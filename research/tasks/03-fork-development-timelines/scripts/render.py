@@ -651,15 +651,31 @@ def layer_panel_records(
                 }
             )
 
-        for event in eip["inclusions"]:
+        previous_inclusion_state: str | None = None
+        inclusion_events = sorted(
+            eip["inclusions"],
+            key=lambda item: (parse_datetime(item["occurred_at"]), item["id"]),
+        )
+        for event in inclusion_events:
             event_at = parse_datetime(event["occurred_at"])
+            normalized_state = event["normalized_state"]
+            if normalized_state == "unknown":
+                event_role = "uncertain_record"
+                event_role_label = "Uncertain record (transition unknown)"
+            elif normalized_state == previous_inclusion_state:
+                event_role = "same_state_record"
+                event_role_label = "Same-state record (no transition)"
+            else:
+                event_role = "state_transition"
+                event_role_label = "State transition"
+                previous_inclusion_state = normalized_state
             if not start <= event_at <= end:
                 continue
             event_label = INCLUSION_LABELS.get(
-                event["normalized_state"], event["normalized_state"]
+                normalized_state, normalized_state
             )
             if (
-                event["normalized_state"] == "considered_for_inclusion"
+                normalized_state == "considered_for_inclusion"
                 and "RIP-" in event["raw_label"]
             ):
                 event_label = "CFI (RIP)"
@@ -672,9 +688,11 @@ def layer_panel_records(
                     "eip_label": eip["label"],
                     "occurred_at": event["occurred_at"],
                     "event_label": event_label,
-                    "event_kind": event["normalized_state"],
+                    "event_kind": normalized_state,
+                    "event_role": event_role,
+                    "event_role_label": event_role_label,
                     "raw_label": event["raw_label"],
-                    "confidence": "high" if event["normalized_state"] != "unknown" else "uncertain",
+                    "confidence": "high" if normalized_state != "unknown" else "uncertain",
                     "rationale": event["normalization_rationale"],
                     "source_title": event["source_title"],
                     "source_url": event["source_url"],
@@ -901,23 +919,35 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
 
     inclusion_rules = (
         base.transform_filter(alt.datum.record_type == "inclusion_marker")
-        .mark_rule(strokeWidth=1.4, opacity=0.75)
+        .mark_rule(strokeWidth=1.4)
         .encode(
             x=x_no_axis,
-            color=alt.Color(
-                "event_kind:N",
-                scale=alt.Scale(
-                    domain=list(INCLUSION_COLORS),
-                    range=list(INCLUSION_COLORS.values()),
+            color=alt.condition(
+                alt.datum.event_role != "state_transition",
+                alt.value("#94A3B8"),
+                alt.Color(
+                    "event_kind:N",
+                    scale=alt.Scale(
+                        domain=list(INCLUSION_COLORS),
+                        range=list(INCLUSION_COLORS.values()),
+                    ),
+                    legend=None,
                 ),
-                legend=None,
             ),
             strokeDash=alt.condition(
-                alt.datum.event_kind == "unknown", alt.value([3, 3]), alt.value([1, 0])
+                alt.datum.event_role != "state_transition",
+                alt.value([3, 3]),
+                alt.value([1, 0]),
+            ),
+            opacity=alt.condition(
+                alt.datum.event_role != "state_transition",
+                alt.value(0.35),
+                alt.value(0.75),
             ),
             href=alt.Href("source_url:N"),
             tooltip=[
                 alt.Tooltip("event_label:N", title="Normalized state"),
+                alt.Tooltip("event_role_label:N", title="Event role"),
                 alt.Tooltip("occurred_at:N", title="Recorded at"),
                 alt.Tooltip("raw_label:N", title="Historical label"),
                 alt.Tooltip("rationale:N", title="Normalization rationale"),
@@ -928,7 +958,10 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
     )
 
     inclusion_points = (
-        base.transform_filter(alt.datum.record_type == "inclusion_marker")
+        base.transform_filter(
+            (alt.datum.record_type == "inclusion_marker")
+            & (alt.datum.event_role == "state_transition")
+        )
         .mark_point(filled=True, size=70, stroke="white", strokeWidth=1)
         .encode(
             x=x_no_axis,
@@ -939,7 +972,7 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
                     domain=list(INCLUSION_COLORS),
                     range=list(INCLUSION_COLORS.values()),
                 ),
-                legend=alt.Legend(title="Inclusion state", orient="top"),
+                legend=alt.Legend(title="Inclusion-state transition", orient="top"),
             ),
             shape=alt.Shape(
                 "event_kind:N",
@@ -952,6 +985,34 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
             href=alt.Href("source_url:N"),
             tooltip=[
                 alt.Tooltip("event_label:N", title="Normalized state"),
+                alt.Tooltip("event_role_label:N", title="Event role"),
+                alt.Tooltip("occurred_at:N", title="Recorded at"),
+                alt.Tooltip("raw_label:N", title="Historical label"),
+                alt.Tooltip("rationale:N", title="Normalization rationale"),
+                alt.Tooltip("source_url:N", title="Source"),
+            ],
+        )
+    )
+
+    inclusion_record_points = (
+        base.transform_filter(
+            (alt.datum.record_type == "inclusion_marker")
+            & (alt.datum.event_role != "state_transition")
+        )
+        .mark_point(
+            filled=False,
+            size=52,
+            color="#94A3B8",
+            stroke="#64748B",
+            strokeWidth=1.4,
+        )
+        .encode(
+            x=x_no_axis,
+            y=alt.Y("value:Q", title=None),
+            href=alt.Href("source_url:N"),
+            tooltip=[
+                alt.Tooltip("event_label:N", title="Normalized state"),
+                alt.Tooltip("event_role_label:N", title="Event role"),
                 alt.Tooltip("occurred_at:N", title="Recorded at"),
                 alt.Tooltip("raw_label:N", title="Historical label"),
                 alt.Tooltip("rationale:N", title="Normalization rationale"),
@@ -1111,6 +1172,7 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
 
     inclusion_stage_tooltip = [
         alt.Tooltip("event_label:N", title="Inclusion state"),
+        alt.Tooltip("event_role_label:N", title="Event role"),
         alt.Tooltip("occurred_at:N", title="Recorded at"),
         alt.Tooltip("raw_label:N", title="Historical label"),
         alt.Tooltip("rationale:N", title="Normalization rationale"),
@@ -1123,10 +1185,16 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
         shape: str,
         color: str,
         y_position: int,
-    ) -> tuple[alt.Chart, alt.Chart]:
+    ) -> tuple[alt.Chart, alt.Chart, alt.Chart]:
         stage_filter = (
             (alt.datum.record_type == "inclusion_marker")
             & (alt.datum.event_kind == state)
+            & (alt.datum.event_role == "state_transition")
+        )
+        same_state_filter = (
+            (alt.datum.record_type == "inclusion_marker")
+            & (alt.datum.event_kind == state)
+            & (alt.datum.event_role == "same_state_record")
         )
         point = (
             base.transform_filter(stage_filter)
@@ -1161,23 +1229,40 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
                 tooltip=inclusion_stage_tooltip,
             )
         )
-        return point, text
+        same_state_record = (
+            base.transform_filter(same_state_filter)
+            .mark_point(
+                shape=shape,
+                filled=False,
+                size=150,
+                color="#94A3B8",
+                stroke="#64748B",
+                strokeWidth=1.5,
+            )
+            .encode(
+                x=x_no_axis,
+                y=alt.value(y_position),
+                href=alt.Href("source_url:N"),
+                tooltip=inclusion_stage_tooltip,
+            )
+        )
+        return point, text, same_state_record
 
-    pfi_flag, pfi_label = inclusion_stage_flag(
+    pfi_flag, pfi_label, pfi_same_state = inclusion_stage_flag(
         "proposed_for_inclusion",
         "PFI",
         "circle",
         INCLUSION_COLORS["proposed_for_inclusion"],
         40,
     )
-    cfi_flag, cfi_label = inclusion_stage_flag(
+    cfi_flag, cfi_label, cfi_same_state = inclusion_stage_flag(
         "considered_for_inclusion",
         "CFI",
         "square",
         INCLUSION_COLORS["considered_for_inclusion"],
         66,
     )
-    sfi_flag, sfi_label = inclusion_stage_flag(
+    sfi_flag, sfi_label, sfi_same_state = inclusion_stage_flag(
         "scheduled_for_inclusion",
         "SFI",
         "diamond",
@@ -1188,6 +1273,7 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
         base.transform_filter(
             (alt.datum.record_type == "inclusion_marker")
             & (alt.datum.event_label == "CFI (RIP)")
+            & (alt.datum.event_role == "state_transition")
         )
         .mark_text(
             text="(RIP)",
@@ -1215,14 +1301,18 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
             commit_points,
             creation_points,
             inclusion_points,
+            inclusion_record_points,
             devnet_points,
             pfi_flag,
             pfi_label,
+            pfi_same_state,
             cfi_flag,
             cfi_label,
+            cfi_same_state,
             cfi_rip_suffix,
             sfi_flag,
             sfi_label,
+            sfi_same_state,
             selected_ref_flags,
             selected_ref_labels,
         )
@@ -1250,6 +1340,7 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
                 f"{LAYER_NAMES[layer]} EIP revision histories",
                 subtitle=[
                     "Primary line: cumulative substantive post-creation revisions. Faint line: all post-creation revisions.",
+                    "Filled inclusion markers are state transitions; open gray markers preserve same-state records.",
                     "Triangles at panel bottoms are relevant devnets; lower opacity denotes medium-confidence participation.",
                     *(
                         [

@@ -51,6 +51,8 @@ Confidence and notes remain visible. Planned and cancelled devnets must not be r
 - The creation commit is a marker, not a revision count.
 - Commit points preserve substantive, non-substantive, and uncertain classifications with source links.
 - CFI, SFI, removal, and inclusion markers are read from Task 01 without reinterpretation.
+  Filled markers denote a change in normalized state; open gray markers preserve repeated
+  records of the same state, such as a reaffirmation or terminology-only relabel.
 - Cross-layer EIPs appear in both layer figures. Their revisions contribute to both layer totals in the overview; the overview labels this overlap explicitly.
 - Events before the configured calendar window contribute to the left-edge cumulative baseline.
 
