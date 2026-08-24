@@ -1,0 +1,408 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7910
+  title: eth_config JSON-RPC Method
+  source_ids:
+  - blob-eip7910-pin
+  - blob-eip7910-creation
+research_run:
+  started_at: '2026-08-20T20:12:00Z'
+  completed_at: '2026-08-20T20:30:00Z'
+  researcher: claude subagent eip-batch-10 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-03-18'
+  frontmatter_source_ids:
+  - blob-eip7910-creation
+  - blob-eip7910-pin
+  first_repository_commit:
+    authored_at: '2025-03-25T08:28:58-06:00'
+    committed_at: '2025-03-25T22:28:58+08:00'
+    commit: 3df094834bd54b0f157027cdade63faad9050419
+    path: EIPS/eip-7910.md
+    source_ids:
+    - commit-3df094834b
+  discrepancy_note: The frontmatter declares created 2025-03-18, while the earliest repository commit
+    adding EIPS/eip-7910.md is 3df094834b, committed 2025-03-25T22:28:58+08:00 - a gap of seven days matching
+    the pull-request review period. The declared date is close to the opening of the discussions-to Ethereum
+    Magicians thread cited in the creation commit (eth-config-json-rpc-method/23183). The frontmatter
+    `created` value was never changed by any later commit (verified against every historical version at
+    the pin). The Git event is the earliest independently verifiable repository event.
+revision_history:
+  summary:
+    file_commit_count: 13
+    post_creation_revision_count: 12
+    substantive_revision_count: 6
+    non_substantive_revision_count: 6
+    uncertain_revision_count: 0
+    first_revision_at: '2025-07-10T01:40:29+08:00'
+    last_revision_at: '2026-01-21T20:25:26+00:00'
+    first_substantive_revision_at: '2025-07-10T01:40:29+08:00'
+    last_substantive_revision_at: '2025-09-29T21:18:06+08:00'
+    derived_from_event_ids:
+    - eip7910-e01
+    - eip7910-e02
+    - eip7910-e03
+    - eip7910-e04
+    - eip7910-e05
+    - eip7910-e06
+    - eip7910-e07
+    - eip7910-e08
+    - eip7910-e09
+    - eip7910-e10
+    - eip7910-e11
+    - eip7910-e12
+    - eip7910-e13
+  events:
+  - id: eip7910-e01
+    event_kind: creation
+    authored_at: '2025-03-25T08:28:58-06:00'
+    committed_at: '2025-03-25T22:28:58+08:00'
+    commit: 3df094834bd54b0f157027cdade63faad9050419
+    path: EIPS/eip-7910.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7910 (311 lines): specifies a new parameterless JSON-RPC method
+      `eth_config` that clients MUST expose on the standard JSON-RPC port (and MAY expose via the Engine
+      API), returning four members - `current`, `next`, `currentHash`, `nextHash` - where the hashes are
+      CRC-32 digests of the RFC-8785 canonical JSON form of each configuration object. Defines the configuration
+      object members `activationTime`, `blobsSchedule`, `chainId`, `precompiles` (address -> name map)
+      and `systemContracts` (name -> address map), with per-fork name lists for Cancun and Prague, a MUST
+      that the object contain exactly the parameters of the fork''s meta-EIP, a MUST that caches be purged
+      at fork boundaries, and a MUST that future forks define their changes in their meta-EIPs. Includes
+      Motivation (the Holesky Pectra misconfiguration), Rationale (precompile enumeration, full configs
+      over deltas, nested vs flat, JSON, CRC-32 by reference to EIP-2124), Backwards Compatibility, Test
+      Cases with Hoodi Prague/Cancun sample configs and a sample curl/response, a Reference Implementation
+      pointer to Besu PR #8417, and Security Considerations (exposure, dishonest nodes, DDoS). Frontmatter:
+      status Draft, type Standards Track, category Interface, created 2025-03-18; no `requires` field.'
+    rationale: Adding commit; recorded as event_kind creation and excluded from revision counts.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-3df094834b
+    - blob-eip7910-creation
+  - id: eip7910-e02
+    event_kind: revision
+    authored_at: '2025-07-09T19:40:29+02:00'
+    committed_at: '2025-07-10T01:40:29+08:00'
+    commit: 59c5b1739bc30ae056517d5c1bc1cfd6ebf0a30f
+    path: EIPS/eip-7910.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Extends the response object from four to nine members: adds `last` and `lastHash` (the last
+      known configuration, equal to `next` when the next fork is also the last) and adds `currentForkId`,
+      `nextForkId` and `lastForkId` carrying the EIP-6122 `FORK_HASH` value. Adds a ''Blob Parameter Only
+      Forks'' section stating that EIP-7892 BPO forks are interpreted as new forks that inherit the parent
+      fork (recursively) and update only `blobsSchedule` values. Updates the abstract, the ''include every
+      configuration parameter'' MUST and the `activationTime` description to cover ''last''. Sample response
+      gains the `last`/`lastHash`/`lastForkId` block and the hash values become `0x`-prefixed. Also fixes
+      the EIP-2124 rationale link to the `.md` form.'
+    rationale: Adds three new response members and a new interpretation rule for BPO forks; both change
+      what clients must return. Introduces this EIP's references to EIP-6122 and EIP-7892 (recorded as
+      dependency events).
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-59c5b1739b
+  - id: eip7910-e03
+    event_kind: revision
+    authored_at: '2025-07-21T16:32:46+02:00'
+    committed_at: '2025-07-21T22:32:46+08:00'
+    commit: 0ed437619eee7fd318709cfdae21965784ca939f
+    path: EIPS/eip-7910.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Renames the agreed-upon precompile names `BN256_ADD`, `BN256_MUL`, `BN256_PAIRING` to `BN254_ADD`,
+      `BN254_MUL`, `BN254_PAIRING` in the Cancun name list and in all four sample configurations. Also
+      trims two trailing/duplicated spaces.
+    rationale: The precompile names are part of the RPC response payload, so renaming them changes the
+      bytes clients must return (and, at this revision, the CRC-32 configuration hash derived from them).
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-0ed437619e
+  - id: eip7910-e04
+    event_kind: revision
+    authored_at: '2025-07-21T21:09:42+02:00'
+    committed_at: '2025-07-21T19:09:42+00:00'
+    commit: e56229c7c0be938c61daa8ca34b9f3fac01898ea
+    path: EIPS/eip-7910.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Recomputes the sample configuration hashes in the Test Cases section after the BN256 ->
+      BN254 rename: currentHash 0x243c27d1 -> 0x2eedf329, nextHash 0x10368496 -> 0xd82a81f, lastHash 0x10368496
+      -> 0x0d82a81f.'
+    rationale: The sample hashes are the reference outputs an implementer checks their canonicalization
+      and CRC-32 implementation against, so correcting them affects testing. Medium confidence because
+      only Test Cases content changed and no requirement was altered.
+    change_group: 7910-sample-hash-recompute-2025-07
+    confidence: medium
+    source_ids:
+    - commit-e56229c7c0
+  - id: eip7910-e05
+    event_kind: revision
+    authored_at: '2025-07-23T03:01:35+01:00'
+    committed_at: '2025-07-23T10:01:35+08:00'
+    commit: 7f95fac93010a6cda91ffc4e07bef1c96f60395d
+    path: EIPS/eip-7910.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Restores the dropped leading zero in one sample value: nextHash 0xd82a81f -> 0x0d82a81f,
+      matching the lastHash value set by the previous commit.'
+    rationale: Single-character formatting fix to an example value; the digest itself is unchanged.
+    change_group: 7910-sample-hash-recompute-2025-07
+    confidence: high
+    source_ids:
+    - commit-7f95fac930
+  - id: eip7910-e06
+    event_kind: revision
+    authored_at: '2025-07-22T20:16:47-06:00'
+    committed_at: '2025-07-23T02:16:47+00:00'
+    commit: d6714338dbd8aa0e9fc32ff250676487788d213b
+    path: EIPS/eip-7910.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Adds an explicit lower-case requirement to three member definitions: `chainId` (''with all
+      leading zeros removed, in lower case''), the `precompiles` address keys (''with zeros preserved,
+      in lower case'') and the `systemContracts` address values (''with leading zeros preserved, in lower
+      case'').'
+    rationale: 'Fixes the byte-level representation of values in the response, which at this revision
+      also determines the canonical JSON form and its CRC-32 hash. Note: although this commit was authored
+      before 7f95fac930, it was committed 15 minutes after it and applies on top of it (parent blob 5cb67275),
+      so it is ordered here by committer date.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-d6714338db
+  - id: eip7910-e07
+    event_kind: revision
+    authored_at: '2025-07-29T15:26:20-06:00'
+    committed_at: '2025-07-29T21:26:20+00:00'
+    commit: 5fbf86102e60e49f6b8b5a26d94bbfbf6ecb638e
+    path: EIPS/eip-7910.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Largest redesign of the response. Removes the six hash/fork-id top-level members (`currentHash`/`nextHash`/`lastHash`,
+      `currentForkId`/`nextForkId`/`lastForkId`) so the response contains exactly three members `current`,
+      `next`, `last`, with `next`/`last` null when no future fork is configured. Deletes the ''Converting
+      a Fork Configuration to a Hash'' section (RFC-8785 canonicalization plus CRC-32) and replaces the
+      ''CRC-32 as Hash Format'' rationale with ''Why no configuration hash''. Adds a per-configuration
+      `forkId` member (EIP-6122 FORK_HASH, `0x`-prefixed, zero-padded to four bytes, lower case). Renames
+      the member `blobsSchedule` -> `blobSchedule` (including in the BPO section). Inverts the `precompiles`
+      object so members are contract names and values are addresses, and requires members in alphabetical
+      rather than ''canonical'' order, with the rule that future forks'' added members MUST be alphabetically
+      sorted. Rewrites all sample configurations accordingly and adds a ''Without Future Fork Scheduled''
+      example returning `next: null` and `last: null`. Weakens DDoS guidance from ''Clients SHOULD cache''
+      to ''Clients MAY cache''.'
+    rationale: Removes response members and an entire hashing procedure, adds a new member, renames another
+      and inverts the shape of the precompiles map; every one of these changes what a conforming client
+      returns.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-5fbf86102e
+  - id: eip7910-e08
+    event_kind: revision
+    authored_at: '2025-07-30T20:20:02+03:00'
+    committed_at: '2025-07-31T01:20:02+08:00'
+    commit: 2dcdf52f74d0a78898797fd215177fb90c3bf241
+    path: EIPS/eip-7910.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Moves `BLAKE2F` to its correct alphabetical position (before the BLS12_* entries) in three
+      sample precompiles objects, and makes the 'Without Future Fork Scheduled' example consistent with
+      the other Hoodi samples (activationTime 1710338135 -> 0, chainId 0x1 -> 0x88bb0, forkId 0xdce96c2d
+      -> 0xbef71d30).
+    rationale: Corrects example JSON so it satisfies the already-stated alphabetical-ordering rule and
+      uses a consistent network; no member definition or requirement changes. Medium confidence because
+      sample ordering is normatively required by the document.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-2dcdf52f74
+  - id: eip7910-e09
+    event_kind: revision
+    authored_at: '2025-09-16T09:10:20-06:00'
+    committed_at: '2025-09-16T15:10:20+00:00'
+    commit: a7783798c5e5da5afc1ab4a5c20a37e7b9670095
+    path: EIPS/eip-7910.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Copyediting pass across the whole document: comma and em-dash normalisation, ''mainnet''
+      -> ''Ethereum Mainnet'', ''rpc results'' -> ''RPC results'', ''four byte'' -> ''four-byte'', curly
+      apostrophes replaced, and the garbled sentence ''Added must MUST be alphabetically sorted'' corrected
+      to ''Added members MUST be alphabetically sorted''.'
+    rationale: Grammar, punctuation and typography only; the corrected sentence restores the evidently
+      intended meaning of an existing requirement rather than changing it.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-a7783798c5
+  - id: eip7910-e10
+    event_kind: revision
+    authored_at: '2025-09-24T09:41:42-07:00'
+    committed_at: '2025-09-24T16:41:42+00:00'
+    commit: 3757d2839a5228cef6eb977dafbc071efb294979
+    path: EIPS/eip-7910.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter status Draft -> Review; adds a missing full stop to one use-case bullet.
+    rationale: Process-status frontmatter change plus punctuation.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-3757d2839a
+  - id: eip7910-e11
+    event_kind: revision
+    authored_at: '2025-09-29T15:18:06+02:00'
+    committed_at: '2025-09-29T21:18:06+08:00'
+    commit: 18019f0ce89cedabd318b60cccb0cf7894876934
+    path: EIPS/eip-7910.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Adds the line ''For Osaka, the added contract is: `P256VERIFY`.'' to the `precompiles` member
+      definition, extending the per-fork precompile name list to Osaka.'
+    rationale: Adds a name that a conforming client MUST report in the Osaka configuration object. The
+      line names the precompile only, not the EIP that introduces it, so no dependency event is recorded.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-18019f0ce8
+  - id: eip7910-e12
+    event_kind: revision
+    authored_at: '2025-10-07T10:00:01-07:00'
+    committed_at: '2025-10-07T17:00:01+00:00'
+    commit: 494006cdcbae24690bee7d528928dfe0a47059ae
+    path: EIPS/eip-7910.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Frontmatter status Review -> Last Call and adds last-call-deadline: 2025-10-28.'
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-494006cdcb
+  - id: eip7910-e13
+    event_kind: revision
+    authored_at: '2026-01-21T15:25:26-05:00'
+    committed_at: '2026-01-21T20:25:26+00:00'
+    commit: 0c82d532192eca83ab5ce12b2a0d3e019c803066
+    path: EIPS/eip-7910.md
+    change_type: dependency
+    semantic_effect: non_substantive
+    summary: 'Frontmatter status Last Call -> Final (last-call-deadline removed); the section heading
+      ''Blob Parameter Only Forks'' becomes ''Blob Parameter Only (BPO) Forks'' and its opening clause
+      ''BPO forks specified in [EIP-7892](./eip-7892.md) should be interpreted as new forks'' loses the
+      EIP-7892 citation; the ''Reference Implementation'' section pointing at Besu PR #8417 is deleted.'
+    rationale: Process-status change plus removal of the document's only EIP-7892 citation and of an informative
+      reference-implementation pointer. The BPO interpretation rule itself is unchanged, so the semantic
+      effect is non_substantive; the citation removal is recorded as dependency event eip7910-dep-e5.
+      Medium confidence on the change_type because the commit mixes three kinds of change.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-0c82d53219
+dependency_history:
+  events:
+  - id: eip7910-dep-e1
+    target_eip: 2124
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2025-03-25T22:28:58+08:00'
+    commit: 3df094834bd54b0f157027cdade63faad9050419
+    rationale: 'Explanation of ''other'': the creation text''s Rationale section ''CRC-32 as Hash Format''
+      states ''The reasons for using CRC-32 instead of a cryptographic hash are the same as those in [EIP-2124](./eip-2124#why-use-ieee-crc32-as-the-checksum-instead-of-keccak256),
+      incorporated by reference.'' This is an explicit textual EIP reference that imports rationale, not
+      a normative requirement, and EIP-7910 has no `requires` frontmatter field at any revision.'
+    confidence: high
+    source_ids:
+    - commit-3df094834b
+    - blob-eip7910-creation
+  - id: eip7910-dep-e2
+    target_eip: 6122
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2025-07-10T01:40:29+08:00'
+    commit: 59c5b1739bc30ae056517d5c1bc1cfd6ebf0a30f
+    rationale: This commit adds the response members 'currentForkId', 'nextForkId' and 'lastForkId', defined
+      as 'the `FORK_HASH` value as specified in [EIP-6122](./eip-6122.md)'. The relationship is `requires`
+      because a conforming implementation must compute a value defined by EIP-6122. Commit 5fbf86102e
+      later replaces the three members with a single per-configuration `forkId` member but keeps the same
+      EIP-6122 definition; the reference is still present at the pinned state.
+    confidence: high
+    source_ids:
+    - commit-59c5b1739b
+    - commit-5fbf86102e
+    - blob-eip7910-pin
+  - id: eip7910-dep-e3
+    target_eip: 7892
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2025-07-10T01:40:29+08:00'
+    commit: 59c5b1739bc30ae056517d5c1bc1cfd6ebf0a30f
+    rationale: 'The same commit adds the section ''Blob Parameter Only Forks'': ''BPO forks specified
+      in [EIP-7892](./eip-7892.md) should be interpreted as new forks, taking the parent fork as base
+      (recursively, if the parent fork is also a BPO) and updating only the appropriate values in the
+      `blobsSchedule` object''. The relationship is `interacts_with`: EIP-7910 defines how it reports
+      forks defined by EIP-7892 without depending on it to function.'
+    confidence: high
+    source_ids:
+    - commit-59c5b1739b
+  - id: eip7910-dep-e4
+    target_eip: 2124
+    event_type: removed
+    relationship: other
+    occurred_at: '2025-07-29T21:26:20+00:00'
+    commit: 5fbf86102e60e49f6b8b5a26d94bbfbf6ecb638e
+    rationale: 'The configuration-hash removal replaces the ''CRC-32 as Hash Format'' rationale (the only
+      place EIP-2124 was cited) with ''Why no configuration hash'', which cites no EIP. Verified by grepping
+      every historical version for EIP-number patterns: eip-2124 appears in versions 1-6 and is absent
+      from version 7 onward.'
+    confidence: high
+    source_ids:
+    - commit-5fbf86102e
+    - blob-eip7910-pin
+  - id: eip7910-dep-e5
+    target_eip: 7892
+    event_type: removed
+    relationship: interacts_with
+    occurred_at: '2026-01-21T20:25:26+00:00'
+    commit: 0c82d532192eca83ab5ce12b2a0d3e019c803066
+    rationale: The 'Move to Final' commit rewrites the BPO section opening from 'BPO forks specified in
+      [EIP-7892](./eip-7892.md) should be interpreted...' to 'BPO forks should be interpreted...', removing
+      the document's only EIP-7892 citation. The BPO interpretation rule itself remains. At the pinned
+      state EIP-6122 is the only EIP referenced by EIPS/eip-7910.md.
+    confidence: high
+    source_ids:
+    - commit-0c82d53219
+    - blob-eip7910-pin
+source_registry: outputs/sources/eips/eip-7910.yaml
+unknowns:
+- 'EIP-7910 has never had a `requires` frontmatter field: all thirteen historical versions of EIPS/eip-7910.md
+  lack it, including the pinned Final version, even though the document normatively references EIP-6122''s
+  FORK_HASH. All dependency events here come from explicit textual references.'
+- 'Negative search: grepping every historical version of EIPS/eip-7910.md for `eip-[0-9]{3,4}` yields
+  only eip-2124 (versions 1-6), eip-6122 (versions 2-13) and eip-7892 (versions 2-12). No other explicit
+  cross-EIP reference exists.'
+- 'Commit 18019f0ce8 adds ''For Osaka, the added contract is: `P256VERIFY`.'' The commit subject calls
+  it ''add P256 precompile for Osaka'', but the text names only the precompile, not the EIP that introduces
+  it (EIP-7951), so no dependency event is recorded - this task records only explicit EIP references.'
+- Commit d6714338db was authored 2025-07-22T20:16:47-06:00, before commit 7f95fac930 (authored 2025-07-23T03:01:35+01:00),
+  but was committed afterwards and applies on top of it. Events are ordered by committer date, which matches
+  the parent-blob chain (9375c6b1 -> 5cb67275 -> ea8f5377).
+- Commit e56229c7c0 changes only sample hash values in the Test Cases section. It is classified clarification
+  / substantive with medium confidence on the grounds that the samples are the reference outputs used
+  to validate a canonicalization and CRC-32 implementation; a reviewer treating Test Cases content as
+  illustrative would classify it non_substantive.
+- The frontmatter `description` still reads 'A JSON-RPC method that describes the configuration of the
+  current and next fork' at the pinned state, although the response has included a 'last' configuration
+  since commit 59c5b1739b. This is recorded as an observation, not as a revision event, because no commit
+  changed the field.
+- Summary first/last revision dates use the committer timestamps (committed_at) of the referenced events;
+  authored timestamps are recorded per event as well.
+- No PR numbers appear in any of the thirteen commit subjects for this file, and GitHub PR metadata was
+  not consulted or archived, so no mutable sources were relied upon and the raw/ directory for this work
+  unit is empty.

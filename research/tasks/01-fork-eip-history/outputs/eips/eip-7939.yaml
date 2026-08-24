@@ -1,0 +1,200 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7939
+  title: Count leading zeros (CLZ) opcode
+  source_ids:
+  - eips-blob-eip7939-pin
+research_run:
+  started_at: '2026-08-20T19:56:20Z'
+  completed_at: '2026-08-21T00:37:47Z'
+  researcher: claude subagent eip-batch-13 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-04-28'
+  frontmatter_source_ids:
+  - eips-blob-eip7939-creation
+  - eips-blob-eip7939-pin
+  first_repository_commit:
+    authored_at: '2025-04-29T03:46:03Z'
+    committed_at: '2025-04-29T03:46:03Z'
+    commit: ef1a4dd914726ec4af20b706d1ec44e19fca4fd9
+    path: EIPS/eip-7939.md
+    source_ids:
+    - eips-commit-ef1a4dd91472
+  discrepancy_note: 'The frontmatter ''created'' date (2025-04-28) precedes the first repository commit (2025-04-29T03:46:03Z)
+    by one calendar day in UTC. The gap is a time-zone artefact plus the normal merge lag: the commit''s own local timestamps
+    straddle the boundary (authored 2025-04-29T11:46:03+08:00 in the author''s zone, committed 2025-04-28T21:46:03-06:00
+    in the committer''s zone, i.e. still 2025-04-28 locally). The frontmatter value was never modified in any later commit
+    (verified across all eight file commits). No conflict.'
+revision_history:
+  summary:
+    file_commit_count: 8
+    post_creation_revision_count: 7
+    substantive_revision_count: 2
+    non_substantive_revision_count: 5
+    uncertain_revision_count: 0
+    first_revision_at: '2025-04-29T16:01:44Z'
+    last_revision_at: '2026-01-21T09:16:44Z'
+    first_substantive_revision_at: '2025-05-12T23:56:41Z'
+    last_substantive_revision_at: '2025-07-07T15:31:20Z'
+    derived_from_event_ids:
+    - eip7939-e00
+    - eip7939-e01
+    - eip7939-e02
+    - eip7939-e03
+    - eip7939-e04
+    - eip7939-e05
+    - eip7939-e06
+    - eip7939-e07
+  events:
+  - id: eip7939-e00
+    event_kind: creation
+    authored_at: '2025-04-29T11:46:03+08:00'
+    committed_at: '2025-04-28T21:46:03-06:00'
+    commit: ef1a4dd914726ec4af20b706d1ec44e19fca4fd9
+    path: EIPS/eip-7939.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7939 ''Count leading zeros (CLZ) opcode'' (148 lines, Draft, sole author Vectorized):
+      introduces the CLZ opcode at 0x1e, which pops one 256-bit word and pushes the number of leading zero bits, returning
+      256 for zero. Gives a Solidity reference implementation and a Python definition, sets the gas cost at 3 (the same
+      as ADD), gives rationale for the zero case and for preferring CLZ over a trailing-zeros opcode, and lists six test
+      cases. Security Considerations is a ''TBA'' placeholder. Merged via PR 9701.'
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-ef1a4dd91472
+    - eips-blob-eip7939-creation
+  - id: eip7939-e01
+    event_kind: revision
+    authored_at: '2025-04-30T00:01:44+08:00'
+    committed_at: '2025-04-29T16:01:44+00:00'
+    commit: 71c089251fd49df9fc2ecaae971ce7eb79661262
+    path: EIPS/eip-7939.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Fixes the spelling of 'implemention' -> 'implementation' in a doc comment inside the Solidity reference implementation.
+    rationale: Single-word typographical fix inside a code comment; no executable or normative content changed.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-71c089251fd4
+  - id: eip7939-e02
+    event_kind: revision
+    authored_at: '2025-05-13T07:56:41+08:00'
+    committed_at: '2025-05-13T07:56:41+08:00'
+    commit: 8008342ee834baf5d9a93b22aeb1fcae43694c7e
+    path: EIPS/eip-7939.md
+    change_type: security_assumption
+    semantic_effect: substantive
+    summary: Replaces the 'TBA' Security Considerations placeholder with a substantive claim (CLZ is a stateless opcode
+      with a low worst-case constant cost in memory, compute and proving, and is therefore not exploitable for denial of
+      service). Also adds three co-authors (Georgios Konstantopoulos, Jochem Brouwer, Ben Adams), adds an SP1/ZK proving-cost
+      paragraph to the Motivation, adds a C++ reference implementation including an SP1 rv32im-optimised 8-limb variant,
+      and expands the gas-cost rationale with SP1 proving comparisons against ADD.
+    rationale: Fills in the EIP's security assumptions, which had been an explicit placeholder, and adds reference implementations
+      that implementers and reviewers may rely on. The opcode semantics and the gas cost (3 at this point) are unchanged,
+      so the substantive label rests on the security-assumption and reference-implementation content; confidence medium
+      because the remainder of the diff is motivation, rationale and author metadata.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-8008342ee834
+  - id: eip7939-e03
+    event_kind: revision
+    authored_at: '2025-06-09T12:17:58+02:00'
+    committed_at: '2025-06-09T10:17:58+00:00'
+    commit: c43098e67b8fd94c5166bd7a46ec53cafac04123
+    path: EIPS/eip-7939.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Adds a fifth author (Giulio Rebuffo); turns the ZK-proving motivation paragraph into a three-item list (cheaper
+      compute, cheaper ZK proving, smaller bytecode); renames the rationale section 'Opcode namespace conservation' to 'Preference
+      over CTZ (count trailing zeros)' and adds the observation that CLZ cannot be implemented in terms of CTZ; and capitalises
+      clz/add to CLZ/ADD throughout the prose.
+    rationale: Motivation, rationale and author-metadata prose only. The opcode, its semantics, its encoding and its gas
+      cost are untouched; the added CTZ argument justifies the existing design rather than changing it.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c43098e67b8f
+  - id: eip7939-e04
+    event_kind: revision
+    authored_at: '2025-07-07T16:31:20+01:00'
+    committed_at: '2025-07-07T15:31:20+00:00'
+    commit: a794de3fcf71bb8c71e8bafdba11f63133ce4516
+    path: EIPS/eip-7939.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Changes the gas cost of the CLZ opcode from 3 to 5: ''The cost of the opcode is 3, the same as ADD.'' becomes
+      ''The cost of the opcode is 5, matching MUL (raised from 3 to avoid under-pricing DoS risk).'''
+    rationale: Changes the opcode's normative gas price, which every client implementation and every gas-related test must
+      follow.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a794de3fcf71
+  - id: eip7939-e05
+    event_kind: revision
+    authored_at: '2025-07-22T15:58:04+08:00'
+    committed_at: '2025-07-22T15:58:04+08:00'
+    commit: 43576f4c39a01947ab02fa8f6f202195cb02f4c6
+    path: EIPS/eip-7939.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-43576f4c39a0
+  - id: eip7939-e06
+    event_kind: revision
+    authored_at: '2025-09-29T06:50:27-07:00'
+    committed_at: '2025-09-29T21:50:27+08:00'
+    commit: 764eccb1c6ee4f9dcea4b9774fe8818d9c652ed2
+    path: EIPS/eip-7939.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Last Call, adding last-call-deadline 2025-10-28.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-764eccb1c6ee
+  - id: eip7939-e07
+    event_kind: revision
+    authored_at: '2026-01-21T04:16:44-05:00'
+    committed_at: '2026-01-21T09:16:44+00:00'
+    commit: b55cdb0ee78a696327cf76d1c5cf8088d73499ca
+    path: EIPS/eip-7939.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final (last-call-deadline removed). Bulk commit: its subject names only EIP-7823,
+      but it moves five Fusaka EIPs (7823, 7825, 7883, 7939, 7951) to Final in the same change; the EIPS/eip-7939.md hunk
+      is the three-line frontmatter status edit.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b55cdb0ee78a
+dependency_history:
+  events: []
+source_registry: outputs/sources/eips/eip-7939.yaml
+unknowns:
+- 'Negative search: EIP-7939 has no frontmatter ''requires'' field in any of its eight commits, and no revision of the body
+  ever names another EIP, ERC or RIP (grep for ''eip-<digits>'', ''erc-<digits>'' and ''rip-<digits>'' over the pinned blob,
+  plus a per-commit check of the frontmatter). Its only external references are the ethereum-magicians discussion thread,
+  the intx library and SP1/rv32im. dependency_history.events is therefore empty by observation, not by omission.'
+- 'Classification judgement (eip7939-e02): recorded as security_assumption / substantive because it replaces an explicit
+  ''TBA'' Security Considerations placeholder with a real DoS-safety claim and adds C++ reference implementations. Confidence
+  medium: opcode semantics and gas cost were unchanged in that commit, and a stricter reading would treat the whole diff
+  as motivation and rationale prose.'
+- The opcode's byte value (0x1e) and its zero-input result (256) were fixed at creation and never changed; the only normative
+  parameter change in the EIP's history is the gas cost 3 -> 5 (eip7939-e04).
+- No mutable (non-Git) sources were needed for this record; all evidence is reproducible from the pinned ethereum/EIPs history,
+  so raw/eips/eip-7939/ is empty.

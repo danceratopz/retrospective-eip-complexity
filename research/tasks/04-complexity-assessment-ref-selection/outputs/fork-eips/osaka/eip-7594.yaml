@@ -1,0 +1,203 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7594
+  title: PeerDAS - Peer Data Availability Sampling
+  layers:
+  - execution
+  - consensus
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7594.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7594.yaml
+research_run:
+  started_at: '2026-08-21T06:52:00Z'
+  completed_at: '2026-08-21T07:00:06Z'
+  researcher: claude subagent osaka/eip-7594 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7594-e1
+  alternative_event_ids: []
+  kind: normalized_proposal_equivalent
+  raw_label: EIPs Scheduled for Inclusion
+  effective_at: '2024-09-27T18:42:32Z'
+  recorded_at: '2024-09-27T18:42:32Z'
+  date_basis: >-
+    Task 01's occurred_at for event osaka-eip7594-e1 is the UTC committer date of the ethereum/EIPs commit
+    that made the inclusion-state change to EIPS/eip-7607.md (Hardfork Meta - Fulu/Osaka), and that
+    convention is adopted here. Verified directly from the read-only clone at the Task 01 run-wide pin
+    a08f51fec5b2b5da457adb05b8cffb487fb4f7de: `git log -1 --format='%H %cI %aI %s'
+    1d4ce5462677c5af8852cae6105ebf4c941f363b` returns committer 2024-09-28T02:42:32+08:00 (= 2024-09-27T18:42:32Z),
+    author 2024-09-27T11:42:32-07:00, subject 'Add EIP: Hardfork Meta - Amsterdam' (squash merge of
+    ethereum/EIPs PR #8911, author Tim Beiko). The underlying AllCoreDevs decision identified by Task 01
+    is AllCoreDevs - Execution ACDE#197, held 2024-09-26 14:00-15:30 UTC (pm-issue-1153,
+    pm-blob-meeting197-pin), which split the Pectra scope and moved PeerDAS into Fusaka; the repository
+    record therefore lags the decision by roughly 1.2 days. effective_at uses the merge/commit time
+    because under the EIP-7723 process the fork-scope state takes effect when the change to the Meta EIP
+    is merged; recorded_at is the same event. Using the ACDE#197 call date instead would move the anchor
+    at most ~1.2 days earlier and would not change either bracketing candidate (nearest revisions are
+    103 days before and 106 days after the anchor).
+  verification_status: verified
+  verification_rationale: >-
+    Primary evidence, not Task 01 prose: `git show 1d4ce5462677c5af8852cae6105ebf4c941f363b --
+    EIPS/eip-7607.md` shows the hunk that restructured the Fusaka Meta EIP into 'EIPs Scheduled for
+    Inclusion' / 'Considered for Inclusion' / 'Proposed for Inclusion' sections (with a pointer to
+    EIP-7723 for the definitions) and adds the bullet '* [EIP-7594](./eip-7594.md): PeerDAS - Peer Data
+    Availability Sampling' as the first entry under '### EIPs Scheduled for Inclusion'. The same hunk
+    creates '### Proposed for Inclusion' as an EMPTY section, so EIP-7594 demonstrably never occupied a
+    PFI section of EIP-7607. Independently re-verified across the complete history of EIPS/eip-7607.md
+    (53 commits at the pin): the string '7594' is absent from the file before 1d4ce546, first appears at
+    1d4ce546 under '### EIPs Scheduled for Inclusion', and thereafter only ever appears under the
+    Scheduled/Included Core-EIPs subsection (section heading above the bullet becomes '#### Core EIPs'
+    from commit 9d17611c8710 onward) - no removal and no re-proposal cycle. The exact anchor timestamp is
+    therefore verified from immutable Git content; the choice to treat this SFI entry as the PFI-equivalent
+    anchor is a judgement call flagged for human review.
+  confidence: medium
+  source_ids:
+  - eips-commit-1d4ce5462677
+  - eips-pr-8911
+  - pm-issue-1153
+  - pm-blob-meeting197-pin
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7594-e02
+    event_kind: revision
+    commit: 4353b530c3701b22d7d2b46f940d8b6608d7aa8a
+    committed_at: '2024-06-17T16:19:19Z'
+    offset_from_anchor_seconds: -8821393
+    semantic_effect: non_substantive
+    summary: >-
+      'Update EIP-7594: Move to Review (#8671)'. Frontmatter status Draft -> Review; no other change
+      (verified by `git diff 4353b530c3^ 4353b530c3 -- EIPS/eip-7594.md`, a single one-line hunk). The
+      resulting file is the 52-line creation document with status Review.
+    immutable_url: https://github.com/ethereum/EIPs/blob/4353b530c3701b22d7d2b46f940d8b6608d7aa8a/EIPS/eip-7594.md
+    source_ids:
+    - commit-4353b530c3
+  following:
+    exists: true
+    revision_event_id: eip7594-e03
+    event_kind: revision
+    commit: 62f28725e80dd8cd1c3b27e3dab40e27362541fb
+    committed_at: '2025-01-12T00:23:21Z'
+    offset_from_anchor_seconds: 9178849
+    semantic_effect: non_substantive
+    summary: >-
+      '(bot 1272989785) moving EIPS/eip-7594.md to stagnant (#9170)'. EIP-bot frontmatter status Review ->
+      Stagnant after inactivity; no other change (verified by `git diff 62f28725e8^ 62f28725e8 --
+      EIPS/eip-7594.md`, a single one-line hunk). 106 days after the anchor, far outside the seven-day
+      post-anchor exception ceiling.
+    immutable_url: https://github.com/ethereum/EIPs/blob/62f28725e80dd8cd1c3b27e3dab40e27362541fb/EIPS/eip-7594.md
+    source_ids:
+    - commit-62f28725e8
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7594-e02
+    event_kind: revision
+    repository: ethereum/EIPs
+    commit: 4353b530c3701b22d7d2b46f940d8b6608d7aa8a
+    path: EIPS/eip-7594.md
+    committed_at: '2024-06-17T16:19:19Z'
+    offset_from_anchor_seconds: -8821393
+    git_blob_sha: 3d9747d143e6886ba45d3b9a4d5f1a3a5f96449f
+    content_sha256: bf2501c16c94716b9d5c1bf1132792a0a39bb1417c89619458c79f8e9280913b
+    immutable_url: https://github.com/ethereum/EIPs/blob/4353b530c3701b22d7d2b46f940d8b6608d7aa8a/EIPS/eip-7594.md
+    source_ids:
+    - commit-4353b530c3
+  information_cutoff_at: '2024-09-27T18:42:32Z'
+  rationale: >-
+    Default preceding rule. The complete Task 01 revision_history.events list (14 events, e01-e14) was
+    re-derived from git with committer times normalized to UTC (`TZ=UTC git log --date=format-local
+    ... -- EIPS/eip-7594.md`); the list and its order match Task 01 exactly. Relative to the anchor
+    2024-09-27T18:42:32Z the events split as: e01 creation 2024-05-12T08:49:39Z (-11958773 s) and e02
+    2024-06-17T16:19:19Z (-8821393 s) at or before the anchor; e03 2025-01-12T00:23:21Z (+9178849 s) and
+    all later events after it. The latest at-or-before event is therefore e02, commit 4353b530c3, and it
+    is selected. No post-anchor exception is even eligible: the following candidate is 106.24 days after
+    the anchor, more than fifteen times the seven-day ceiling. The EIP file was untouched between
+    2024-06-17T16:19:19Z and 2025-01-12T00:23:21Z, so this blob is byte-for-byte the EIP text that stood
+    in the repository at the moment PeerDAS was placed in the Fusaka scope. Resolution verified in the
+    read-only clone: `git ls-tree 4353b530c3 -- EIPS/eip-7594.md` returns '100644 blob
+    3d9747d143e6886ba45d3b9a4d5f1a3a5f96449f EIPS/eip-7594.md' (path present at that commit); `git
+    rev-parse 4353b530c3:EIPS/eip-7594.md` returns the same blob SHA; `git cat-file blob
+    4353b530c3:EIPS/eip-7594.md | sha256sum` returns
+    bf2501c16c94716b9d5c1bf1132792a0a39bb1417c89619458c79f8e9280913b (2729 bytes, 52 lines).
+    information_cutoff_at is the verified anchor time because the preceding revision was selected.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: >-
+      Not used. The following candidate (62f28725e8, 2025-01-12T00:23:21Z) is 106.24 calendar days after
+      the anchor and fails exception condition 1 (seven-day ceiling); it is also a bot-driven Stagnant
+      status flip with no proposal content. Its diff was nevertheless reviewed directly and is a single
+      frontmatter line (Review -> Stagnant).
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - >-
+    Anchor kind is normalized_proposal_equivalent, not explicit_pfi: no PFI event exists for EIP-7594 in
+    the Fusaka Meta EIP. Commit 1d4ce546 created EIP-7607's 'Proposed for Inclusion' section empty and
+    listed EIP-7594 directly under 'EIPs Scheduled for Inclusion' (verified from the hunk and across all
+    53 commits of the file). A reviewer must confirm that this SFI-at-seed entry is the correct
+    PFI-equivalent anchor for this fork.
+  - >-
+    Confirm the date basis: effective_at is the UTC committer time of the ethereum/EIPs commit editing
+    EIPS/eip-7607.md (2024-09-27T18:42:32Z), while the underlying AllCoreDevs decision is ACDE#197 on
+    2024-09-26 (14:00-15:30 UTC). The ~1.2-day difference does not change the preceding or following
+    candidate.
+  - >-
+    Confirm the scope boundary Task 01 asserts: PeerDAS entered Fusaka by the Pectra scope split, so any
+    earlier PFI/CFI-equivalent event for EIP-7594 lives in the Prague/Pectra fork work unit (EIP-7600),
+    not in this record. If the study wants the earliest proposal-equivalent event for this EIP in any
+    fork, that event is out of scope here and this anchor is not it.
+  - >-
+    Confirm acceptance of a non-substantive selected revision: the selected commit 4353b530c3 only flips
+    frontmatter status Draft -> Review, and its blob is otherwise identical to the creation blob. It is
+    selected because it is the latest at-or-before-anchor event, and its content is the EIP text in force
+    at the anchor.
+  - >-
+    Escalation for the coordinator, recorded as fact and not as a complexity judgement: at the selected
+    ref the document is frontmatter category Networking and its Specification delegates the detailed spec
+    by link to ethereum/consensus-specs (specs/_features/eip7594/das-core.md at consensus-specs commit
+    b4188829), with Rationale 'TBD' and Security Considerations 'Needs discussion'. The
+    execution-layer-observable requirements that the Task 01 fork-EIP record cites for the cross-layer
+    classification (the cell-proof PooledTransactions wrapper, commit b447dd7866,
+    2025-04-01T17:36:08Z, and the 6-blobs-per-transaction limit, commit cf1a3edbdd, 2025-07-14T14:14:09Z)
+    do not exist in the EIP file at the selected ref. A human must decide whether this fork-EIP record
+    should be assessed at the anchor ref anyway.
+unknowns:
+- >-
+  Negative finding (independently verified, not taken from Task 01 prose): EIPS/eip-7607.md never listed
+  EIP-7594 under 'Proposed for Inclusion'. Across the 53 commits touching the file at the pin, '7594'
+  first appears at 1d4ce546 under '### EIPs Scheduled for Inclusion' and never leaves the
+  Scheduled/Included Core-EIPs subsection; there is no removal or re-proposal cycle, hence
+  alternative_event_ids is empty.
+- >-
+  The ACDE#197 decision evidence (pm-issue-1153, pm-blob-meeting197-pin, ethereum/pm pinned at
+  ecf2eecc74adc479cea38b3d3b9a670c320421b1) was taken from Task 01's registry and was NOT re-verified in
+  this work unit; only the ethereum/EIPs clone was available as primary evidence here. The decision date
+  2024-09-26 is therefore carried forward on Task 01's authority.
+- >-
+  Task 01 records committed_at with the original local offsets for these events (e01
+  '2024-05-12T11:49:39+03:00', e02 '2024-06-17T10:19:19-06:00', e03 '2025-01-12T08:23:21+08:00'). All
+  bracketing arithmetic here uses their UTC equivalents (2024-05-12T08:49:39Z, 2024-06-17T16:19:19Z,
+  2025-01-12T00:23:21Z), each re-read from git rather than converted from the YAML text.
+- >-
+  Task 01's fork-EIP record notes that EIP-7594's earlier consideration history under Pectra is out of
+  scope for the osaka record. Whether a Pectra-era PFI/CFI-equivalent event exists, and what its date is,
+  is unknown to this work unit.
+- >-
+  The frontmatter `created: 2024-01-12` predates the first repository commit (2024-05-12T08:49:39Z) by
+  about four months, per Task 01's discrepancy_note. Only committer times were used for bracketing, so
+  this discrepancy does not affect the selection.
+- >-
+  Two source_ids cited for the anchor are Task 01 reference-only GitHub sources (eips-pr-8911,
+  pm-issue-1153) whose upstream content is mutable; the anchor timestamp itself does not depend on them
+  (it is verified from immutable Git content).

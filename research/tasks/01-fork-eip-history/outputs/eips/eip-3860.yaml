@@ -1,0 +1,361 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 3860
+  title: Limit and meter initcode
+  source_ids:
+  - eips-blob-eip3860-pin
+research_run:
+  started_at: '2026-08-20T19:56:19Z'
+  completed_at: '2026-08-21T02:40:00Z'
+  researcher: claude subagent eip-batch-12 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2021-07-16'
+  frontmatter_source_ids:
+  - eips-blob-eip3860-creation
+  - eips-blob-eip3860-pin
+  first_repository_commit:
+    authored_at: '2021-09-08T01:25:54Z'
+    committed_at: '2021-09-08T01:25:54Z'
+    commit: d1b0faebca7677fd68086b91b14c498159ed72f6
+    path: EIPS/eip-3860.md
+    source_ids:
+    - eips-commit-d1b0faebca76
+    - gh-pr-map-eip-3860
+  discrepancy_note: >-
+    The frontmatter 'created' date (2021-07-16) precedes the first repository commit
+    (2021-09-08T01:25:54Z UTC) by about seven and a half weeks. The adding pull request
+    (ethereum/EIPs#3860, "Add draft for initcode limiting & metering") was opened only on
+    2021-09-07T13:33:24Z and merged twelve hours later, so review latency does not account for
+    the gap; the declared date corresponds to the period when the proposal was drafted and
+    discussed off-repository (discussions-to
+    https://ethereum-magicians.org/t/eip-3860-limit-and-meter-initcode/7018). No primary source
+    reviewed here states why 2021-07-16 was chosen, and the value was never edited in any of
+    the ten file commits.
+revision_history:
+  summary:
+    file_commit_count: 10
+    post_creation_revision_count: 9
+    substantive_revision_count: 4
+    non_substantive_revision_count: 5
+    uncertain_revision_count: 0
+    first_revision_at: '2021-09-18T07:08:01Z'
+    last_revision_at: '2025-04-16T14:09:43Z'
+    first_substantive_revision_at: '2022-02-03T17:32:59Z'
+    last_substantive_revision_at: '2023-01-09T13:42:48Z'
+    derived_from_event_ids:
+    - eip3860-e00
+    - eip3860-e01
+    - eip3860-e02
+    - eip3860-e03
+    - eip3860-e04
+    - eip3860-e05
+    - eip3860-e06
+    - eip3860-e07
+    - eip3860-e08
+    - eip3860-e09
+  events:
+  - id: eip3860-e00
+    event_kind: creation
+    authored_at: '2021-09-08T02:25:54+01:00'
+    committed_at: '2021-09-08T01:25:54+00:00'
+    commit: d1b0faebca7677fd68086b91b14c498159ed72f6
+    path: EIPS/eip-3860.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: >-
+      Initial addition of EIP-3860 'Limit and meter initcode' in Draft status (122 lines) with
+      frontmatter 'requires 170'. Defines INITCODE_WORD_COST = 2 and MAX_INITCODE_SIZE = 2 *
+      MAX_CODE_SIZE = 49152, the helper initcode_cost(initcode) = INITCODE_WORD_COST *
+      ceil(len(initcode) / 32), and four rules covering create transactions and the CREATE and
+      CREATE2 instructions; oversize initcode causes an exceptional abort in all three cases.
+    rationale: Creation commit adding the complete initial specification (merged via ethereum/EIPs#3860).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-d1b0faebca76
+    - eips-blob-eip3860-creation
+    - gh-pr-map-eip-3860
+  - id: eip3860-e01
+    event_kind: revision
+    authored_at: '2021-09-18T08:08:01+01:00'
+    committed_at: '2021-09-18T07:08:01+00:00'
+    commit: 60c9fbce541a1229b8f3a349cc00e25fa401f482
+    path: EIPS/eip-3860.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: >-
+      'Review status' (ethereum/EIPs#3984). Status Draft to Review, plus removal of the Yellow
+      Paper parenthetical '(recipient T~t~ being empty)' from rule 1's description of a create
+      transaction.
+    rationale: >-
+      Process metadata plus the deletion of a notation aside that the EIPs renderer does not
+      display as intended. Rule 1 still applies to create transactions, so no normative content
+      is lost; recorded as non_substantive with medium confidence because the removal does drop
+      an explicit definition of which transactions are covered.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-60c9fbce541a
+    - gh-pr-map-eip-3860
+  - id: eip3860-e02
+    event_kind: revision
+    authored_at: '2022-02-03T18:32:59+01:00'
+    committed_at: '2022-02-03T17:32:59+00:00'
+    commit: d38a4add0cfd890f5b44a9491a29399cd1e4a52d
+    path: EIPS/eip-3860.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: >-
+      'Clarify rules inclusion and failure rules' (ethereum/EIPs#4757). Rule 1 changes from "the
+      transaction is valid, may be included in a block and aborts exceptionally" to "the
+      transaction is invalid"; rule 2 states the initcode cost is part of the intrinsic gas
+      cost; rule 3 changes CREATE and CREATE2 oversize behaviour from exceptional abort to
+      pushing 0 on the stack; the "How to report initcode limit violation?" rationale is
+      rewritten accordingly; two test cases about intrinsic-gas coverage are added; Andrei
+      Maiboroda is added as an author.
+    rationale: >-
+      Reverses the block-inclusion semantics of oversize create transactions and the failure
+      mode of the creation instructions, both of which change consensus behaviour and the tests
+      required for it.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-d38a4add0cfd
+    - gh-pr-map-eip-3860
+  - id: eip3860-e03
+    event_kind: revision
+    authored_at: '2022-05-06T03:29:09-04:00'
+    committed_at: '2022-05-06T00:29:09-07:00'
+    commit: 9e393a79d9937f579acbdcb234a67869259d5a96
+    path: EIPS/eip-3860.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: >-
+      Repository-wide licence-link normalisation (ethereum/EIPs#5055, 'Force usage of included
+      LICENSE file'); the CC0 link in the Copyright section becomes ../LICENSE.md.
+    rationale: Link-only change applied across the whole EIPs repository; no EIP-specific content.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-9e393a79d993
+    - gh-pr-map-eip-3860
+  - id: eip3860-e04
+    event_kind: revision
+    authored_at: '2022-06-28T17:45:03+02:00'
+    committed_at: '2022-06-28T17:45:03+02:00'
+    commit: d59cf1a7c7d452bc4b570ce70fa744b48eaeca64
+    path: EIPS/eip-3860.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: >-
+      'Clarify gas deduction in failure cases' (ethereum/EIPs#5130). Rule 3 gains the sentence
+      "Gas for initcode execution is not deducted in this case."; rule 2's trailing note is
+      turned into an italic aside.
+    rationale: >-
+      Specifies gas accounting when the initcode length check fails, a consensus-relevant detail
+      that implementations and tests must reproduce. Continues the rule-3 failure-semantics
+      thread started in eip3860-e02.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-d59cf1a7c7d4
+    - gh-pr-map-eip-3860
+  - id: eip3860-e05
+    event_kind: revision
+    authored_at: '2022-11-25T12:10:14+01:00'
+    committed_at: '2022-11-25T11:10:14+00:00'
+    commit: 7fa3a41afeb4d18f94058969ae891e3883cadf0d
+    path: EIPS/eip-3860.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: >-
+      'Clarify nonce rules' (ethereum/EIPs#6040). Rule 3 gains "and caller's nonce is not
+      incremented"; rule 4 gains "If the instruction fails due to the initcode length check of
+      point 3, this cost is not deducted."; the Security Considerations section is moved after
+      Test Cases; the EIP-3670 mention becomes a markdown link; the go-ethereum release link and
+      some prose are reflowed; the 'requires' frontmatter line moves below 'created'.
+    rationale: >-
+      Nonce handling and the non-deduction of the word cost on failure are observable consensus
+      effects; the remaining edits in the same commit are formatting.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-7fa3a41afeb4
+    - gh-pr-map-eip-3860
+  - id: eip3860-e06
+    event_kind: revision
+    authored_at: '2023-01-09T14:42:48+01:00'
+    committed_at: '2023-01-09T05:42:48-08:00'
+    commit: b0ace5758c494b5c7d7a481de81d2113da6ecdf1
+    path: EIPS/eip-3860.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: >-
+      'Change the failure to OOG' (ethereum/EIPs#6249). Rule 3 reverts to an exceptional abort
+      "(as if it runs out of gas)" instead of pushing 0 on the stack, rule 4 drops the
+      conditional non-deduction sentence added in eip3860-e05, and the violation-reporting
+      rationale is rewritten around the ordering of early out-of-gas checks.
+    rationale: >-
+      Final change to the failure semantics of oversize initcode in CREATE and CREATE2, undoing
+      the model introduced in eip3860-e02 and refined in eip3860-e04 and eip3860-e05. This is
+      the state shipped in Shanghai and the state at the pin.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b0ace5758c49
+    - gh-pr-map-eip-3860
+  - id: eip3860-e07
+    event_kind: revision
+    authored_at: '2023-04-06T21:24:31-04:00'
+    committed_at: '2023-04-06T21:24:31-04:00'
+    commit: a7bc71d9bfcdd625fa7a4b14739dd4625e399b2d
+    path: EIPS/eip-3860.md
+    change_type: dependency
+    semantic_effect: non_substantive
+    summary: >-
+      'Move to Last Call' (ethereum/EIPs#6835). Status Review to Last Call with
+      last-call-deadline 2023-04-12, and the third motivation bullet loses its reference to
+      EIP-3670, becoming "To have a cost system which is extendable in the future."
+    rationale: >-
+      Classified as a dependency change because it removes an explicit cross-EIP reference, but
+      non_substantive: EIP-3670 appeared only in the Motivation as an example of a future
+      proposal that would benefit from the cost system, and its removal changes no rule,
+      parameter or interface. The status edit is process metadata.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-a7bc71d9bfcd
+    - gh-pr-map-eip-3860
+  - id: eip3860-e08
+    event_kind: revision
+    authored_at: '2023-04-19T10:50:01-04:00'
+    committed_at: '2023-04-19T07:50:01-07:00'
+    commit: 02e909894525413f42e2651c0880179590a0633a
+    path: EIPS/eip-3860.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final; last-call-deadline removed (ethereum/EIPs#6905).'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-02e909894525
+    - gh-pr-map-eip-3860
+  - id: eip3860-e09
+    event_kind: revision
+    authored_at: '2025-04-16T17:09:43+03:00'
+    committed_at: '2025-04-16T10:09:43-04:00'
+    commit: 23938a1833f988cba4572be500813b16ffabe66d
+    path: EIPS/eip-3860.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: >-
+      Typo fix in Backwards Compatibility, 'should not be effected' -> 'should not be affected'
+      (ethereum/EIPs#9614).
+    rationale: Spelling correction only; made two years after the EIP became Final.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-23938a1833f9
+    - gh-pr-map-eip-3860
+dependency_history:
+  events:
+  - id: eip3860-d01
+    target_eip: 170
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2021-09-08T01:25:54Z'
+    commit: d1b0faebca7677fd68086b91b14c498159ed72f6
+    rationale: >-
+      Declared in the frontmatter as 'requires 170' at creation and stated in the text: "We
+      extend [EIP-170](./eip-170.md) by introducing a maximum size limit for initcode" and
+      "Where MAX_CODE_SIZE is defined by [EIP-170](./eip-170.md) as 24576". MAX_INITCODE_SIZE is
+      defined in terms of EIP-170's constant, so the dependency is normative. Still present and
+      unchanged at the pin; commit 7fa3a41a only moved the frontmatter line below 'created'.
+    confidence: high
+    source_ids:
+    - eips-commit-d1b0faebca76
+    - eips-blob-eip3860-creation
+    - eips-blob-eip3860-pin
+  - id: eip3860-d02
+    target_eip: 1014
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2021-09-08T01:25:54Z'
+    commit: d1b0faebca7677fd68086b91b14c498159ed72f6
+    rationale: >-
+      Explicit reference in the Rationale at creation: "calculating gas per word is compatible
+      with the calculation of CREATE2's hashcost of [EIP-1014](./eip-1014.md)", followed by the
+      combined per-word constants for CREATE and CREATE2 before and after activation. EIP-3860
+      adds a cost on top of EIP-1014's CREATE2 instruction, so the relationship is
+      interacts_with rather than requires; EIP-1014 is not listed in the frontmatter. Still
+      present at the pin.
+    confidence: high
+    source_ids:
+    - eips-commit-d1b0faebca76
+    - eips-blob-eip3860-creation
+    - eips-blob-eip3860-pin
+  - id: eip3860-d03
+    target_eip: 3670
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2021-09-08T01:25:54Z'
+    commit: d1b0faebca7677fd68086b91b14c498159ed72f6
+    rationale: >-
+      Plain-text reference in the Motivation at creation: "To have a cost system which is
+      extendable in the future (i.e. for proposals like EIP-3670)". Relationship 'other'.
+      EIP-3670 is named only as an example of a future proposal that the metering scheme should
+      accommodate; EIP-3860 neither requires nor extends it.
+    confidence: high
+    source_ids:
+    - eips-commit-d1b0faebca76
+    - eips-blob-eip3860-creation
+  - id: eip3860-d04
+    target_eip: 3670
+    event_type: changed
+    relationship: other
+    occurred_at: '2022-11-25T11:10:14Z'
+    commit: 7fa3a41afeb4d18f94058969ae891e3883cadf0d
+    rationale: >-
+      The 'Clarify nonce rules' commit turned the plain-text mention into a markdown link,
+      "(i.e. for proposals like [EIP-3670](./eip-3670.md))". The reference itself is unchanged;
+      only its form is.
+    confidence: high
+    source_ids:
+    - eips-commit-7fa3a41afeb4
+  - id: eip3860-d05
+    target_eip: 3670
+    event_type: removed
+    relationship: other
+    occurred_at: '2023-04-07T01:24:31Z'
+    commit: a7bc71d9bfcdd625fa7a4b14739dd4625e399b2d
+    rationale: >-
+      The 'Move to Last Call' commit deleted the EIP-3670 reference from the motivation bullet.
+      Verified against the pinned blob: at a08f51fec5b2b5da457adb05b8cffb487fb4f7de the only
+      cross-EIP references left in EIPS/eip-3860.md are EIP-170 (frontmatter and text) and
+      EIP-1014 (Rationale).
+    confidence: high
+    source_ids:
+    - eips-commit-a7bc71d9bfcd
+    - eips-blob-eip3860-pin
+source_registry: outputs/sources/eips/eip-3860.yaml
+unknowns:
+- >-
+  The seven-and-a-half-week gap between the frontmatter 'created' date (2021-07-16) and the
+  first repository commit (2021-09-08) is not explained by any primary source reviewed here;
+  the adding PR was opened one day before merge. Negative search: git log --follow at the pin
+  reports no earlier path for this file, so no pre-2021-09-08 repository version exists.
+- >-
+  The failure semantics of oversize initcode in CREATE and CREATE2 changed three times
+  (exceptional abort at creation, 0 pushed on the stack from eip3860-e02, exceptional abort
+  again from eip3860-e06). Each commit is recorded separately; no change_group was assigned
+  because these were distinct decisions taken months apart rather than one logical update split
+  across commits.
+- >-
+  Pull-request metadata used for event attribution is mutable GitHub API data archived under
+  raw/eips/eip-3860/ (source gh-pr-map-eip-3860); it supplements, and never replaces, the Git
+  commit evidence.

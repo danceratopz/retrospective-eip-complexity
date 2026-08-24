@@ -1,0 +1,273 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7843
+  title: SLOTNUM opcode
+  source_ids:
+  - eips-blob-eip7843-pin
+research_run:
+  started_at: '2026-08-21T00:42:51Z'
+  completed_at: '2026-08-21T00:57:18Z'
+  researcher: claude subagent eip-amsterdam-2 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2024-12-06'
+  frontmatter_source_ids:
+  - eips-blob-eip7843-creation
+  - eips-blob-eip7843-pin
+  first_repository_commit:
+    authored_at: '2024-12-23T12:41:47Z'
+    committed_at: '2024-12-23T12:41:47Z'
+    commit: e5b4a82dda0f7b8726bc19e9f64a23b12bdf36ec
+    path: EIPS/eip-7843.md
+    source_ids:
+    - eips-commit-e5b4a82dda0f
+    - gh-pr-map-eip-7843
+    - eips-blob-eip7843-creation
+  discrepancy_note: 'The frontmatter ''created'' date (2024-12-06) precedes the first repository commit (authored
+    and committed 2024-12-23T12:41:47Z) by 17 days. The adding pull request, ethereum/EIPs#9141 ''Add EIP: SLOT
+    precompile'', was opened 2024-12-16T08:15:23Z - ten days after the declared creation date - and merged 2024-12-23T12:41:47Z,
+    so the gap is drafting time before submission plus editor-review latency rather than a conflict. The ''created''
+    date was never edited afterwards, even though the proposal changed from a precompile to an opcode in May 2025.
+    The file was added directly at EIPS/eip-7843.md; there is no rename in its history, so ''git log --follow''
+    and a plain ''git log'' report the same commit set.'
+revision_history:
+  summary:
+    file_commit_count: 9
+    post_creation_revision_count: 8
+    substantive_revision_count: 4
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2025-01-07T16:47:24Z'
+    last_revision_at: '2026-08-05T14:32:20Z'
+    first_substantive_revision_at: '2025-01-07T16:47:24Z'
+    last_substantive_revision_at: '2026-01-20T14:46:09Z'
+    derived_from_event_ids:
+    - eip7843-e00
+    - eip7843-e01
+    - eip7843-e02
+    - eip7843-e03
+    - eip7843-e04
+    - eip7843-e05
+    - eip7843-e06
+    - eip7843-e07
+    - eip7843-e08
+  events:
+  - id: eip7843-e00
+    event_kind: creation
+    authored_at: '2024-12-23T12:41:47+00:00'
+    committed_at: '2024-12-23T20:41:47+08:00'
+    commit: e5b4a82dda0f7b8726bc19e9f64a23b12bdf36ec
+    path: EIPS/eip-7843.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Initial addition of EIP-7843 'SLOT precompile' (59 lines, status Draft, type Standards Track, category
+      Core, single author Marc Harvey-Hill). It specifies a new precompiled contract SLOT at an unassigned address
+      ('If block.timestamp >= TBD a new precompiled contract SLOT shall be created at address TBD'), returning
+      the current slot number as an 8 byte ulong big-endian, at a fixed gas cost of 2. Motivation is that contracts
+      otherwise have to hardcode the chain slot length; a sub-section motivates encrypted mempools. Rationale
+      covers the W_base pricing and the choice of a precompile over an opcode (L2 flexibility).
+    rationale: Creation commit adding the complete initial document, including the new precompile, its output
+      encoding and its gas cost. Both the activation condition and the precompile address are 'TBD' placeholders
+      at this point.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-e5b4a82dda0f
+    - gh-pr-map-eip-7843
+    - eips-blob-eip7843-creation
+  - id: eip7843-e01
+    event_kind: revision
+    authored_at: '2025-01-07T16:47:24+00:00'
+    committed_at: '2025-01-07T16:47:24+00:00'
+    commit: 7f01d7b262fd2acda7ccb9a7b02aa1914d42e649
+    path: EIPS/eip-7843.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Moves slot computation from the execution layer to the consensus layer and adds the plumbing for
+      it. A new 'RPC changes' section states that the slot number is calculated in the consensus layer and passed
+      to the execution layer through the engine API, adds a slot_number uint64 parameter to engine_newPayload,
+      extends the engine API PayloadAttributes object with a slot_number uint64 field, and lets consensus clients
+      optionally expose eth_getSlotNumberFromTimestamp and eth_getTimestampFromSlotNumber. Adds the 'Calculation
+      in consensus layer' rationale and rewrites the Motivation and the encrypted-mempool sub-section as an example
+      application; description becomes 'Precompile to get the current slot number'.
+    rationale: Introduces new cross-layer interface surface (engine API parameter and PayloadAttributes field,
+      plus two optional JSON-RPC methods) that clients must implement, so the change is substantive and interface-shaped.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-7f01d7b262fd
+    - gh-pr-map-eip-7843
+  - id: eip7843-e02
+    event_kind: revision
+    authored_at: '2025-01-27T11:51:20+00:00'
+    committed_at: '2025-01-27T11:51:20+00:00'
+    commit: b9726100a21e8547d9e72b0c9cfae21f860e1fdc
+    path: EIPS/eip-7843.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Replaces the ''newPayload change'' sub-section with a ''Header extension'': instead of an engine_newPayload
+      parameter, the execution block header encoding is extended with a slot_number uint64 field. Adds a ''ZK-VM
+      proving'' rationale arguing that SLOT does not increase proving complexity because the slot number now lives
+      in the header, keeping the block self-contained for proving.'
+    rationale: Relocating the slot number from an engine API parameter into the block header changes the block
+      data structure, block hashing and header validation for every client, so this is a substantive interface
+      change despite being an eight-line diff.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b9726100a21e
+    - gh-pr-map-eip-7843
+  - id: eip7843-e03
+    event_kind: revision
+    authored_at: '2025-02-13T10:38:11+00:00'
+    committed_at: '2025-02-13T18:38:11+08:00'
+    commit: 270874f063cf030c04141cac4dff57aabd3b1260
+    path: EIPS/eip-7843.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Single-line wording fix in the Specification: ''SLOT returns as output the current slot number as
+      an 8 byte ulong in big endian encoding'' becomes ''... as an 8-byte uint64 in big-endian encoding''.'
+    rationale: Renames the width in standard EVM/SSZ terminology and hyphenates two compounds. An 8 byte ulong
+      and an 8-byte uint64 are the same value, so no implementation-visible detail changes.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-270874f063cf
+    - gh-pr-map-eip-7843
+  - id: eip7843-e04
+    event_kind: revision
+    authored_at: '2025-05-20T17:23:34+01:00'
+    committed_at: '2025-05-20T16:23:34+00:00'
+    commit: 0aefdc9d5a4b637ca280832f5fe617a5f4dd4f3f
+    path: EIPS/eip-7843.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Converts the proposal from a precompile to an opcode and gives it a concrete encoding: title becomes
+      ''SLOTNUM opcode'', description ''Opcode to get the current slot number'', discussions-to moves to the slotnum-opcode
+      topic, and the Specification now reads ''A new opcode SLOTNUM is introduced at 0x4b. It shall return one
+      stack element'', with an Output stack table and ''SlotNumber is an 8 byte uint in big endian encoding'';
+      the fixed gas cost of 2 is retained. The Motivation is rewritten around two existing ways to obtain the
+      slot number on chain - computing it from the block timestamp, or supplying it as calldata and proving it
+      against the beacon block root using EIP-4788 - and the two optional JSON-RPC conversion endpoints and the
+      ''Precompile'' rationale sub-section are deleted.'
+    rationale: Changes the instruction form (precompile to opcode), assigns the opcode byte 0x4b, replaces the
+      return-data encoding with a stack result, and removes previously specified optional RPC surface. This is
+      the largest normative change in the file's history and is also the commit that first names another EIP.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-0aefdc9d5a4b
+    - gh-pr-map-eip-7843
+  - id: eip7843-e05
+    event_kind: revision
+    authored_at: '2025-06-09T10:48:46+02:00'
+    committed_at: '2025-06-09T16:48:46+08:00'
+    commit: 77f096af0ce517c3f7d7644f189845e06612905c
+    path: EIPS/eip-7843.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Frontmatter status Draft -> Review, and the Output sub-section''s stack table (a ''Stack'' heading
+      plus a two-column table giving top - 0 = SlotNumber, followed by ''SlotNumber is an 8 byte uint in big endian
+      encoding'') is collapsed into one prose sentence: ''One element SlotNumber is added to the stack; it is
+      equal to the corresponding slot number for this block. SlotNumber is a uint64 in big endian encoding.'''
+    rationale: Process-status metadata plus a presentation change that restates the same single stack output in
+      prose. Confidence is medium rather than high because the prose drops the explicit 'top - 0' position marker,
+      but the surrounding text already states that the opcode returns exactly one stack element, so no behaviour
+      is added or removed.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-77f096af0ce5
+    - gh-pr-map-eip-7843
+  - id: eip7843-e06
+    event_kind: revision
+    authored_at: '2025-12-28T08:29:03+08:00'
+    committed_at: '2025-12-28T08:29:03+08:00'
+    commit: cc5e68b8cc6cbbf980317f02573a5076572123ec
+    path: EIPS/eip-7843.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Automated eth-bot change: frontmatter status Review -> Stagnant; no other change to the file.'
+    rationale: Repository housekeeping applied by the stagnation bot after the EIP sat without activity. Process
+      metadata only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-cc5e68b8cc6c
+    - gh-pr-map-eip-7843
+  - id: eip7843-e07
+    event_kind: revision
+    authored_at: '2026-01-20T14:46:09+00:00'
+    committed_at: '2026-01-20T22:46:09+08:00'
+    commit: c3bfd4ba41cf0fcbfe8c404f33ba89f5174971e0
+    path: EIPS/eip-7843.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Frontmatter status Stagnant -> Draft, plus two specification changes. The stack output and the header
+      field are renamed from SlotNumber / slot_number to slotNumber, and the ''PayloadAttributes change'' sub-section
+      is replaced by ''Engine API changes'': new objects ExecutionPayloadV4 and PayloadAttributesV4 carrying a
+      slotNumber uint64 field, and new methods engine_newPayloadV4, engine_getPayloadV6 and engine_forkChoiceUpdateV4
+      that use them. The ZK-VM rationale is updated from ''new_payload'' to ''engine_newPayload''.'
+    rationale: Names concrete versioned engine API objects and methods for the first time, which is the interface
+      contract client teams implement against, and renames a header field. Substantive despite sharing a commit
+      with a status change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c3bfd4ba41cf
+    - gh-pr-map-eip-7843
+  - id: eip7843-e08
+    event_kind: revision
+    authored_at: '2026-08-05T15:32:20+01:00'
+    committed_at: '2026-08-05T22:32:20+08:00'
+    commit: 115174e36f14c67a7cda1d54a37a4eae37885799
+    path: EIPS/eip-7843.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter status Draft -> Review; no other change to the file.
+    rationale: EIP process-status metadata only; the state at the pinned repository commit.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-115174e36f14
+    - gh-pr-map-eip-7843
+dependency_history:
+  events:
+  - id: eip7843-d01
+    target_eip: 4788
+    event_type: introduced
+    relationship: other
+    occurred_at: '2025-05-20T16:23:34Z'
+    commit: 0aefdc9d5a4b637ca280832f5fe617a5f4dd4f3f
+    rationale: 'The Motivation rewritten by eip7843-e04 names another EIP for the first time: ''2) Provide the
+      slot number as calldata and prove it against the beacon block root (using [EIP-4788](./eip-4788.md)).''
+      The relationship is recorded as ''other'' with this explanation because EIP-4788 is cited as one of the
+      two pre-existing alternatives the new opcode is meant to displace, and is neither required, extended, interacted
+      with, replaced nor superseded by EIP-7843''s normative text; the frontmatter has no ''requires'' field at
+      any version. The reference is still present, unchanged, at the pinned repository commit.'
+    confidence: high
+    source_ids:
+    - eips-commit-0aefdc9d5a4b
+    - eips-blob-eip7843-pin
+    - gh-pr-map-eip-7843
+source_registry: outputs/sources/eips/eip-7843.yaml
+unknowns:
+- Explicit cross-EIP dependency search (positive and negative result). Every one of the nine blob versions of
+  EIPS/eip-7843.md was matched case-insensitively against 'eip[- _]?<digits>' and 'erc[- _]?<digits>', and the
+  frontmatter was read at each version. The file's first five versions (creation through commit 270874f0) contain
+  no cross-EIP reference at all; EIP-4788 is the only target ever named, from commit 0aefdc9d onwards. No 'requires'
+  frontmatter field exists in any version, and no cross-EIP reference was ever changed or removed.
+- 'Commit b9726100a21e (''Update EIP-7793: zk-vm sections'', ethereum/EIPs#9224) is a multi-file commit whose
+  subject and pull-request title name EIP-7793, not EIP-7843. It nevertheless changes EIPS/eip-7843.md substantively
+  (the header extension and the ZK-VM proving rationale) and is recorded as event eip7843-e02. A search keyed
+  on commit subjects rather than on paths would miss it.'
+- 'Both the activation condition and, after the switch to an opcode, the fork in which SLOTNUM is introduced remain
+  unspecified in the EIP text: the creation version says ''If block.timestamp >= TBD'' and ''address TBD'', and
+  the pinned version simply introduces opcode 0x4b with no activation clause. Fork membership and activation scheduling
+  are out of scope for this work unit.'
+- Event timestamps are reproduced with the offsets recorded in Git. Committer timezone offsets in this repository
+  are set by the merge tooling and are not evidence of where a change was made; every summary date is the equivalent
+  UTC instant of the commit's committer date.

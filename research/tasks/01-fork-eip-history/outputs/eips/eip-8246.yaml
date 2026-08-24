@@ -1,0 +1,179 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 8246
+  title: Remove SELFDESTRUCT Burn
+  source_ids:
+  - eips-pin-eip-8246
+research_run:
+  started_at: '2026-08-21T00:43:01Z'
+  completed_at: '2026-08-21T00:51:28Z'
+  researcher: claude subagent eip-amsterdam-3 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2026-05-01'
+  frontmatter_source_ids:
+  - git-630c3420dacd
+  - eips-pin-eip-8246
+  first_repository_commit:
+    authored_at: '2026-05-06T12:59:06Z'
+    committed_at: '2026-05-06T12:59:06Z'
+    commit: 630c3420dacd31a90ce702b76092f4c9f085d4d4
+    path: EIPS/eip-8246.md
+    source_ids:
+    - git-630c3420dacd
+    - gh-pr-map-eip-8246
+  discrepancy_note: 'The frontmatter declares created: 2026-05-01, five days before the earliest repository
+    commit (2026-05-06T12:59:06Z, the squash merge of ethereum/EIPs PR #11590). Normal authoring-to-merge
+    lag. The created date is unchanged across the whole file history.'
+revision_history:
+  summary:
+    file_commit_count: 5
+    post_creation_revision_count: 4
+    substantive_revision_count: 1
+    non_substantive_revision_count: 3
+    uncertain_revision_count: 0
+    first_revision_at: '2026-05-08T11:10:59Z'
+    last_revision_at: '2026-05-21T18:47:39Z'
+    first_substantive_revision_at: '2026-05-14T17:49:23Z'
+    last_substantive_revision_at: '2026-05-14T17:49:23Z'
+    derived_from_event_ids:
+    - eip8246-e01
+    - eip8246-e02
+    - eip8246-e03
+    - eip8246-e04
+    - eip8246-e05
+  events:
+  - id: eip8246-e01
+    event_kind: creation
+    authored_at: '2026-05-06T12:59:06Z'
+    committed_at: '2026-05-06T12:59:06Z'
+    commit: 630c3420dacd31a90ce702b76092f4c9f085d4d4
+    path: EIPS/eip-8246.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition (PR #11590) as a Draft: removes the remaining SELFDESTRUCT burn cases.
+      Same-transaction selfdestruct-to-self leaves the balance unchanged, and at transaction finalization
+      accounts marked for selfdestruction are no longer deleted but have nonce reset to 0, balance unchanged,
+      code cleared and storage cleared; a resulting zero balance still makes the account empty and EIP-161-deleted.
+      Frontmatter requires: 161, 6780. Test Cases are TBD.'
+    rationale: Adding commit that creates the EIP file with its initial normative proposal.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-630c3420dacd
+    - gh-pr-map-eip-8246
+  - id: eip8246-e02
+    event_kind: revision
+    authored_at: '2026-05-08T11:10:59Z'
+    committed_at: '2026-05-08T11:10:59Z'
+    commit: 4e303336fc9970887aea31579f9e804f4a186030
+    path: EIPS/eip-8246.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Typo and grammar pass (PR #11630): ''behaviour'' to ''behavior'', ''Such usage pattern''
+      to ''Such a usage pattern'', ''Differently to Mainnet, the Optimizm-based L2 chains ... require
+      different addoption path'' to ''Unlike Mainnet, Optimism-based L2 chains ... require a different
+      adoption path'', and two Security Considerations sentences regrammared (''combinatory effect on
+      vast amount'' to ''combinatorial effect on a vast number'', ''addapted'' to ''adapted'').'
+    rationale: Spelling and grammar only; no rule, parameter or dependency changed.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-4e303336fc99
+    - gh-pr-map-eip-8246
+  - id: eip8246-e03
+    event_kind: revision
+    authored_at: '2026-05-08T11:47:20Z'
+    committed_at: '2026-05-08T11:47:20Z'
+    commit: 3b30ff829e5e698f1c6f69427111d194b80af38d
+    path: EIPS/eip-8246.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Specification style pass (PR #11632): the two trailing Notes are lifted out of the numbered
+      Specification list into standalone Note paragraphs; ''block 24.95M'' becomes ''block 25M'' in the
+      Motivation replay figure; the L2 sentence becomes ''These chains will require a separate migration
+      plan''; and the dust-account Security Consideration is restated as ''the new account creation gas
+      cost is paid by the transaction, so dust accounts are not a free DoS vector''.'
+    rationale: The three normative Specification items (selfdestruct-to-self balance, the finalization
+      field-by-field treatment, and the unchanged-behavior note) are unchanged; the reformatting of the
+      two Notes is presentational and the security sentence restates the same fact with an explicit conclusion.
+      Medium confidence because it does edit Specification and Security Considerations text and rounds
+      a cited measurement.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - git-3b30ff829e5e
+    - gh-pr-map-eip-8246
+  - id: eip8246-e04
+    event_kind: revision
+    authored_at: '2026-05-14T17:49:23Z'
+    committed_at: '2026-05-14T17:49:23Z'
+    commit: 60a241e35e88a147fb08db96a786275b384fbe6a
+    path: EIPS/eip-8246.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Replaces the ''TBD'' Test Cases section with a full test matrix (PR #11631): a factor list
+      (level, call type, code state, status, revert, balance) plus 17 enumerated cases across instruction
+      level, transaction finalization and multi-transaction (CREATE2-recreate) scenarios.'
+    rationale: Materially specifies what implementations must be tested against; the task rubric treats
+      detail that could affect implementation or testing as substantive.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-60a241e35e88
+    - gh-pr-map-eip-8246
+  - id: eip8246-e05
+    event_kind: revision
+    authored_at: '2026-05-21T18:47:39Z'
+    committed_at: '2026-05-21T18:47:39Z'
+    commit: 45b443dc26ffae9437f8e396e677b4242e067613
+    path: EIPS/eip-8246.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Frontmatter status Draft to Review (PR #11626).'
+    rationale: EIP-process status transition only; no specification content changed.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-45b443dc26ff
+    - gh-pr-map-eip-8246
+dependency_history:
+  events:
+  - id: eip8246-d01
+    target_eip: 161
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2026-05-06T12:59:06Z'
+    commit: 630c3420dacd31a90ce702b76092f4c9f085d4d4
+    rationale: 'Frontmatter ''requires: 161, 6780'' at creation, plus the Specification note ''if the
+      resulting balance is 0, the account is empty and is deleted from the state by [EIP-161]''. Present
+      unchanged at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-630c3420dacd
+    - eips-pin-eip-8246
+  - id: eip8246-d02
+    target_eip: 6780
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2026-05-06T12:59:06Z'
+    commit: 630c3420dacd31a90ce702b76092f4c9f085d4d4
+    rationale: 'Frontmatter ''requires: 161, 6780'' at creation, plus Motivation (''After [EIP-6780],
+      ETH can still be burned only when...''), Backwards Compatibility (''the behavior is unchanged from
+      [EIP-6780]'') and Security Considerations (''many existing test cases for EIP-6780 can be adapted'').
+      Present unchanged at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-630c3420dacd
+    - eips-pin-eip-8246
+source_registry: outputs/sources/eips/eip-8246.yaml
+unknowns:
+- 'Negative search: no dependency change event. Every commit diff was checked for frontmatter requires
+  edits and added or removed EIP-N references; ''requires: 161, 6780'' and the EIP-161 and EIP-6780 text
+  references are unchanged from creation to the pinned state.'
+- Commit 3b30ff82 ('small spec style changes') is classified non_substantive with medium confidence. It
+  restructures two normative-adjacent Notes and rounds the mainnet replay figure from 24.95M to 25M blocks;
+  a reviewer weighting Specification-section edits more heavily could classify it substantive.

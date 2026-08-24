@@ -1,0 +1,495 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7883
+  title: ModExp Gas Cost Increase
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, this draft changed only the gas-pricing algorithm
+    for the existing ModExp precompile, building on EIP-2565. It raised the
+    minimum charge from 200 to 500, doubled the exponent-length contribution
+    above 32 bytes, and doubled multiplication complexity when the base or
+    modulus exceeds 32 bytes. The interface and arithmetic algorithms remained
+    unchanged, and existing vectors were to be reused with updated gas values.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7883/manifest.yaml
+    manifest_sha256: 7d11f24ea01defb176e00e83acc3975290dd95721c5fd2af5dc358a6e3ad53ba
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b
+    path: EIPS/eip-7883.md
+    committed_at: '2025-02-14T17:00:54Z'
+    git_blob_sha: 8fdc33692f0971ae2a34098bf47fd9e7cdc689ce
+    content_sha256: ca87942f7dcba477b81ca31dab57f0dad4383e8a84c3995930dfbc7b651e1683
+    immutable_url: https://github.com/ethereum/EIPs/blob/4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b/EIPS/eip-7883.md
+    information_cutoff_at: '2025-02-21T10:10:59Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7883.md
+    content_sha256: b63e4eca48ced9833826b09a385d14c6557dbded42515e1de6efb0b63863116d
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T13:26:39+02:00'
+    session_id: assessment-run-d76fdb54-d596-431d-a2b7-d2f87b9e4995
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2565.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: The existing ModExp call cost is recalculated with changed constants and length-dependent branches.
+  rationale: >-
+    This updates an existing EVM gas-accounting mechanism for one precompile,
+    matching score 1; it does not introduce a separate gas mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-115
+    summary: The EIP states that the underlying interface and arithmetic algorithms do not change.
+  rationale: >-
+    The change is confined to pricing an existing precompile and specifies no
+    state access or change in charging order relative to a state access, so the
+    score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 14-16
+    summary: The stated scope is modification of the ModExp precompile pricing algorithm.
+  rationale: >-
+    No blob gas rule or mechanism is introduced or modified, which is the
+    score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 22-45
+    summary: The specification defines only execution-gas pricing for a call to the ModExp precompile.
+  rationale: >-
+    The proposal changes neither state-write gas rates nor a state-gas budget,
+    charging site, reservoir, or spill path, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-45
+    summary: The gas-cost function returns a charge with a minimum of 500 and specifies no refund path.
+  rationale: >-
+    The EIP only increases charges and introduces no gas-refund mechanism, so
+    the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-147
+    summary: Existing ModExp vectors are reusable, but their expected pricing values are updated across the supplied table.
+  rationale: >-
+    A minor, localized subset of pre-existing tests that assert ModExp gas or
+    gas-boundary outcomes must be reworked, matching score 1. The EIP does not
+    imply broad changes across diverse test categories.
+  confidence: high
+  uncertainty_note: >-
+    The package does not enumerate every pre-existing test that embeds a ModExp
+    gas allowance, but the affected rule remains limited to one precompile.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-117
+    summary: Existing vectors are reused with changed expected prices rather than gaining an additional assertion.
+  rationale: >-
+    Pre-existing tests need updated gas expectations, not a new invariant that
+    tests unrelated to this EIP must additionally assert, so the score-0 anchor
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-115
+    summary: The EIP explicitly states that there are no changes to the underlying interface.
+  rationale: >-
+    The repricing requires no new transition-tool field or interface mechanism,
+    which is the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-117
+    summary: Existing test vectors can be reused by substituting the updated pricing expectations.
+  rationale: >-
+    Reusing existing vectors with new expected values requires no new framework
+    abstraction, expectation type, modifier, or helper, so the score-0 anchor
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-115
+    summary: The proposal changes neither the ModExp arithmetic algorithm nor its interface.
+  rationale: >-
+    Although modular exponentiation is useful to cryptographic applications,
+    this EIP introduces and modifies no cryptographic mechanism; it only
+    reprices execution. The score-0 anchor therefore applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 27-45
+    summary: The formula contains a 32-byte base-or-modulus branch, a 32-byte exponent branch, and a 500-gas floor.
+  - source: eip.md
+    locator: Changes, lines 50-103
+    summary: The three changes separately alter the minimum-price boundary and the length-dependent behavior above 32 bytes.
+  rationale: >-
+    Multiple boundary-prone mechanisms must be checked below, at, and above
+    their thresholds, including the interaction with the minimum charge. The
+    branches are simple closed-form rules and no single one requires an elevated
+    case count, matching score 2 rather than score 3.
+  confidence: medium
+  uncertainty_note: >-
+    Combining base, modulus, and exponent dimensions expands the useful test
+    matrix, but the EIP's unchanged interface and explicit formulas keep each
+    boundary independently tractable.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-24
+    summary: The proposal is limited to pricing calls to an existing precompile.
+  rationale: >-
+    It introduces no block RLP validation mechanism and therefore no syncing
+    change, which is the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-115
+    summary: The underlying interface is explicitly unchanged.
+  rationale: >-
+    No Engine API field, endpoint, or communication mechanism is added, so the
+    score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 22-24
+    summary: The change applies to the already existing precompile at address 0x0000000000000000000000000000000000000005.
+  rationale: >-
+    Repricing an existing precompile does not add a system contract, so the
+    score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Test Cases, lines 14-16 and 113-115
+    summary: The EIP reprices a precompile while leaving its interface and arithmetic behavior unchanged.
+  rationale: >-
+    A precompile gas-schedule update is not a direct or indirect modification to
+    a pre-existing system contract under this anchor, so the score is 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 22-24
+    summary: The target is an existing precompile address rather than a new EVM instruction.
+  rationale: >-
+    No opcode is introduced, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Test Cases, lines 14-16 and 113-115
+    summary: Only a precompile pricing algorithm changes, with no change to the underlying arithmetic behavior.
+  rationale: >-
+    The proposal modifies no opcode result or behavior and does not deprecate an
+    opcode. Gas-only changes would also be excluded by this anchor, so the score
+    is 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-24
+    summary: The proposal modifies pricing for the existing ModExp precompile at address 0x05.
+  rationale: >-
+    No new precompile is introduced, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Changes, lines 48-103
+    summary: The minimum charge and two length-dependent terms in the existing ModExp gas schedule are increased.
+  - source: eip.md
+    locator: Test Cases, lines 113-115
+    summary: The underlying interface and arithmetic are unchanged, isolating the modification to gas pricing.
+  rationale: >-
+    Exactly one pre-existing precompile has its gas schedule modified without a
+    behavior change, matching score 1.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 113-115
+    summary: The underlying interface is unchanged; only pricing differs.
+  rationale: >-
+    The EIP introduces no transaction-, block-, or interface-level encoding
+    change, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-24
+    summary: The complete stated scope is repricing calls to the existing ModExp precompile.
+  rationale: >-
+    No transaction type is introduced, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: The formula determines execution gas for a precompile call and does not define transaction validation or intrinsic gas.
+  rationale: >-
+    Execution-time precompile charging does not change transaction validity
+    rules or intrinsic gas calculation, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-24
+    summary: The proposal changes only the pricing algorithm for an existing precompile call.
+  rationale: >-
+    No block or header field is introduced, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 22-45
+    summary: Activation switches the gas-cost formula and specifies no one-time state or internal-variable mutation.
+  rationale: >-
+    Ordinary activation of a new pricing rule is not a fork-block state or
+    internal-variable modification under this anchor, so the score is 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Motivation and Rationale, lines 18-20 and 105-107
+    summary: Benchmarking identified underpriced cases, and the new parameters target a cost no lower than EcRecover for worst-performing cases.
+  - source: eip.md
+    locator: Test Cases, lines 113-115
+    summary: No arithmetic algorithm changes, so validation concerns the isolated relationship between input shapes, runtime, and price.
+  rationale: >-
+    The modified pricing needs performance calibration, but ModExp can be
+    benchmarked in isolation and its execution algorithm is unchanged. This
+    matches score 1 rather than a benchmark interaction score.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 154-156
+    summary: The EIP introduces no functionality and makes no operation cheaper; it identifies only the possibility of overpricing ModExp scenarios.
+  rationale: >-
+    Because the change only raises gas charges and leaves functionality intact,
+    the written proposal introduces no mechanism that compromises an existing
+    security invariant. The score-0 anchor applies; overpricing is a usability
+    and calibration concern captured under performance, not a new security
+    interaction.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: Explicit branches define multiplication complexity, iteration count, and the final gas cost for the input lengths and exponent.
+  - source: eip.md
+    locator: Changes, lines 50-103
+    summary: Each departure from EIP-2565 is identified by its exact replacement constant or formula branch.
+  rationale: >-
+    The assessment-time text determines the changed gas result for constructible
+    boundary cases and preserves the existing interface and arithmetic. No new
+    detail needs client agreement before vectors can be baselined, so the score
+    is 0.
+  confidence: high
+  uncertainty_note: >-
+    The draft has no reference implementation, but absence of an implementation
+    does not create an unresolved semantic case in the explicit pricing formula.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Abstract, lines 1-16
+    summary: EIP-7883 requires EIP-2565 and explicitly modifies the ModExp pricing algorithm introduced by it.
+  - source: supporting/eip-2565.md
+    locator: Specification, lines 22-40
+    summary: EIP-2565 supplies the baseline multiplication, iteration, and minimum-cost formula that EIP-7883 changes.
+  rationale: >-
+    The proposal directly modifies EIP-2565, requiring its pricing vectors and
+    boundary expectations to be coordinated with the new formula. The
+    interaction is limited to one existing precompile and one EIP, matching
+    score 2 rather than a broad multi-EIP interdependency score. Interacting
+    EIPs: EIP-2565.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips:
+  - EIP-2565
+totals:
+  primary_score: 8
+  complexity_tier: low
+under_specification:
+  present: false
+  summary: >-
+    No material under-specification is present. The changed constants,
+    threshold branches, and final minimum are explicit, while all unmodified
+    interface and arithmetic behavior is inherited unchanged from EIP-2565.
+  affected_criteria: []
+  plausible_total_range:
+    minimum: 8
+    maximum: 8
+  plausible_tiers:
+  - low
+  unresolved_questions: []
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed package sources listed in provenance, attempted
+    no internet access, used no prohibited skill or external source, and did not
+    rely on present-day or later implementation knowledge.
+notable_ambiguities: []
+overall_confidence: high

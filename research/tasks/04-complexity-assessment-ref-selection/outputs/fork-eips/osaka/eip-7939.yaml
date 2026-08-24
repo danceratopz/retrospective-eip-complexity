@@ -1,0 +1,274 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7939
+  title: Count leading zeros (CLZ) opcode
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7939.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7939.yaml
+research_run:
+  started_at: '2026-08-21T07:02:18Z'
+  completed_at: '2026-08-21T07:05:22Z'
+  researcher: claude subagent osaka/eip-7939 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7939-e1
+  alternative_event_ids: []
+  kind: other
+  raw_label: EIPs Scheduled for Inclusion / Core EIPs
+  effective_at: '2025-07-02T17:49:36Z'
+  recorded_at: '2025-07-02T17:49:36Z'
+  date_basis: >-
+    Task 01's occurred_at for event osaka-eip7939-e1 is the UTC committer date of the ethereum/EIPs
+    commit that edited EIPS/eip-7607.md (the Fusaka Meta EIP); that convention is stated run-wide in
+    research/tasks/01-fork-eip-history/outputs/forks/osaka.yaml ("Event dating convention: occurred_at
+    on every inclusion-state event is the UTC committer date of the ethereum/EIPs commit that changed
+    EIPS/eip-7607.md"). Verified directly from the read-only clone at the Task 01 run-wide pin
+    a08f51fec5b2b5da457adb05b8cffb487fb4f7de: 'git log -1 --format=%H %cI %aI %s
+    ca4fda0074fe0298f56abd0ffa7286de8d30531e' reports committer date 2025-07-02T17:49:36+00:00 (author
+    date 2025-07-02T10:49:36-07:00, subject "Update EIP-7607: ACDE#214 changes", author Tim Beiko,
+    "Merged by EIP-Bot"), and the commit is an ancestor of the pin. 'git show <sha> -- EIPS/eip-7607.md'
+    shows the hunk adding "* [EIP-7939](./eip-7939.md): Count leading zeros (CLZ) opcode" (together
+    with EIP-7907 and EIP-7934) and simultaneously deleting the whole "### Considered for Inclusion"
+    section; rendering EIPS/eip-7607.md at that commit places the added EIP-7939 line under "### EIPs
+    Scheduled for Inclusion" / "#### Core EIPs". The underlying AllCoreDevs decision Task 01 identifies
+    is AllCoreDevs - Execution (ACDE) #214, held 2025-06-19 (scheduled 14:00 UTC per the agenda issue
+    ethereum/pm 1569, source pm-issue-1569), the devnet-2 scope call at which EIP-7907, EIP-7934,
+    EIP-7939 and EIP-7951 were SFI'd; the change was merged as ethereum/EIPs pull request 9957
+    (source eips-pr-9957, merged 2025-07-02T17:49:36Z, squash commit ca4fda0074fe). Task 01 records no
+    minute-level timestamp for the call itself and notes that ethereum/pm at the run-wide pin
+    ecf2eecc74adc479cea38b3d3b9a670c320421b1 holds no committed minutes for ACDE >= 205, so the
+    exactly-timed repository record is used as both effective_at and recorded_at rather than a
+    calendar-day-truncated meeting date; ACDE#214 preceded the repository record by roughly 13.2 days,
+    the largest such gap in the Fusaka Task 01 record. Task 01 lists exactly two inclusion-state events
+    for this fork-EIP pair - osaka-eip7939-e1 (this one) and osaka-eip7939-e2, the 2026-02-04T22:29:12Z
+    move of EIP-7607 to Final that retitled the section to "Included EIPs" - so there is a single
+    inclusion cycle with no removal and re-proposal, and alternative_event_ids is empty by observation.
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary Git evidence rather than Task 01 prose: (a) commit
+    ca4fda0074fe0298f56abd0ffa7286de8d30531e exists in the pinned clone, is an ancestor of the pin, and
+    its exact committer timestamp is 2025-07-02T17:49:36+00:00; (b) the actual hunk adds the EIP-7939
+    line to EIPS/eip-7607.md; (c) at that commit the added line sits under "### EIPs Scheduled for
+    Inclusion" / "#### Core EIPs"; (d) an independent negative search over all 53 commits of
+    EIPS/eip-7607.md in the pin's ancestry - testing each commit's blob for '7939' and 'CLZ' - shows
+    ca4fda0074fe is the FIRST commit in which EIP-7939 appears at all, reproducing Task 01's negative
+    finding that no PFI and no CFI entry ever existed for this EIP; (e) a further heading census shows
+    EIPS/eip-7607.md carried a "Proposed for Inclusion" section only from 2024-09-28 (commit 1d4ce546)
+    to 2025-04-14 (commit 9d17611c), the section being removed by commit fc9a8d9a on 2025-04-19 - ten
+    days BEFORE EIPS/eip-7939.md was created (2025-04-29T03:46:03Z) - so an explicit-PFI event was
+    structurally impossible for this EIP in this document, and the "Considered for Inclusion" section
+    that still existed was removed by the anchor commit itself. What is verified is the existence, exact
+    time and content of the SFI event; the judgement that this SFI event is the best available stand-in
+    for PFI is a documented fallback, not a verified fact, hence anchor.kind 'other' and low confidence.
+  confidence: low
+  source_ids:
+  - eips-commit-ca4fda0074fe
+  - eips-pr-9957
+  - pm-issue-1569
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7939-e03
+    event_kind: revision
+    commit: c43098e67b8fd94c5166bd7a46ec53cafac04123
+    committed_at: '2025-06-09T10:17:58Z'
+    offset_from_anchor_seconds: -2014298
+    semantic_effect: non_substantive
+    summary: >-
+      Task 01 change_type clarification, semantic_effect non_substantive (confidence high): adds a fifth
+      author (Giulio Rebuffo); turns the ZK-proving motivation paragraph into a three-item list (cheaper
+      compute, cheaper ZK proving, smaller bytecode); renames the rationale section "Opcode namespace
+      conservation" to "Preference over CTZ (count trailing zeros)" and adds the observation that CLZ
+      cannot be implemented in terms of CTZ; and capitalises clz/add to CLZ/ADD throughout the prose.
+      The opcode (0x1e), its semantics, its zero-input result (256) and its gas cost (3 at this point)
+      are untouched. Git committer time 2025-06-09T10:17:58+00:00 (author time 2025-06-09T12:17:58+02:00),
+      re-verified directly at the pin; 2,014,298 seconds (23.31 days) before the anchor. This is the
+      latest of the four events at or before the anchor (creation eip7939-e00 2025-04-29T03:46:03Z,
+      eip7939-e01 2025-04-29T16:01:44Z, eip7939-e02 2025-05-12T23:56:41Z, eip7939-e03).
+    immutable_url: https://github.com/ethereum/EIPs/blob/c43098e67b8fd94c5166bd7a46ec53cafac04123/EIPS/eip-7939.md
+    source_ids:
+    - eips-commit-c43098e67b8f
+  following:
+    exists: true
+    revision_event_id: eip7939-e04
+    event_kind: revision
+    commit: a794de3fcf71bb8c71e8bafdba11f63133ce4516
+    committed_at: '2025-07-07T15:31:20Z'
+    offset_from_anchor_seconds: 423704
+    semantic_effect: substantive
+    summary: >-
+      Task 01 change_type parameter, semantic_effect substantive (confidence high): the single-line
+      normative gas repricing of CLZ from 3 to 5. Line 111 of the Specification changes from "The cost
+      of the opcode is 3, the same as `ADD`." to "The cost of the opcode is 5, matching MUL (raised from
+      3 to avoid under-pricing DoS risk)."; the commit subject is "Update EIP-7939: Change gas cost from
+      3 to 5". Git committer time 2025-07-07T15:31:20+00:00 (author time 2025-07-07T16:31:20+01:00),
+      re-verified at the pin; 423,704 seconds (4.90 calendar days) after the anchor, i.e. inside the
+      seven-day eligibility ceiling but declined - see selection.post_anchor_exception. Blob at this
+      commit is c4d74e941b10bd4726181dad9695bbfec34251eb, content SHA-256
+      897cb71df80685d1d6e5ebd3b5304fdb80735f1ae632287195c14cae42fcc5d1.
+    immutable_url: https://github.com/ethereum/EIPs/blob/a794de3fcf71bb8c71e8bafdba11f63133ce4516/EIPS/eip-7939.md
+    source_ids:
+    - eips-commit-a794de3fcf71
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7939-e03
+    event_kind: revision
+    repository: ethereum/EIPs
+    commit: c43098e67b8fd94c5166bd7a46ec53cafac04123
+    path: EIPS/eip-7939.md
+    committed_at: '2025-06-09T10:17:58Z'
+    offset_from_anchor_seconds: -2014298
+    git_blob_sha: 1a4aed0bca3a74bc2caa37c16514098e3d072a8c
+    content_sha256: 8f03612a4d1903cebe96bef61ffffb2a392a6301ee024a43f2adb8c18848ab5b
+    immutable_url: https://github.com/ethereum/EIPs/blob/c43098e67b8fd94c5166bd7a46ec53cafac04123/EIPS/eip-7939.md
+    source_ids:
+    - eips-commit-c43098e67b8f
+  information_cutoff_at: '2025-07-02T17:49:36Z'
+  rationale: >-
+    Default preceding rule applied. The complete Task 01 revision_history.events list for EIP-7939 has
+    eight events (creation eip7939-e00 plus revisions eip7939-e01..e07); all eight commits touching
+    EIPS/eip-7939.md were re-listed directly from the pinned clone and each committer time normalized to
+    UTC with 'TZ=UTC git log -1', matching Task 01 exactly (note that Task 01 stores several committed_at
+    values with their raw Git offsets: eip7939-e00 2025-04-28T21:46:03-06:00 = 2025-04-29T03:46:03Z,
+    eip7939-e02 2025-05-13T07:56:41+08:00 = 2025-05-12T23:56:41Z, eip7939-e05 2025-07-22T15:58:04+08:00
+    = 2025-07-22T07:58:04Z, eip7939-e06 2025-09-29T21:50:27+08:00 = 2025-09-29T13:50:27Z). Against the
+    anchor 2025-07-02T17:49:36Z, four events fall at or before it (e00, e01, e02, e03) and four after
+    (e04 2025-07-07T15:31:20Z, e05, e06, e07); the latest at or before is eip7939-e03, commit
+    c43098e67b8f at 2025-06-09T10:17:58Z, 2,014,298 seconds (23.31 days) earlier, and the earliest after
+    is eip7939-e04 at +423,704 seconds (4.90 days). The following candidate is inside the seven-day
+    ceiling but the exception is declined on condition 4 (see post_anchor_exception), so the preceding
+    candidate stands. The selection is independently robust to the anchor-timing question: if a reviewer
+    instead treats the ACDE#214 call (2025-06-19, scheduled 14:00 UTC) as effective_at, eip7939-e03 is
+    still the preceding candidate (-877,322 s) and eip7939-e04 is still the following candidate, then
+    1,560,680 s (18.06 days) later and thus not even exception-eligible. Because the file was untouched
+    between 2025-06-09T10:17:58Z and 2025-07-07T15:31:20Z, the selected blob is byte-identical to
+    EIPS/eip-7939.md as it stood at the anchor instant: 'git rev-parse
+    ca4fda0074fe0298f56abd0ffa7286de8d30531e:EIPS/eip-7939.md' also returns
+    1a4aed0bca3a74bc2caa37c16514098e3d072a8c. Resolution verified at the pin: 'git ls-tree
+    c43098e67b8fd94c5166bd7a46ec53cafac04123 -- EIPS/eip-7939.md' confirms the path existed and yields
+    mode 100644 blob 1a4aed0bca3a74bc2caa37c16514098e3d072a8c; 'git cat-file blob' piped to sha256sum
+    yields 8f03612a4d1903cebe96bef61ffffb2a392a6301ee024a43f2adb8c18848ab5b over 6,189 bytes / 189
+    lines. The selected content is the EIP as it stood when ACDE#214's scheduling decision was recorded:
+    status Draft, five authors, CLZ at 0x1e returning 256 for a zero input, gas cost 3 ("the same as
+    `ADD`"), Solidity/Python/C++ reference implementations including the SP1 rv32im 8-limb variant, and
+    the substantive Security Considerations text added in eip7939-e02. information_cutoff_at is the
+    verified anchor time 2025-07-02T17:49:36Z because the preceding revision was selected.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: true
+    diff_semantic_effect: >-
+      Normative parameter change. 'git diff c43098e67b8fd94c5166bd7a46ec53cafac04123
+      a794de3fcf71bb8c71e8bafdba11f63133ce4516 -- EIPS/eip-7939.md' is a single hunk at line 111
+      replacing "The cost of the opcode is 3, the same as `ADD`." with "The cost of the opcode is 5,
+      matching MUL (raised from 3 to avoid under-pricing DoS risk)." - the CLZ gas price rises from 3 to
+      5. Nothing else changes: no frontmatter, status, opcode value, semantics, zero-case, reference
+      implementation, test-case or Security Considerations edit. Task 01 classifies it as change_type
+      parameter / substantive with high confidence.
+    diff_summary: >-
+      Exception evaluated against all five conditions and DECLINED; no exception is proposed. Condition 1
+      (seven-day ceiling) is satisfied: +423,704 s = 4.90 calendar days. Condition 2 (direct diff review)
+      is satisfied: the one-line diff above was read directly from the pinned clone. Condition 3
+      (plausibly completes or corrects the proposal being submitted) is at best arguable: the gas price
+      was not a placeholder or an omission in the selected text - it was an explicit, reasoned value of 3
+      justified in the Rationale by SP1 proving comparisons against ADD - so the later commit revises a
+      settled parameter rather than completing an unfinished one. Condition 4 is NOT satisfied: the diff
+      is post-SFI pricing feedback. Its own wording ("raised from 3 to avoid under-pricing DoS risk")
+      records DoS-repricing review that arrived after the ACDE#214 scheduling decision, which is exactly
+      the class of post-inclusion design feedback the contract excludes. Condition 5 is moot. Because a
+      single condition fails the exception is unavailable, and the contract's guidance that seven days is
+      an eligibility ceiling rather than a nearest-commit rule reinforces the preceding selection even
+      though 4.90 days after the anchor is closer in absolute time than 23.31 days before it.
+    hindsight_risk: >-
+      Not applicable - none incurred, since the pre-anchor revision was selected and imports no
+      post-anchor information. Recorded for the reviewer: had eip7939-e04 been selected, the assessed
+      text would have carried the gas price (5) that Fusaka actually shipped, but it would have imported
+      the post-scheduling DoS-repricing conclusion into a ref that is meant to represent the proposal as
+      submitted. That is a material hindsight asymmetry for a one-opcode EIP whose only normative
+      parameter change in its entire eight-commit history is this 3 -> 5 repricing, so the reviewer
+      should expect the selected ref to state gas cost 3, not the shipped 5.
+    justification: >-
+      Not applicable - the default preceding candidate exists (eip7939-e03, 23.31 days before the
+      anchor), the following candidate fails condition 4 of the exception test, and under the
+      alternative ACDE#214-dated anchor the following candidate would also fail condition 1 (18.06
+      days).
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - 'Anchor kind is ''other'', not explicit_pfi, normalized_proposal_equivalent or fallback_cfi, and this
+    is the record''s main contestable judgement. EIP-7939 never appeared in a Proposed-for-Inclusion or a
+    Considered-for-Inclusion section of EIPS/eip-7607.md in any of that file''s 53 commits
+    (independently re-verified here); it was added straight into "EIPs Scheduled for Inclusion / Core
+    EIPs" per ACDE#214. The only inclusion-state events available as anchors are therefore an SFI event
+    and, much later, the Included/Final event. fallback_cfi was rejected because the contract defines it
+    as using the earliest CFI-equivalent event and no CFI-equivalent event exists here - the anchor is
+    one pipeline stage further downstream than a fallback_cfi anchor.
+    normalized_proposal_equivalent was rejected because Task 01 identifies no proposal event with an
+    event id; the nearest contemporaneous proposal signal it records is informal (see unknowns). A human
+    must confirm that the earliest SFI event is the accepted PFI stand-in for this EIP, or direct that a
+    different anchor be used. Note for cross-EIP consistency: the sibling record for EIP-7934, which does
+    have a CFI event, uses fallback_cfi.'
+  - 'Anchor timing convention: effective_at uses the exactly-timed ethereum/EIPs commit
+    (2025-07-02T17:49:36Z) rather than the ACDE#214 call date (2025-06-19, scheduled 14:00 UTC), for
+    which Task 01 records no minute-level timestamp, and recorded_at is set equal to it. This is the
+    largest decision-to-record gap in the Fusaka Task 01 record (13.2 days), so the effective_at vs
+    recorded_at reading deserves explicit confirmation. The choice does not affect the outcome: under
+    either candidate anchor the preceding candidate is c43098e67b8f and the following candidate is
+    a794de3fcf71.'
+  - 'Post-anchor exception considered and declined, so no self-approval is claimed - but the reviewer
+    should confirm the judgement, because the following revision is only 4.90 days after the anchor and
+    is the shipped-parameter version. The decline rests on condition 4: the commit''s own text attributes
+    the 3 -> 5 gas change to DoS under-pricing risk identified after the ACDE#214 SFI decision.'
+  - 'Selected content caveat for downstream complexity work: the selected revision specifies CLZ gas cost
+    3 ("the same as `ADD`"), whereas Fusaka shipped 5. A reviewer should confirm that assessing the
+    pre-anchor text - not the shipped parameter - is intended for this fork.'
+  - 'Task 01''s semantic_effect for eip7939-e02 (the last substantive event before the selected one) is
+    recorded with medium confidence and is flagged in Task 01''s own unknowns. That classification does
+    not affect this selection, which is decided purely by committer time, but it does mean the selected
+    blob''s Security Considerations content originates from an event a stricter reading would call
+    non-substantive.'
+unknowns:
+- 'Negative finding, independently reproduced: no Proposed-for-Inclusion event and no
+  Considered-for-Inclusion event exists for EIP-7939 in the Fusaka Meta EIP. Every one of the 53 commits
+  touching EIPS/eip-7607.md in the pin''s ancestry was tested for the strings ''7939'' and ''CLZ'';
+  ca4fda0074fe0298f56abd0ffa7286de8d30531e (2025-07-02T17:49:36Z) is the first and only commit that
+  introduces the EIP, and it places it under "### EIPs Scheduled for Inclusion" / "#### Core EIPs".'
+- 'Structural negative finding not in Task 01: EIPS/eip-7607.md carried a "Proposed for Inclusion"
+  section only between commit 1d4ce546 (2024-09-28) and commit 9d17611c (2025-04-14); commit fc9a8d9a
+  (2025-04-19T08:32:43+08:00 = 2025-04-19T00:32:43Z) removed it, ten days before EIPS/eip-7939.md was
+  created on 2025-04-29T03:46:03Z. No explicit-PFI event could therefore have existed for this EIP in
+  this document. This strengthens rather than contradicts Task 01; it is recorded here as context for the
+  anchor-kind decision, not as a Task 01 correction.'
+- 'The exact instant at which ACDE#214 (2025-06-19) resolved to SFI EIP-7939 is unknown. Task 01 cites
+  ethereum/pm issue 1569 as a reference-only keyword extract giving only the scheduled call time (14:00
+  UTC) and records that ethereum/pm at the run-wide pin ecf2eecc74adc479cea38b3d3b9a670c320421b1
+  contains no committed minutes for ACDE >= 205, so no minute-level decision timestamp is recoverable
+  from the pinned evidence. The anchor is therefore the repository-record time; the selection''s
+  insensitivity to this is demonstrated in selection.rationale.'
+- 'Task 01 records an informal, earlier proposal signal that is not an inclusion-state event and has no
+  event id: CLZ was raised for Fusaka in the ACDE#212 agenda thread (ethereum/pm issue 1533, comment by
+  benaadams 2025-05-13 noting "CLZ isn''t CFI''d", with Tim Beiko replying that the CFI deadline had
+  passed). It was not adopted as the anchor because it sets no documented inclusion state, is not an
+  event in the Task 01 fork-EIP record, and rests on a mutable reference-only extract; ethereum/pm issue
+  1533 is also not in the Task 01 source registry for this fork, so no source ID exists to cite it. If a
+  human reviewer prefers a normalized_proposal_equivalent anchor, that signal (2025-05-13) is the
+  candidate, and it would move the preceding candidate back to eip7939-e02 (2025-05-12T23:56:41Z, roughly
+  22 hours earlier) and make eip7939-e03 the following candidate - a materially different selection that
+  would require a Task 01 amendment to supply the event and source IDs.'
+- 'Task 01 stores committer offsets as recorded in Git (several are +08:00 or -06:00 from merge tooling).
+  Every timestamp in this record is the equivalent UTC instant, re-derived from the pinned clone with
+  ''TZ=UTC git log -1''; no Task 01 local-offset value is preserved verbatim in a timestamp field here.'
+- 'No Task 01 error was found. All eight commits touching EIPS/eip-7939.md, their committer instants,
+  the anchor commit''s timestamp and hunk, and the fork-EIP record''s negative PFI/CFI finding all match
+  the Task 01 records exactly, so no Task 01 correction is requested.'
+- 'The gas cost of 3 in the selected revision is the value in the specification text at the anchor; no
+  attempt was made to establish what value client teams, testers or devnets were working with at that
+  time, as client, devnet, testing and development-start research is out of scope for this task.'

@@ -1,0 +1,752 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7688
+  title: "Forward compatible consensus data structures"
+  source_ids: [blob-pinned]
+research_run:
+  started_at: "2026-08-20T19:40:52Z"
+  completed_at: "2026-08-20T19:55:22Z"
+  researcher: "claude subagent eip-batch-08 (coordinated)"
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: "2024-04-15"
+  frontmatter_source_ids: [blob-creation, blob-pinned]
+  first_repository_commit:
+    authored_at: "2024-05-05T21:38:57+02:00"
+    committed_at: "2024-05-06T03:38:57+08:00"
+    commit: a639237e18b24102f30df80f3bc9ce089a4c6c65
+    path: EIPS/eip-7688.md
+    source_ids: [c-a639237e]
+  discrepancy_note: >-
+    The frontmatter declares created 2024-04-15 but the file first entered ethereum/EIPs
+    on 2024-05-05/06 (commit a639237e, "Add EIP: Forward compatible consensus data
+    structures"), about three weeks later. The frontmatter date is the authors' declared
+    proposal-creation date (matching the EIP number allocation and the ethereum-magicians
+    discussion thread), while the Git commit is the earliest independently verifiable
+    repository event. The file was created at EIPS/eip-7688.md and was never renamed; the
+    created value was never changed in any later commit. Note the EIP was created with
+    description "Transition consensus SSZ data structures to StableContainer"; the
+    description was changed to "...to ProgressiveContainer" on 2025-07-01 (commit
+    20674997) while the title stayed the same.
+revision_history:
+  summary:
+    file_commit_count: 28
+    post_creation_revision_count: 27
+    substantive_revision_count: 18
+    non_substantive_revision_count: 9
+    uncertain_revision_count: 0
+    first_revision_at: "2024-05-14T06:24:37Z"
+    last_revision_at: "2026-05-19T16:56:56Z"
+    first_substantive_revision_at: "2024-05-14T06:24:37Z"
+    last_substantive_revision_at: "2026-05-19T16:56:56Z"
+    derived_from_event_ids: [eip7688-e01, eip7688-e02, eip7688-e03, eip7688-e04,
+      eip7688-e05, eip7688-e06, eip7688-e07, eip7688-e08, eip7688-e09, eip7688-e10,
+      eip7688-e11, eip7688-e12, eip7688-e13, eip7688-e14, eip7688-e15, eip7688-e16,
+      eip7688-e17, eip7688-e18, eip7688-e19, eip7688-e20, eip7688-e21, eip7688-e22,
+      eip7688-e23, eip7688-e24, eip7688-e25, eip7688-e26, eip7688-e27, eip7688-e28]
+  events:
+    - id: eip7688-e01
+      event_kind: creation
+      authored_at: "2024-05-05T21:38:57+02:00"
+      committed_at: "2024-05-06T03:38:57+08:00"
+      commit: a639237e18b24102f30df80f3bc9ce089a4c6c65
+      path: EIPS/eip-7688.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        Adds the EIP in Draft (requires: 7495): converts consensus SSZ data structures to
+        EIP-7495 StableContainer, with a conversion procedure, capacity constants
+        (MAX_EXECUTION_PAYLOAD_FIELDS, MAX_BEACON_BLOCK_BODY_FIELDS,
+        MAX_BEACON_STATE_FIELDS), fork-agnostic StableContainer definitions for
+        ExecutionPayload/ExecutionPayloadHeader/BeaconBlockBody/BeaconState, and
+        fork-specific Variant definitions.
+      rationale: >-
+        Initial proposal text establishing the entire conversion scheme; the adding commit
+        is the creation event.
+      change_group: null
+      confidence: high
+      source_ids: [c-a639237e, blob-creation]
+    - id: eip7688-e02
+      event_kind: revision
+      authored_at: "2024-05-14T09:24:37+03:00"
+      committed_at: "2024-05-14T14:24:37+08:00"
+      commit: 8fda943c25dfecb670dcc68c2fc666462c11ebd1
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Include EIP-7549 attestation data structure changes": adds requires 7549; adds
+        StableAttestation, StableIndexedAttestation and StableAttesterSlashing definitions
+        with new capacities MAX_ATTESTATION_FIELDS (8) and MAX_INDEXED_ATTESTATION_FIELDS
+        (8); switches the block body lists to MAX_ATTESTER_SLASHINGS_ELECTRA /
+        MAX_ATTESTATIONS_ELECTRA and to the Stable* element types; adds the corresponding
+        Variant definitions.
+      rationale: >-
+        Extends the set of converted types and their capacities; changes the SSZ data
+        structures implementers must define.
+      change_group: null
+      confidence: high
+      source_ids: [c-8fda943c]
+    - id: eip7688-e03
+      event_kind: revision
+      authored_at: "2024-05-16T17:06:20+03:00"
+      committed_at: "2024-05-16T14:06:20+00:00"
+      commit: e95cfaaab79c5e68ecc32e90024ba20ac55cb8c6
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Adopt `Profile`, and match EIP-7549 Attestation order": renames the fork-specific
+        Variant[B] type to Profile[B] throughout; rewrites the conversion procedure (all
+        StableContainer field types wrapped in Optional[T]; existing field types including
+        List/Bitlist capacity MUST NOT change; deprecated fields retained; per-field
+        required/optional changes allowed per fork); reorders aggregation_bits /
+        attesting_indices to the front to match EIP-7549.
+      rationale: >-
+        Changes the type-system construct used for fork-specific definitions and the rules
+        governing field evolution and ordering, both of which affect merkleization.
+      change_group: null
+      confidence: high
+      source_ids: [c-e95cfaaa]
+    - id: eip7688-e04
+      event_kind: revision
+      authored_at: "2024-05-30T20:03:35+02:00"
+      committed_at: "2024-05-31T02:03:35+08:00"
+      commit: df0d2d029b66ae6829e0ea7d1cbeae1b1da8674f
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Document types considered immutable": adds the normative table of types treated
+        as having immutable merkleization (Slot, Epoch, Validator, AttestationData,
+        DepositReceipt, ExecutionLayerWithdrawalRequest, Consolidation, ... ) with the rule
+        that an incompatible future change requires a new type and new field name; expands
+        the frontmatter requires from "7495, 7549" to "6110, 7002, 7251, 7495, 7549, 7569";
+        replaces the "_v2 field" convention with "a new field with a new name".
+      rationale: >-
+        Defines which referenced types are frozen for merkleization purposes - a normative
+        constraint on all future forks - and materially expands the declared dependencies.
+      change_group: null
+      confidence: high
+      source_ids: [c-df0d2d02]
+    - id: eip7688-e05
+      event_kind: revision
+      authored_at: "2024-06-26T11:47:24+02:00"
+      committed_at: "2024-06-26T09:47:24+00:00"
+      commit: 8d74fc3a6b52b0c199423c683db370e24b77a12a
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Bump for consensus-specs v1.5.0-alpha.3": renames DepositReceipt ->
+        DepositRequest, ExecutionLayerWithdrawalRequest -> WithdrawalRequest, and
+        Consolidation / SignedConsolidation -> ConsolidationRequest; renames the payload
+        fields deposit_receipts -> deposit_requests and deposit_receipts_start_index ->
+        deposit_requests_start_index; adds consolidation_requests to StableExecutionPayload
+        and consolidation_requests_root to the header; removes the consolidations list from
+        StableBeaconBlockBody; bumps all consensus-specs links.
+      rationale: >-
+        Field and type names inside the StableContainer definitions are load-bearing for
+        stable merkleization, and one list moves between containers.
+      change_group: null
+      confidence: high
+      source_ids: [c-8d74fc3a]
+    - id: eip7688-e06
+      event_kind: revision
+      authored_at: "2024-07-09T16:16:09+02:00"
+      committed_at: "2024-07-09T14:16:09+00:00"
+      commit: a73b0c4fd7a7253090555a43fe22f0ea6c5d44a3
+      path: EIPS/eip-7688.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: "Status frontmatter changed from Draft to Review."
+      rationale: Process-metadata-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-a73b0c4f]
+    - id: eip7688-e07
+      event_kind: revision
+      authored_at: "2024-09-23T16:03:07+02:00"
+      committed_at: "2024-09-23T22:03:07+08:00"
+      commit: 815286789ae0f715eda3df83d12c0f8141dba023
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Adjustments for v1.5.0-alpha.6 specs": moves the deposit, withdrawal and
+        consolidation request lists out of StableExecutionPayload /
+        StableExecutionPayloadHeader into a new StableExecutionRequests container with the
+        new capacity MAX_EXECUTION_REQUESTS_FIELDS (16); adds execution_requests to
+        StableBeaconBlockBody and an ExecutionRequests Profile.
+      rationale: >-
+        Relocates fields between containers and adds a new container with its own
+        capacity; changes merkleization and generalized indices.
+      change_group: null
+      confidence: high
+      source_ids: [c-81528678]
+    - id: eip7688-e08
+      event_kind: revision
+      authored_at: "2024-10-11T13:05:15+02:00"
+      committed_at: "2024-10-11T11:05:15+00:00"
+      commit: 2ccac851e7c0389e393f761a5c34d9c8af15e8ff
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        Renames PendingBalanceDeposit -> PendingDeposit, the BeaconState field
+        pending_balance_deposits -> pending_deposits and the limit
+        PENDING_BALANCE_DEPOSITS_LIMIT -> PENDING_DEPOSITS_LIMIT, tracking the upstream
+        consensus-specs rename; bumps all consensus-specs links (commit subject is
+        "Update EIP-7495: ...", a multi-EIP change that also touched this file).
+      rationale: >-
+        Field names in a StableContainer are permanent identifiers under this EIP's own
+        immutability rule, so renaming one is a change to the normative data structure,
+        not merely editorial.
+      change_group: null
+      confidence: medium
+      source_ids: [c-2ccac851]
+    - id: eip7688-e09
+      event_kind: revision
+      authored_at: "2025-02-10T17:05:08+01:00"
+      committed_at: "2025-02-10T16:05:08+00:00"
+      commit: 167b4b57da0d050127cb93acf5858e8d3b028cc3
+      path: EIPS/eip-7688.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Bumps every consensus-specs permalink from commit c1e509b0 to the tagged beta
+        version b3e83f66 (38 link-only replacements); no prose or type definition changed.
+      rationale: Link-target-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-167b4b57]
+    - id: eip7688-e10
+      event_kind: revision
+      authored_at: "2025-04-15T11:32:04+08:00"
+      committed_at: "2025-04-15T03:32:04+00:00"
+      commit: 565882cf0997844708d47752eae563f2db7f0744
+      path: EIPS/eip-7688.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Status frontmatter changed back from Review to Draft (commit subject "Update
+        EIP-7495: Move to Draft"; the dependency's status move propagated to this file).
+      rationale: Process-metadata-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-565882cf]
+    - id: eip7688-e11
+      event_kind: revision
+      authored_at: "2025-07-01T12:14:32+02:00"
+      committed_at: "2025-07-01T10:14:32+00:00"
+      commit: 20674997972fceccb613a08720c5a42448d56464
+      path: EIPS/eip-7688.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        "Adopt ProgressiveContainer / ProgressiveList": wholesale redesign replacing
+        StableContainer/Profile with EIP-7495 ProgressiveContainer(active_fields=[...])
+        plus EIP-7916 ProgressiveList / ProgressiveBitlist; deletes the capacity constants
+        table, the fork-agnostic StableContainer definitions and the fork-specific Profile
+        definitions; introduces a "Converted types" list naming the types and fields to
+        convert; adds active_fields evolution rules (append trailing 1, zero a removed
+        field's bit, CompatibleUnion tests); adds requires 7916 and changes the
+        description to "...to ProgressiveContainer"; adds a cleanup-opportunities section.
+      rationale: >-
+        Replaces the underlying SSZ mechanism, the merkleization scheme and the entire
+        specification structure; the largest normative change in the EIP's history
+        (102 insertions / 230 deletions).
+      change_group: null
+      confidence: high
+      source_ids: [c-20674997]
+    - id: eip7688-e12
+      event_kind: revision
+      authored_at: "2025-08-04T15:38:45+02:00"
+      committed_at: "2025-08-04T13:38:45+00:00"
+      commit: de33cd5e3599cb09f8c8b8fcb08d80f48257cf28
+      path: EIPS/eip-7688.md
+      change_type: clarification
+      semantic_effect: non_substantive
+      summary: >-
+        Corrects the declaration notation from ProgressiveContainer[active_fields=[...]]
+        to ProgressiveContainer(active_fields=[...]) in the rule and the example (valid
+        Python call syntax); commit subject is "Update EIP-6404: ...", a multi-EIP change
+        that also touched this file.
+      rationale: >-
+        Notation-only correction; the same active_fields semantics and the same converted
+        types are specified before and after.
+      change_group: null
+      confidence: high
+      source_ids: [c-de33cd5e]
+    - id: eip7688-e13
+      event_kind: revision
+      authored_at: "2025-09-16T14:53:36+02:00"
+      committed_at: "2025-09-16T12:53:36+00:00"
+      commit: 89d746cc86b8b7332050331baf91777a2fee3031
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Also make committee bits progressive": adds Attestation.committee_bits to the
+        converted list, redefining it to use ProgressiveBitlist.
+      rationale: Adds a field to the normative conversion list, changing Attestation merkleization.
+      change_group: eip7688-committee-bits
+      confidence: high
+      source_ids: [c-89d746cc]
+    - id: eip7688-e14
+      event_kind: revision
+      authored_at: "2025-09-17T15:53:22+02:00"
+      committed_at: "2025-09-17T13:53:22+00:00"
+      commit: 94af9bb708ca55b89ad97b1eabdccb28f568c6c7
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Move committee_bits to cleanup opportunities": reverses the previous day's change
+        by removing committee_bits from the normative converted list and recording it
+        instead as a non-normative cleanup opportunity (Bitvector whose top bits are forced
+        to zero); also restructures the cleanup section into per-type subsections.
+      rationale: >-
+        Removes a field from the normative conversion list, reverting the merkleization
+        change introduced by commit 89d746cc; same logical update.
+      change_group: eip7688-committee-bits
+      confidence: high
+      source_ids: [c-94af9bb7]
+    - id: eip7688-e15
+      event_kind: revision
+      authored_at: "2025-09-19T11:14:43+02:00"
+      committed_at: "2025-09-19T09:14:43+00:00"
+      commit: d0de8bd93595b247e6841e3161cbc2918403c2e1
+      path: EIPS/eip-7688.md
+      change_type: clarification
+      semantic_effect: non_substantive
+      summary: >-
+        Adds an IndexedAttestation subsection to the (explicitly non-normative) "Cleanup
+        opportunities" rationale, discussing attesting_indices limits versus
+        SingleAttestation traffic, MAX_ATTESTER_SLASHINGS_ELECTRA, and possible shared
+        resource-based limits.
+      rationale: >-
+        Forward-looking discussion added to the Rationale section only; no requirement,
+        type or field is changed.
+      change_group: null
+      confidence: high
+      source_ids: [c-d0de8bd9]
+    - id: eip7688-e16
+      event_kind: revision
+      authored_at: "2025-09-26T11:21:06+02:00"
+      committed_at: "2025-09-26T09:21:06+00:00"
+      commit: 360ef59657a062a8f09b42a61b753506c4f49634
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Add notes for ExecutionPayload and ExecutionRequests": removes
+        ExecutionPayloadHeader from the converted-types list; records that the
+        MAX_TRANSACTIONS_PER_PAYLOAD (1M) limit is no longer enforced; adds
+        ExecutionPayload and ExecutionRequests cleanup subsections; rewords the
+        BeaconBlockHeader and Validator items to state they are proposed to be kept as is.
+      rationale: >-
+        Changes which types are converted (ExecutionPayloadHeader dropped) and states that
+        a previously enforced list limit no longer applies.
+      change_group: null
+      confidence: high
+      source_ids: [c-360ef596]
+    - id: eip7688-e17
+      event_kind: revision
+      authored_at: "2025-10-02T01:02:39+02:00"
+      committed_at: "2025-10-01T23:02:39+00:00"
+      commit: f84409415728844ea0057f559cb03b11dc196132
+      path: EIPS/eip-7688.md
+      change_type: security_assumption
+      semantic_effect: substantive
+      summary: >-
+        "Add security considerations and add blob lists": replaces "Security
+        Considerations: None" with a three-paragraph analysis (loss of fixed upper bounds
+        with ProgressiveList, length checks moved to gossip validation and state
+        transition, libp2p decrypt/decompress/hash pipeline under MAX_PAYLOAD_SIZE, and
+        the argument that DoS exposure does not materially increase); simultaneously moves
+        blob_kzg_commitments out of the BeaconBlockBody bullet into a separate bullet that
+        also converts kzg_proofs and column to ProgressiveList.
+      rationale: >-
+        Introduces the EIP's security analysis where none existed and, in the same commit,
+        extends the set of progressive-list fields; classified by the dominant
+        security-assumption effect with the data-structure change recorded in the summary.
+      change_group: null
+      confidence: medium
+      source_ids: [c-f8440941]
+    - id: eip7688-e18
+      event_kind: revision
+      authored_at: "2025-10-02T04:26:15+02:00"
+      committed_at: "2025-10-02T02:26:15+00:00"
+      commit: 148db0a7caa981448e1cc7b0cbbded60fa8ea92a
+      path: EIPS/eip-7688.md
+      change_type: clarification
+      semantic_effect: non_substantive
+      summary: >-
+        "Refer to correct EIP for 6110 refs": in the BeaconState cleanup-opportunities
+        bullet, replaces "no longer needed post Fulu" with "no longer needed after the
+        [EIP-6110](./eip-6110.md#eth1data-poll-deprecation) transition period finishes",
+        adding an in-text link to EIP-6110.
+      rationale: >-
+        Corrects an attribution inside the non-normative cleanup section; EIP-6110 was
+        already a declared frontmatter dependency, so the dependency set is unchanged.
+      change_group: null
+      confidence: high
+      source_ids: [c-148db0a7]
+    - id: eip7688-e19
+      event_kind: revision
+      authored_at: "2025-10-12T11:12:54+02:00"
+      committed_at: "2025-10-12T17:12:54+08:00"
+      commit: cfb56cc2fef7d780f89c1f3890d64425f684ea2a
+      path: EIPS/eip-7688.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: 'Typo fix in the Validator cleanup paragraph: "consider that that such" -> "consider that such".'
+      rationale: Duplicated-word fix only.
+      change_group: null
+      confidence: high
+      source_ids: [c-cfb56cc2]
+    - id: eip7688-e20
+      event_kind: revision
+      authored_at: "2025-11-05T08:01:55-05:00"
+      committed_at: "2025-11-05T21:01:55+08:00"
+      commit: 92a822fba7d243a8ee6038b80bfb45e59dd3b4f7
+      path: EIPS/eip-7688.md
+      change_type: clarification
+      semantic_effect: non_substantive
+      summary: >-
+        "Correct ProgressiveContainer reference": in the "Can this be applied
+        retroactively?" rationale, replaces the stale term `Profile` (removed by the
+        2025-07-01 redesign) with `ProgressiveContainer`.
+      rationale: >-
+        Terminology repair in rationale text; the statement it makes (serialization
+        unchanged, merkleization changed) is the same before and after.
+      change_group: null
+      confidence: high
+      source_ids: [c-92a822fb]
+    - id: eip7688-e21
+      event_kind: revision
+      authored_at: "2025-12-02T13:31:52-03:00"
+      committed_at: "2025-12-03T00:31:52+08:00"
+      commit: 95a263d15ccbbad813fd002666d7c753a126280c
+      path: EIPS/eip-7688.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: "Status frontmatter changed from Draft to Review."
+      rationale: Process-metadata-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-95a263d1]
+    - id: eip7688-e22
+      event_kind: revision
+      authored_at: "2025-12-30T10:24:03+01:00"
+      committed_at: "2025-12-30T17:24:03+08:00"
+      commit: 53a85823f374965161ab1b711a0ee3084db8d6c0
+      path: EIPS/eip-7688.md
+      change_type: clarification
+      semantic_effect: substantive
+      summary: >-
+        "Fix field naming and wording": corrects the ExecutionRequests bullet from the
+        field name "consolidation" to "consolidations" (matching the consensus-specs
+        field), and fixes "as is breaks" -> "as it breaks" in the BeaconBlockHeader
+        cleanup paragraph.
+      rationale: >-
+        The field-name correction is inside the normative converted-types list and
+        identifies which ExecutionRequests field becomes a ProgressiveList; classified
+        substantive on that basis, with the grammar fix incidental.
+      change_group: null
+      confidence: medium
+      source_ids: [c-53a85823]
+    - id: eip7688-e23
+      event_kind: revision
+      authored_at: "2026-05-05T22:31:25+02:00"
+      committed_at: "2026-05-05T20:31:25+00:00"
+      commit: d2fb2b2e6104e7484f552bf142c500a9d2a6ef4e
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Make Transaction progressive": Transaction is redefined as ProgressiveByteList
+        and removed from the immutable-types table; the MAX_BYTES_PER_TRANSACTION (1 GB)
+        limit is no longer enforced; the parenthetical justifying the unenforced
+        MAX_TRANSACTIONS_PER_PAYLOAD limit via MAX_PAYLOAD_SIZE is dropped.
+      rationale: >-
+        Moves a type from the immutable set into the converted set, changing its
+        merkleization and removing an enforced size bound.
+      change_group: null
+      confidence: high
+      source_ids: [c-d2fb2b2e]
+    - id: eip7688-e24
+      event_kind: revision
+      authored_at: "2026-05-18T21:53:51+02:00"
+      committed_at: "2026-05-18T19:53:51+00:00"
+      commit: 5f4a908c019f83e5d8dc00abccba37c312fca02f
+      path: EIPS/eip-7688.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        "Suggest constants for network message size bounds": adds a new specification
+        section requiring (SHOULD) a constant per affected libp2p gossip topic and
+        req/resp chunk type giving its maximum uncompressed serialized size derived from
+        the pre-conversion capacity, with MAX_PAYLOAD_SIZE as the fallback for
+        variable-size messages; rewrites Security Considerations to state that
+        serialization and libp2p limits are unchanged and early-reject behavior is
+        preserved by the new constants; adds "Only merkleization changes; serialization of
+        affected types is unchanged" to the abstract; bumps consensus-specs links to
+        932c6d69.
+      rationale: >-
+        Adds a new normative requirement covering p2p message bounds and replaces the
+        previous security argument that no such bounds existed.
+      change_group: null
+      confidence: high
+      source_ids: [c-5f4a908c]
+    - id: eip7688-e25
+      event_kind: revision
+      authored_at: "2026-05-19T15:55:59+02:00"
+      committed_at: "2026-05-19T13:55:59+00:00"
+      commit: 9eb1fadbc0941fbc877294c5d647c30fb42c5bfb
+      path: EIPS/eip-7688.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        "Add rationale for Validator remaining Container": restores ExecutionPayloadHeader
+        to the converted-types list; revises the immutable-types table (adds
+        SignedBeaconBlockHeader, ParticipationFlags, SyncCommittee, AttesterSlashing,
+        reorders entries, moves KZGCommitment to the deneb polynomial-commitments path,
+        fixes the ConsolidationRequest anchor and the #custom-types -> #types anchors);
+        adds a "Validator container" rationale explaining why Validator stays a Container;
+        removes the "Best timing?" and "Can this be applied retroactively?" sections,
+        folding the latter into a "Retroactive application" section.
+      rationale: >-
+        Changes both the converted-types set and the immutable-types set, which together
+        determine the merkleization of the affected structures.
+      change_group: eip7688-2026-05-19-review-pass
+      confidence: high
+      source_ids: [c-9eb1fadb]
+    - id: eip7688-e26
+      event_kind: revision
+      authored_at: "2026-05-19T16:57:40+02:00"
+      committed_at: "2026-05-19T14:57:40+00:00"
+      commit: 19f03bc45b9fa63fe434f9ad7fdc2b82f174cc2f
+      path: EIPS/eip-7688.md
+      change_type: clarification
+      semantic_effect: substantive
+      summary: >-
+        "Resolve the 'cleanup opportunities' section": deletes the entire cleanup
+        opportunities section (BeaconState, Attestation, IndexedAttestation,
+        ExecutionPayload, ExecutionRequests, BeaconBlockHeader - including the in-text
+        EIP-6110 link) and replaces it with a "History accumulators" rationale stating
+        that historical_roots and historical_summaries are deliberately kept as List
+        types; adds a Motivation paragraph on decoupling operational limits from the SSZ
+        schema; rewords the list-conversion and immutable-types paragraphs.
+      rationale: >-
+        Beyond removing non-normative discussion, it states positively which accumulators
+        are deliberately not converted, which resolves previously open scope for
+        implementers; classified substantive on that basis.
+      change_group: eip7688-2026-05-19-review-pass
+      confidence: medium
+      source_ids: [c-19f03bc4]
+    - id: eip7688-e27
+      event_kind: revision
+      authored_at: "2026-05-19T18:11:43+02:00"
+      committed_at: "2026-05-19T16:11:43+00:00"
+      commit: aea03b391168915770667f3564c445e7de589a17
+      path: EIPS/eip-7688.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        "Improve wording / address nits": lifts "The application logic SHALL be updated to
+        check for an appropriate limit at runtime" out of the ProgressiveList bullet into
+        a standalone sentence so it now covers both the List and Bitlist conversions; adds
+        an Electra example to the append-only immutability rationale; changes "since Phase
+        0" to "since genesis"; links the gossipsub message rejection behavior; various
+        wording nits in Motivation, History accumulators, Backwards Compatibility and
+        Security Considerations.
+      rationale: >-
+        Broadens the scope of a SHALL requirement from one conversion rule to both;
+        the remaining changes are wording.
+      change_group: eip7688-2026-05-19-review-pass
+      confidence: medium
+      source_ids: [c-aea03b39]
+    - id: eip7688-e28
+      event_kind: revision
+      authored_at: "2026-05-19T18:56:56+02:00"
+      committed_at: "2026-05-19T16:56:56+00:00"
+      commit: f2e6d7fb01194d590e16fcdcae8061d06cf1a7f1
+      path: EIPS/eip-7688.md
+      change_type: dependency
+      semantic_effect: substantive
+      summary: >-
+        "Rebase requirements to be based on Fusaka": frontmatter requires changes from
+        "6110, 7002, 7251, 7495, 7549, 7569, 7916" to "7495, 7607, 7916" - dropping the
+        Electra/Dencun-era requirements (6110, 7002, 7251, 7549, 7569) and adding 7607.
+      rationale: >-
+        Sole change in the commit is the declared dependency set, rebasing the EIP's
+        baseline onto Fusaka.
+      change_group: null
+      confidence: high
+      source_ids: [c-f2e6d7fb, blob-pinned]
+dependency_history:
+  events:
+    - id: eip7688-d01
+      target_eip: 7495
+      event_type: present_at_creation
+      relationship: requires
+      occurred_at: "2024-05-06T03:38:57+08:00"
+      commit: a639237e18b24102f30df80f3bc9ce089a4c6c65
+      rationale: >-
+        Frontmatter "requires: 7495" at creation, plus the explicit abstract statement
+        "This EIP defines the changes needed to adopt `StableContainer` from
+        [EIP-7495](./eip-7495.md) in consensus data structures". Still required at the pin
+        (now for ProgressiveContainer).
+      confidence: high
+      source_ids: [c-a639237e, blob-creation, blob-pinned]
+    - id: eip7688-d02
+      target_eip: 7549
+      event_type: introduced
+      relationship: requires
+      occurred_at: "2024-05-14T14:24:37+08:00"
+      commit: 8fda943c25dfecb670dcc68c2fc666462c11ebd1
+      rationale: >-
+        Frontmatter requires changed from "7495" to "7495, 7549" in the commit that
+        incorporated the EIP-7549 attestation data structure changes.
+      confidence: high
+      source_ids: [c-8fda943c]
+    - id: eip7688-d03
+      target_eip: 6110
+      event_type: introduced
+      relationship: requires
+      occurred_at: "2024-05-31T02:03:35+08:00"
+      commit: df0d2d029b66ae6829e0ea7d1cbeae1b1da8674f
+      rationale: >-
+        Frontmatter requires expanded to "6110, 7002, 7251, 7495, 7549, 7569" when the
+        immutable-types table introduced the Electra request types.
+      confidence: high
+      source_ids: [c-df0d2d02]
+    - id: eip7688-d04
+      target_eip: 7002
+      event_type: introduced
+      relationship: requires
+      occurred_at: "2024-05-31T02:03:35+08:00"
+      commit: df0d2d029b66ae6829e0ea7d1cbeae1b1da8674f
+      rationale: Same frontmatter requires expansion as eip7688-d03.
+      confidence: high
+      source_ids: [c-df0d2d02]
+    - id: eip7688-d05
+      target_eip: 7251
+      event_type: introduced
+      relationship: requires
+      occurred_at: "2024-05-31T02:03:35+08:00"
+      commit: df0d2d029b66ae6829e0ea7d1cbeae1b1da8674f
+      rationale: Same frontmatter requires expansion as eip7688-d03.
+      confidence: high
+      source_ids: [c-df0d2d02]
+    - id: eip7688-d06
+      target_eip: 7569
+      event_type: introduced
+      relationship: requires
+      occurred_at: "2024-05-31T02:03:35+08:00"
+      commit: df0d2d029b66ae6829e0ea7d1cbeae1b1da8674f
+      rationale: Same frontmatter requires expansion as eip7688-d03.
+      confidence: high
+      source_ids: [c-df0d2d02]
+    - id: eip7688-d07
+      target_eip: 7916
+      event_type: introduced
+      relationship: requires
+      occurred_at: "2025-07-01T10:14:32+00:00"
+      commit: 20674997972fceccb613a08720c5a42448d56464
+      rationale: >-
+        Frontmatter requires gained 7916, and the abstract added the explicit statement
+        "...and `ProgressiveList` from [EIP-7916](./eip-7916.md)", when the EIP adopted
+        ProgressiveContainer / ProgressiveList. Still required at the pin.
+      confidence: high
+      source_ids: [c-20674997, blob-pinned]
+    - id: eip7688-d08
+      target_eip: 7607
+      event_type: introduced
+      relationship: requires
+      occurred_at: "2026-05-19T16:56:56+00:00"
+      commit: f2e6d7fb01194d590e16fcdcae8061d06cf1a7f1
+      rationale: >-
+        The "Rebase requirements to be based on Fusaka" commit added 7607 (Fusaka Meta) to
+        the frontmatter requires. Present at the pin (requires: 7495, 7607, 7916).
+      confidence: high
+      source_ids: [c-f2e6d7fb, blob-pinned]
+    - id: eip7688-d09
+      target_eip: 6110
+      event_type: removed
+      relationship: requires
+      occurred_at: "2026-05-19T16:56:56+00:00"
+      commit: f2e6d7fb01194d590e16fcdcae8061d06cf1a7f1
+      rationale: >-
+        Dropped from the frontmatter requires by the Fusaka rebase; absent at the pin.
+      confidence: high
+      source_ids: [c-f2e6d7fb, blob-pinned]
+    - id: eip7688-d10
+      target_eip: 7002
+      event_type: removed
+      relationship: requires
+      occurred_at: "2026-05-19T16:56:56+00:00"
+      commit: f2e6d7fb01194d590e16fcdcae8061d06cf1a7f1
+      rationale: Dropped from the frontmatter requires by the Fusaka rebase; absent at the pin.
+      confidence: high
+      source_ids: [c-f2e6d7fb, blob-pinned]
+    - id: eip7688-d11
+      target_eip: 7251
+      event_type: removed
+      relationship: requires
+      occurred_at: "2026-05-19T16:56:56+00:00"
+      commit: f2e6d7fb01194d590e16fcdcae8061d06cf1a7f1
+      rationale: Dropped from the frontmatter requires by the Fusaka rebase; absent at the pin.
+      confidence: high
+      source_ids: [c-f2e6d7fb, blob-pinned]
+    - id: eip7688-d12
+      target_eip: 7549
+      event_type: removed
+      relationship: requires
+      occurred_at: "2026-05-19T16:56:56+00:00"
+      commit: f2e6d7fb01194d590e16fcdcae8061d06cf1a7f1
+      rationale: Dropped from the frontmatter requires by the Fusaka rebase; absent at the pin.
+      confidence: high
+      source_ids: [c-f2e6d7fb, blob-pinned]
+    - id: eip7688-d13
+      target_eip: 7569
+      event_type: removed
+      relationship: requires
+      occurred_at: "2026-05-19T16:56:56+00:00"
+      commit: f2e6d7fb01194d590e16fcdcae8061d06cf1a7f1
+      rationale: Dropped from the frontmatter requires by the Fusaka rebase; absent at the pin.
+      confidence: high
+      source_ids: [c-f2e6d7fb, blob-pinned]
+unknowns:
+  - >-
+    Summary first/last dates are the commit (committer) timestamps normalized to UTC;
+    per-event authored_at/committed_at and dependency occurred_at preserve git's original
+    zone offsets verbatim.
+  - >-
+    In-text EIP-6110 link lifecycle without a dependency-set change: an explicit
+    ./eip-6110.md link was added to the cleanup-opportunities section on 2025-10-02
+    (commit 148db0a7) and removed with that section on 2026-05-19 (commit 19f03bc4).
+    Because EIP-6110 was already a declared frontmatter dependency for that entire window
+    (introduced 2024-05-30, removed 2026-05-19), no separate dependency event is recorded
+    for the link; the requires-level events eip7688-d03 and eip7688-d09 carry the change.
+  - >-
+    Textual EIP references were tracked across every historical version: EIP-7495 is
+    linked in all 28 versions, EIP-7916 from commit 20674997 onward, and EIP-6110 only
+    between commits 148db0a7 and 19f03bc4. No other EIP is named in the body text in any
+    version; all other dependencies are frontmatter-only.
+  - >-
+    Three same-day commits on 2026-05-19 (9eb1fadb, 19f03bc4, aea03b39) share
+    change_group eip7688-2026-05-19-review-pass as one editorial/review pass; commit
+    f2e6d7fb the same day is kept separate because it changes only the dependency set.
+    Group membership was inferred from git evidence (same author, same day, sequential
+    refinements of the same sections); pull-request discussion was not consulted.
+  - >-
+    Several commits classified here carry commit subjects naming a different EIP
+    (for example "Update EIP-7495: ...", "Update EIP-6404: ...") because they were
+    multi-EIP pull requests that also modified EIPS/eip-7688.md; the classification
+    reflects the diff to this file only.

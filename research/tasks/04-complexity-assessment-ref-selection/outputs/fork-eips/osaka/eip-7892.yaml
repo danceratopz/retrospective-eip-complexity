@@ -1,0 +1,213 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7892
+  title: Blob Parameter Only Hardforks
+  layers:
+  - execution
+  - consensus
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7892.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7892.yaml
+research_run:
+  started_at: '2026-08-21T06:58:16Z'
+  completed_at: '2026-08-21T06:59:01Z'
+  researcher: claude subagent osaka/eip-7892 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7892-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: Proposed for Inclusion
+  effective_at: '2025-03-25T15:44:57Z'
+  recorded_at: '2025-03-25T15:44:57Z'
+  date_basis: >-
+    Task 01's occurred_at for event osaka-eip7892-e1 is the UTC committer date of the ethereum/EIPs
+    commit that edited EIPS/eip-7607.md (Hardfork Meta - Fusaka). Verified directly against the
+    read-only clone at the Task 01 run-wide pin a08f51fec5b2b5da457adb05b8cffb487fb4f7de:
+    `git log -1 --format='%H %cI %aI %s' 31e9f151073dbb7d99a9fe68e574530dc5ce53ff` returns committer
+    time 2025-03-25T23:44:57+08:00, i.e. 2025-03-25T15:44:57Z in UTC (author time
+    2025-03-25T10:44:57-05:00, deliberately not used). effective_at and recorded_at are identical
+    because this is a direct Meta EIP merge: the squash commit that recorded the state in the
+    repository is the act that set PFI. No underlying AllCoreDevs decision exists or is identified by
+    Task 01 for this event - PFI under the EIP-7723 process is champion-initiated, and Task 01 records
+    decision_body as 'EIP champion via ethereum/EIPs pull request (PFI is champion-initiated per
+    EIP-7723)'. The corresponding pull request ethereum/EIPs#9525 (opened by the EIP author Mark
+    Mackey / ethDreamer) is recorded by Task 01 as merged at 2025-03-25T15:44:57Z, matching the
+    verified committer date; the PR opening time is not used as the PFI-set time.
+  verification_status: verified
+  verification_rationale: >-
+    Primary evidence confirmed at the Task 01 pin (clone HEAD = a08f51fec5b2b5da457adb05b8cffb487fb4f7de).
+    (1) Commit identity and committer timestamp verified with
+    `git log -1 --format='%H %cI %aI %s' 31e9f151073dbb7d99a9fe68e574530dc5ce53ff` ->
+    2025-03-25T23:44:57+08:00 = 2025-03-25T15:44:57Z. (2) The hunk was inspected with
+    `git show 31e9f151073dbb7d99a9fe68e574530dc5ce53ff -- EIPS/eip-7607.md`: a single added line
+    '* [EIP-7892](./eip-7892.md): Blob Parameter Only Hardforks'. (3) The enclosing section was
+    verified by reading EIPS/eip-7607.md at that commit
+    (`git show 31e9f151073dbb7d99a9fe68e574530dc5ce53ff:EIPS/eip-7607.md`): the added line is the last
+    entry of the '### Proposed for Inclusion' list, which is distinct from the '### Considered for
+    Inclusion' and '### Scheduled for Inclusion' sections present in the same document. The inclusion
+    state is therefore an explicit PFI placement, not an inference from a later state. The commit
+    subject's wording ('Add EIP-7892 to the candidate for inclusion in Fusaka') is looser than the
+    section it edits; the section placement is authoritative and was verified directly, as Task 01 also
+    records.
+  confidence: high
+  source_ids:
+  - eips-commit-31e9f151073d
+  - eips-pr-9525
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7892-e01
+    event_kind: creation
+    commit: 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f
+    committed_at: '2025-03-24T16:26:03Z'
+    offset_from_anchor_seconds: -83934
+    semantic_effect: substantive
+    summary: >-
+      Initial addition of EIPS/eip-7892.md (119 lines): defines Blob Parameter Only (BPO) hardforks as a
+      class of fork modifying only blob_target, blob_limit and baseFeeUpdateFraction; extends the
+      EIP-7840 `blobSchedule` object to an arbitrary number of block-timestamp keys; sketches a
+      consensus-layer `BPO_FORK` epoch/max_blobs configuration table; states four requirements (EL and
+      CL schedules MUST be consistent; BPO forks MUST NOT conflict with other fork schedules; the
+      blobSchedule timestamp MUST align with the start of the CL epoch; the blobSchedule max field MUST
+      equal the CL max_blobs value). Frontmatter status Draft, type Informational, created 2025-02-28,
+      requires 7840. Committer timestamp re-verified with
+      `git log -1 --format='%H %cI %aI %s' 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f` ->
+      2025-03-24T16:26:03+00:00 (author time 2025-03-24T11:26:03-05:00, not used).
+    immutable_url: https://github.com/ethereum/EIPs/blob/216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f/EIPS/eip-7892.md
+    source_ids:
+    - commit-216ebd2f32
+    - blob-eip7892-creation
+  following:
+    exists: true
+    revision_event_id: eip7892-e02
+    event_kind: revision
+    commit: 3b6d8bf25e475aa77531328c69f79b72a8cdcc7f
+    committed_at: '2025-04-10T14:39:51Z'
+    offset_from_anchor_seconds: 1378494
+    semantic_effect: substantive
+    summary: >-
+      'Update EIP-7892: use valid yaml for consensus config'. Rewrites the consensus-layer configuration
+      snippet from a repeated-key comment table ('#  epoch  max_blobs' / 'BPO_FORK: 348618  24') into a
+      valid YAML sequence ('BPO_FORK:' with '- epoch: ... / max_blobs: ...' entries); the illustrative
+      epoch and max_blobs values are unchanged. Diff confirmed directly with
+      `git diff 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f 3b6d8bf25e475aa77531328c69f79b72a8cdcc7f -- EIPS/eip-7892.md`
+      (a single hunk, 3 lines removed / 5 added). Committer timestamp re-verified with
+      `git log -1 --format='%H %cI %aI %s' 3b6d8bf25e475aa77531328c69f79b72a8cdcc7f` ->
+      2025-04-10T14:39:51+00:00. This is 1378494 s (15 days 22:54:54) after the anchor, so it is outside
+      the seven-calendar-day post-anchor exception ceiling.
+    immutable_url: https://github.com/ethereum/EIPs/blob/3b6d8bf25e475aa77531328c69f79b72a8cdcc7f/EIPS/eip-7892.md
+    source_ids:
+    - commit-3b6d8bf25e
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7892-e01
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f
+    path: EIPS/eip-7892.md
+    committed_at: '2025-03-24T16:26:03Z'
+    offset_from_anchor_seconds: -83934
+    git_blob_sha: 6076cad2adb6f6d35bcbbaf9d5fc327453f28f06
+    content_sha256: 78546589d5cebf184aa6983758a8f5b2a71884a7e8ef2161f1313f0a80b779fc
+    immutable_url: https://github.com/ethereum/EIPs/blob/216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f/EIPS/eip-7892.md
+    source_ids:
+    - commit-216ebd2f32
+    - blob-eip7892-creation
+  information_cutoff_at: '2025-03-25T15:44:57Z'
+  rationale: >-
+    Default preceding rule applied. Bracketing was derived mechanically from the complete
+    revision_history.events list of the Task 01 global EIP record (12 events, eip7892-e01..e12), with
+    all committer times normalized to UTC and each bracketing candidate re-verified against the
+    read-only ethereum/EIPs clone at the Task 01 pin. The full file history
+    (`git log --follow --format='%H %cI %aI %s' -- EIPS/eip-7892.md`) returns exactly the same 12
+    commits as Task 01, so no revision is missing from the bracket. Only one EIP-file event falls at or
+    before the anchor 2025-03-25T15:44:57Z: the creation commit 216ebd2f32 at 2025-03-24T16:26:03Z
+    (-83934 s). The next event, 3b6d8bf25e at 2025-04-10T14:39:51Z (+1378494 s), is over 15 days after
+    the anchor and therefore fails condition 1 of the post-anchor exception test, so no exception is
+    even eligible; the preceding candidate is selected. The selected content is the EIP exactly as
+    submitted for PFI: the file was created 23 h 18 min 54 s before the Meta EIP entry was merged and
+    was not touched in between. Path existence at the selected commit was confirmed
+    (`git ls-tree 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f -- EIPS/eip-7892.md` -> 100644 blob
+    6076cad2adb6f6d35bcbbaf9d5fc327453f28f06), the blob resolved with `git rev-parse
+    216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f:EIPS/eip-7892.md`, and the SHA-256 computed with
+    `git cat-file blob 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f:EIPS/eip-7892.md | sha256sum`.
+    information_cutoff_at is the verified proposal anchor time because the preceding revision was
+    selected.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: null
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - >-
+    Confirm the anchor kind explicit_pfi: the anchor commit's subject reads 'Add EIP-7892 to the
+    candidate for inclusion in Fusaka', but the added line was verified to sit in the '### Proposed for
+    Inclusion' section of EIPS/eip-7607.md at that commit, not in '### Considered for Inclusion'.
+    Section placement was treated as authoritative over subject wording (matching Task 01's
+    normalization).
+  - >-
+    Confirm that effective_at equals recorded_at is acceptable here: PFI under EIP-7723 is
+    champion-initiated, so no separate AllCoreDevs decision date exists to reconcile, and the merge of
+    ethereum/EIPs#9525 (squash commit 31e9f151073d) is both the decision and its recording.
+  - >-
+    Confirm the choice of the creation commit as the assessment ref. The EIP file existed for less than
+    one day before PFI, so the selected content is the EIP's first and only pre-anchor version (119
+    lines, frontmatter status Draft / type Informational). Everything that later made EIP-7892
+    substantial for execution clients (the `<fork_name>Time` activation mechanism and modified
+    `compute_fork_digest` in f37240a9ae, and the blob-base-fee function changes in c419cacfe6) is
+    deliberately excluded because it post-dates the anchor by months.
+  - >-
+    Confirm treating Task 01's declared frontmatter creation date 2025-02-28 as irrelevant to
+    bracketing: per the task contract, frontmatter `created` is not a valid bracketing basis, so the
+    24-day gap between it and the first repository commit does not change the selection.
+unknowns:
+- >-
+  Task 01 records a 24-day discrepancy between EIP-7892's frontmatter `created: 2025-02-28` and the
+  first repository commit adding EIPS/eip-7892.md (216ebd2f32, 2025-03-24T16:26:03Z). No
+  repository-visible EIP text exists for that earlier period, so the selected ref cannot represent any
+  pre-2025-03-24 draft; whatever existed then lived only in the Ethereum Magicians discussion thread
+  (eip-7892-blob-parameter-only-hardforks/23018), which is out of scope for this task.
+- >-
+  Negative finding: no AllCoreDevs decision underlies the PFI anchor. Task 01 identifies decision
+  bodies for the later CFI (ACDE#209, 2025-04-10) and SFI (ACDC#155, 2025-04-17) events but records the
+  PFI event as champion-initiated per EIP-7723, so no meeting date was available to cross-check
+  effective_at against, and none was researched.
+- >-
+  Negative finding: exactly one proposal-for-inclusion event exists for EIP-7892 in Fusaka
+  (osaka-eip7892-e1). There is no earlier or competing proposal cycle, no removal-and-re-proposal, and
+  no PFI event in any other fork record for this EIP, so alternative_event_ids is legitimately empty
+  rather than unknown.
+- >-
+  eips-pr-9525 is a reference_only mutable source (archived metadata extract, not reproducible from
+  Git). It is cited only as corroboration; the anchor time is taken from the immutable committer
+  timestamp of 31e9f151073d, and the two agree exactly at 2025-03-25T15:44:57Z. The PR opening time was
+  not used and was not retrieved.
+- >-
+  Task 01's global EIP record stores some committed_at values with non-UTC offsets (for example
+  eip7892-e10 as '2025-10-06T21:45:52+08:00', which is that clone's local rendering of the committer
+  timestamp rather than a true +08:00 commit). This does not affect this record: both bracketing
+  candidates carry +00:00 offsets in Task 01 and both were independently re-verified with git. The
+  coordinator may wish to note the offset-rendering inconsistency for a separate Task 01 review; no
+  correction is proposed here.
+- >-
+  Task 01's fork-EIP record contains event osaka-eip7892-e4 (2025-08-26, relocation from 'Core EIPs' to
+  'Other EIPs' within the Scheduled-for-Inclusion section) with normalized_state 'unknown'. It is a
+  post-SFI editorial reclassification, far after the anchor, and is irrelevant to proposal-anchor
+  selection; it is recorded here only so the reviewer knows it was considered and excluded.
+- >-
+  EIP-7892 is cross-layer (execution + consensus) and Informational in type. This record selects a ref
+  only; whether an Informational configuration-mechanism EIP is in scope for an execution-layer
+  complexity assessment, and how its consensus-layer half is handled, is a scoping question for the
+  later task and is not decided here.

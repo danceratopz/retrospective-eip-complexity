@@ -1,0 +1,88 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork:
+  id: shanghai
+  execution_name: Shanghai
+  consensus_name: Capella
+  combined_name: Shapella
+research_run:
+  started_at: "2026-08-20T15:55:00Z"
+  completed_at: "2026-08-20T16:19:00Z"
+  researcher: "claude subagent fork:shanghai (coordinated)"
+resolved_refs:
+  - repository: ethereum/execution-specs
+    requested_ref: 8dbde99b132ff8d8fcc9cfb015a9947ccc8b12d6
+    resolved_commit: 8dbde99b132ff8d8fcc9cfb015a9947ccc8b12d6
+    note: Pinned input commit (already exact); verified present in the read-only local clone /home/dtopz/code/github/execution-specs.
+  - repository: ethereum/EIPs
+    requested_ref: master
+    resolved_commit: a08f51fec5b2b5da457adb05b8cffb487fb4f7de
+    note: Resolved by the coordinator at run start (2026-08-20); verified equal to origin/master in the read-only local clone /home/dtopz/code/github/EIPs.
+  - repository: ethereum/pm
+    requested_ref: master
+    resolved_commit: ecf2eecc74adc479cea38b3d3b9a670c320421b1
+    note: Resolved 2026-08-20T16:05Z via GitHub API by this work unit (no local ethereum/pm clone was available); all AllCoreDevs minutes were read and archived at this commit.
+  - repository: ethereum/consensus-specs
+    requested_ref: 01b53691dcc36d37a5ad8994b3a32d8de69fb1aa
+    resolved_commit: 01b53691dcc36d37a5ad8994b3a32d8de69fb1aa
+    note: Exact commit given by EIP-7568's "Capella [CL]" pointer (v1.3.0); used only as layer-classification evidence for EIP-4895.
+source_registry: outputs/sources/forks/shanghai.yaml
+source_ids:
+  - execspecs-shanghai-doc-8dbde99b
+  - eips-eip7568-blob-a08f51fe
+  - eips-commit-0249f04c-add-eip7568
+  - execspecs-commit-87335430-placeholder
+membership_summary:
+  source_rule: >-
+    Authoritative membership is the "Included EIPs" section (only) of
+    network-upgrades/mainnet-upgrades/shanghai.md in ethereum/execution-specs at
+    commit 8dbde99b132ff8d8fcc9cfb015a9947ccc8b12d6, as configured in
+    inputs/shanghai.yaml. EIP-7568 ("Hardfork Meta Backfill - Berlin to Shapella", at
+    pinned ethereum/EIPs master a08f51fec5b2b5da457adb05b8cffb487fb4f7de) is the
+    authoritative backfill pointer: its "Shanghai [EL]" section does not list EIPs
+    directly but links to exactly that document at exactly that commit (the pointer
+    has been stable since the EIP's creation commit 0249f04c, 2023-12-09). The section
+    yields five EIPs: 3651, 3855, 3860, 4895, 6049. The document distinguishes EIP-6049
+    with an explicit no-behavior-change note, preserved here as membership
+    classification "meta" versus "core" for the other four. EIP-7568's "Capella [CL]"
+    section points to consensus-specs v1.3.0 (commit 01b53691) for the consensus-layer
+    changes, which are not represented as EIP numbers and are therefore not
+    inventoried (per the input's membership notes).
+  total_eips: 5
+  execution_only: 4
+  consensus_only: 0
+  cross_layer: 1
+fork_eip_records:
+  - outputs/fork-eips/shanghai/eip-3651.yaml
+  - outputs/fork-eips/shanghai/eip-3855.yaml
+  - outputs/fork-eips/shanghai/eip-3860.yaml
+  - outputs/fork-eips/shanghai/eip-4895.yaml
+  - outputs/fork-eips/shanghai/eip-6049.yaml
+unresolved_questions:
+  - No local ethereum/pm clone was available (both local pm checkouts are the
+    ethspecs/pm working repo, which does not contain AllCoreDevs archives), so
+    AllCoreDevs minutes were retrieved from ethereum/pm via the GitHub API, pinned to
+    master commit ecf2eecc74adc479cea38b3d3b9a670c320421b1 and archived under
+    raw/forks/shanghai/.
+  - EIP-3855's move to CFI has no explicit call-decision sentence naming it; it was
+    added by a same-day commit in the ACD-131 CFI PR (#447) whose body names only
+    3540/3670/3860. Recorded as considered_for_inclusion on 2022-02-04 with the
+    ambiguity preserved in the record's rationale and unknowns.
+  - The first proposal of the EOF/initcode trio (including inventoried EIP-3860) is
+    recalled on ACD 131 as end-of-call ACD 130 discussion plus Discord consensus;
+    Meeting 130 minutes contain no record (negative search), so no
+    proposed_for_inclusion event predating 2022-02-04 is recorded for EIP-3860.
+  - EIPs mentioned by EIP-7568 for Shapella but outside the "Included EIPs" section
+    are deliberately not inventoried; EIP-6122 and EIP-6953 describe the
+    timestamp-based upgrade-activation mechanism used by Shapella and appear in
+    EIP-7568's Shapella prose and requires list, not in the authoritative Shanghai
+    included list.
+  - EIPs that were "Considered for Inclusion" for Shanghai but not included at the
+    pinned commit (EOF EIPs 3540/3670/4200/4750/5450; EIPs 1153, 2537, 4844) are
+    outside the configured membership rule and have no fork-EIP records; their
+    CFI/removal history in the same document (e.g. commits b11cdefd 2022-12-08 and
+    ad2bd933 2023-01-05 "Remove EOF from Shanghai Spec") was observed but not
+    reconstructed, since the input restricts inventory to the "Included EIPs" section.
+  - Capella consensus-layer changes (e.g. BLSToExecutionChange, historical summaries)
+    have no EIP numbers and no EIP-style inclusion states; per the input's membership
+    notes none were invented.

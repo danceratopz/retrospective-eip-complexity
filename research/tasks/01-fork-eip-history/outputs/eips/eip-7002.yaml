@@ -1,0 +1,596 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7002
+  title: Execution layer triggerable withdrawals
+  source_ids:
+  - eips-blob-eip7002-pin
+research_run:
+  started_at: '2026-08-20T16:38:44Z'
+  completed_at: '2026-08-20T19:47:52Z'
+  researcher: claude subagent eip-batch-06 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2023-05-09'
+  frontmatter_source_ids:
+  - eips-blob-eip7002-creation
+  - eips-blob-eip7002-pin
+  first_repository_commit:
+    authored_at: '2023-06-29T14:13:35Z'
+    committed_at: '2023-06-29T14:13:35Z'
+    commit: 28cbb0162f998530fd423c0062d9954de6d4a5c4
+    path: EIPS/eip-7002.md
+    source_ids:
+    - eips-commit-28cbb0162f99
+  discrepancy_note: 'The frontmatter ''created'' date (2023-05-09) precedes the first repository commit (2023-06-29,
+    PR #7002) by about seven weeks. The frontmatter date is the authors'' declared proposal-creation date; the Git
+    commit is the earliest independently verifiable repository event (the merge of the PR that added the file).
+    The gap is consistent with the normal drafting and PR-review period; the original title at creation was ''Execution
+    layer triggerable exits''.'
+revision_history:
+  summary:
+    file_commit_count: 30
+    post_creation_revision_count: 29
+    substantive_revision_count: 17
+    non_substantive_revision_count: 12
+    uncertain_revision_count: 0
+    first_revision_at: '2024-01-19T19:23:16Z'
+    last_revision_at: '2025-11-12T16:21:04Z'
+    first_substantive_revision_at: '2024-01-19T19:23:16Z'
+    last_substantive_revision_at: '2025-04-01T13:41:09Z'
+    derived_from_event_ids:
+    - eip7002-e00
+    - eip7002-e01
+    - eip7002-e02
+    - eip7002-e03
+    - eip7002-e04
+    - eip7002-e05
+    - eip7002-e06
+    - eip7002-e07
+    - eip7002-e08
+    - eip7002-e09
+    - eip7002-e10
+    - eip7002-e11
+    - eip7002-e12
+    - eip7002-e13
+    - eip7002-e14
+    - eip7002-e15
+    - eip7002-e16
+    - eip7002-e17
+    - eip7002-e18
+    - eip7002-e19
+    - eip7002-e20
+    - eip7002-e21
+    - eip7002-e22
+    - eip7002-e23
+    - eip7002-e24
+    - eip7002-e25
+    - eip7002-e26
+    - eip7002-e27
+    - eip7002-e28
+    - eip7002-e29
+  events:
+  - id: eip7002-e00
+    event_kind: creation
+    authored_at: '2023-06-29T08:13:35-06:00'
+    committed_at: '2023-06-29T08:13:35-06:00'
+    commit: 28cbb0162f998530fd423c0062d9954de6d4a5c4
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7002 ''Execution layer triggerable exits'' (PR #7002): stateful precompile
+      allowing validators to trigger beacon-chain exits from 0x01 withdrawal credentials, with an EIP-1559-style
+      dynamic exit fee and an in-state exit message queue.'
+    rationale: Creation commit adding the complete initial specification (384 lines).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-28cbb0162f99
+  - id: eip7002-e01
+    event_kind: revision
+    authored_at: '2024-01-19T22:23:16+03:00'
+    committed_at: '2024-01-19T19:23:16+00:00'
+    commit: 7eb97f37eb35408e91f2965c0c5292617d60ed4d
+    path: EIPS/eip-7002.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Commit subject says ''Fix typos'' but the change corrects the queue storage-slot arithmetic in normative
+      pseudocode: slot stride changed from 2 to 3 per exit message and the four duplicated ''queue_storage_slot
+      + 1'' sload operands corrected to the intended ''+1[0:32]'' and ''+2[0:16]'' slots.'
+    rationale: Materially corrects the specified storage layout an implementer would follow; the prior pseudocode
+      contradicted the documented 3-slots-per-exit design, so this is a substantive correction despite the 'typos'
+      subject.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-7eb97f37eb35
+  - id: eip7002-e02
+    event_kind: revision
+    authored_at: '2024-03-25T04:48:35-06:00'
+    committed_at: '2024-03-25T18:48:35+08:00'
+    commit: 35589d35c40576d932923542b31a4d8f7812c3e7
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Converts the mechanism from a stateful precompile to a deployed system contract: names VALIDATOR_EXIT_ADDRESS
+      and SYSTEM_ADDRESS, defines three contract code paths (add exit, excess-exits getter, system process), removes
+      the excess-return gas stipend, adds contract bytecode/deployment, and adds lightclient as author.'
+    rationale: Major redesign of the core mechanism (402 insertions / 165 deletions) changing how clients implement
+      and invoke it.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-35589d35c405
+  - id: eip7002-e03
+    event_kind: revision
+    authored_at: '2024-04-05T13:21:24+13:00'
+    committed_at: '2024-04-05T00:21:24+00:00'
+    commit: fd8cb7912c607ef06ca296527c3acdca645ca547
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Removes trailing whitespace and fixes a stray '>' typo in the consensus-specs link.
+    rationale: Formatting and link-typo fixes only; no semantic content changed.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-fd8cb7912c60
+  - id: eip7002-e04
+    event_kind: revision
+    authored_at: '2024-04-19T11:54:24-06:00'
+    committed_at: '2024-04-19T11:54:24-06:00'
+    commit: 967e58e57a901cb4412a56d8e706d61717ffd402
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds support for partial withdrawals (PR #8406): renames the mechanism from ''exits'' to ''withdrawal
+      requests'' throughout (title, constants, contract name), adds the uint64 ''amount'' field to the request operation,
+      and changes the predeploy address.'
+    rationale: Extends normative functionality (partial withdrawals) and changes the operation's data structure
+      and constants.
+    change_group: partial-withdrawals-rename
+    confidence: high
+    source_ids:
+    - eips-commit-967e58e57a90
+  - id: eip7002-e05
+    event_kind: revision
+    authored_at: '2024-04-19T14:53:19-06:00'
+    committed_at: '2024-04-19T14:53:19-06:00'
+    commit: 1536db76e9d76056cd3d8d734cb865c5de9f087c
+    path: EIPS/eip-7002.md
+    change_type: dependency
+    semantic_effect: substantive
+    summary: 'Converts the EIP to use the EIP-7685 general-purpose execution-layer requests framework (PR #8469):
+      adds ''requires: 7685'' to the frontmatter, introduces WITHDRAWAL_REQUEST_TYPE 0x01, replaces the standalone
+      RLP block-body/header extension with EIP-7685 request encoding, and deletes the block-structure section.'
+    rationale: Introduces an explicit cross-EIP dependency and restructures the request encoding and block integration
+      around it.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-1536db76e9d7
+  - id: eip7002-e06
+    event_kind: revision
+    authored_at: '2024-04-21T18:23:54+02:00'
+    committed_at: '2024-04-22T00:23:54+08:00'
+    commit: 08e599b0f4dcf2a5fa90926b99c0612c8997d7f7
+    path: EIPS/eip-7002.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Fixes a leftover variable name in the fee-update pseudocode after the exits->withdrawal-requests rename
+      ('exit' -> 'count').
+    rationale: Repairs an identifier orphaned by the rename in 967e58e5; the intended semantics were unambiguous
+      from context, so treated as a non-substantive consistency fix.
+    change_group: partial-withdrawals-rename
+    confidence: medium
+    source_ids:
+    - eips-commit-08e599b0f4dc
+  - id: eip7002-e07
+    event_kind: revision
+    authored_at: '2024-04-21T20:57:28-06:00'
+    committed_at: '2024-04-21T20:57:28-06:00'
+    commit: 72523ee3f865e09f8a6117c1b5e74cbb2df4f60e
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Inhibits early use of the withdrawal-request queue (PR #8477): the deployed contract state now starts
+      with an excess value that keeps the fee prohibitively high before the fork, with updated bytecode, a new deployment
+      transaction, and a new predeploy address.'
+    rationale: Changes deployed contract behavior and the canonical bytecode/address that implementations must use.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-72523ee3f865
+  - id: eip7002-e08
+    event_kind: revision
+    authored_at: '2024-04-25T15:01:44-06:00'
+    committed_at: '2024-04-25T21:01:44+00:00'
+    commit: fed0965fc8c4a5714e2631d4f76735471af9f684
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds an explicit normative requirement that withdrawal requests appear in the EIP-7685 requests list
+      in the order returned by dequeue_withdrawal_requests().
+    rationale: New MUST-level ordering constraint affecting implementations and testing.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-fed0965fc8c4
+  - id: eip7002-e09
+    event_kind: revision
+    authored_at: '2024-05-28T19:19:55+02:00'
+    committed_at: '2024-05-28T12:19:55-05:00'
+    commit: f20b164b00ae5553f7536a6d7a83a0f254455e09
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Repository-wide typo sweep touching this file: ''speficiation'' -> ''specification'' in the Rationale.'
+    rationale: Spelling fix only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-f20b164b00ae
+  - id: eip7002-e10
+    event_kind: revision
+    authored_at: '2024-06-17T08:33:57-07:00'
+    committed_at: '2024-06-17T09:33:57-06:00'
+    commit: f3620fabfa303fd84ee84522c744ae4a4da65cdf
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review (PR #8654).'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-f3620fabfa30
+  - id: eip7002-e11
+    event_kind: revision
+    authored_at: '2024-09-17T11:52:30-06:00'
+    committed_at: '2024-09-17T17:52:30+00:00'
+    commit: 133576571773222705b93372fc9cad7f2a17f39e
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds logging to the system contract: the add-request path now emits a LOG0 with caller and calldata;
+      contract bytecode updated accordingly.'
+    rationale: Changes the observable behavior and canonical bytecode of the system contract.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-133576571773
+  - id: eip7002-e12
+    event_kind: revision
+    authored_at: '2024-09-26T05:16:36+02:00'
+    committed_at: '2024-09-25T21:16:36-06:00'
+    commit: a23be81719b713f5e59b5e040e03ad88c0fb2e3d
+    path: EIPS/eip-7002.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Changes the request to flat encoding (PR #8855): EIP-7685 encoding becomes type-prefixed concatenation
+      (76-byte request_data) instead of RLP, with explicit little-endian handling of the contract-returned amount
+      and new endianness helper functions; bytecode updated.'
+    rationale: Alters the wire/data-structure encoding that clients must produce and parse.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a23be81719b7
+  - id: eip7002-e13
+    event_kind: revision
+    authored_at: '2024-10-07T06:51:24-06:00'
+    committed_at: '2024-10-07T12:51:24+00:00'
+    commit: 630457dde6f22d7acdc640241f4bc77231acefb7
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds updated excess-inhibitor logic: introduces EXCESS_INHIBITOR = 2**256-1, a fee-computation guard
+      requiring the inhibitor to be cleared, and updated bytecode.'
+    rationale: New constant plus behavior change in the fee path of the system contract.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-630457dde6f2
+  - id: eip7002-e14
+    event_kind: revision
+    authored_at: '2024-10-10T09:26:18-06:00'
+    committed_at: '2024-10-10T09:26:18-06:00'
+    commit: f88a24b00b0ad92d5ba640f8427ab5001fc453ad
+    path: EIPS/eip-7002.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Harmonizes the request EIPs with updated EIP-7685 (PR #8949, multi-file commit titled ''Update EIP-6110''):
+      request_data becomes ssz.serialize(read_withdrawal_requests()) and the fixed 76-byte flat description is removed.'
+    rationale: Changes the specified encoding pipeline for requests handed to the EIP-7685 framework.
+    change_group: 7685-encoding-harmonization
+    confidence: high
+    source_ids:
+    - eips-commit-f88a24b00b0a
+  - id: eip7002-e15
+    event_kind: revision
+    authored_at: '2024-10-14T07:49:50-06:00'
+    committed_at: '2024-10-14T13:49:50+00:00'
+    commit: e0d0c814bb8b240d4dc44fefc48bc7aa00792504
+    path: EIPS/eip-7002.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Moves SSZ serialization into the system-call pseudocode: read_withdrawal_requests() now returns ssz.serialize(reqs)
+      and the outer encoding uses its return value directly.'
+    rationale: Adjusts where serialization happens in the normative pseudocode interface, completing the 7685 harmonization.
+    change_group: 7685-encoding-harmonization
+    confidence: high
+    source_ids:
+    - eips-commit-e0d0c814bb8b
+  - id: eip7002-e16
+    event_kind: revision
+    authored_at: '2024-10-18T19:34:57+02:00'
+    committed_at: '2024-10-18T17:34:57+00:00'
+    commit: 06c79cd3ad1a2b7faab197799e42b03efa4e73ae
+    path: EIPS/eip-7002.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Updates WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS from 0x00A3ca265EBcb825B45F985A16CEFB49958cE017 to 0x09Fc772D0857550724b07B850a4323f39112aAaA.
+    rationale: Changes a normative protocol constant (the predeploy address).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-06c79cd3ad1a
+  - id: eip7002-e17
+    event_kind: revision
+    authored_at: '2024-11-18T17:33:12+08:00'
+    committed_at: '2024-11-18T09:33:12+00:00'
+    commit: 16a12dcf41251c592f74042b6aa5727097f60167
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds excess-inhibitor reset logic to the fee pseudocode (previous_excess treated as 0 while the inhibitor
+      is set), reworks the contract control flow, and redeploys: new bytecode, new deployment transaction, and new
+      address 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA in the deployment section (constants table left stale,
+      fixed in 7fbdc5d7).'
+    rationale: Behavioral change to fee computation plus a canonical redeployment of the system contract.
+    change_group: excess-inhibitor-redeploy
+    confidence: high
+    source_ids:
+    - eips-commit-16a12dcf4125
+  - id: eip7002-e18
+    event_kind: revision
+    authored_at: '2024-11-27T08:12:05+01:00'
+    committed_at: '2024-11-27T15:12:05+08:00'
+    commit: a00464b9a262219f7b1dc024bee1ad9b3e1ca802
+    path: EIPS/eip-7002.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Changes the zero-length-input code path from an excess-withdrawal-requests getter to a fee getter,
+      and replaces the excess-payment-return rationale with a 'Fee Overpayment' section (overpaid fees are not returned)
+      including a Solidity usage example.
+    rationale: Changes the contract's external read interface and documents fee-overpayment behavior.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a00464b9a262
+  - id: eip7002-e19
+    event_kind: revision
+    authored_at: '2024-12-09T15:33:57+01:00'
+    committed_at: '2024-12-09T14:33:57+00:00'
+    commit: 7fbdc5d77b40b6d6d2e0214e202d2917c9a429ea
+    path: EIPS/eip-7002.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Fixes WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS in the constants table to 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA,
+      aligning it with the redeployment made in 16a12dcf.
+    rationale: Corrects the authoritative constants-table value; an implementer reading the table would otherwise
+      use the superseded address, so treated as substantive.
+    change_group: excess-inhibitor-redeploy
+    confidence: medium
+    source_ids:
+    - eips-commit-7fbdc5d77b40
+  - id: eip7002-e20
+    event_kind: revision
+    authored_at: '2024-12-19T05:38:35-08:00'
+    committed_at: '2024-12-19T13:38:35+00:00'
+    commit: 4fe3910b824dfd27f0b896fd32d56420a2cd8ef8
+    path: EIPS/eip-7002.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Removes the placeholder FORK_TIMESTAMP constants table and rewords FORK_BLOCK as 'the first block after
+      this EIP has been activated'.
+    rationale: Activation is scheduled by the hard-fork meta process; removing the TBD constant and generalizing
+      the wording does not change the specified behavior.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-4fe3910b824d
+  - id: eip7002-e21
+    event_kind: revision
+    authored_at: '2025-01-30T15:12:11+01:00'
+    committed_at: '2025-01-30T22:12:11+08:00'
+    commit: 95ae9d5a6def960898b3f8b118c2200f4d89ff5e
+    path: EIPS/eip-7002.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Sets the final system contract address 0x00000961Ef480Eb55e80D19ad83579A64c007002 with a new deployment
+      transaction and sender.
+    rationale: Changes the normative predeploy address and canonical deployment data.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-95ae9d5a6def
+  - id: eip7002-e22
+    event_kind: revision
+    authored_at: '2025-02-13T21:50:27+05:00'
+    committed_at: '2025-02-13T09:50:27-07:00'
+    commit: 974da538ed952bb63ebe86ff6ef61876e74eb20a
+    path: EIPS/eip-7002.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Last Call with last-call-deadline 2025-02-21 (PR #9328), plus Rationale rewrites:
+      new justification for TARGET_WITHDRAWAL_REQUESTS_PER_BLOCK, link to a fee-analysis asset, wording fixes, and
+      an added discussion of the rejected Engine-API signature-verification alternative.'
+    rationale: All content changes are in non-normative Rationale sections; parameters and specified behavior are
+      unchanged.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-974da538ed95
+  - id: eip7002-e23
+    event_kind: revision
+    authored_at: '2025-03-04T11:17:29+06:00'
+    committed_at: '2025-03-04T05:17:29+00:00'
+    commit: f73240f3df187bc214fe7682ea723f44dc723f1b
+    path: EIPS/eip-7002.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Adds a requestFeeLimit parameter and a high-fee revert check to the Solidity fee-overpayment usage
+      example, with a note explaining why the check matters.
+    rationale: Changes only the non-normative usage example / integrator guidance; protocol behavior is unchanged.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-f73240f3df18
+  - id: eip7002-e24
+    event_kind: revision
+    authored_at: '2025-03-08T22:42:59+01:00'
+    committed_at: '2025-03-08T21:42:59+00:00'
+    commit: 6097373070b12f44d10d11d5908c42557ee618eb
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds Felix Lange (@fjl) to the author list.
+    rationale: Author-metadata change only (multi-file commit across the request EIPs).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-6097373070b1
+  - id: eip7002-e25
+    event_kind: revision
+    authored_at: '2025-03-26T17:40:21+08:00'
+    committed_at: '2025-03-26T17:40:21+08:00'
+    commit: c6bc36304bdef3ddce9ede45f0c7cb5901bb7e07
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Multi-file typo commit (subject ''Update EIP-6110: fix typos'') fixing ''transation'' -> ''transaction''
+      in this file.'
+    rationale: Spelling fix only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c6bc36304bde
+  - id: eip7002-e26
+    event_kind: revision
+    authored_at: '2025-04-01T17:41:09+04:00'
+    committed_at: '2025-04-01T13:41:09+00:00'
+    commit: 1117931951800f2f7cd262cabcc7f84c404a0fd5
+    path: EIPS/eip-7002.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds system-call gas semantics and failure directives: dedicated 30,000,000 gas limit excluded from
+      block gas accounting, no EIP-1559 fee burn for the call, block MUST be invalidated if the predeploy has no
+      code or the call fails, plus new ''System Call failure'' and ''Empty Code failure'' sections with recovery
+      guidance.'
+    rationale: New MUST-level validity rules and gas semantics directly affecting client implementation and testing.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-111793195180
+  - id: eip7002-e27
+    event_kind: revision
+    authored_at: '2025-05-14T02:03:57+05:30'
+    committed_at: '2025-05-14T04:33:57+08:00'
+    commit: 2f7d1a9085f8c5dc85f1cc03f62c1bac8037cbd1
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Fixes a variable-name typo in the dequeue function pseudocode: num_dequeue -> num_dequeued.'
+    rationale: The loop bound referenced an undefined identifier whose intent was unambiguous; naming fix only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-2f7d1a9085f8
+  - id: eip7002-e28
+    event_kind: revision
+    authored_at: '2025-05-15T10:45:43-06:00'
+    committed_at: '2025-05-15T16:45:43+00:00'
+    commit: c45ae256ef1355ae6dd0e2beb551083b56ea4460
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final; removes last-call-deadline.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c45ae256ef13
+  - id: eip7002-e29
+    event_kind: revision
+    authored_at: '2025-11-13T04:21:04+12:00'
+    committed_at: '2025-11-12T11:21:04-05:00'
+    commit: d8bf2fad25d41d7054651de856a3c0f8885ee0fd
+    path: EIPS/eip-7002.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Grammar and punctuation fixes in six places (PR #10387), e.g. ''custody relationships'' -> ''custody
+      relationship'', ''is excluded'' -> ''are excluded''.'
+    rationale: Language-only fixes; no semantic change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-d8bf2fad25d4
+dependency_history:
+  events:
+  - id: eip7002-d01
+    target_eip: 1559
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2023-06-29T14:13:35Z'
+    commit: 28cbb0162f998530fd423c0062d9954de6d4a5c4
+    rationale: 'Explicit reference at creation, in the Rationale only: the exit-fee mechanism is described as an
+      ''EIP-1559-style mechanism'' and compared to EIP-1559 base-fee behavior. A design analogy, not a requires/extends
+      relationship, hence ''other''.'
+    confidence: high
+    source_ids:
+    - eips-commit-28cbb0162f99
+    - eips-blob-eip7002-creation
+  - id: eip7002-d02
+    target_eip: 4788
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2023-06-29T14:13:35Z'
+    commit: 28cbb0162f998530fd423c0062d9954de6d4a5c4
+    rationale: 'Explicit reference at creation, in the Rationale: EIP-4788 is identified only as what a rejected
+      alternative design (''method (a) (not used in this EIP)'') would require. The text explicitly disclaims reliance,
+      hence ''other''.'
+    confidence: high
+    source_ids:
+    - eips-commit-28cbb0162f99
+    - eips-blob-eip7002-creation
+  - id: eip7002-d03
+    target_eip: 7685
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2024-04-19T20:53:19Z'
+    commit: 1536db76e9d76056cd3d8d734cb865c5de9f087c
+    rationale: 'Commit 1536db76 (PR #8469) adds ''requires: 7685'' to the frontmatter and converts the withdrawal-request
+      operation to an EIP-7685 request with type 0x01.'
+    confidence: high
+    source_ids:
+    - eips-commit-1536db76e9d7
+  - id: eip7002-d04
+    target_eip: 1559
+    event_type: changed
+    relationship: interacts_with
+    occurred_at: '2025-04-01T13:41:09Z'
+    commit: 1117931951800f2f7cd262cabcc7f84c404a0fd5
+    rationale: 'Commit 11179319 adds a normative statement to the Specification: the system call ''does not follow
+      EIP-1559 fee burn semantics''. The reference moves from a rationale analogy to an explicit normative interaction.'
+    confidence: medium
+    source_ids:
+    - eips-commit-111793195180
+source_registry: outputs/sources/eips/eip-7002.yaml
+unknowns:
+- 'GitHub pull-request pages referenced by commit subjects (#7002, #8406, #8469, #8477, #8654, #8855, #8949, #9328,
+  #10387) were not fetched or archived; the PR numbers recorded here come from the immutable commit messages themselves.
+  All classifications rest on the commit diffs.'
+- Two commits in the file's history carry 'Update EIP-6110' subjects (c6bc36304bde, f88a24b00b0a); they are multi-file
+  commits that also modified EIPS/eip-7002.md and were reviewed and classified from this file's diff hunks.

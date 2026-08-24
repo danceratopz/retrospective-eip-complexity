@@ -1,0 +1,972 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 8037
+  title: State Creation Gas Cost Increase
+  source_ids:
+  - eips-blob-eip8037-pin
+research_run:
+  started_at: '2026-08-20T16:38:44Z'
+  completed_at: '2026-08-20T19:47:52Z'
+  researcher: claude subagent eip-batch-06 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-10-01'
+  frontmatter_source_ids:
+  - eips-blob-eip8037-creation
+  - eips-blob-eip8037-pin
+  first_repository_commit:
+    authored_at: '2025-10-07T21:20:16Z'
+    committed_at: '2025-10-07T21:20:16Z'
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    path: EIPS/eip-8037.md
+    source_ids:
+    - eips-commit-c47ae3be2144
+  discrepancy_note: 'The frontmatter ''created'' date (2025-10-01) precedes the first repository commit (authored
+    2025-10-07T21:20:16Z UTC, committed 2025-10-07T21:20:16Z UTC) by six days: the declared drafting date versus
+    the merge of the adding PR. No conflict.'
+revision_history:
+  summary:
+    file_commit_count: 32
+    post_creation_revision_count: 31
+    substantive_revision_count: 27
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2025-10-22T14:28:38Z'
+    last_revision_at: '2026-07-31T15:51:07Z'
+    first_substantive_revision_at: '2025-10-22T14:28:38Z'
+    last_substantive_revision_at: '2026-07-22T16:04:52Z'
+    derived_from_event_ids:
+    - eip8037-e00
+    - eip8037-e01
+    - eip8037-e02
+    - eip8037-e03
+    - eip8037-e04
+    - eip8037-e05
+    - eip8037-e06
+    - eip8037-e07
+    - eip8037-e08
+    - eip8037-e09
+    - eip8037-e10
+    - eip8037-e11
+    - eip8037-e12
+    - eip8037-e13
+    - eip8037-e14
+    - eip8037-e15
+    - eip8037-e16
+    - eip8037-e17
+    - eip8037-e18
+    - eip8037-e19
+    - eip8037-e20
+    - eip8037-e21
+    - eip8037-e22
+    - eip8037-e23
+    - eip8037-e24
+    - eip8037-e25
+    - eip8037-e26
+    - eip8037-e27
+    - eip8037-e28
+    - eip8037-e29
+    - eip8037-e30
+    - eip8037-e31
+  events:
+  - id: eip8037-e00
+    event_kind: creation
+    authored_at: '2025-10-07T23:20:16+02:00'
+    committed_at: '2025-10-08T05:20:16+08:00'
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-8037 ''State Creation Gas Cost Increase'': raises state-creation gas parameters
+      (GAS_CREATE 212,800 etc.), targets 60 GiB/year state growth at a 300M gas limit, and introduces separate metering
+      for code deposit costs derived from EIP-8011 (159 lines; requires: 2780).'
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c47ae3be2144
+  - id: eip8037-e01
+    event_kind: revision
+    authored_at: '2025-10-22T16:28:38+02:00'
+    committed_at: '2025-10-22T14:28:38+00:00'
+    commit: 4e9dba1082fbd729d3d8f66d8538f14f7e3a363a
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Defines success-vs-failure gas accounting for contract deployment: GAS_NEW_ACCOUNT, GAS_CODE_DEPOSIT*L
+      and HASH_COST(L) are charged only on the success path, with explicit total-gas formulas and check ordering;
+      removes the duplicated-code deposit-exemption sentence from the abstract; reformats the parameter table.'
+    rationale: Materially specifies when deployment charges apply, replacing the previous duplication-check design.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-4e9dba1082fb
+  - id: eip8037-e02
+    event_kind: revision
+    authored_at: '2025-10-28T11:20:33+01:00'
+    committed_at: '2025-10-28T10:20:33+00:00'
+    commit: dee539a58f206ce2a3bf08130605adf50938c40f
+    path: EIPS/eip-8037.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Changes GAS_NEW_ACCOUNT's affected operations to CALL*, removes GAS_SELF_DESTRUCT_NEW_ACCOUNT (replaced
+      by GAS_NEW_ACCOUNT), and corrects the deployment cost example accordingly.
+    rationale: Changes the parameter schedule's scope and removes a distinct constant.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-dee539a58f20
+  - id: eip8037-e03
+    event_kind: revision
+    authored_at: '2026-01-06T15:43:38+00:00'
+    committed_at: '2026-01-06T15:43:38+00:00'
+    commit: e733f8fc7b319ec7c777785431b28127699db236
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Major rework (empty commit subject): cost-per-state-byte becomes a dynamic variable derived from TARGET_STATE_GROWTH_PER_YEAR
+      = 100 GiB, all state-creation parameters are re-expressed as multiples of cost_per_state_byte, and two-dimensional
+      metering (regular_gas / state_gas) is introduced with the EIP-7825 transaction cap applying only to the gas
+      dimension; description updated and three authors added.'
+    rationale: Fundamental redesign of the pricing model and introduction of multidimensional metering.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-e733f8fc7b31
+  - id: eip8037-e04
+    event_kind: revision
+    authored_at: '2026-01-19T15:34:53+01:00'
+    committed_at: '2026-01-19T14:34:53+00:00'
+    commit: b0adb33638b54b00a3e69ac983c89f1ce9b19f22
+    path: EIPS/eip-8037.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Splits the parameter table into 'New State Gas' and 'New Regular Gas' columns, assigning explicit accompanying
+      regular-gas charges (e.g. 2,900 for SSTORE; 7,500 for PER_AUTH_BASE_COST derived from EIP-7702's cost analysis).
+    rationale: Defines new regular-gas cost components alongside the state-gas charges; changes what implementations
+      charge.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b0adb33638b5
+  - id: eip8037-e05
+    event_kind: revision
+    authored_at: '2026-01-29T11:19:37+01:00'
+    committed_at: '2026-01-29T18:19:37+08:00'
+    commit: ed46fdbb28081b05f0f8535bf5891051999533d5
+    path: EIPS/eip-8037.md
+    change_type: dependency
+    semantic_effect: substantive
+    summary: Updates the frontmatter requires header from '2780' to '2780, 7702, 7825, 8011', formalizing dependencies
+      already referenced in the text.
+    rationale: Changes the declared dependency set, which affects specification interpretation and implementation
+      ordering.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-ed46fdbb2808
+  - id: eip8037-e06
+    event_kind: revision
+    authored_at: '2026-02-06T09:54:52+01:00'
+    committed_at: '2026-02-06T08:54:52+00:00'
+    commit: 70328117d9a9e8a8fc958270792fac40c435ea1e
+    path: EIPS/eip-8037.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Fixes a leftover prose value: the stated state-growth target is corrected from 75 GiB to 100 GiB to
+      match the TARGET_STATE_GROWTH_PER_YEAR parameter introduced in e733f8fc.'
+    rationale: Aligns stale prose with the already-normative parameter; no behavior change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-70328117d9a9
+  - id: eip8037-e07
+    event_kind: revision
+    authored_at: '2026-02-10T15:46:12+01:00'
+    committed_at: '2026-02-10T14:46:12+00:00'
+    commit: 2e6dc063300f1c7e893cd0d435168b05c9db8e0b
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds CPSB quantization (CPSB_SIGNIFICANT_BITS = 5, CPSB_OFFSET = 9578, stepped bit-truncation formula),
+      the reservoir model for transaction-level gas accounting, bottleneck-resource block accounting, fixed regular-gas
+      values in the table, and a note that regular-gas values will be updated based on EIP-8038.
+    rationale: Introduces new normative parameters, a new cost formula, and the reservoir accounting model.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-2e6dc063300f
+  - id: eip8037-e08
+    event_kind: revision
+    authored_at: '2026-03-06T15:59:36+00:00'
+    committed_at: '2026-03-06T23:59:36+08:00'
+    commit: de0ad9db93813d9883302ec1517be668ed195cf3
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Clarifies reservoir mechanics: renames refund inputs to tx_gas_used_before_refund, applies the EIP-7623
+      calldata floor after refunds in tx_gas_used (with receipt semantics), states refund_counter is single and
+      un-dimensioned, and adds the EIP-7702 intrinsic_state_gas adjustment to avoid double counting; removes a leftover
+      TODO marker.'
+    rationale: Materially pins down refund and calldata-floor accounting that implementations must follow.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-de0ad9db9381
+  - id: eip8037-e09
+    event_kind: revision
+    authored_at: '2026-03-18T21:51:09+00:00'
+    committed_at: '2026-03-19T05:51:09+08:00'
+    commit: 48566ad265a5c2bb981e520a9b8e17ed9921b8a8
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds a single normative rule: when an opcode requires both regular and state gas, the regular gas
+      charge MUST be applied first; an out-of-gas on the regular charge prevents the state gas charge.'
+    rationale: New MUST-level ordering rule affecting gas-accounting implementations.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-48566ad265a5
+  - id: eip8037-e10
+    event_kind: revision
+    authored_at: '2026-03-20T09:29:54+01:00'
+    committed_at: '2026-03-20T16:29:54+08:00'
+    commit: 7df0a62ca4255f22a72603595c7a5312649f6e47
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Aligns with EIP-7928 gas-validation phases: adds a pre-state/post-state validation section mapping
+      each cost parameter to a validation phase, reservoir-aware pre-state checks, and the SSTORE GAS_CALL_STIPEND
+      rule.'
+    rationale: Specifies how the two-dimensional charges interact with EIP-7928's validation phases; normative for
+      BAL-compatible implementations.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-7df0a62ca425
+  - id: eip8037-e11
+    event_kind: revision
+    authored_at: '2026-04-14T15:07:21+02:00'
+    committed_at: '2026-04-14T21:07:21+08:00'
+    commit: 2d317791dfadd9f701423fd6c2af60e12a308065
+    path: EIPS/eip-8037.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Clarifies that a state-gas charge increments execution_state_gas_used by its full amount regardless
+      of whether it was satisfied from the reservoir, gas_left, or both, and never increments execution_regular_gas_used.
+    rationale: Resolves a counting ambiguity that directly affects block-level accounting; materially clarifies
+      normative behavior.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-2d317791dfad
+  - id: eip8037-e12
+    event_kind: revision
+    authored_at: '2026-04-17T09:23:07+02:00'
+    committed_at: '2026-04-17T15:23:07+08:00'
+    commit: 26d056fe537a6b1393bb6936210384045177fbd6
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Changes frame-failure semantics: state gas is now refunded on all frame failures including the top
+      level (restoration via the reservoir), explicitly departing from the earlier rule that account-creation state
+      gas was consumed on revert.'
+    rationale: Reverses previously specified behavior; the diff itself notes the departure from the prior rule.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-26d056fe537a
+  - id: eip8037-e13
+    event_kind: revision
+    authored_at: '2026-04-17T16:07:26+01:00'
+    committed_at: '2026-04-17T15:07:26+00:00'
+    commit: 4f0332706351a67eae4adf1bfac880dfb412d237
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'More state-gas accounting changes: separates state-gas and regular-gas refund handling for SSTORE
+      restoration, adds a CREATE-failure state-gas refund for silent failures (balance, nonce, depth, collision),
+      and adds same-transaction SELFDESTRUCT refund rules referencing EIP-6780, including the CALL-with-value-to-selfdestructed-account
+      case.'
+    rationale: Multiple new normative refund rules.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-4f0332706351
+  - id: eip8037-e14
+    event_kind: revision
+    authored_at: '2026-04-20T05:21:21+02:00'
+    committed_at: '2026-04-20T11:21:21+08:00'
+    commit: fabf144654d9ab2374aeb1bbf4ffde1aebb99935
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds a per-dimension block gas limit check to check_transaction: cumulative regular-gas and state-gas
+      usage plus the transaction''s worst-case contribution must not exceed the block gas limit in each dimension.'
+    rationale: New transaction-inclusion validity rule.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-fabf144654d9
+  - id: eip8037-e15
+    event_kind: revision
+    authored_at: '2026-04-20T09:33:54+02:00'
+    committed_at: '2026-04-20T15:33:54+08:00'
+    commit: 9493cd502540bb5b50e01aa3708835fb87fce0bc
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Specifies SSTORE restoration refund rollback semantics: the state-gas refund is scoped to the frame
+      executing the X->0 SSTORE and propagates only through successfully returning frames; revert or exceptional
+      halt undoes the refund''s reservoir credit.'
+    rationale: New normative rollback rule for refund propagation.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-9493cd502540
+  - id: eip8037-e16
+    event_kind: revision
+    authored_at: '2026-05-04T10:21:48+02:00'
+    committed_at: '2026-05-04T16:21:48+08:00'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Replaces the dynamic quantized cost_per_state_byte with a fixed CPSB (1174) plus STATE_BYTES_* constants,
+      reworks frame-level accounting, updates the requires header (removes 8011; adds 6780, 7976, 7981, 8038), and
+      adds the system-contract gas-limit update referencing EIP-2935/4788/7002/7251; rationale re-derived for a
+      96M reference gas limit.
+    rationale: Wholesale change of the pricing formula, dependency set, and frame accounting (124 insertions / 182
+      deletions).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-e17
+    event_kind: revision
+    authored_at: '2026-05-06T10:16:00+02:00'
+    committed_at: '2026-05-06T08:16:00+00:00'
+    commit: 1d1e455c9e43b1e400b58b5475eac8a636f83555
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Clarifies SELFDESTRUCT charges: SELFDESTRUCT added to GAS_NEW_ACCOUNT''s affected operations, SELFDESTRUCT_NEW_ACCOUNT
+      formally removed, account-creation charges applied at execution point, and the end-of-transaction section
+      retitled to state-gas refills.'
+    rationale: Changes when and under which constant SELFDESTRUCT-created accounts are charged.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-1d1e455c9e43
+  - id: eip8037-e18
+    event_kind: revision
+    authored_at: '2026-05-13T17:02:09+02:00'
+    committed_at: '2026-05-13T23:02:09+08:00'
+    commit: 34258fc205d83fe2d560b91814057041dfbbb5f9
+    path: EIPS/eip-8037.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Updates parameters and rationale: CPSB 1174 -> 1530, STATE_BYTES_PER_STORAGE_SET 32 -> 64, STATE_BYTES_PER_NEW_ACCOUNT
+      112 -> 120, target restated as 120 GiB/year at a 150M reference gas limit; motivation data refreshed to January
+      2026; adds 7904 to requires.'
+    rationale: Changes the normative parameter values and the declared dependency set.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-34258fc205d8
+  - id: eip8037-e19
+    event_kind: revision
+    authored_at: '2026-05-13T18:26:19+02:00'
+    committed_at: '2026-05-13T16:26:19+00:00'
+    commit: b549622cc0e9f1f4db83848c5daa6f91e9f650a1
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Fixes bugs found on bal-devnet-6: state-gas accounting for CALL*/CREATE moves to right before the
+      call frame with refill-on-failure semantics, top-level contract-creation refill added, regular-gas columns
+      for GAS_NEW_ACCOUNT/GAS_STORAGE_SET set to 0 (STORAGE_WRITE reference dropped), and requires gains 7623 and
+      7928.'
+    rationale: Devnet-driven normative fixes to charge timing and refill behavior, plus dependency changes.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b549622cc0e9
+  - id: eip8037-e20
+    event_kind: revision
+    authored_at: '2026-06-01T11:09:46+02:00'
+    committed_at: '2026-06-01T09:09:46+00:00'
+    commit: 1d65cedf6fc2ec68a4f08f72577a9d7e55ca3f51
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Calldata-floor accounting alignment and call-frame refill clarification: CREATE to an existent account
+      charges only L x CPSB (existence defined per EIP-161 with EIP-684 collision-target note), pre-frame silent
+      failures refill state gas, tx_regular_gas redefined as tx_gas_used_after_refund - tx_state_gas, EIP-7778 integration
+      section added, and Dragan Rakita added as author.'
+    rationale: Multiple normative accounting changes and new cross-EIP integration semantics.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-1d65cedf6fc2
+  - id: eip8037-e21
+    event_kind: revision
+    authored_at: '2026-06-02T21:34:46+08:00'
+    committed_at: '2026-06-02T21:34:46+08:00'
+    commit: 546b61a9f75c6ec508de408b4fdd6ee6f29731f3
+    path: EIPS/eip-8037.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Fixes an erroneous variable in the block-accounting formula: block_regular_gas_used += tx_state_gas
+      corrected to += tx_regular_gas.'
+    rationale: Subject says 'fix typo' but the formula previously accumulated the wrong dimension; the correction
+      is material to block-level accounting.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-546b61a9f75c
+  - id: eip8037-e22
+    event_kind: revision
+    authored_at: '2026-06-08T17:05:49+08:00'
+    committed_at: '2026-06-08T17:05:49+08:00'
+    commit: dfb77c2aa4a3d863e07c5f08f086a855e49345e9
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Removes CALLCODE from the operations charging GAS_NEW_ACCOUNT for account creation.
+    rationale: Changes which opcodes incur the account-creation charge.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-dfb77c2aa4a3
+  - id: eip8037-e23
+    event_kind: revision
+    authored_at: '2026-06-10T15:04:55+08:00'
+    committed_at: '2026-06-10T07:04:55+00:00'
+    commit: a3749180f2995892b8b48406cab7d863076c16d0
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Improves EIP-7702 authorization gas accounting: states the at-most-once-per-authority charging invariant
+      and defines three per-authorization rules (invalid-authorization refill, account-leaf refill, delegation-indicator
+      refill) driven by pre- and current-state delegation status.'
+    rationale: Restructured, materially different authorization charging rules.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a3749180f299
+  - id: eip8037-e24
+    event_kind: revision
+    authored_at: '2026-06-18T16:52:07+02:00'
+    committed_at: '2026-06-18T14:52:07+00:00'
+    commit: bee14641d13e369e1c0418757eedf2eb0f04e0ac
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Resolves the EIP-7928 conflict and routes state-gas refills to the origin frame: CALL* charges account
+      creation conditionally pre-frame, CREATE/CREATE2 charges unconditionally with LIFO refill (avoiding the deferred
+      address read EIP-7928 constrains), adds a third counter, and applies the model to top-level creation transactions.'
+    rationale: Substantial redesign of charge/refill flow for EIP-7928 compatibility.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-bee14641d13e
+  - id: eip8037-e25
+    event_kind: revision
+    authored_at: '2026-06-25T14:13:17+02:00'
+    committed_at: '2026-06-25T20:13:17+08:00'
+    commit: 9b0028c57465cb0451f041b46a84ab4cb3eab2e7
+    path: EIPS/eip-8037.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Adds an explanation that 101 bytes is the size of an EIP-7702 authorization tuple (with field breakdown)
+      in the REGULAR_PER_AUTH_BASE_COST derivation, noting it is representative rather than worst-case.
+    rationale: Explanatory annotation of an existing value; no charged value changes.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-9b0028c57465
+  - id: eip8037-e26
+    event_kind: revision
+    authored_at: '2026-07-07T14:05:49+02:00'
+    committed_at: '2026-07-07T20:05:49+08:00'
+    commit: a4801f3bb1d1380ecc7db5f988b222684ae098eb
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Charges account creation conditionally at access for the CREATE family too: the create component of
+      intrinsic_state_gas is seeded into the reservoir rather than pre-consumed, the charge applies at the single
+      EIP-7928-sanctioned destination access (which also performs the EIP-7610 collision check), and collision handling
+      is restated.'
+    rationale: Replaces the unconditional-charge-with-refill model with conditional charging; changes charge timing
+      and reservoir initialization.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a4801f3bb1d1
+  - id: eip8037-e27
+    event_kind: revision
+    authored_at: '2026-07-09T18:33:20+02:00'
+    committed_at: '2026-07-09T16:33:20+00:00'
+    commit: 2e7e88bb8dc0ead4db7726ac6af89f576c221d93
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Aligns with recent EIP-2780 changes (multi-file commit): intrinsic gas becomes state-independent and
+      entirely regular-gas per EIP-2780, state-dependent charges (account creation, EIP-7702 delegation) become
+      runtime charges in EIP-2780''s pre-execution phase, and the reservoir initialization is re-anchored to that
+      phase.'
+    rationale: Re-partitions intrinsic vs runtime charging between this EIP and EIP-2780.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-2e7e88bb8dc0
+  - id: eip8037-e28
+    event_kind: revision
+    authored_at: '2026-07-10T23:56:35+02:00'
+    committed_at: '2026-07-11T05:56:35+08:00'
+    commit: 190d539c9c49d91438a4d9977235c001a43b4df1
+    path: EIPS/eip-8037.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Applies the EIP-7976/EIP-7623 calldata floor to block-level gas accounting: tx_regular_gas gains a
+      max(..., calldata_floor_gas_cost) term (also in the EIP-7778 variant) and a new ''Calldata floor in block
+      accounting'' rationale section explains the per-dimension comparison.'
+    rationale: Changes the block-accounting formula; closes a bytes-per-block bound gap.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-190d539c9c49
+  - id: eip8037-e29
+    event_kind: revision
+    authored_at: '2026-07-22T18:04:52+02:00'
+    committed_at: '2026-07-22T16:04:52+00:00'
+    commit: 4ef37e3dde616e9660e42527c73a8bf9303ea8ed
+    path: EIPS/eip-8037.md
+    change_type: dependency
+    semantic_effect: substantive
+    summary: 'Renames ''regular gas'' to ''execution gas'' throughout and updates the requires header: adds 161,
+      684, 7610; removes 7904 and 7981.'
+    rationale: The rename is terminological, but the declared dependency set changes materially; classified by its
+      dependency effect.
+    change_group: execution-gas-rename
+    confidence: high
+    source_ids:
+    - eips-commit-4ef37e3dde61
+  - id: eip8037-e30
+    event_kind: revision
+    authored_at: '2026-07-30T14:54:28+02:00'
+    committed_at: '2026-07-30T12:54:28+00:00'
+    commit: 0a1d42b3c7a455cd812ce73b4b937c16d6f20bd6
+    path: EIPS/eip-8037.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review (multi-file ''Update EIP-2780'' commit); also removes the last remaining
+      EIP-8011 reference from the higher-throughput rationale sentence.'
+    rationale: Process metadata plus removal of an informative rationale cross-reference; no behavior change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-0a1d42b3c7a4
+  - id: eip8037-e31
+    event_kind: revision
+    authored_at: '2026-07-31T17:51:07+02:00'
+    committed_at: '2026-07-31T15:51:07+00:00'
+    commit: 5a8c80897aeb0952322cd0dfff767c541002b8c3
+    path: EIPS/eip-8037.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Variable rename and cleanups (multi-file commit): REGULAR_PER_AUTH_BASE_COST -> EXECUTION_PER_AUTH_BASE_COST
+      completing the execution-gas rename, code-formatting of numeric literals, and wording polish.'
+    rationale: Purely terminological/formatting alignment with the rename in 4ef37e3d.
+    change_group: execution-gas-rename
+    confidence: high
+    source_ids:
+    - eips-commit-5a8c80897aeb
+dependency_history:
+  events:
+  - id: eip8037-d01
+    target_eip: 2780
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-10-07T21:20:16Z'
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    rationale: 'Frontmatter ''requires: 2780'' present in the creation commit and in every subsequent revision through
+      the pin.'
+    confidence: high
+    source_ids:
+    - eips-commit-c47ae3be2144
+    - eips-blob-eip8037-creation
+  - id: eip8037-d02
+    target_eip: 8011
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2025-10-07T21:20:16Z'
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    rationale: 'Explicit textual statement at creation: the multidimensional metering ''specification is derived
+      from [EIP-8011]''. A derivation/compatibility relationship, recorded as ''other'' (not in the requires header
+      at creation).'
+    confidence: high
+    source_ids:
+    - eips-commit-c47ae3be2144
+    - eips-blob-eip8037-creation
+  - id: eip8037-d03
+    target_eip: 7825
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2025-10-07T21:20:16Z'
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    rationale: 'Explicit textual statement at creation: the transaction gas limit set in EIP-7825 applies only to
+      the regular gas dimension.'
+    confidence: high
+    source_ids:
+    - eips-commit-c47ae3be2144
+    - eips-blob-eip8037-creation
+  - id: eip8037-d04
+    target_eip: 7702
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2025-10-07T21:20:16Z'
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    rationale: 'Explicit references at creation: PER_EMPTY_ACCOUNT_COST / PER_AUTH_BASE_COST changes apply to EIP-7702
+      EOA delegation.'
+    confidence: high
+    source_ids:
+    - eips-commit-c47ae3be2144
+    - eips-blob-eip8037-creation
+  - id: eip8037-d05
+    target_eip: 170
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2025-10-07T21:20:16Z'
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    rationale: 'Explicit but purely illustrative reference at creation: the cost-comparison table cites the EIP-170
+      code-size limit (''Deploy 24kB contract (EIP-170 limit)''). Contextual, hence ''other''.'
+    confidence: medium
+    source_ids:
+    - eips-commit-c47ae3be2144
+    - eips-blob-eip8037-creation
+  - id: eip8037-d06
+    target_eip: 7702
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-01-29T10:19:37Z'
+    commit: ed46fdbb28081b05f0f8535bf5891051999533d5
+    rationale: Commit ed46fdbb adds 7702 to the frontmatter requires header, elevating the existing textual interaction
+      to a declared dependency.
+    confidence: high
+    source_ids:
+    - eips-commit-ed46fdbb2808
+  - id: eip8037-d07
+    target_eip: 7825
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-01-29T10:19:37Z'
+    commit: ed46fdbb28081b05f0f8535bf5891051999533d5
+    rationale: Commit ed46fdbb adds 7825 to the frontmatter requires header.
+    confidence: high
+    source_ids:
+    - eips-commit-ed46fdbb2808
+  - id: eip8037-d08
+    target_eip: 8011
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-01-29T10:19:37Z'
+    commit: ed46fdbb28081b05f0f8535bf5891051999533d5
+    rationale: Commit ed46fdbb adds 8011 to the frontmatter requires header.
+    confidence: high
+    source_ids:
+    - eips-commit-ed46fdbb2808
+  - id: eip8037-d09
+    target_eip: 8038
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-02-10T14:46:12Z'
+    commit: 2e6dc063300f1c7e893cd0d435168b05c9db8e0b
+    rationale: 'First explicit textual reference: ''The values assigned to regular gas will be updated based on
+      [EIP-8038]'' (commit 2e6dc063).'
+    confidence: high
+    source_ids:
+    - eips-commit-2e6dc063300f
+  - id: eip8037-d10
+    target_eip: 7623
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-03-06T15:59:36Z'
+    commit: de0ad9db93813d9883302ec1517be668ed195cf3
+    rationale: 'First explicit textual reference: tx_gas_used applies the EIP-7623 calldata floor after refunds
+      (commit de0ad9db).'
+    confidence: high
+    source_ids:
+    - eips-commit-de0ad9db9381
+  - id: eip8037-d11
+    target_eip: 7928
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-03-20T08:29:54Z'
+    commit: 7df0a62ca4255f22a72603595c7a5312649f6e47
+    rationale: 'First explicit textual reference: alignment with EIP-7928''s two-phase gas validation (commit 7df0a62c).'
+    confidence: high
+    source_ids:
+    - eips-commit-7df0a62ca425
+  - id: eip8037-d12
+    target_eip: 6780
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-04-17T15:07:26Z'
+    commit: 4f0332706351a67eae4adf1bfac880dfb412d237
+    rationale: 'First explicit textual reference: same-transaction SELFDESTRUCT refund rules cite EIP-6780 semantics
+      (commit 4f033270).'
+    confidence: high
+    source_ids:
+    - eips-commit-4f0332706351
+  - id: eip8037-d13
+    target_eip: 8011
+    event_type: changed
+    relationship: other
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Commit 80c580b2 removes 8011 from the requires header (while adding 6780, 7976, 7981, 8038); an informative
+      rationale reference to EIP-8011 remains in the text, so the relationship reverts from requires to an informative
+      reference. The EIP text does not state why; no replacement/supersession is inferred.
+    confidence: medium
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d14
+    target_eip: 6780
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Commit 80c580b2 adds 6780 to the frontmatter requires header.
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d15
+    target_eip: 7976
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Commit 80c580b2 adds 7976 to the requires header. No textual reference to EIP-7976 exists until commit
+      190d539c (calldata floor).
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d16
+    target_eip: 7981
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Commit 80c580b2 adds 7981 to the requires header. No textual reference to EIP-7981 was found in any
+      revision of the file; requires-header-only dependency.
+    confidence: medium
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d17
+    target_eip: 8038
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Commit 80c580b2 adds 8038 to the frontmatter requires header (previously a textual reference only).
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d18
+    target_eip: 2935
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Commit 80c580b2 adds a section updating the gas limit of per-block system calls, explicitly naming
+      the EIP-2935 system contract as affected.
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d19
+    target_eip: 4788
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Same system-contract gas-limit section explicitly names the EIP-4788 system contract as affected.
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d20
+    target_eip: 7002
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Same section names the EIP-7002 system contract; SYSTEM_MAX_SSTORES_PER_CALL = 16 is later justified
+      by EIP-7002's MAX_WITHDRAWAL_REQUESTS_PER_BLOCK.
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d21
+    target_eip: 7251
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-05-04T08:21:48Z'
+    commit: 80c580b2ad323eb2797058801467b160ae2d5968
+    rationale: Same system-contract gas-limit section explicitly names the EIP-7251 system contract as affected.
+    confidence: high
+    source_ids:
+    - eips-commit-80c580b2ad32
+  - id: eip8037-d22
+    target_eip: 7904
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-05-13T15:02:09Z'
+    commit: 34258fc205d83fe2d560b91814057041dfbbb5f9
+    rationale: Commit 34258fc2 adds 7904 to the frontmatter requires header (first reference to EIP-7904 in the
+      file).
+    confidence: high
+    source_ids:
+    - eips-commit-34258fc205d8
+  - id: eip8037-d23
+    target_eip: 7623
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-05-13T16:26:19Z'
+    commit: b549622cc0e9f1f4db83848c5daa6f91e9f650a1
+    rationale: Commit b549622c adds 7623 to the frontmatter requires header (previously a textual interaction only).
+    confidence: high
+    source_ids:
+    - eips-commit-b549622cc0e9
+  - id: eip8037-d24
+    target_eip: 7928
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-05-13T16:26:19Z'
+    commit: b549622cc0e9f1f4db83848c5daa6f91e9f650a1
+    rationale: Commit b549622c adds 7928 to the frontmatter requires header (previously a textual interaction only).
+    confidence: high
+    source_ids:
+    - eips-commit-b549622cc0e9
+  - id: eip8037-d25
+    target_eip: 161
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-06-01T09:09:46Z'
+    commit: 1d65cedf6fc2ec68a4f08f72577a9d7e55ca3f51
+    rationale: 'First explicit textual reference: account existence defined ''per [EIP-161]'' (commit 1d65cedf).'
+    confidence: high
+    source_ids:
+    - eips-commit-1d65cedf6fc2
+  - id: eip8037-d26
+    target_eip: 684
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-06-01T09:09:46Z'
+    commit: 1d65cedf6fc2ec68a4f08f72577a9d7e55ca3f51
+    rationale: 'First explicit textual reference: a balance-only address ''is a valid CREATE/CREATE2 target under
+      [EIP-684]'' (commit 1d65cedf).'
+    confidence: high
+    source_ids:
+    - eips-commit-1d65cedf6fc2
+  - id: eip8037-d27
+    target_eip: 7778
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-06-01T09:09:46Z'
+    commit: 1d65cedf6fc2ec68a4f08f72577a9d7e55ca3f51
+    rationale: Commit 1d65cedf adds an explicit 'Integration with EIP-7778' treatment ('If implemented together
+      with [EIP-7778]...'). Conditional integration; EIP-7778 never enters the requires header.
+    confidence: high
+    source_ids:
+    - eips-commit-1d65cedf6fc2
+  - id: eip8037-d28
+    target_eip: 7610
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-07-07T12:05:49Z'
+    commit: a4801f3bb1d1380ecc7db5f988b222684ae098eb
+    rationale: 'First explicit textual reference: the destination access ''also performs the [EIP-7610] collision
+      check'' (commit a4801f3b).'
+    confidence: high
+    source_ids:
+    - eips-commit-a4801f3bb1d1
+  - id: eip8037-d29
+    target_eip: 161
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-07-22T16:04:52Z'
+    commit: 4ef37e3dde616e9660e42527c73a8bf9303ea8ed
+    rationale: Commit 4ef37e3d adds 161 to the frontmatter requires header.
+    confidence: high
+    source_ids:
+    - eips-commit-4ef37e3dde61
+  - id: eip8037-d30
+    target_eip: 684
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-07-22T16:04:52Z'
+    commit: 4ef37e3dde616e9660e42527c73a8bf9303ea8ed
+    rationale: Commit 4ef37e3d adds 684 to the frontmatter requires header.
+    confidence: high
+    source_ids:
+    - eips-commit-4ef37e3dde61
+  - id: eip8037-d31
+    target_eip: 7610
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-07-22T16:04:52Z'
+    commit: 4ef37e3dde616e9660e42527c73a8bf9303ea8ed
+    rationale: Commit 4ef37e3d adds 7610 to the frontmatter requires header.
+    confidence: high
+    source_ids:
+    - eips-commit-4ef37e3dde61
+  - id: eip8037-d32
+    target_eip: 7904
+    event_type: removed
+    relationship: requires
+    occurred_at: '2026-07-22T16:04:52Z'
+    commit: 4ef37e3dde616e9660e42527c73a8bf9303ea8ed
+    rationale: Commit 4ef37e3d removes 7904 from the requires header; no textual reference to EIP-7904 remains at
+      the pin. The EIP text gives no reason; none is inferred.
+    confidence: high
+    source_ids:
+    - eips-commit-4ef37e3dde61
+  - id: eip8037-d33
+    target_eip: 7981
+    event_type: removed
+    relationship: requires
+    occurred_at: '2026-07-22T16:04:52Z'
+    commit: 4ef37e3dde616e9660e42527c73a8bf9303ea8ed
+    rationale: Commit 4ef37e3d removes 7981 from the requires header; EIP-7981 was never referenced in the body
+      text. The EIP text gives no reason; none is inferred.
+    confidence: high
+    source_ids:
+    - eips-commit-4ef37e3dde61
+  - id: eip8037-d34
+    target_eip: 8011
+    event_type: removed
+    relationship: other
+    occurred_at: '2026-07-30T12:54:28Z'
+    commit: 0a1d42b3c7a455cd812ce73b4b937c16d6f20bd6
+    rationale: Commit 0a1d42b3 deletes the last remaining textual reference to EIP-8011 (the higher-throughput rationale
+      sentence); after this commit the EIP contains no reference to EIP-8011.
+    confidence: high
+    source_ids:
+    - eips-commit-0a1d42b3c7a4
+source_registry: outputs/sources/eips/eip-8037.yaml
+unknowns:
+- The reason for dropping EIP-8011 from the requires header at commit 80c580b2 while EIP-8038 (and 7981) were added
+  is not stated in the EIP text; whether EIP-8038 replaces or supersedes EIP-8011 for this EIP's purposes was not
+  established from primary sources, so no replaces/supersedes relationship is recorded.
+- Commit e733f8fc7b31 has an empty commit subject ('Update EIP-8037:'); its associated pull request was not identified
+  or fetched. The classification rests entirely on the diff.
+- EIP-7981 never appears in the EIP's body text in any revision; its dependency events are grounded solely in the
+  frontmatter requires header.
+- GitHub pull-request pages behind these merge commits were not fetched or archived; all classifications rest on
+  the commit diffs at the pinned repository state.
+- 'Four commits in the file''s history are multi-file commits whose subjects name other EIPs (''Update EIP-2780...'':
+  2e7e88bb, 0a1d42b3, 5a8c8089; none named 8037 in c47ae3be''s PR title formatting); each was reviewed and classified
+  from this file''s diff hunks only.'

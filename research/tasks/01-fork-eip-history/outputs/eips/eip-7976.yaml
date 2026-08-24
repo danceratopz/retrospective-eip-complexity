@@ -1,0 +1,249 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7976
+  title: Increase Calldata Floor Cost
+  source_ids:
+  - eips-blob-eip7976-pin
+research_run:
+  started_at: '2026-08-21T00:42:51Z'
+  completed_at: '2026-08-21T00:57:18Z'
+  researcher: claude subagent eip-amsterdam-2 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-06-18'
+  frontmatter_source_ids:
+  - eips-blob-eip7976-creation
+  - eips-blob-eip7976-pin
+  first_repository_commit:
+    authored_at: '2025-06-24T16:07:49Z'
+    committed_at: '2025-06-24T16:07:49Z'
+    commit: 337df2cb4657de5beba79671a57dbdd0c71e5203
+    path: EIPS/eip-7976.md
+    source_ids:
+    - eips-commit-337df2cb4657
+    - gh-pr-map-eip-7976
+    - eips-blob-eip7976-creation
+  discrepancy_note: 'The frontmatter ''created'' date (2025-06-18) precedes the first repository commit (authored
+    2025-06-24T16:07:49Z, committed the same instant) by six days. The adding pull request, ethereum/EIPs#9909
+    ''Add EIP: Further increase calldata cost'', was opened 2025-06-19T11:55:41Z - one day after the declared
+    creation date - and merged 2025-06-24T16:07:49Z, so the gap is drafting and editor-review latency rather than
+    a conflict. The file was added directly at EIPS/eip-7976.md; there is no rename in its history, so ''git log
+    --follow'' and a plain ''git log'' report the same commit set.'
+revision_history:
+  summary:
+    file_commit_count: 7
+    post_creation_revision_count: 6
+    substantive_revision_count: 2
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2025-09-03T08:10:21Z'
+    last_revision_at: '2026-07-07T16:49:17Z'
+    first_substantive_revision_at: '2026-02-15T14:52:28Z'
+    last_substantive_revision_at: '2026-04-15T13:59:42Z'
+    derived_from_event_ids:
+    - eip7976-e00
+    - eip7976-e01
+    - eip7976-e02
+    - eip7976-e03
+    - eip7976-e04
+    - eip7976-e05
+    - eip7976-e06
+  events:
+  - id: eip7976-e00
+    event_kind: creation
+    authored_at: '2025-06-24T18:07:49+02:00'
+    committed_at: '2025-06-25T00:07:49+08:00'
+    commit: 337df2cb4657de5beba79671a57dbdd0c71e5203
+    path: EIPS/eip-7976.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7976 ''Further increase calldata cost'' (108 lines, status Draft, type Standards
+      Track, category Core, single author Toni Wahrstaetter, frontmatter ''requires: 7623''). It raises the EIP-7623
+      calldata floor from 10/40 to 15/60 gas per zero/non-zero byte by setting TOTAL_COST_FLOOR_PER_TOKEN to 15
+      while STANDARD_TOKEN_COST stays 4, restates the tx.gasUsed max() formula, and declares transactions invalid
+      whose gas limit is below 21000 + TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata or below intrinsic gas.
+      Also imports INITCODE_WORD_COST = 2 from EIP-3860, and adds Rationale (~0.72 MB to ~0.47 MB worst-case payload
+      at a 30M gas limit), Backwards Compatibility (eth_estimateGas MUST be updated), Test Cases and Security
+      Considerations sections.'
+    rationale: Creation commit adding the complete initial document, including the single normative pricing parameter
+      and the gas formula.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-337df2cb4657
+    - gh-pr-map-eip-7976
+    - eips-blob-eip7976-creation
+  - id: eip7976-e01
+    event_kind: revision
+    authored_at: '2025-09-03T10:10:21+02:00'
+    committed_at: '2025-09-03T08:10:21+00:00'
+    commit: c582d21e5075522a6d5852f53156045f1c77f86d
+    path: EIPS/eip-7976.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Retitles the EIP from ''Further increase calldata cost'' to ''Increase calldata floor cost'' (description
+      reworded to match) and re-bases the Rationale''s block-size arithmetic on a 45M rather than a 30M gas limit:
+      the EIP-7623 worst case becomes ~1.07 MB and this EIP''s worst case ~0.72 MB, and the bullet ''Maximum data-heavy
+      payload size drops to ~0.47 MB'' becomes ''drops by ~33%''. Introduces the typo ''45s_000_000'' and the
+      wording slip ''for non zero bytes'' in the same sentence.'
+    rationale: 'Confined to the title, description and the illustrative Rationale arithmetic. No parameter, formula,
+      validity rule, or backwards-compatibility requirement changes: TOTAL_COST_FLOOR_PER_TOKEN remains 15 and
+      the tx.gasUsed formula is untouched.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c582d21e5075
+    - gh-pr-map-eip-7976
+  - id: eip7976-e02
+    event_kind: revision
+    authored_at: '2025-09-04T14:47:19+02:00'
+    committed_at: '2025-09-04T12:47:19+00:00'
+    commit: 5aea12c20ee27b3d85f7c2ec9e6a09e451fd81f0
+    path: EIPS/eip-7976.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Wording pass: title capitalised to ''Increase Calldata Floor Cost''; the Abstract is rewritten to
+      drop the ''Following the implementation of EIP-7623'' framing and to state the ~33% worst-case block-size
+      reduction directly; a ''Have minimal impact on users'' bullet is added to Motivation; a sentence is added
+      to Rationale reporting that 1.5% of transactions in blocks 20644414-23272414 (Sept 2024 - Sept 2025) would
+      have been affected; one missing full stop is added.'
+    rationale: Prose and supporting-analysis changes only. The retained EIP-7623 reference and the specification
+      section are unchanged, so no implementation-visible detail moves.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-5aea12c20ee2
+    - gh-pr-map-eip-7976
+  - id: eip7976-e03
+    event_kind: revision
+    authored_at: '2025-11-04T15:01:49+01:00'
+    committed_at: '2025-11-04T14:01:49+00:00'
+    commit: 173fe4aade1b70114347b6566bb96ed17959c696
+    path: EIPS/eip-7976.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds one sentence to Rationale linking to an empirical impact analysis at ../assets/eip-7976/eip7976_empirical_analysis.md.
+      The same commit adds that 218-line asset file, which is outside the EIP file reviewed by this work unit.
+    rationale: A two-line addition of a supporting-evidence link in a non-normative section; no rule, parameter
+      or interface changes. Recorded because it is a file-changing commit.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-173fe4aade1b
+    - gh-pr-map-eip-7976
+  - id: eip7976-e04
+    event_kind: revision
+    authored_at: '2026-02-15T15:52:28+01:00'
+    committed_at: '2026-02-15T22:52:28+08:00'
+    commit: 137a1323c80fd69f87b39183e13efea2f9904ecd
+    path: EIPS/eip-7976.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Re-targets the EIP from a 15/60 floor to a flat 64 gas per calldata byte. TOTAL_COST_FLOOR_PER_TOKEN
+      changes from 15 to 16 and a new quantity floor_tokens_in_calldata = (zero_bytes_in_calldata + nonzero_bytes_in_calldata)
+      * 4 is introduced; the floor branch of the tx.gasUsed max() and the transaction-validity threshold both
+      switch from tokens_in_calldata to floor_tokens_in_calldata, which removes the 1:4 zero/non-zero asymmetry
+      inherited from EIP-7623. Description, Abstract, Motivation (a 10 MiB payload would need ~671M gas rather
+      than ~105M), Rationale (~0.67 MB worst case at 45M gas, ~37% reduction), the wallet guidance (parameter
+      value 16) and the Test Cases are all updated to match.
+    rationale: Changes the normative pricing parameter and the calldata-tokenisation used by the floor, so every
+      implementation and every test vector for this EIP changes. The largest substantive revision in the file's
+      history.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-137a1323c80f
+    - gh-pr-map-eip-7976
+  - id: eip7976-e05
+    event_kind: revision
+    authored_at: '2026-04-15T15:59:42+02:00'
+    committed_at: '2026-04-15T13:59:42+00:00'
+    commit: 15e4f96ccd6a2e9d5dd307a52be1d4e60ec6eed1
+    path: EIPS/eip-7976.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Adds one sentence to the Specification: ''Equivalently, the floor cost is 64 gas per calldata byte
+      (both zero and non-zero), since TOTAL_COST_FLOOR_PER_TOKEN * 4 = 64. The token abstraction is retained only
+      for consistency with EIP-7623.'''
+    rationale: Classified substantive because it resolves the mismatch between the EIP's title/description ('64/64
+      gas per byte') and the specified parameter value (16 per token) that implementers and test authors must
+      program; the rubric treats a material clarification of a parameter as substantive. Confidence is medium
+      because the statement is arithmetically derivable from the text already present after eip7976-e04, so a
+      stricter reading would call it non-substantive.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-15e4f96ccd6a
+    - gh-pr-map-eip-7976
+  - id: eip7976-e06
+    event_kind: revision
+    authored_at: '2026-07-07T12:49:17-04:00'
+    committed_at: '2026-07-08T00:49:17+08:00'
+    commit: c998ef94eb16a6af8a9b8e2084f947b17ea14865
+    path: EIPS/eip-7976.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter status Draft -> Review; no other change to the file.
+    rationale: EIP process-status metadata only. Opened by an EIP editor (poojaranjan) rather than the author.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c998ef94eb16
+    - gh-pr-map-eip-7976
+dependency_history:
+  events:
+  - id: eip7976-d01
+    target_eip: 7623
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-06-24T16:07:49Z'
+    commit: 337df2cb4657de5beba79671a57dbdd0c71e5203
+    rationale: 'The creation commit declares ''requires: 7623'' in the frontmatter and the body repeatedly names
+      EIP-7623 as the mechanism being repriced: the Abstract (''Following the implementation of [EIP-7623](./eip-7623.md)
+      ... raising the floor cost from 10/40 to 15/60''), the Motivation, the Rationale and the Security Considerations.
+      The declaration is unchanged at the pinned commit, so no later dependency event exists for this target.
+      Note that the relationship is recorded as ''requires'' because that is the frontmatter''s own term; functionally
+      the EIP extends EIP-7623''s floor-cost mechanism by changing its parameter.'
+    confidence: high
+    source_ids:
+    - eips-blob-eip7976-creation
+    - eips-blob-eip7976-pin
+    - eips-commit-337df2cb4657
+  - id: eip7976-d02
+    target_eip: 3860
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-06-24T16:07:49Z'
+    commit: 337df2cb4657de5beba79671a57dbdd0c71e5203
+    rationale: 'The Specification imports a constant from another EIP: ''Let INITCODE_WORD_COST be 2 as defined
+      in [EIP-3860](./eip-3860.md).'' That constant appears in the contract-creation term of the tx.gasUsed formula,
+      so the formula cannot be evaluated without EIP-3860; the relationship is therefore recorded as ''requires''
+      even though EIP-3860 is not listed in the frontmatter ''requires'' field. The reference is present at creation
+      and unchanged at the pinned commit.'
+    confidence: high
+    source_ids:
+    - eips-blob-eip7976-creation
+    - eips-blob-eip7976-pin
+    - eips-commit-337df2cb4657
+source_registry: outputs/sources/eips/eip-7976.yaml
+unknowns:
+- Explicit cross-EIP dependency search (positive and negative result). Every one of the seven blob versions of
+  EIPS/eip-7976.md was matched case-insensitively against 'eip[- _]?<digits>' and 'erc[- _]?<digits>' and the
+  frontmatter 'requires' field was read at each version. The only targets found are EIP-7623 and EIP-3860, both
+  present in the creation commit and both still present at the pinned commit; no cross-EIP reference was ever
+  added, changed or removed after creation.
+- The frontmatter 'requires' field lists only 7623. EIP-3860 is referenced normatively in the body but never declared
+  in the frontmatter; this is recorded as a dependency event because the task's definition keys on explicit identification
+  of another EIP by the EIP's own text, not on the frontmatter field alone.
+- 'Two defects introduced by eip7976-e01 are noted for completeness rather than classified as separate events:
+  the Rationale gained the typo ''45s_000_000'' and the phrase ''approximately 0.72 MB ... for non zero bytes
+  and maintains proportional costs for non-zero bytes''. Both were removed when eip7976-e04 rewrote the paragraph
+  for the 64-gas-per-byte design.'
+- Event timestamps are reproduced with the offsets recorded in Git. Committer timezone offsets in this repository
+  are set by the merge tooling and are not evidence of where a change was made; every summary date is the equivalent
+  UTC instant of the commit's committer date.
+- 'Out of scope for this work unit and therefore not researched: whether and how the assets/eip-7976 empirical
+  analysis changed after eip7976-e03, and any client, devnet or fork-scheduling history.'

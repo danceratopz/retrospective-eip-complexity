@@ -1,0 +1,27 @@
+schema_version: 1
+task_id: 01-fork-eip-history
+fork:
+  id: shanghai
+  execution_name: Shanghai
+  consensus_name: Capella
+  combined_name: Shapella
+membership_sources:
+  - role: authoritative_execution_membership
+    repository: ethereum/execution-specs
+    url: https://github.com/ethereum/execution-specs/blob/8dbde99b132ff8d8fcc9cfb015a9947ccc8b12d6/network-upgrades/mainnet-upgrades/shanghai.md
+    requested_ref: 8dbde99b132ff8d8fcc9cfb015a9947ccc8b12d6
+    local_repository: ../execution-specs
+    path: network-upgrades/mainnet-upgrades/shanghai.md
+    include_sections:
+      - Included EIPs
+  - role: authoritative_backfill_pointer
+    repository: ethereum/EIPs
+    eip: 7568
+    url: https://raw.githubusercontent.com/ethereum/EIPs/refs/heads/master/EIPS/eip-7568.md
+    requested_ref: master
+    local_repository: ../EIPs
+    path: EIPS/eip-7568.md
+membership_notes:
+  - EIP-7568 points to the pinned Shanghai execution-spec document instead of listing the EIPs directly.
+  - Inventory EIPs listed for Shanghai. Classify cross-layer EIPs such as withdrawals using their actual affected layers.
+  - Do not invent EIP numbers for Capella consensus-spec changes that were not represented as EIPs.

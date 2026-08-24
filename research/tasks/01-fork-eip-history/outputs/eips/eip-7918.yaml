@@ -1,0 +1,448 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7918
+  title: Blob base fee bounded by execution cost
+  source_ids:
+  - blob-eip7918-pin
+  - blob-eip7918-creation
+research_run:
+  started_at: '2026-08-20T19:20:00Z'
+  completed_at: '2026-08-20T20:10:00Z'
+  researcher: claude subagent eip-batch-09 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-03-25'
+  frontmatter_source_ids:
+  - blob-eip7918-creation
+  - blob-eip7918-pin
+  first_repository_commit:
+    authored_at: '2025-03-26T21:04:25+02:00'
+    committed_at: '2025-03-27T03:04:25+08:00'
+    commit: d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680
+    path: EIPS/eip-7918.md
+    source_ids:
+    - commit-d4a7453aac
+  discrepancy_note: 'The frontmatter declares created 2025-03-25, while the earliest repository commit adding EIPS/eip-7918.md
+    is d4a7453a (authored 2025-03-26T21:04:25+02:00, committed 2025-03-27T03:04:25+08:00, subject ''Add EIP: Blob
+    base fee bounded by execution cost''). The one-to-two day gap is the interval between the declared drafting
+    date and the merge of the opening pull request. The Git event is the earliest independently verifiable repository
+    event; the frontmatter date is unchanged at the pinned state.'
+revision_history:
+  summary:
+    file_commit_count: 18
+    post_creation_revision_count: 17
+    substantive_revision_count: 6
+    non_substantive_revision_count: 11
+    uncertain_revision_count: 0
+    first_revision_at: '2025-03-27T07:26:26+00:00'
+    last_revision_at: '2026-02-04T20:44:27+00:00'
+    first_substantive_revision_at: '2025-04-10T19:27:03+08:00'
+    last_substantive_revision_at: '2025-08-14T19:51:05+00:00'
+    derived_from_event_ids:
+    - eip7918-e01
+    - eip7918-e02
+    - eip7918-e03
+    - eip7918-e04
+    - eip7918-e05
+    - eip7918-e06
+    - eip7918-e07
+    - eip7918-e08
+    - eip7918-e09
+    - eip7918-e10
+    - eip7918-e11
+    - eip7918-e12
+    - eip7918-e13
+    - eip7918-e14
+    - eip7918-e15
+    - eip7918-e16
+    - eip7918-e17
+    - eip7918-e18
+  events:
+  - id: eip7918-e01
+    event_kind: creation
+    authored_at: '2025-03-26T21:04:25+02:00'
+    committed_at: '2025-03-27T03:04:25+08:00'
+    commit: d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680
+    path: EIPS/eip-7918.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7918 ''Blob base fee bounded by execution cost'': modifies `calc_excess_blob_gas()`
+      from EIP-4844 so that `TARGET_BLOB_GAS_PER_BLOCK` is not subtracted when `TX_BASE_COST * parent.base_fee_per_gas
+      > TARGET_BLOB_GAS_PER_BLOCK * get_base_fee_per_blob_gas(parent)`, instead returning `parent.excess_blob_gas
+      + parent.blob_gas_used`. Includes Figure 1, fee-inelasticity rationale, a ''designing for the future'' square-root
+      variant, and two alternative specifications (current-block comparison, and a `fake_log` variant). Frontmatter:
+      status Draft, created 2025-03-25, `requires: 4844`.'
+    rationale: Adding commit; recorded as event_kind creation and excluded from revision counts.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-d4a7453aac
+    - blob-eip7918-creation
+  - id: eip7918-e02
+    event_kind: revision
+    authored_at: '2025-03-27T09:26:26+02:00'
+    committed_at: '2025-03-27T07:26:26+00:00'
+    commit: 4d6081ceb9d3d65e22971544b3831a74e881a1e4
+    path: EIPS/eip-7918.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Adds Figure 2 (permitted/restricted regions against execution base fee) and moves the previous figure's
+      caption content; rewrites the Motivation and 'Designing for the future' rationale around the two figures;
+      adds a paragraph arguing the bound is justified even if demand were inelastic at zero execution cost.
+    rationale: Presentation and rationale only; the specification code block is unchanged.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-4d6081ceb9
+  - id: eip7918-e03
+    event_kind: revision
+    authored_at: '2025-04-10T14:27:03+03:00'
+    committed_at: '2025-04-10T19:27:03+08:00'
+    commit: 2e5ad16264ae97c59ab0f01311caf5c3df5055b4
+    path: EIPS/eip-7918.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Status Draft -> Review, and announces the `// 3` rebalancing: the Specification prose now says the
+      function is changed ''to add `parent.blob_gas_used // 3` and not subtract `TARGET_BLOB_GAS_PER_BLOCK`'', the
+      ''Delayed response'' rationale is restated in terms of `blob_gas_used // 3` (''retaining the same maximum
+      fee increase while not allowing for a decrease''), and the first alternative specification''s return becomes
+      `parent.excess_blob_gas + parent.blob_gas_used // 3`. Also adds the formal demand-function maths (Q(f_b +
+      c_tx), the c_tx formula and the inelasticity-horizon limit). The main specification code block is not yet
+      updated.'
+    rationale: Introduces the divide-by-three rebalancing of the excess-blob-gas update, a normative change to how
+      the blob base fee rises in the execution-fee-led regime.
+    change_group: 7918-blob-gas-used-third-2025-04
+    confidence: high
+    source_ids:
+    - commit-2e5ad16264
+  - id: eip7918-e04
+    event_kind: revision
+    authored_at: '2025-04-10T18:27:14+03:00'
+    committed_at: '2025-04-10T15:27:14+00:00'
+    commit: 484d12e3523f8e5de13fb1a3cf35bfb2dfc4d721
+    path: EIPS/eip-7918.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Applies the `// 3` change to the main specification code block: `return parent.excess_blob_gas + parent.blob_gas_used`
+      becomes `return parent.excess_blob_gas + parent.blob_gas_used // 3`.'
+    rationale: Completes the divide-by-three change in the normative function, four hours after the prose and the
+      alternative variant were updated.
+    change_group: 7918-blob-gas-used-third-2025-04
+    confidence: high
+    source_ids:
+    - commit-484d12e352
+  - id: eip7918-e05
+    event_kind: revision
+    authored_at: '2025-05-09T03:32:28+03:00'
+    committed_at: '2025-05-09T00:32:28+00:00'
+    commit: 5e24f7de5395ea9cf74519e460d6aa6e0010bf63
+    path: EIPS/eip-7918.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Rewrites Abstract, Motivation and much of the Rationale: adds the ''10% blob base fee change may shift
+      total cost by 0.0000001%'' argument, quantifies the parity threshold as roughly 40x below the execution base
+      fee, adds a reflexivity discussion of ETH-denominated DA income, and adds a new alternative specification
+      using a hypothetical `MAX_BLOBS_PER_TX` cap from EIP-7594.'
+    rationale: Motivation and rationale prose plus a newly discussed alternative; the normative code block is unchanged.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-5e24f7de53
+  - id: eip7918-e06
+    event_kind: revision
+    authored_at: '2025-05-09T03:59:40+03:00'
+    committed_at: '2025-05-09T00:59:40+00:00'
+    commit: 015f08bba346696a02379f1dec40cd38db38b2c9
+    path: EIPS/eip-7918.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Adds an 'Empirical analysis' rationale section with Figures 3-5, comparing the thresholds implied by
+      EIP-7762 and this EIP over November 2024 and March 2025 data (~900k blocks from block 22075724) and describing
+      the histogram methodology.
+    rationale: Adds supporting empirical analysis; no normative content changes.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-015f08bba3
+  - id: eip7918-e07
+    event_kind: revision
+    authored_at: '2025-05-09T19:06:33+03:00'
+    committed_at: '2025-05-09T16:06:33+00:00'
+    commit: 9f4bb6ad0e5b6ce302c258be8d8068495139201a
+    path: EIPS/eip-7918.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Wording pass across Abstract, Motivation and Rationale (e.g. merging two motivation paragraphs, 'the
+      number of blobs over which the consumer can amortize', 'gets posted' -> 'get posted').
+    rationale: Grammar and phrasing only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-9f4bb6ad0e
+  - id: eip7918-e08
+    event_kind: revision
+    authored_at: '2025-05-12T01:21:38+03:00'
+    committed_at: '2025-05-11T22:21:38+00:00'
+    commit: 5fae72b226be42a043e75c682d13d3eb889da17b
+    path: EIPS/eip-7918.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds author Ben Adams (@benaadams) to the frontmatter.
+    rationale: Author-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-5fae72b226
+  - id: eip7918-e09
+    event_kind: revision
+    authored_at: '2025-05-12T15:12:31+03:00'
+    committed_at: '2025-05-12T12:12:31+00:00'
+    commit: a9a5474677392f47a40544d836729a9b9f9204d0
+    path: EIPS/eip-7918.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds author Francesco D'Amato (@fradamt) to the frontmatter.
+    rationale: Author-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-a9a5474677
+  - id: eip7918-e10
+    event_kind: revision
+    authored_at: '2025-05-26T07:11:44+03:00'
+    committed_at: '2025-05-26T04:11:44+00:00'
+    commit: a47d890fed95ac4415170b0d6b9fd004f47be173
+    path: EIPS/eip-7918.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Respecification around a per-blob reserve price. Introduces the constant `BLOB_BASE_COST` = 2**14 in
+      a new Parameters section; the `if`-clause becomes `BLOB_BASE_COST * parent.base_fee_per_gas > GAS_PER_BLOB
+      * get_base_fee_per_blob_gas(parent)` and its branch returns `parent.excess_blob_gas + parent.blob_gas_used
+      * (blobSchedule.max - blobSchedule.target) // blobSchedule.max` (replacing the `// 3` form); frontmatter `requires`
+      becomes '4844, 7840' and the text cites EIP-7840 for the blobSchedule; description and abstract are rewritten
+      in reserve-price terms; a second justification (paying for KZG proof-verification compute) and a blob-verification-cost
+      section are added; the EIP-7762 empirical comparison and the older alternative specifications are removed.
+    rationale: Changes the comparison constant, the comparison quantity and the excess-blob-gas update expression;
+      the largest normative change in this EIP's history.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-a47d890fed
+  - id: eip7918-e11
+    event_kind: revision
+    authored_at: '2025-05-27T00:36:59+03:00'
+    committed_at: '2025-05-26T21:36:59+00:00'
+    commit: 2b1cb718a3e313c262cc1b69e05b4a577cf7dd51
+    path: EIPS/eip-7918.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Converts three display-math blocks ($$ ... $$) to inline math ($ ... $) so they render, and rewords
+      the sentence about the fixed BLOB_BASE_COST / GAS_PER_BLOB ratio.
+    rationale: Markdown/math rendering fix and phrasing; no content change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-2b1cb718a3
+  - id: eip7918-e12
+    event_kind: revision
+    authored_at: '2025-07-03T18:26:23+02:00'
+    committed_at: '2025-07-03T16:26:23+00:00'
+    commit: d074de3dccc9108ecac8fcc24ff810bb035aaeea
+    path: EIPS/eip-7918.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: '`BLOB_BASE_COST` 2**14 -> 2**13; the derived reserve-price ratio in the rationale changes from 1/8
+      to 1/16, the constant fraction becomes 2^13/(2^13+10500), and the income-share example changes from 1/9th
+      to 1/17th.'
+    rationale: Changes the single normative constant of the proposal; this value survives to the pinned state.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-d074de3dcc
+  - id: eip7918-e13
+    event_kind: revision
+    authored_at: '2025-08-14T11:20:02+02:00'
+    committed_at: '2025-08-14T09:20:02+00:00'
+    commit: e369ff07d5332160b7ca39c8649a90462ef8e37f
+    path: EIPS/eip-7918.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Removes the fixed `TARGET_BLOB_GAS_PER_BLOCK` constant from the function: `calc_excess_blob_gas()`
+      now computes `target_blob_gas = GAS_PER_BLOB * blob_schedule.target` and uses it in both the early-return
+      guard and the subtraction; Abstract, Motivation and Rationale are updated to the new name.'
+    rationale: Sources the target from the per-fork blob schedule rather than a fixed constant, which changes the
+      computed value across forks.
+    change_group: 7918-blobschedule-2025-08
+    confidence: high
+    source_ids:
+    - commit-e369ff07d5
+  - id: eip7918-e14
+    event_kind: revision
+    authored_at: '2025-08-14T22:51:05+03:00'
+    committed_at: '2025-08-14T19:51:05+00:00'
+    commit: e29b72f0735553c8f29ba8036d378a1768c3fb45
+    path: EIPS/eip-7918.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: States explicitly that the current block's `blobSchedule` is used during processing, so that after
+      a hard fork `get_base_fee_per_blob_gas(parent)` calls `fake_exponential()` with the new `blobSchedule.baseFeeUpdateFraction`
+      and `calc_excess_blob_gas()` uses the new `blobSchedule.max` and `blobSchedule.target`; renames the local
+      `blob_schedule` to `blobSchedule` in the code; minor motivation rewording.
+    rationale: Resolves the fork-boundary ambiguity left by the previous commit; determines the first post-fork
+      block's blob base fee, so it is implementation- and test-relevant.
+    change_group: 7918-blobschedule-2025-08
+    confidence: high
+    source_ids:
+    - commit-e29b72f073
+  - id: eip7918-e15
+    event_kind: revision
+    authored_at: '2025-08-15T04:30:02+03:00'
+    committed_at: '2025-08-15T01:30:02+00:00'
+    commit: 8c0c4c4bba44de075ec020f3b9fd3367aa85f6df
+    path: EIPS/eip-7918.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Clarity pass over Motivation, Specification prose and Rationale: the description gains ''blob gas''
+      / ''execution gas'' wording, the KZG-compute justification and Figure 1 move into a restructured argument,
+      the reserve price is derived inline from the `if`-clause condition, and Figure 1 is regenerated (assets/eip-7918/1.png).'
+    rationale: Restructuring and wording; the constant, the `if`-clause condition and the returned expressions are
+      unchanged.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-8c0c4c4bba
+  - id: eip7918-e16
+    event_kind: revision
+    authored_at: '2025-08-15T17:01:44+03:00'
+    committed_at: '2025-08-15T14:01:44+00:00'
+    commit: 183b8935edd728ad101f2768f7614fad7a7867a7
+    path: EIPS/eip-7918.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Updates Figures 2-5 assets to reflect BLOB_BASE_COST = 2**13 and rewrites surrounding rationale: the
+      PeerDAS verification bullets are tightened, the batching/parallelisation discussion is rewritten, the blob-scaling
+      discussion is condensed with a new ''1000 blobs and 30M execution gas'' example, and the ''Alternative specifications''
+      section - which had said ''The constant `BLOB_BASE_COST` is still subject to testing and review. It may change
+      in the final specification.'' - is removed; Security Considerations now says the fee settles where a blob
+      costs at least `BLOB_BASE_COST` execution gas.'
+    rationale: Figure regeneration and rationale rewriting; no change to the constant, condition or returned expressions.
+      Medium confidence because the removed caveat had signalled that the constant might still change.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-183b8935ed
+  - id: eip7918-e17
+    event_kind: revision
+    authored_at: '2025-09-29T07:12:37-07:00'
+    committed_at: '2025-09-29T14:12:37+00:00'
+    commit: 5be7cedf1778053ea093890546f3f0dff928f7be
+    path: EIPS/eip-7918.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Status Review -> Last Call with last-call-deadline 2025-10-28.
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-5be7cedf17
+  - id: eip7918-e18
+    event_kind: revision
+    authored_at: '2026-02-04T22:44:27+02:00'
+    committed_at: '2026-02-04T20:44:27+00:00'
+    commit: 684c90ff6dddfce5f25a6402d5cd2ea18e876b5b
+    path: EIPS/eip-7918.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Status Last Call -> Final (last-call-deadline removed).
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-684c90ff6d
+dependency_history:
+  events:
+  - id: eip7918-dep-e1
+    target_eip: 4844
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-03-27T03:04:25+08:00'
+    commit: d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680
+    rationale: 'The creation frontmatter carries `requires: 4844` and the Specification states ''The function `calc_excess_blob_gas()`
+      from [EIP-4844](./eip-4844.md) is changed ...''. Both the declared requirement and the normative text persist
+      through the pinned state (where `requires` reads ''4844, 7840'').'
+    confidence: high
+    source_ids:
+    - commit-d4a7453aac
+    - blob-eip7918-creation
+  - id: eip7918-dep-e2
+    target_eip: 7594
+    event_type: introduced
+    relationship: other
+    occurred_at: '2025-05-09T00:32:28+00:00'
+    commit: 5e24f7de5395ea9cf74519e460d6aa6e0010bf63
+    rationale: 'Explanation of ''other'': the new alternative-specification text says ''One potential feature in
+      [EIP-7594](./eip-7594.md) is a cap on the number of blobs referenced in each blob-carrying transaction ...
+      No final decision has yet been made on this feature.'' An explicit but explicitly hypothetical reference.
+      It survives to the pinned state, where EIP-7594 is instead cited as the source of the PeerDAS cell-proof verification
+      costs discussed in the rationale; the relationship remains informative throughout and no separate `changed`
+      event is recorded.'
+    confidence: medium
+    source_ids:
+    - commit-5e24f7de53
+  - id: eip7918-dep-e3
+    target_eip: 7762
+    event_type: introduced
+    relationship: other
+    occurred_at: '2025-05-09T00:59:40+00:00'
+    commit: 015f08bba346696a02379f1dec40cd38db38b2c9
+    rationale: 'Explanation of ''other'': the ''Empirical analysis'' section compares this proposal''s threshold
+      with the one from ''[EIP-7762](./eip-7762.md)'' across Figures 3-5. A comparative/analytical reference to
+      a competing proposal, not a requirement.'
+    confidence: high
+    source_ids:
+    - commit-015f08bba3
+  - id: eip7918-dep-e4
+    target_eip: 7762
+    event_type: removed
+    relationship: other
+    occurred_at: '2025-05-26T04:11:44+00:00'
+    commit: a47d890fed95ac4415170b0d6b9fd004f47be173
+    rationale: The reserve-price respecification rewrites the empirical-analysis discussion and drops every EIP-7762
+      citation; no EIP-7762 reference remains (verified by scanning every historical version of the file for EIP-number
+      mentions).
+    confidence: high
+    source_ids:
+    - commit-a47d890fed
+  - id: eip7918-dep-e5
+    target_eip: 7840
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2025-05-26T04:11:44+00:00'
+    commit: a47d890fed95ac4415170b0d6b9fd004f47be173
+    rationale: 'The same commit changes the frontmatter to `requires: 4844, 7840` and states ''The blobSchedule
+      for referencing target and max blobs was introduced in [EIP-7840](./eip-7840.md).'' The `blobSchedule` fields
+      are used directly in the normative function, so the relationship is `requires`; it persists through the pinned
+      state.'
+    confidence: high
+    source_ids:
+    - commit-a47d890fed
+source_registry: outputs/sources/eips/eip-7918.yaml
+unknowns:
+- 'EIP-7918 is the only EIP in this batch with a `requires` frontmatter field: `requires: 4844` from creation, changed
+  to `requires: 4844, 7840` by commit a47d890f (verified by checking the frontmatter of every historical version
+  at the pin).'
+- From commit 015f08bb onwards the file contains self-references to 'EIP-7918' in figure captions comparing it to
+  EIP-7762; self-references are not recorded as cross-EIP dependency events.
+- Commit 2e5ad162 ('Move to Review') also changed the `// 3` rebalancing in the Specification prose and the alternative
+  variant while leaving the main code block untouched until commit 484d12e3 four hours later; both commits are recorded
+  and share change_group 7918-blob-gas-used-third-2025-04. The two commits' committer timestamps are 2025-04-10T19:27:03+08:00
+  (11:27 UTC) and 2025-04-10T15:27:14+00:00.
+- Commits 8c0c4c4b and 183b8935 also modify PNG assets under assets/eip-7918/; asset-file evolution is outside the
+  per-file event scope of this record and is noted for context only.
+- Summary first/last revision dates use the committer timestamps (committed_at) of the referenced events; authored
+  timestamps are also recorded per event.
+- This EIP's commit subjects do not carry PR numbers; GitHub PR metadata was not consulted or archived, so no mutable
+  sources were relied upon and the raw/ directory for this work unit is empty.

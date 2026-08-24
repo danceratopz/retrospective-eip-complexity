@@ -1,0 +1,192 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7883
+  title: ModExp Gas Cost Increase
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7883.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7883.yaml
+research_run:
+  started_at: '2026-08-21T06:56:00Z'
+  completed_at: '2026-08-21T06:59:52Z'
+  researcher: claude subagent osaka/eip-7883 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7883-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: Proposed for Inclusion
+  effective_at: '2025-02-21T10:10:59Z'
+  recorded_at: '2025-02-21T10:10:59Z'
+  date_basis: >-
+    Task 01's occurred_at for osaka-eip7883-e1 is the UTC committer date of the ethereum/EIPs commit that
+    edited EIPS/eip-7607.md (Hardfork Meta - Fusaka), and that is the basis used here. Verified directly
+    from the read-only clone at the Task 01 run-wide pin a08f51fec5b2b5da457adb05b8cffb487fb4f7de:
+    `git log -1 --format='%H %cI %aI %s' c585cb4a35ef3bffb9cb42000be2b029ef65f6c0` returns committer
+    2025-02-21T10:10:59+00:00 (= 2025-02-21T10:10:59Z), author 2025-02-21T11:10:59+01:00, subject
+    'Update EIP-7607: ModExp Gas Cost Increase to Fusaka'. `git show <sha> -- EIPS/eip-7607.md` shows a
+    single one-line addition, '* [EIP-7883](./eip-7883.md): ModExp Gas Cost Increase', inside the
+    '### Proposed for Inclusion' section (the hunk at line 47 sits between the EIP-7805 and EIP-7825
+    bullets of that section, confirmed by reading EIPS/eip-7607.md at that commit); the string 'eip-7883'
+    is absent from the file at the parent commit c585cb4a35ef...^. Under the EIP-7723 process PFI is
+    champion-initiated, so no AllCoreDevs decision underlies this event: Task 01 records decision_body
+    'EIP champion via ethereum/EIPs pull request (PFI is champion-initiated per EIP-7723)', and the PR
+    (ethereum/EIPs#9393) was opened by EIP author Marek Moraczynski, who is also the commit author. The
+    AllCoreDevs decisions Task 01 does identify for this EIP belong to later states, not to PFI:
+    ACDE#208 on 2025-03-27 for Considered for Inclusion (event osaka-eip7883-e2) and ACDT#36 on
+    2025-05-12 for Scheduled for Inclusion (event osaka-eip7883-e3). effective_at and recorded_at are
+    identical because the proposal state took effect when the Meta EIP change merged. Context only:
+    the Task 01 source registry records the GitHub merge timestamp of PR #9393 as 2025-02-21T10:11:00Z,
+    one second after the squash commit's committer time; the committer time is used per the task contract.
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary Git evidence rather than Task 01 prose: the anchor commit SHA, its exact
+    committer timestamp, its diff hunk, the containing '### Proposed for Inclusion' section, and the
+    absence of any EIP-7883 entry in EIPS/eip-7607.md at the anchor's parent were each checked directly
+    in the read-only clone /home/dtopz/code/github/EIPs at pin a08f51fec5b2b5da457adb05b8cffb487fb4f7de.
+    A single proposal cycle was confirmed: `git log -G'eip-7883' -- EIPS/eip-7607.md` returns exactly
+    four commits (c585cb4a35ef 2025-02-21T10:10:59Z adding the entry, 4a8bf58f80cf 2025-03-27T16:55:10Z
+    CFI, fc9a8d9a4d43 2025-04-19T00:32:43Z trailing-whitespace only, 48d580cf3838 2025-05-21T15:54:56Z
+    SFI), and `git log -S'eip-7883' -- EIPS/eip-7607.md` returns only c585cb4a35ef, so the entry was
+    added once and never removed - there is no removal-and-re-proposal cycle to preserve.
+  confidence: high
+  source_ids:
+  - eips-commit-c585cb4a35ef
+  - eips-pr-9393
+  - eips-blob-eip7607-pin
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7883-e00
+    event_kind: creation
+    commit: 4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b
+    committed_at: '2025-02-14T17:00:54Z'
+    offset_from_anchor_seconds: -580205
+    semantic_effect: substantive
+    summary: >-
+      Creation commit adding EIPS/eip-7883.md, 'ModExp Gas Cost Increase' (160 lines, status Draft,
+      'requires: 2565'): reprices the ModExp precompile at address 0x05 relative to EIP-2565 by raising
+      the minimum price from 200 to 500, doubling the large-exponent multiplier from 8 to 16, and doubling
+      multiplication_complexity when base or modulus exceeds 32 bytes; includes the full pricing
+      pseudocode, a 29-row updated test-vector table, and a 'Reference Implementation: [None]' placeholder.
+      This is the latest EIP-file event at or before the anchor and the only one before it - no revision
+      commit touched the file between creation and the anchor. Time basis: Task 01 event eip7883-e00
+      records committed_at in a local offset as '2025-02-15T01:00:54+08:00'; the UTC equivalent is
+      2025-02-14T17:00:54Z (epoch 1739552454), which is the value used in the committed_at field above
+      and which matches Task 01's own creation.first_repository_commit.committed_at. Verified with
+      `TZ=UTC git log -1 --date=format-local:'%Y-%m-%dT%H:%M:%SZ' --format=%cd 4a06cae0ed50...`.
+    immutable_url: https://github.com/ethereum/EIPs/blob/4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b/EIPS/eip-7883.md
+    source_ids:
+    - eips-commit-4a06cae0ed50
+    - eips-blob-eip7883-creation
+  following:
+    exists: true
+    revision_event_id: eip7883-e01
+    event_kind: revision
+    commit: e740ec8e682558ba91ad44d9f4f312b605e84fd1
+    committed_at: '2025-04-15T10:06:53Z'
+    offset_from_anchor_seconds: 4578954
+    semantic_effect: non_substantive
+    summary: >-
+      Earliest EIP-file revision after the anchor, 4578954 s (52.997 calendar days) later - far outside
+      the seven-day post-anchor exception ceiling. Diff reviewed directly
+      (`git show e740ec8e6825... -- EIPS/eip-7883.md`): it removes only the four-line empty
+      '## Reference Implementation' section whose body was the placeholder '[None]'; despite the commit
+      subject 'Update EIP-7883: Add reference implementation', no implementation was added to the EIP
+      file. Time basis: Task 01 event eip7883-e01 records committed_at '2025-04-15T10:06:53+00:00', i.e.
+      already UTC, quoted here as 2025-04-15T10:06:53Z (epoch 1744711613) and verified with
+      `TZ=UTC git log -1 --date=format-local:'%Y-%m-%dT%H:%M:%SZ' --format=%cd e740ec8e6825...`.
+    immutable_url: https://github.com/ethereum/EIPs/blob/e740ec8e682558ba91ad44d9f4f312b605e84fd1/EIPS/eip-7883.md
+    source_ids:
+    - eips-commit-e740ec8e6825
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7883-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: 4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b
+    path: EIPS/eip-7883.md
+    committed_at: '2025-02-14T17:00:54Z'
+    offset_from_anchor_seconds: -580205
+    git_blob_sha: 8fdc33692f0971ae2a34098bf47fd9e7cdc689ce
+    content_sha256: ca87942f7dcba477b81ca31dab57f0dad4383e8a84c3995930dfbc7b651e1683
+    immutable_url: https://github.com/ethereum/EIPs/blob/4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b/EIPS/eip-7883.md
+    source_ids:
+    - eips-commit-4a06cae0ed50
+    - eips-blob-eip7883-creation
+  information_cutoff_at: '2025-02-21T10:10:59Z'
+  rationale: >-
+    Default preceding rule applied. Bracketing was derived mechanically from the complete
+    revision_history.events list of the Task 01 global record (nine EIP-file commits: eip7883-e00 through
+    eip7883-e08), with every candidate's committer time re-verified in UTC directly from Git rather than
+    from the YAML alone. Exactly one event falls at or before the anchor 2025-02-21T10:10:59Z - the
+    creation commit at 2025-02-14T17:00:54Z (-580205 s, 6.715 days before) - so it is the preceding
+    candidate; the next event is 2025-04-15T10:06:53Z (+4578954 s, 52.997 days after), which fails
+    condition 1 of the post-anchor exception test (seven-day ceiling), so no exception is available or
+    considered. The full commit list for EIPS/eip-7883.md was independently enumerated with
+    `git log --follow -- EIPS/eip-7883.md` and matches Task 01's nine events with no additional or
+    missing commit and no rename. The selected revision was resolved from Git:
+    `git ls-tree 4a06cae0ed50... -- EIPS/eip-7883.md` confirms the path existed at that commit as blob
+    8fdc33692f0971ae2a34098bf47fd9e7cdc689ce (identical to `git rev-parse
+    4a06cae0ed50...:EIPS/eip-7883.md`), and `git cat-file blob 4a06cae0ed50...:EIPS/eip-7883.md |
+    sha256sum` yields ca87942f7dcba477b81ca31dab57f0dad4383e8a84c3995930dfbc7b651e1683. Because the
+    preceding candidate is selected, information_cutoff_at is the verified proposal anchor time
+    2025-02-21T10:10:59Z, allowing the as-created specification to be read with context available at PFI
+    while excluding later development history.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: null
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - 'Confirm the anchor semantics: PFI here is champion-initiated under EIP-7723 (PR ethereum/EIPs#9393
+    opened by the EIP author and merged as squash commit c585cb4a35ef), so no AllCoreDevs decision
+    underlies it and effective_at equals recorded_at. The ACDE#208 (2025-03-27) and ACDT#36 (2025-05-12)
+    decisions Task 01 names belong to the later CFI and SFI events, not to this anchor.'
+  - 'Confirm the timestamp normalization: Task 01 event eip7883-e00 states committed_at as
+    ''2025-02-15T01:00:54+08:00'' (a preserved local offset); this record uses the UTC equivalent
+    2025-02-14T17:00:54Z, which also matches Task 01''s creation.first_repository_commit.committed_at.
+    No Task 01 record was modified.'
+  - 'Confirm the default preceding selection: the selected ref is the creation revision, the only EIP-file
+    revision at or before the anchor, and the anchor falls 6.715 days after it. The three substantive
+    repricing revisions Task 01 identifies (eip7883-e02 2025-06-11, eip7883-e03 2025-07-11, eip7883-e04
+    2025-07-14) all post-date the anchor by months and are therefore excluded from the selected ref; the
+    selected content is the as-proposed specification, not the final Fusaka one.'
+  - 'Confirm that the one-second discrepancy between the PR #9393 GitHub merge timestamp
+    (2025-02-21T10:11:00Z, per the Task 01 source registry) and the squash commit''s committer time
+    (2025-02-21T10:10:59Z) is resolved in favour of the committer time, per the task contract''s
+    instruction to use exact committer timestamps.'
+unknowns:
+- 'Negative finding - no competing or repeated proposal cycle: EIP-7883 was added to EIPS/eip-7607.md
+  exactly once (`git log -S''eip-7883'' -- EIPS/eip-7607.md` returns only c585cb4a35ef) and was never
+  removed, so alternative_event_ids is legitimately empty. The Task 01 fork-EIP record likewise lists a
+  single proposed_for_inclusion event.'
+- 'Negative finding - no EIP-file revision falls between creation (2025-02-14T17:00:54Z) and the anchor
+  (2025-02-21T10:10:59Z), so the ref that a retrospective assessment must read is the file exactly as
+  created, with the ''Reference Implementation: [None]'' placeholder still present and the test-vector
+  table still matching the original (pre-triple-price) formula.'
+- 'Observed but unrecorded in Task 01 (not a material error, noted for transparency): commit
+  fc9a8d9a4d43ba0ce798b9466984dd21026251c3 (committer 2025-04-19T00:32:43Z, ''Update EIP-7607: update
+  Fusaka CFI and SFI list'') touches the EIP-7883 line in EIPS/eip-7607.md but only strips trailing
+  whitespace and does not change its inclusion state, consistent with Task 01 recording no event for it.
+  It has no Task 01 source ID, so none is cited.'
+- 'Source-strength caveat carried from Task 01: eips-pr-9393 is a reference_only, truncated metadata
+  extract archived at raw/forks/osaka/eips-pr-9393.json (content_sha256
+  9c2bfb058e01142ae5b629c04d28f85a2ca492aa02c515d3887831ef873e7c80). Its merge timestamp and PR
+  authorship were not re-fetched from GitHub in this run; the anchor time itself does not depend on it,
+  being taken from the reproducible Git committer timestamp.'
+- 'Scope note: content_sha256 is recorded only for the selected revision, as the template provides no
+  such field for the bracketing candidates; both bracketing candidates are nevertheless fully
+  identified by commit SHA and immutable URL.'

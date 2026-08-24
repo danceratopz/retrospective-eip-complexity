@@ -1,0 +1,449 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7825
+  title: Transaction Gas Limit Cap
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, this draft proposed a protocol-wide maximum declared
+    transaction gasLimit of 30,000,000, independent of the block gas limit. A
+    transaction above the cap would be excluded during transaction-pool validation,
+    and a block containing one would be invalid before processing. The proposal did
+    not change EVM gas prices or accounting, transaction encoding, opcodes, or block
+    fields.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7825/manifest.yaml
+    manifest_sha256: 9b8715396d3827cbabe7fb145d1699a8179044553c356e30997ac908340168f2
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 8096a3a13aa6bda755416d1199150f4165a36315
+    path: EIPS/eip-7825.md
+    committed_at: '2024-12-02T17:16:34Z'
+    git_blob_sha: 47cbfed315988c0bd4d10002c110ae402504cd94
+    content_sha256: d8c7ec66e85f9ccaa5ce7c3a33058902e996df621ba179a4aa9d97ae4d543523
+    immutable_url: https://github.com/ethereum/EIPs/blob/8096a3a13aa6bda755416d1199150f4165a36315/EIPS/eip-7825.md
+    information_cutoff_at: '2025-02-21T01:11:23Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 780bc6b41de4cb9cf665fb6f392cf428a5406bf62614bc4d8a4519a7972a6597
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7825.md
+    content_sha256: a8f57f4ee795d3f648f2e9cc224a9de4152cc9153528e2b241edeb162d1284bf
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T10:22:41Z'
+    session_id: assessment-run-f2a5a861-d8e5-46be-8696-f60a5632c3f3
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/rubric.md
+  - package/eip.md
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - 'eip.md: Gas Cap and Changes to EVM Behavior, lines 31-47'
+  rationale: >-
+    The proposal adds a validity ceiling on the transaction's declared gasLimit; it
+    does not alter an EVM gas charge, cost schedule, or accounting mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: >-
+    The specified checks occur at transaction-pool and block validation and do not
+    move any state access or gas charge within opcode execution.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - 'eip.md: Gas Cap, lines 33-37'
+  rationale: >-
+    The cap concerns the ordinary transaction gasLimit and specifies no blob-gas
+    accounting change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: >-
+    No state-writing charge, state-gas budget, reservoir, or spill interaction is
+    introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: The proposal contains no gas-refund mechanism or refund-rule change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - 'eip.md: Changes to EVM Behavior, lines 39-42'
+  - 'eip.md: Backwards Compatibility, lines 61-63'
+  rationale: >-
+    A minor subset of existing transaction and block-validity cases using gasLimit
+    values above 30,000,000 changes from accepted to rejected. The EIP says values
+    below the cap remain unaffected and expects only minimal practical impact.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no historical test inventory, so the exact number of
+    pre-existing vectors above the cap is not established.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - 'eip.md: Changes to EVM Behavior, lines 39-42'
+  rationale: >-
+    The cap changes the expected validity of affected cases; it does not produce a
+    new value or invariant that unrelated pre-existing tests must additionally
+    assert.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - 'eip.md: Changes to EVM Behavior and Protocol Adjustment, lines 39-47'
+  rationale: >-
+    Validation uses the existing transaction gasLimit value and requires no new
+    transition-tool field or interface mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - 'eip.md: Gas Cap and Changes to EVM Behavior, lines 33-42'
+  rationale: >-
+    A scalar boundary check and invalid-transaction or invalid-block expectations
+    can be expressed with ordinary test cases; the proposal identifies no need for
+    new framework abstractions.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: The transaction gas-limit comparison introduces no cryptography.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - 'eip.md: Gas Cap, lines 33-37'
+  - 'eip.md: Changes to EVM Behavior, lines 39-42'
+  rationale: >-
+    The EIP introduces one sharp numeric boundary: 30,000,000 is permitted while a
+    gasLimit greater than 30,000,000 is rejected, in both admission and block
+    validation contexts.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 1
+  evidence:
+  - 'eip.md: Changes to EVM Behavior, lines 39-42'
+  rationale: >-
+    Block import or syncing gains one simple validation rule: reject a block when
+    any contained transaction declares a gasLimit above the cap. The check uses an
+    existing transaction field and does not change its encoding.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP calls this block validation rather than specifically RLP validation, so
+    the rubric's block-RLP boundary admits a score of 0 interpretation.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: No Engine API endpoint, field, or communication mechanism is specified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: The validation cap introduces no system contract.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: >-
+    The proposal neither modifies a system contract nor describes an indirect
+    behavioral effect on one.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: No opcode is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - 'eip.md: Changes to EVM Behavior, lines 39-42'
+  rationale: >-
+    Despite the heading, the described behavior changes only transaction and block
+    validation; no pre-existing opcode result or behavior changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: No precompile logic or gas schedule is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - 'eip.md: Gas Cap and Protocol Adjustment, lines 33-47'
+  rationale: >-
+    The proposal constrains the value of the existing gasLimit field but does not
+    alter transaction, block, or interface encoding.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: >-
+    The cap applies a validation rule to transactions and does not define a new
+    transaction type.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - 'eip.md: Gas Cap and Changes to EVM Behavior, lines 33-42'
+  - 'eip.md: Backwards Compatibility, lines 61-63'
+  rationale: >-
+    This is a new validity rule for existing transactions: values above the cap are
+    rejected at pool admission and make a containing block invalid. It changes
+    affected existing cases but is a single comparison requiring limited vector
+    updates rather than testing-infrastructure redesign.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - 'eip.md: Protocol Adjustment, lines 44-47'
+  rationale: >-
+    The existing block gas limit remains independent of the transaction cap, and no
+    new block or header field is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - 'eip.md: Specification, lines 31-47'
+  rationale: >-
+    The proposal specifies no state or internal-variable modification at the fork
+    activation block.
+  confidence: medium
+  uncertainty_note: >-
+    The historical draft does not state its activation mechanics, but nothing in
+    its described rule calls for the kind of activation-block mutation scored by
+    this anchor.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - 'eip.md: Abstract and Motivation, lines 13-29'
+  - 'eip.md: Security Considerations, lines 65-69'
+  rationale: >-
+    The new operation is a fixed scalar validation check and does not itself require
+    performance validation. The stated performance effects are reduced worst-case
+    transaction load and more predictable block verification, not a new performance
+    mechanism or risk.
+  confidence: medium
+  uncertainty_note: >-
+    The text motivates the numerical cap with performance concerns but supplies no
+    benchmark methodology for validating the selected value.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - 'eip.md: Changes to EVM Behavior, lines 39-42'
+  - 'eip.md: Security Considerations, lines 65-69'
+  rationale: >-
+    The consensus-critical cap touches the limited components of transaction
+    admission and block acceptance. An inconsistent comparison or application could
+    cause acceptance divergence, so targeted boundary review and fuzzing are
+    warranted, while the rule has no broad interaction with EVM execution.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP discusses intended DoS mitigation but does not analyze failure modes of
+    inconsistent client enforcement.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - 'eip.md: Abstract, lines 13-15'
+  - 'eip.md: Gas Cap and Changes to EVM Behavior, lines 33-42'
+  rationale: >-
+    The concrete greater-than comparison determines the central block-consensus
+    boundary, but the short draft leaves a few details implicit: whether every use
+    of "gas usage" means declared gasLimit, the exhaustive transaction scope, and
+    activation. These have an obvious intended reading rather than requiring a new
+    consensus mechanism to be designed.
+  confidence: medium
+  uncertainty_note: >-
+    The suggested error code is explicitly only an example and appears to concern
+    local admission rather than the block-consensus result; it is not treated as an
+    additional consensus ambiguity.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 0
+  evidence:
+  - 'eip.md: Specification and Rationale, lines 31-58'
+  rationale: >-
+    The sealed historical text names no other EIP and specifies no dependency,
+    modification, or conflict requiring coordinated cross-EIP testing.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips: []
+totals:
+  primary_score: 8
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: >-
+    The central >30,000,000 block-validity predicate is testable as written, but the
+    draft is not fully normative about fork activation, whether its broad wording
+    covers every transaction form without exception, or whether references to gas
+    usage are exclusively references to the declared gasLimit. Its proposed pool
+    error code is only an example. These gaps are material to finalizing the test
+    matrix but are localized and do not obscure the primary validity rule.
+  affected_criteria:
+  - block_syncing_changes
+  - new_or_modified_transaction_validity_mechanisms
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 7
+    maximum: 9
+  plausible_tiers:
+  - low
+  unresolved_questions:
+  - >-
+    What exact fork activation condition makes the new transaction and block rule
+    effective?
+  - >-
+    Does "any single transaction" cover every transaction form carrying a gasLimit,
+    with no protocol-level exceptions?
+  - >-
+    Are the abstract's references to maximum gas usage intended solely as checks of
+    the sender-declared gasLimit, as the concrete validation clauses state?
+  - >-
+    Is any exact transaction-pool error code normative, or is only rejection
+    required?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the historical EIP revision, rubric, manifest, template, prompt,
+    and task contract present in this isolated capsule. I did not attempt internet
+    access, consult prohibited sources, use a skill, delegate the assessment, or use
+    present-day implementation knowledge.
+notable_ambiguities:
+- >-
+  The abstract describes a cap on gas usage, while the normative checks compare the
+  declared gasLimit; the assessment follows the concrete gasLimit rule.
+- >-
+  The phrase "appropriate error code" is followed by an example rather than a
+  required code, leaving transaction-pool error reporting non-normative.
+- >-
+  No explicit activation clause or exhaustive transaction-scope definition appears
+  in the historical draft.
+overall_confidence: medium

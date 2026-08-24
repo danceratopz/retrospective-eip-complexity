@@ -1,0 +1,538 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7918
+  title: Blob base fee bounded by execution cost
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, this Draft EIP changed EIP-4844's
+    parent-derived `calc_excess_blob_gas()` update. When the parent blob-gas
+    total is at least the target and the execution cost represented by
+    `TX_BASE_COST` exceeds the target blobs' blob fee, the update retains the
+    full parent total instead of subtracting the blob-gas target. The stated
+    goal was to keep the blob fee auction responsive rather than allowing the
+    blob base fee to collapse while execution cost carries the price signal.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7918/manifest.yaml
+    manifest_sha256: 8f167b017ab35052e137d8a4b5b49091ebdb8354b70af1ba92d2750809e19dc0
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680
+    path: EIPS/eip-7918.md
+    committed_at: '2025-03-26T19:04:25Z'
+    git_blob_sha: bd5700342ad5e1b41f973cc46b569a9a639694ee
+    content_sha256: eeca54feba9d22411496c6d0020ffe41b174d465361abfc6790e349ab14fbd8d
+    immutable_url: https://github.com/ethereum/EIPs/blob/d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680/EIPS/eip-7918.md
+    information_cutoff_at: '2025-03-26T23:25:10Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7918.md
+    content_sha256: c4c84efa449bd51e760b9e73e126a1967976e4e4d45dffb37fd3960dfeae1cac
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T11:32:55Z'
+    session_id: assessment-run-8f67f817-10e1-4388-9f1a-b7c29914ee5e
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4844.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Gas accounting, lines 164-167
+    summary: EIP-4844 defines blob gas as independent of normal gas.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 changes only the excess-blob-gas update calculation.
+  rationale: >-
+    The proposal changes the separate blob-gas fee mechanism, not EVM
+    execution-gas charging, so the EVM gas-rule anchor is not triggered.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The normative change is header-derived fee arithmetic and contains no opcode execution or state access.
+  rationale: >-
+    No opcode's state-access position or gas-charge ordering is changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 1
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Header extension and Gas accounting, lines 152-181
+    summary: EIP-4844 already defines the excess-blob-gas update and derives the blob base fee from that value.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 adds a fee-parity branch that can omit subtraction of the target in the existing update.
+  rationale: >-
+    This is a direct update to EIP-4844's existing blob-gas accounting
+    mechanism, matching score 1; it does not introduce a separate new blob-gas
+    mechanism.
+  confidence: high
+  uncertainty_note: >-
+    The accounting rule is structurally clear, but the undefined
+    `TX_BASE_COST` prevents exact threshold vectors from being baselined.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The change updates excess blob gas and does not charge for writing state or alter a state-gas budget.
+  rationale: >-
+    No state-gas cost, charging site, budget, reservoir, or spill path is
+    introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The new branch changes excess-blob-gas accumulation and specifies no refund behavior.
+  - source: supporting/eip-4844.md
+    locator: Gas accounting, lines 184-186
+    summary: The pre-existing blob fee is burned and not refunded on transaction failure.
+  rationale: No new EVM gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation, lines 244-253
+    summary: Existing block validation asserts that the header's excess blob gas equals the output of the update function.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The replacement update changes the expected value only when its new fee-parity condition is satisfied.
+  rationale: >-
+    Existing EIP-4844 excess-blob-gas and block-header vectors in the
+    execution-fee-led regime must be reworked, but this is a narrow subset of
+    existing tests, matching score 1.
+  confidence: medium
+  uncertainty_note: >-
+    The undefined `TX_BASE_COST` leaves the exact subset of affected fee
+    vectors unresolved and could make the affected subset larger.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation, lines 244-253
+    summary: EIP-4844 already requires the excess-blob-gas header value to match the update function.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 changes that existing function's result rather than adding a new asserted output.
+  rationale: >-
+    Tests may need revised expected values, but they gain no additional
+    invariant or assertion, so this distinct anchor remains zero.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Header extension, lines 152-160
+    summary: The pre-existing update accepts the parent header.
+  - source: eip.md
+    locator: Specification, lines 30-40
+    summary: The modified function keeps the same parent-header interface and reads existing header fields.
+  rationale: >-
+    No new transition-tool field or interface mechanism is required; the
+    additional comparison is derivable from the already supplied parent
+    header.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The feature is expressed as deterministic integer comparisons and returns over existing header inputs.
+  rationale: >-
+    Existing value- and block-expectation primitives suffice; the text
+    provides no need for a new framework abstraction, modifier, or expectation
+    type.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The normative change consists solely of fee multiplication, comparison, addition, and subtraction.
+  - source: supporting/eip-4844.md
+    locator: Cryptographic Helpers, lines 67-74
+    summary: EIP-4844's KZG proof helpers are pre-existing context and are not referenced by the EIP-7918 change.
+  rationale: No cryptographic mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 30-40
+    summary: The output depends both on the target-total boundary and on a strict greater-than fee-parity boundary.
+  - source: eip.md
+    locator: Delayed response during a quick rise in execution fees, lines 55-57
+    summary: The proposal identifies a multi-block catch-up period when execution fees rise quickly.
+  rationale: >-
+    Tests must cross below, at, and above the existing target-total boundary
+    with below, equal, and above fee parity, including the different equality
+    behavior of the strict comparison. These are multiple interacting boundary
+    conditions but do not require an elevated case count beyond that compact
+    matrix, matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    Exact parity inputs cannot be fixed until `TX_BASE_COST` is defined.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Header extension, lines 119-160
+    summary: EIP-4844 already defines the header fields and their RLP encoding.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 changes the value-calculation rule without adding an RLP validation mechanism.
+  rationale: No new block RLP validation mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The specification changes a local header-derived calculation and defines no Engine API field or endpoint.
+  rationale: No Engine API field or communication mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The complete normative change is a calculation branch and creates no contract or system action.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The excess-blob-gas update does not read, write, or otherwise reference system-contract code or state.
+  rationale: No existing system contract is directly or indirectly modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 specifies only a change to `calc_excess_blob_gas()`.
+  - source: supporting/eip-4844.md
+    locator: Opcode to get versioned hashes, lines 188-193
+    summary: The blob-related BLOBHASH opcode already belongs to EIP-4844 and is not changed by this proposal.
+  rationale: No opcode is added by EIP-7918.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The normative code modifies a block-level accounting helper, not opcode behavior.
+  rationale: No pre-existing opcode behavior is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 adds only a fee-parity branch and does not define a precompile.
+  - source: supporting/eip-4844.md
+    locator: Point evaluation precompile, lines 195-223
+    summary: The blob point-evaluation precompile is pre-existing EIP-4844 functionality.
+  rationale: No precompile is added by EIP-7918.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The change neither invokes nor alters precompile logic or gas accounting.
+  rationale: No existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Header extension, lines 119-150
+    summary: EIP-4844 already establishes the RLP header encoding containing the blob-gas fields.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 changes how one existing field value is computed, not how any data is encoded.
+  rationale: No transaction, block, or interface encoding is changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Blob transaction, lines 97-117
+    summary: The blob transaction type is pre-existing EIP-4844 functionality.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 introduces no transaction format or type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation, lines 244-281
+    summary: EIP-4844 separately defines the existing block-header assertion and blob-transaction validity checks.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 changes the block's excess-blob-gas derivation and does not change transaction validity or intrinsic gas.
+  rationale: >-
+    The changed consensus value is a block validity consequence, not a change
+    to any transaction type's validity rules or intrinsic gas calculation.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Header extension, lines 119-162
+    summary: `blob_gas_used` and `excess_blob_gas` are fields already introduced by EIP-4844.
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: EIP-7918 only changes the derivation of the existing `excess_blob_gas` field.
+  rationale: No new block or header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-40
+    summary: The proposal defines the ongoing parent-derived rule and specifies no activation-block state or internal-variable mutation.
+  - source: supporting/eip-4844.md
+    locator: Header extension, lines 152-162
+    summary: The parent blob-gas fields and their first-introduction initialization are pre-existing EIP-4844 behavior.
+  rationale: >-
+    Switching to the new calculation at the fork does not itself modify state
+    or an internal variable at the activation block, so the binary anchor is
+    zero.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 30-40
+    summary: The per-block update adds a comparison and a call to derive the parent blob base fee.
+  - source: supporting/eip-4844.md
+    locator: Helpers and Gas accounting, lines 83-94 and 169-181
+    summary: Blob-base-fee derivation uses the existing iterative `fake_exponential()` helper.
+  rationale: >-
+    The added per-block work is self-contained and can be benchmarked in
+    isolation, with no stated broad effect on existing performance behavior,
+    matching score 1.
+  confidence: medium
+  uncertainty_note: >-
+    The text supplies no performance measurements, although the computation is
+    bounded to one existing helper invocation per update.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 18-22
+    summary: The proposal addresses loss of the blob-price signal, fallback to a first-price auction, and spiky blob resource consumption.
+  - source: eip.md
+    locator: Specification and Security Considerations, lines 30-40 and 93-95
+    summary: The rule couples execution and blob fee values, while the author reports no known security risks.
+  rationale: >-
+    Incorrect threshold or update behavior could affect consensus on the header
+    and the intended fee/resource-control mechanism. The change interacts with
+    a limited set of critical existing components—the execution base fee and
+    EIP-4844 blob accounting—so targeted security and economic review is
+    warranted, matching score 2 rather than an extensive multi-component score.
+  confidence: medium
+  uncertainty_note: >-
+    The security section is brief and the undefined `TX_BASE_COST` leaves the
+    exact economic threshold unresolved.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Specification, lines 1-11 and 28-40
+    summary: The normative comparison uses `TX_BASE_COST`, but the EIP provides no value or definition for that symbol.
+  - source: supporting/eip-4844.md
+    locator: Parameters, lines 38-56
+    summary: The required EIP defines the blob-gas constants used by the comparison but does not define `TX_BASE_COST`.
+  rationale: >-
+    Clients cannot baseline the fee-parity branch without agreeing on the
+    numeric meaning of `TX_BASE_COST`. The gap is localized to one constant and
+    does not expose previously unobservable behavior, matching score 2.
+  confidence: high
+  uncertainty_note: >-
+    The phrase "simple blob-carrying transaction" suggests an intended
+    interpretation, but the sealed text does not make that interpretation
+    normative.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Specification, lines 1-11 and 28-40
+    summary: EIP-7918 explicitly requires EIP-4844 and modifies its excess-blob-gas update.
+  - source: eip.md
+    locator: Abstract, lines 14-16
+    summary: The new rule directly compares the blob base fee with `base_fee_per_gas`.
+  - source: supporting/eip-4844.md
+    locator: Front matter and Gas accounting, lines 1-11 and 164-181
+    summary: EIP-4844 requires EIP-1559 and defines its blob gas as a separate targeting rule similar to EIP-1559.
+  rationale: >-
+    The proposal modifies EIP-4844 and couples that blob-fee mechanism to the
+    EIP-1559 execution base fee. Coordinated cross-market boundary tests are
+    required, but the interaction is limited to the fee update calculation,
+    matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    EIP-1559 is an indirect dependency through EIP-4844 and the existing
+    `base_fee_per_gas` field, but the new comparison makes that interaction
+    direct for testing purposes.
+  exceptional_score_justification: null
+  interacting_eips: [1559, 4844]
+totals:
+  primary_score: 11
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: >-
+    The normative rule uses `TX_BASE_COST` without defining its value or exact
+    composition. That omission prevents clients from agreeing on which side of
+    the fee-parity branch a constructed block occupies, even though the rest of
+    the update rule is localized and explicit.
+  affected_criteria:
+  - blob_gas_accounting_changes
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 10
+    maximum: 12
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - What exact numeric value and cost components does `TX_BASE_COST` denote for the normative fee-parity comparison?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP, its allowlisted EIP-4844
+    supporting document, and the packaged rubric at the recorded information
+    cutoff. I did not use internet access, later implementation knowledge,
+    external project records, other EIP assessments, or a dedicated assessment
+    skill.
+notable_ambiguities:
+- The preferred normative specification is distinguishable from the two explicitly labeled alternatives, but `TX_BASE_COST` is never defined.
+- The proposal notes delayed catch-up after a rapid execution-base-fee rise without specifying a separate bound; the normative recurrence nevertheless determines each block's result once its constants are defined.
+overall_confidence: medium

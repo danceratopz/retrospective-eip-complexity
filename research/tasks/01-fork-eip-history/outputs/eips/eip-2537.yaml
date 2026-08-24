@@ -1,0 +1,876 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 2537
+  title: Precompile for BLS12-381 curve operations
+  source_ids:
+  - blob-eip2537-pin
+  - blob-eip2537-creation
+research_run:
+  started_at: '2026-08-20T19:20:00Z'
+  completed_at: '2026-08-20T19:41:00Z'
+  researcher: claude subagent eip-batch-05 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2020-02-21'
+  frontmatter_source_ids:
+  - blob-eip2537-creation
+  - blob-eip2537-pin
+  first_repository_commit:
+    authored_at: '2020-06-01T17:55:43+03:00'
+    committed_at: '2020-06-01T09:55:43-05:00'
+    commit: 5edff4ae6ff62c7e0bbfad624fc3d0ba7dc84392
+    path: EIPS/eip-2537.md
+    source_ids:
+    - commit-5edff4ae6f
+  discrepancy_note: The frontmatter declares created 2020-02-21 (the proposal's declared creation date,
+    matching the opening period of PR ethereum/EIPs#2537 referenced in the merge-commit subject), while
+    the earliest repository commit adding EIPS/eip-2537.md is 5edff4ae, committed 2020-06-01. The ~3.3-month
+    gap is the PR review period before the draft was merged; the squash-merge subject preserves the intermediate
+    draft history ('draft', 'set EIP number', ...). The Git event is the earliest independently verifiable
+    repository event.
+revision_history:
+  summary:
+    file_commit_count: 46
+    post_creation_revision_count: 45
+    substantive_revision_count: 24
+    non_substantive_revision_count: 21
+    uncertain_revision_count: 0
+    first_revision_at: '2020-06-03T08:57:33+01:00'
+    last_revision_at: '2025-05-13T01:46:57+08:00'
+    first_substantive_revision_at: '2020-06-04T06:25:20+12:00'
+    last_substantive_revision_at: '2025-01-23T22:51:23+08:00'
+    derived_from_event_ids:
+    - eip2537-e01
+    - eip2537-e02
+    - eip2537-e03
+    - eip2537-e04
+    - eip2537-e05
+    - eip2537-e06
+    - eip2537-e07
+    - eip2537-e08
+    - eip2537-e09
+    - eip2537-e10
+    - eip2537-e11
+    - eip2537-e12
+    - eip2537-e13
+    - eip2537-e14
+    - eip2537-e15
+    - eip2537-e16
+    - eip2537-e17
+    - eip2537-e18
+    - eip2537-e19
+    - eip2537-e20
+    - eip2537-e21
+    - eip2537-e22
+    - eip2537-e23
+    - eip2537-e24
+    - eip2537-e25
+    - eip2537-e26
+    - eip2537-e27
+    - eip2537-e28
+    - eip2537-e29
+    - eip2537-e30
+    - eip2537-e31
+    - eip2537-e32
+    - eip2537-e33
+    - eip2537-e34
+    - eip2537-e35
+    - eip2537-e36
+    - eip2537-e37
+    - eip2537-e38
+    - eip2537-e39
+    - eip2537-e40
+    - eip2537-e41
+    - eip2537-e42
+    - eip2537-e43
+    - eip2537-e44
+    - eip2537-e45
+    - eip2537-e46
+  events:
+  - id: eip2537-e01
+    event_kind: creation
+    authored_at: '2020-06-01T17:55:43+03:00'
+    committed_at: '2020-06-01T09:55:43-05:00'
+    commit: 5edff4ae6ff62c7e0bbfad624fc3d0ba7dc84392
+    path: EIPS/eip-2537.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-2537 (merged from PR #2537): nine BLS12-381 precompiles (G1/G2 ADD,
+      MUL, MULTIEXP, PAIRING, Fp->G1 and Fp2->G2 mapping) at addresses 0x0a..0x12, with curve parameters,
+      field/point encodings, ABI and error cases, error-handling gas rule, gas schedule with MSM discount
+      table, required test properties and informative implementation list. Frontmatter: status Draft,
+      created 2020-02-21.'
+    rationale: Adding commit; recorded as event_kind creation and excluded from revision counts.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-5edff4ae6f
+  - id: eip2537-e02
+    event_kind: revision
+    authored_at: '2020-06-03T00:57:33-07:00'
+    committed_at: '2020-06-03T08:57:33+01:00'
+    commit: db94b47f674c81a865f1fe4c120649e7cf86b2e4
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Typo fix ''operaiton''->''operation'' in the pairing gas heading (PR #2691).'
+    rationale: Spelling-only change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-db94b47f67
+  - id: eip2537-e03
+    event_kind: revision
+    authored_at: '2020-06-03T21:25:20+03:00'
+    committed_at: '2020-06-04T06:25:20+12:00'
+    commit: caafd7202aef6cb148860e7bb145b034ff85ca7b
+    path: EIPS/eip-2537.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds ''Behavior on empty inputs'' rule (variable-length operations MUST return an error
+      on empty input; new ''Input is empty'' error cases for MSM/pairing) and changes error handling from
+      consuming all supplied gas to consuming only the operation''s scheduled gas cost, with a Solidity
+      staticcall example (PR #2692).'
+    rationale: Changes observable precompile error/gas semantics and adds a new input-validity rule.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-caafd7202a
+  - id: eip2537-e04
+    event_kind: revision
+    authored_at: '2020-07-07T22:00:29+03:00'
+    committed_at: '2020-07-08T07:00:29+12:00'
+    commit: b95c19f7118740cb498e0f758803037189b4ca30
+    path: EIPS/eip-2537.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Reverts error handling to burning all gas supplied with CALL/STATICCALL (''Gas burinig on
+      error''), adds a DDoS-protection section, adds the mandatory top-16-zero-bytes check note for Fp
+      encodings, removes the pairing boolean-encoding error case, and adds gas-schedule pseudocode for
+      variable-length inputs including the k=0 -> 0 gas case (PR #2693).'
+    rationale: Changes error-gas semantics again and adds normative gas-computation pseudocode; reverses
+      part of the previous commit.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-b95c19f711
+  - id: eip2537-e05
+    event_kind: revision
+    authored_at: '2020-08-31T13:37:20+03:00'
+    committed_at: '2020-08-31T22:37:20+12:00'
+    commit: 7d70b071258325338aced1c915896311b97cd5c7
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Adds the Noble TypeScript/JavaScript BLS12-381 library to the informative implementation
+      list (PR #2690).'
+    rationale: Informative link addition only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-7d70b07125
+  - id: eip2537-e06
+    event_kind: revision
+    authored_at: '2020-09-08T10:32:52+01:00'
+    committed_at: '2020-09-08T17:32:52+08:00'
+    commit: f8e7c028f509c18684dc4af32a4c4ff24241091b
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Repo-wide ''Simplify the EIP template'' sweep (PR #2939) removing HTML template comments
+      from section headers.'
+    rationale: No content change; comment removal only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-f8e7c028f5
+  - id: eip2537-e07
+    event_kind: revision
+    authored_at: '2020-10-02T17:19:03+03:00'
+    committed_at: '2020-10-03T03:19:03+13:00'
+    commit: 19afcb19a6cf339bee8ca647e470e2877cc2b8e6
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Gas repricing: G2 multiplication 55000->45000, pairing 23000*k+115000 -> 43000*k+65000,
+      Fp2->G2 mapping 110000->75000; adds a ''Benchmarking test cases'' section with worst-case inputs
+      (PR #2999).'
+    rationale: Changes concrete gas parameters. First step of the October 2020 repricing sequence (applied,
+      reverted same day, re-applied on 2020-10-30).
+    change_group: 2537-gas-reprice-2020
+    confidence: high
+    source_ids:
+    - commit-19afcb19a6
+  - id: eip2537-e08
+    event_kind: revision
+    authored_at: '2020-10-02T17:28:25+03:00'
+    committed_at: '2020-10-03T03:28:25+13:00'
+    commit: c7975135b135a45ba7a41f2e54709e51d08bdd9c
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Reverts the same-day repricing of PR #2999: G2 multiplication back to 55000, pairing back
+      to 23000*k+115000, Fp2->G2 mapping back to 110000; removes the benchmarking section (PR #3016).'
+    rationale: Exact revert of the previous commit's parameter changes, ~9 minutes later.
+    change_group: 2537-gas-reprice-2020
+    confidence: high
+    source_ids:
+    - commit-c7975135b1
+  - id: eip2537-e09
+    event_kind: revision
+    authored_at: '2020-10-30T21:04:51+01:00'
+    committed_at: '2020-10-31T09:04:51+13:00'
+    commit: 897f456335920ab2063bd90c3d922af327996625
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Re-applies and extends the repricing: G1 addition 600->500, G2 addition 4500->800, G2 multiplication
+      55000->45000, pairing -> 43000*k+65000, Fp2->G2 mapping -> 75000; restores the benchmarking test
+      cases (PR #3077).'
+    rationale: Final landing of the 2020 gas repricing with two additional parameters changed.
+    change_group: 2537-gas-reprice-2020
+    confidence: high
+    source_ids:
+    - commit-897f456335
+  - id: eip2537-e10
+    event_kind: revision
+    authored_at: '2021-03-11T09:32:45+03:00'
+    committed_at: '2021-03-11T14:32:45+08:00'
+    commit: acb5d621a98b269870f13f47ee18ef79138eb268
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Status Draft->Review; adds author Kelly Olson; replaces the external IETF hash-to-curve
+      draft (v7) reference with an in-repo mapping specification (assets/eip-2537/field_to_curve.md);
+      inlines gas costs into the abstract list; replaces the informative implementation list with a Reference
+      Implementation section (Rust/OpenEthereum based on EIP1962 code, Geth); moves benchmark vectors
+      to an asset file; heading-level restructure (PR #3343).'
+    rationale: Mostly restructuring, but the normative definition source of the mapping functions moves
+      from a mutable external draft to a pinned in-repo document, which materially affects implementers.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-acb5d621a9
+  - id: eip2537-e11
+    event_kind: revision
+    authored_at: '2021-09-26T00:20:57-05:00'
+    committed_at: '2021-09-26T00:20:57-05:00'
+    commit: a9f8257c620b570d3bdf91aa758c7bc5839ff72b
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'EIP-bot moves status Review->Stagnant due to inactivity (PR #3964).'
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-a9f8257c62
+  - id: eip2537-e12
+    event_kind: revision
+    authored_at: '2022-05-06T03:29:09-04:00'
+    committed_at: '2022-05-06T00:29:09-07:00'
+    commit: 9e393a79d9937f579acbdcb234a67869259d5a96
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Repo-wide sweep pointing the copyright waiver at the in-repo LICENSE file (PR #5055).'
+    rationale: Link-only change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-9e393a79d9
+  - id: eip2537-e13
+    event_kind: revision
+    authored_at: '2022-10-28T17:12:41+02:00'
+    committed_at: '2022-10-28T11:12:41-04:00'
+    commit: 9746dddb102aacf521e64943d097b81472647188
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Typo fixes: ''mappign''->''mapping'' headings, ''referred as''->''referred to as'', minor
+      article fix (PR #5772).'
+    rationale: Spelling/grammar only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-9746dddb10
+  - id: eip2537-e14
+    event_kind: revision
+    authored_at: '2023-06-22T16:51:34-06:00'
+    committed_at: '2023-06-22T15:51:34-07:00'
+    commit: ef0a1320a0a1143abd2abb84093d511d0b0602b4
+    path: EIPS/eip-2537.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Shifts all nine precompile addresses from 0x0a..0x12 to 0x0c..0x14 to avoid collision with
+      the latest precompile set; adds author Alex Stokes; blank-line formatting under 'Error cases'.
+    rationale: Precompile addresses are part of the externally observable interface.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-ef0a1320a0
+  - id: eip2537-e15
+    event_kind: revision
+    authored_at: '2024-02-26T20:02:06+01:00'
+    committed_at: '2024-02-26T19:02:06+00:00'
+    commit: f92f1f8f5f80f43e0588799315d2097cb82ca548
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Status Stagnant->Review; adds description frontmatter and author Antonio Sanso; removes the
+      Simple Summary section; fixes 'burinig'->'burning'; drops the 'Important notes' heading; changes
+      the reference-implementation lineage citation from 'EIP1962 code' to '[EIP-196](./eip-196.md) code'.
+    rationale: Frontmatter/status/formatting changes without normative content change. The EIP-1962 ->
+      EIP-196 citation swap is recorded as dependency events eip2537-dep-e2/e3.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-f92f1f8f5f
+  - id: eip2537-e16
+    event_kind: revision
+    authored_at: '2024-02-29T09:24:09+01:00'
+    committed_at: '2024-02-29T16:24:09+08:00'
+    commit: 86d1d2793838df57deca133c7e8631a02b6e1660
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Editorial grammar sweep; fixes 'Peppinger'->'Pippenger'; rewords the infinity-point encoding
+      text (zero-byte sequences decode to the point of infinity) without changing the convention.
+    rationale: Wording improvements only; encoding semantics unchanged.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-86d1d27938
+  - id: eip2537-e17
+    event_kind: revision
+    authored_at: '2024-02-29T11:22:21+01:00'
+    committed_at: '2024-02-29T10:22:21+00:00'
+    commit: f3c212cc23b6d2144f1b4680c34fd3369f7bcb7a
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Adds the identity-element property 'P + 0 = P' to the required test properties for add/multiply
+      operations.
+    rationale: Adds a required correctness property that affects testing.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-f3c212cc23
+  - id: eip2537-e18
+    event_kind: revision
+    authored_at: '2024-03-08T12:09:53-07:00'
+    committed_at: '2024-03-08T19:09:53+00:00'
+    commit: 13b858c1daefeda21b1f6c4c60ca0825e51e4c4f
+    path: EIPS/eip-2537.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Switches activation to timestamp-based forking (new Constants section with FORK_TIMESTAMP;
+      'block.timestamp >= FORK_TIMESTAMP' condition) and tightly repacks precompile addresses to 0x0b..0x13;
+      abstract restructured.
+    rationale: Changes activation semantics and the precompile address assignments.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-13b858c1da
+  - id: eip2537-e19
+    event_kind: revision
+    authored_at: '2024-03-12T16:57:24+01:00'
+    committed_at: '2024-03-12T23:57:24+08:00'
+    commit: 6eaa523b218c7f310f7bed59190554f39925776c
+    path: EIPS/eip-2537.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Despite the ''Editorial'' subject: adds formal ''Fields and Groups'' definitions (G1/G2
+      defined to include the infinity point), annotates curve equations and renames generators to H1/H2,
+      rewrites all ABI error cases in terms of group membership (''neither on a curve nor the infinity
+      point''), requires k to be a positive integer for G1 MSM and pairing inputs (replacing the ''Input
+      is empty'' error), and states that each pairing input point is expected to be in the subgroup of
+      order q.'
+    rationale: Redefines input-validity conditions and group membership; commit title understates the
+      semantic content.
+    change_group: 2537-abi-groups-rewrite-2024-03
+    confidence: high
+    source_ids:
+    - commit-6eaa523b21
+  - id: eip2537-e20
+    event_kind: revision
+    authored_at: '2024-03-13T10:14:50+01:00'
+    committed_at: '2024-03-13T09:14:50+00:00'
+    commit: 69cb2298d9e82cf96144a1389b3b4a3da3c5b87d
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Adds the positive-integer k constraint to the G2 MSM ABI, completing the previous commit's
+      rewrite.
+    rationale: Completes the input-validity restatement started in commit 6eaa523b.
+    change_group: 2537-abi-groups-rewrite-2024-03
+    confidence: high
+    source_ids:
+    - commit-69cb2298d9
+  - id: eip2537-e21
+    event_kind: revision
+    authored_at: '2024-03-13T16:03:25+01:00'
+    committed_at: '2024-03-13T15:03:25+00:00'
+    commit: ab9b3a46e5b79b69b0c1ad49845e9f219504ff97
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Links the in-repo test vector files (assets/eip-2537/test-vectors.md); the vectors themselves
+      are added as asset files in the same commit.
+    rationale: Adds normative test vectors to the proposal (affects testing).
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-ab9b3a46e5
+  - id: eip2537-e22
+    event_kind: revision
+    authored_at: '2024-04-06T17:25:33+02:00'
+    committed_at: '2024-04-06T23:25:33+08:00'
+    commit: b6b2b84b7736f22641aa15539dd68493e999413f
+    path: EIPS/eip-2537.md
+    change_type: interface_or_data_structure
+    semantic_effect: non_substantive
+    summary: Renames the multiexponentiation precompiles and sections to MSM (BLS12_G1MSM/BLS12_G2MSM)
+      throughout.
+    rationale: Terminology-only rename of interface labels; addresses, encodings, gas and behavior unchanged.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-b6b2b84b77
+  - id: eip2537-e23
+    event_kind: revision
+    authored_at: '2024-04-12T18:01:46+02:00'
+    committed_at: '2024-04-12T16:01:46+00:00'
+    commit: 86abe0649f138816ea7586ac4a4213ac08e6f812
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Expands the required pairing test properties: bilinearity kept, adds non-degeneracy e(P,Q)
+      != 1 and e(P,-Q) = e(-P,Q).'
+    rationale: Adds required correctness properties that affect testing.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-86abe0649f
+  - id: eip2537-e24
+    event_kind: revision
+    authored_at: '2024-04-15T07:36:28-06:00'
+    committed_at: '2024-04-15T21:36:28+08:00'
+    commit: 41fb82670f71ce7b91407b1184b253bc118d8f1a
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Changes the pairing cost in the Gas schedule section from 43000*k+65000 to 23000*k+115000
+      to match the stale pseudocode ('Fix conflicting gas formula').
+    rationale: Changed a concrete gas parameter, resolving the document's internal conflict in the wrong
+      direction; rolled back the same day.
+    change_group: 2537-pairing-formula-consistency-2024-04
+    confidence: high
+    source_ids:
+    - commit-41fb82670f
+  - id: eip2537-e25
+    event_kind: revision
+    authored_at: '2024-04-15T13:03:37-06:00'
+    committed_at: '2024-04-16T03:03:37+08:00'
+    commit: ce2149a4c5ace0bcb695c6ff8eade01e2c581b40
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Rolls back the previous change (Gas schedule back to 43000*k+65000) and instead fixes the
+      pairing gas pseudocode from 23000*k+115000 to 43000*k+65000, resolving the internal inconsistency
+      that dated from the 2020 repricing.
+    rationale: Restores the intended pairing price and aligns the second occurrence.
+    change_group: 2537-pairing-formula-consistency-2024-04
+    confidence: high
+    source_ids:
+    - commit-ce2149a4c5
+  - id: eip2537-e26
+    event_kind: revision
+    authored_at: '2024-04-17T10:40:04+02:00'
+    committed_at: '2024-04-17T08:40:04+00:00'
+    commit: 1ccfab6874c28b1ba8f1eaf550570b5b22f6408d
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: In EIPS/eip-2537.md only one blank line is removed; the commit's substance is updated test-vector
+      JSON asset files (add/mul/msm/map/pairing vectors under assets/eip-2537/).
+    rationale: File-scope change is whitespace-only; asset-file changes are outside this file's event
+      scope and noted here for context.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-1ccfab6874
+  - id: eip2537-e27
+    event_kind: revision
+    authored_at: '2024-04-18T13:59:46+02:00'
+    committed_at: '2024-04-18T11:59:46+00:00'
+    commit: e6ef2673993c34fbd8d8c4dbbf5998475143c4c6
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Grammar fix in the field-to-curve mapping sentence.
+    rationale: Wording-only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-e6ef267399
+  - id: eip2537-e28
+    event_kind: revision
+    authored_at: '2024-04-22T11:39:09+02:00'
+    committed_at: '2024-04-22T09:39:09+00:00'
+    commit: d8f70e7d7b6cb863d852e043f85ddac30dc7a498
+    path: EIPS/eip-2537.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Rewrites subgroup-check requirements: MUL and MSM error cases now include ''on the curve
+      but not in the correct subgroup''; explicit notes that the ADD precompiles perform no subgroup check;
+      note that pairing over any infinity input yields 1; subgroup-check section restated with MUST/SHOULD/MAY,
+      linking an optimized method document (assets/eip-2537/fast_subgroup_checks.md) and permitting endomorphism
+      acceleration.'
+    rationale: Changes input-validity/error behavior of MUL and MSM operations (consensus-relevant) and
+      formalizes subgroup-check requirements.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-d8f70e7d7b
+  - id: eip2537-e29
+    event_kind: revision
+    authored_at: '2024-04-24T17:53:04+02:00'
+    committed_at: '2024-04-24T15:53:04+00:00'
+    commit: 57638c1f28cf3df3378886a534a19a566dff1a79
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: In EIPS/eip-2537.md only two blank lines are removed; the commit adds fail-case test-vector
+      JSON assets ('Finalizing test vectors').
+    rationale: File-scope change is whitespace-only; asset-file additions are outside this file's event
+      scope and noted for context.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-57638c1f28
+  - id: eip2537-e30
+    event_kind: revision
+    authored_at: '2024-06-07T15:02:45-05:00'
+    committed_at: '2024-06-07T20:02:45+00:00'
+    commit: f6112d0c01fb9d42a7e8e79d618aad7304fd70cb
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Formatting nits: constants table alignment, pseudocode indentation, minor grammar/typo fixes
+      (''Fix some nits'').'
+    rationale: Formatting and grammar only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-f6112d0c01
+  - id: eip2537-e31
+    event_kind: revision
+    authored_at: '2024-06-19T12:20:55-07:00'
+    committed_at: '2024-06-19T19:20:55+00:00'
+    commit: 9ccf12ceb3979bf0b31ad82a54a0470845c38c2d
+    path: EIPS/eip-2537.md
+    change_type: interface_or_data_structure
+    semantic_effect: non_substantive
+    summary: Renames BLS12_PAIRING to BLS12_PAIRING_CHECK in the constants table, abstract list, ABI section
+      and gas section. The commit subject also says 'introduce PAIRING_PRODUCT precompile' but no such
+      addition appears in this file's diff.
+    rationale: Label-only rename; address, ABI, gas and behavior unchanged. Subject/content mismatch recorded
+      in unknowns.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-9ccf12ceb3
+  - id: eip2537-e32
+    event_kind: revision
+    authored_at: '2024-08-20T15:38:35+08:00'
+    committed_at: '2024-08-20T15:38:35+08:00'
+    commit: 90bb02b2821527345014c37d9215f5a0b87551bd
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Grammar: ''less than or equal than'' -> ''less than or equal to''.'
+    rationale: Grammar-only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-90bb02b282
+  - id: eip2537-e33
+    event_kind: revision
+    authored_at: '2024-09-11T14:48:32+02:00'
+    committed_at: '2024-09-11T12:48:32+00:00'
+    commit: 32fbf6e7b4fabc62f0ce72c3e5f1c5c0e752e900
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Typo: discount ''cup'' -> ''cap'' (verified by word-diff).'
+    rationale: Spelling-only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-32fbf6e7b4
+  - id: eip2537-e34
+    event_kind: revision
+    authored_at: '2024-10-03T16:58:42+08:00'
+    committed_at: '2024-10-03T16:58:42+08:00'
+    commit: 04970d92b4b832fa74f8d4c3fd77721ccf200181
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Spells out what the pairing check computes: the equation e(P1,Q1) * e(P2,Q2) * ... * e(Pk,Qk)
+      == 1 in the pairing target field, with boolean output bytes.'
+    rationale: Materially clarifies the operation's semantics for implementers; observable behavior unchanged
+      but now unambiguous.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-04970d92b4
+  - id: eip2537-e35
+    event_kind: revision
+    authored_at: '2024-10-09T21:41:12+02:00'
+    committed_at: '2024-10-10T03:41:12+08:00'
+    commit: 71e68664850c66b0057eea01e10467427c6ecd1a
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Abstract wording: ''multiexponentiation'' -> ''multi-scalar-multiplication'', completing
+      the MSM terminology change of 2024-04-06.'
+    rationale: Terminology consistency only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-71e6866485
+  - id: eip2537-e36
+    event_kind: revision
+    authored_at: '2024-12-18T16:34:18+01:00'
+    committed_at: '2024-12-18T23:34:18+08:00'
+    commit: 10de931675ee55e7aae5201a4189553f6f7db8f6
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Repricing of fixed-cost operations: G1 addition 500->375, G2 addition 800->600, G2 multiplication
+      45000->22500, Fp2->G2 mapping 75000->23800; baseline reworded from ''30 MGas/second'' to ''EcRecover
+      precompile as a baseline''.'
+    rationale: Concrete gas parameter changes; part of the December 2024 (Pectra) repricing series.
+    change_group: 2537-pectra-gas-reprice-2024-12
+    confidence: high
+    source_ids:
+    - commit-10de931675
+  - id: eip2537-e37
+    event_kind: revision
+    authored_at: '2024-12-18T16:34:35+01:00'
+    committed_at: '2024-12-18T23:34:35+08:00'
+    commit: e37988a39144d994823bc67f867cbf057aeb2c2c
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Repricing of the pairing check operation: 43000*k+65000 -> 32600*k+37700.'
+    rationale: Concrete gas parameter change; part of the December 2024 repricing series.
+    change_group: 2537-pectra-gas-reprice-2024-12
+    confidence: high
+    source_ids:
+    - commit-e37988a391
+  - id: eip2537-e38
+    event_kind: revision
+    authored_at: '2024-12-18T15:34:50+00:00'
+    committed_at: '2024-12-18T23:34:50+08:00'
+    commit: 3777bef647a48fec665846c83ece1d18e19dd113
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'MSM gas repricing: introduces separate G1 and G2 discount tables (max_discount 519 and 524)
+      replacing the single shared table with max_discount 174.'
+    rationale: Concrete gas parameter changes; part of the December 2024 repricing series.
+    change_group: 2537-pectra-gas-reprice-2024-12
+    confidence: high
+    source_ids:
+    - commit-3777bef647
+  - id: eip2537-e39
+    event_kind: revision
+    authored_at: '2024-12-19T18:47:19+01:00'
+    committed_at: '2024-12-19T17:47:19+00:00'
+    commit: eb4715f31696f0418b2d4c2898972c96560a76a6
+    path: EIPS/eip-2537.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Removes the dedicated G1MUL and G2MUL precompiles (nine -> seven precompiles), repacks addresses
+      to 0x0b..0x11, adds a 'No dedicated MUL call' rationale (MUL == MSM with k == 1), and narrows the
+      subgroup-check statement to MSMs and pairings.
+    rationale: Removes two precompiles and reassigns addresses; a change to the external interface.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-eb4715f316
+  - id: eip2537-e40
+    event_kind: revision
+    authored_at: '2024-12-20T15:30:09-08:00'
+    committed_at: '2024-12-21T07:30:09+08:00'
+    commit: a362aae2729eb7fb334cb8c2782b81fd978782c6
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: non_substantive
+    summary: Removes the *TBD* FORK_TIMESTAMP constants-table row and the 'If block.timestamp >= FORK_TIMESTAMP'
+      phrasing ('We introduce ...').
+    rationale: The removed constant was a TBD placeholder; no concrete value or behavior changed, only
+      how activation is phrased. Classified non-substantive with medium confidence.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-a362aae272
+  - id: eip2537-e41
+    event_kind: revision
+    authored_at: '2025-01-06T17:54:51+01:00'
+    committed_at: '2025-01-07T00:54:51+08:00'
+    commit: 6655848f12b57f39a8bf8ecaa2f9d9810a2825f0
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Applies the 32600*k+37700 pairing price to the second location (the gas pseudocode), aligning
+      it with the 2024-12-18 repricing ('Adjusted pairing costs in the 2nd place').
+    rationale: Completes the pairing repricing by fixing the remaining stale value.
+    change_group: 2537-pectra-gas-reprice-2024-12
+    confidence: high
+    source_ids:
+    - commit-6655848f12
+  - id: eip2537-e42
+    event_kind: revision
+    authored_at: '2025-01-15T13:15:27+01:00'
+    committed_at: '2025-01-15T12:15:27+00:00'
+    commit: da321864817908f2bb8741ee3ac6e58acf5db565
+    path: EIPS/eip-2537.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Aligns the abstract's per-operation gas costs (375, 600, 23800) with the already-repriced
+      Gas schedule, removing conflicting stale values.
+    rationale: Resolves conflicting gas values inside the document, completing the December 2024 repricing.
+    change_group: 2537-pectra-gas-reprice-2024-12
+    confidence: high
+    source_ids:
+    - commit-da32186481
+  - id: eip2537-e43
+    event_kind: revision
+    authored_at: '2025-01-23T15:51:23+01:00'
+    committed_at: '2025-01-23T22:51:23+08:00'
+    commit: 62c3b2880fd0156d3d53a3cf4884cf0e700c27f7
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Clarifies the MSM gas-cost formula to use explicit integer division ('//') in both the formula
+      text and the pseudocode.
+    rationale: Materially clarifies gas computation (integer semantics) for implementers.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-62c3b2880f
+  - id: eip2537-e44
+    event_kind: revision
+    authored_at: '2025-02-12T10:34:25-08:00'
+    committed_at: '2025-02-13T02:34:25+08:00'
+    commit: cec0be8ba233e3a744de30648018e19910b9cfe8
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Status Review->Last Call with last-call-deadline 2025-04-01.
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-cec0be8ba2
+  - id: eip2537-e45
+    event_kind: revision
+    authored_at: '2025-02-28T09:27:39+01:00'
+    committed_at: '2025-02-28T08:27:39+00:00'
+    commit: 437d026460d5c6d4f6159533efde6926b72dd324
+    path: EIPS/eip-2537.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Removes the informative note that a pairing over any infinity-point input yields 1 and that
+      protocols may want to pre-reject infinity points.
+    rationale: Removes informative guidance only; the precompile's specified behavior is unchanged. Medium
+      confidence because the note carried implementer-relevant advice.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-437d026460
+  - id: eip2537-e46
+    event_kind: revision
+    authored_at: '2025-05-12T11:46:57-06:00'
+    committed_at: '2025-05-13T01:46:57+08:00'
+    commit: 1dd2558f9a68d9453aed71c803fdda09d83c6e37
+    path: EIPS/eip-2537.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Status Last Call->Final.
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-1dd2558f9a
+dependency_history:
+  events:
+  - id: eip2537-dep-e1
+    target_eip: 1962
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2020-06-01T09:55:43-05:00'
+    commit: 5edff4ae6ff62c7e0bbfad624fc3d0ba7dc84392
+    rationale: 'Explanation of ''other'': the creation text''s informative Implementation section lists
+      ''EIP1962 code bases with fixed parameters'' (Rust, Go, C++) among candidate implementation code
+      bases - an explicit textual reference to EIP-1962 describing reference-implementation lineage, not
+      a normative requirement. No `requires` frontmatter existed at creation (or at any later revision).'
+    confidence: high
+    source_ids:
+    - commit-5edff4ae6f
+    - blob-eip2537-creation
+  - id: eip2537-dep-e2
+    target_eip: 1962
+    event_type: removed
+    relationship: other
+    occurred_at: '2024-02-26T19:02:06+00:00'
+    commit: f92f1f8f5f80f43e0588799315d2097cb82ca548
+    rationale: The 'Move to Review' commit rewrites the Reference Implementation line from 'based on the
+      EIP1962 code' to 'based on the [EIP-196](./eip-196.md) code', removing the document's last explicit
+      EIP-1962 reference (verified by scanning every historical version for EIP-number mentions).
+    confidence: high
+    source_ids:
+    - commit-f92f1f8f5f
+  - id: eip2537-dep-e3
+    target_eip: 196
+    event_type: introduced
+    relationship: other
+    occurred_at: '2024-02-26T19:02:06+00:00'
+    commit: f92f1f8f5f80f43e0588799315d2097cb82ca548
+    rationale: 'Explanation of ''other'': the same commit introduces an explicit informative reference
+      stating the Rust reference implementation is ''based on the [EIP-196](./eip-196.md) code'' - reference-implementation
+      lineage, not a normative requirement. The reference persists unchanged through the pinned state.
+      Note the replaced text said ''EIP1962''; whether the renumbering to EIP-196 was intended cannot
+      be determined from the EIP text alone (see unknowns).'
+    confidence: medium
+    source_ids:
+    - commit-f92f1f8f5f
+    - blob-eip2537-pin
+source_registry: outputs/sources/eips/eip-2537.yaml
+unknowns:
+- EIP-2537 never had a `requires` frontmatter field at any of its 46 file revisions (verified by checking
+  the frontmatter of every historical version at the pin).
+- Commit 9ccf12ce (2024-06-19) has the subject 'rename PAIRING to PAIRING_CHECK; introduce PAIRING_PRODUCT
+  precomiple', but no PAIRING_PRODUCT precompile appears in the EIPS/eip-2537.md diff (grep of the commit
+  diff returned zero matches); only the rename landed in this file. The discrepancy between subject and
+  content is preserved rather than resolved.
+- Commits 1ccfab68 (2024-04-17) and 57638c1f (2024-04-24) change EIPS/eip-2537.md only by whitespace;
+  their substance is test-vector JSON files under assets/eip-2537/ (verified via `git show --stat`). Asset-file
+  evolution is outside the per-file event scope of this record.
+- Commit f92f1f8f (2024-02-26) replaced the textual reference 'EIP1962 code' with '[EIP-196](./eip-196.md)
+  code'. Whether the change from EIP-1962 to EIP-196 was an intended retargeting or an accidental renumbering
+  cannot be determined from repository evidence alone; the text as merged references EIP-196 and is recorded
+  as such.
+- Summary first/last revision dates use the committer timestamps (committed_at) of the referenced events;
+  authored timestamps are also recorded per event.
+- PR numbers cited in event summaries come from the merge-commit subjects in ethereum/EIPs; PR metadata
+  itself (GitHub API) was not consulted or archived, so no mutable sources were relied upon and the raw/
+  directory for this work unit is empty.
+- research_run.started_at reflects the resumed session after an interruption (session usage limit); the
+  diff review pass for this EIP began earlier the same day within the same assignment.

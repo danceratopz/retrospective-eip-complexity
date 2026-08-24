@@ -1,0 +1,220 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7934
+  title: RLP Execution Block Size Limit
+  source_ids:
+  - eips-blob-eip7934-pin
+research_run:
+  started_at: '2026-08-20T19:58:12Z'
+  completed_at: '2026-08-21T00:44:00Z'
+  researcher: claude subagent eip-osaka-close (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-04-16'
+  frontmatter_source_ids:
+  - eips-blob-eip7934-creation
+  - eips-blob-eip7934-pin
+  first_repository_commit:
+    authored_at: '2025-05-06T12:39:57Z'
+    committed_at: '2025-05-06T12:39:57Z'
+    commit: 040800a32544ba8819ce7b9feaad9c8bb4400f62
+    path: EIPS/eip-7934.md
+    source_ids:
+    - eips-commit-040800a32544
+    - gh-pr-map-eip-7934
+  discrepancy_note: >-
+    The frontmatter 'created' date (2025-04-16) precedes the first repository commit
+    (authored and committed 2025-05-06T12:39:57Z) by twenty days. The adding pull request,
+    ethereum/EIPs#9658 'Add EIP: RLP Execution Block Size Limit', was opened 2025-04-17T20:46:19Z -
+    one day after the declared creation date - and merged 2025-05-06T12:39:57Z. The gap is
+    therefore drafting time plus EIP-editor review latency on the submission PR, not a conflict
+    between the two dates.
+revision_history:
+  summary:
+    file_commit_count: 7
+    post_creation_revision_count: 6
+    substantive_revision_count: 2
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2025-06-10T10:22:38Z'
+    last_revision_at: '2026-01-20T16:02:19Z'
+    first_substantive_revision_at: '2025-06-10T10:22:38Z'
+    last_substantive_revision_at: '2025-06-10T11:44:27Z'
+    derived_from_event_ids:
+    - eip7934-e00
+    - eip7934-e01
+    - eip7934-e02
+    - eip7934-e03
+    - eip7934-e04
+    - eip7934-e05
+    - eip7934-e06
+  events:
+  - id: eip7934-e00
+    event_kind: creation
+    authored_at: '2025-05-06T12:39:57+00:00'
+    committed_at: '2025-05-06T20:39:57+08:00'
+    commit: 040800a32544ba8819ce7b9feaad9c8bb4400f62
+    path: EIPS/eip-7934.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: >-
+      Initial addition of EIP-7934 'RLP Execution Block Size Limit' (77 lines, status Draft):
+      introduces MAX_BLOCK_SIZE = 10 MiB (10,485,760 bytes) and a MARGIN of 512 KiB (524,288 bytes),
+      defines MAX_RLP_BLOCK_SIZE as MAX_BLOCK_SIZE - MARGIN, and makes any block whose RLP encoding
+      exceeds MAX_RLP_BLOCK_SIZE invalid, both at block construction and at block validation. The
+      motivation cites the consensus layer's 10 MiB gossip limit.
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-040800a32544
+    - eips-blob-eip7934-creation
+    - gh-pr-map-eip-7934
+  - id: eip7934-e01
+    event_kind: revision
+    authored_at: '2025-06-10T13:22:38+03:00'
+    committed_at: '2025-06-10T10:22:38+00:00'
+    commit: 9076d228026a5ea6b9c7367c91d626c597d525a0
+    path: EIPS/eip-7934.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: >-
+      Fixes the constant names in the Specification - the bullet list now introduces SAFETY_MARGIN
+      instead of MARGIN, and the pseudocode computes MAX_RLP_BLOCK_SIZE = MAX_BLOCK_SIZE - SAFETY_MARGIN
+      instead of GOSSIP_UPPER_LIMIT - SAFETY_MARGIN, replacing an identifier the EIP never defined.
+    rationale: >-
+      Materially clarifies the normative validity formula - as written at creation the pseudocode
+      derived the block-size bound from GOSSIP_UPPER_LIMIT, a constant that appears nowhere else in
+      the document, so the specification was not self-contained. Marked substantive because it changes
+      what an implementer reading the pseudocode literally must do; a reviewer could reasonably call
+      it editorial because the intended numeric bound (10 MiB minus the margin) is unchanged, which
+      is why confidence is medium rather than high.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-9076d228026a
+    - gh-pr-map-eip-7934
+  - id: eip7934-e02
+    event_kind: revision
+    authored_at: '2025-06-10T13:44:27+02:00'
+    committed_at: '2025-06-10T11:44:27+00:00'
+    commit: 0e2559f9f1ba67f542c6ac4d0c07fac175a39a95
+    path: EIPS/eip-7934.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: >-
+      Raises SAFETY_MARGIN from 512 KiB (524,288 bytes) to 2 MiB (2,097,152 bytes) in the Specification
+      bullet list and pseudocode, and updates the Motivation and Rationale prose accordingly. This
+      lowers the effective MAX_RLP_BLOCK_SIZE from 9,961,472 to 8,388,608 bytes.
+    rationale: >-
+      Changes the normative parameter that determines block validity; directly affects clients, block
+      builders and tests. First commit of the two-commit safety-margin update.
+    change_group: eip7934-safety-margin-2mib
+    confidence: high
+    source_ids:
+    - eips-commit-0e2559f9f1ba
+    - gh-pr-map-eip-7934
+  - id: eip7934-e03
+    event_kind: revision
+    authored_at: '2025-06-18T12:02:51+00:00'
+    committed_at: '2025-06-18T12:02:51+00:00'
+    commit: 6984cfd02f9a83e18452fc831b241be1bb259305
+    path: EIPS/eip-7934.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: >-
+      Updates the frontmatter description and the Abstract from '512 KiB margin' to '2 MiB margin',
+      bringing the summary text into line with the SAFETY_MARGIN value that commit 0e2559f9f1ba had
+      already set in the Specification. Nothing else in the file changes.
+    rationale: >-
+      Documentation-consistency follow-up to the safety-margin bump, so it shares that change group;
+      the normative Specification is untouched by this commit. The commit subject and its pull request
+      title ('Set MAX_RECEIPTS_MESSAGE_SIZE for GetReceipts in devp2p') describe a devp2p change that
+      is not present in the merged diff - ethereum/EIPs#9907 as merged is two added and two deleted
+      lines in EIPS/eip-7934.md and no other file - so the subject must not be read as evidence that
+      a MAX_RECEIPTS_MESSAGE_SIZE constant was ever added to this EIP.
+    change_group: eip7934-safety-margin-2mib
+    confidence: high
+    source_ids:
+    - eips-commit-6984cfd02f9a
+    - gh-pr-map-eip-7934
+  - id: eip7934-e04
+    event_kind: revision
+    authored_at: '2025-09-17T10:26:18-07:00'
+    committed_at: '2025-09-18T01:26:18+08:00'
+    commit: 6625c8ce11e04e5c6b8289b89b1a7cc73770b67e
+    path: EIPS/eip-7934.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-6625c8ce11e0
+    - gh-pr-map-eip-7934
+  - id: eip7934-e05
+    event_kind: revision
+    authored_at: '2025-09-29T06:49:07-07:00'
+    committed_at: '2025-09-29T21:49:07+08:00'
+    commit: 6885acdd1f3e26f1138166af9b0e2cf019796a0f
+    path: EIPS/eip-7934.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Last Call, adding last-call-deadline 2025-10-28.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-6885acdd1f3e
+    - gh-pr-map-eip-7934
+  - id: eip7934-e06
+    event_kind: revision
+    authored_at: '2026-01-20T11:02:19-05:00'
+    committed_at: '2026-01-21T00:02:19+08:00'
+    commit: ef39b609e5693633471f2ac771c941e5fc2c6d85
+    path: EIPS/eip-7934.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final, removing last-call-deadline.'
+    rationale: >-
+      Process-metadata change only. This is the last commit touching the file at the pinned
+      repository state.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-ef39b609e569
+    - gh-pr-map-eip-7934
+    - eips-blob-eip7934-pin
+dependency_history:
+  events: []
+source_registry: outputs/sources/eips/eip-7934.yaml
+unknowns:
+- >-
+  No explicit cross-EIP dependency exists in any revision. Negative search - every one of the seven
+  blob versions of EIPS/eip-7934.md (creation through the pinned master commit) was grepped
+  case-insensitively for 'eip-<digits>', 'EIP <digits>' and 'requires'; there are no matches other
+  than the EIP's own number, and the frontmatter never carried a 'requires' field. The document does
+  refer to the consensus layer's gossip size limit and, in its motivation, to block-size pressure
+  generally, but it never names another EIP, so no dependency event is recorded. The Meta EIP
+  EIP-7607 lists EIP-7934 for Fusaka, which is fork-work-unit scope rather than a dependency
+  declared by this EIP.
+- >-
+  Residual inconsistency carried through to the pin - commit 9076d228026a renamed MARGIN to
+  SAFETY_MARGIN in the bullet that introduces the constant but left the following bullet reading
+  'MAX_RLP_BLOCK_SIZE calculated as MAX_BLOCK_SIZE - MARGIN'. That stale identifier is still present
+  in the Final text at a08f51fec5b2b5da457adb05b8cffb487fb4f7de; the pseudocode below it uses
+  SAFETY_MARGIN. Recorded as an observation about the document, not as a separate event.
+- >-
+  The pull-request title for commit 6984cfd02f9a announces a devp2p MAX_RECEIPTS_MESSAGE_SIZE change
+  that does not appear in the merged diff. The GitHub API reports ethereum/EIPs#9907 as merged with
+  one changed file, two additions and two deletions, matching the diff reviewed here; where the
+  intended devp2p change went (a different repository, a later withdrawn PR, or nowhere) was not
+  investigated because it lies outside this work unit.
+- >-
+  Event timestamps are reproduced with the offsets recorded in Git. The committer timezone offsets in
+  this repository are set by the merge tooling (frequently +08:00) and are not evidence of where a
+  change was made; all summary dates are the equivalent UTC instants.

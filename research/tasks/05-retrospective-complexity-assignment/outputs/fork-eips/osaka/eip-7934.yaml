@@ -1,0 +1,482 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7934
+  title: RLP Execution Block Size Limit
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: At the historical cutoff, EIP-7934 proposed a protocol-level upper bound of
+    10 MiB minus a 512 KiB safety margin on the RLP-encoded execution block. Block builders had to stay
+    at or below that bound, while validating nodes had to reject blocks above it and apply the check during
+    validation and propagation. The limit was explicitly independent of gas metrics and added no new encoding,
+    transaction, header, or EVM feature.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7934/manifest.yaml
+    manifest_sha256: 558da54ef6c72b39349e7c465e03db10c1141388516da6b8454993f911b061f4
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 040800a32544ba8819ce7b9feaad9c8bb4400f62
+    path: EIPS/eip-7934.md
+    committed_at: '2025-05-06T12:39:57Z'
+    git_blob_sha: 028e8657abdf9fa3f2159e639bccd2f66f88be1c
+    content_sha256: 29c5f346e4a9e09f18e7ba5296b49fc0b250e913e2fa02870402d1ea76da5e77
+    immutable_url: https://github.com/ethereum/EIPs/blob/040800a32544ba8819ce7b9feaad9c8bb4400f62/EIPS/eip-7934.md
+    information_cutoff_at: '2025-05-09T21:56:48Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7934.md
+    content_sha256: 45e4d4a57f0e07574b56f13fa6713ab7cdfc3a0899a66583731f58e792f0f3cd
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T13:32:58+02:00'
+    session_id: assessment-run-fea69a4d-9240-4771-ba1f-16f08df42395
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+  assessor_raw_output:
+    path: outputs/raw/fork-eips/osaka/eip-7934.yaml
+    content_sha256: 25696ebea4a26c270e0ecf8168e9846e17a4793d1955c8a823e22b9e897a870f
+  postprocessing:
+  - id: task05_first_run_schema_normalization_v1
+    applied_at: '2026-08-21T11:37:23.437442Z'
+    semantic_scores_changed: false
+    changes:
+    - quoted 118 unsafe plain YAML free-text scalars
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Protocol Adjustment, lines 55-58
+    summary: The new block-size limit is explicitly stated to apply independently of gas-related metrics.
+  rationale: The proposal adds no EVM gas accounting rule, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap and Changes to Protocol Behavior, lines 30-53
+    summary: The specified operation measures the RLP encoding of a whole block and changes only block
+      construction and validation.
+  rationale: No opcode execution, state access, or gas-charge ordering is changed, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Protocol Adjustment, lines 55-58
+    summary: The size check is independent of gas-related metrics, and no blob-gas rule is specified.
+  rationale: There is no blob gas accounting change, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Protocol Adjustment, lines 55-58
+    summary: The proposal separates its block-byte limit from all gas-related metrics and specifies no
+      state-write charge.
+  rationale: No state gas cost, charging site, budget, reservoir, or spill rule is changed, matching the
+    zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-58
+    summary: The complete specified change is a block-size validity comparison independent of gas metrics.
+  rationale: The proposal introduces no gas-refund mechanism, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 66-68
+    summary: Blocks above the new limit cease to be valid, so existing vectors containing such blocks
+      would change outcome.
+  rationale: 'The new validation rule affects a narrow subset of pre-existing block tests: those with
+    an RLP encoding above the cap. That fits the minor-subset anchor rather than broad test rework.'
+  confidence: medium
+  uncertainty_note: The sealed package does not enumerate historical test vectors, so the affected subset
+    is inferred from the validity rule.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Changes to Protocol Behavior, lines 50-53
+    summary: The EIP changes builder acceptance and node rejection behavior but defines no additional
+      result or output for unrelated tests to assert.
+  rationale: Oversized vectors change validity and are counted under test-pattern rework; unrelated tests
+    do not gain a new produced value to assert. This matches the zero anchor.
+  confidence: medium
+  uncertainty_note: The EIP does not describe a test-suite representation, but no new assertion-bearing
+    protocol output is specified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Protocol Adjustment, lines 55-58
+    summary: Clients must add the size check during block validation and propagation; no transition-tool
+      field or interface mechanism is introduced.
+  rationale: The rule consumes the already encoded block and requires no specified transition-tool interface
+    modification, matching the zero anchor.
+  confidence: medium
+  uncertainty_note: The EIP does not state how a transition tool would be used for this outer block-validation
+    rule.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap, lines 30-48
+    summary: The normative behavior is expressible as an RLP encoding length comparison against one constant.
+  rationale: Boundary blocks and expected validity can be expressed without a new expectation type, modifier,
+    or permanent framework abstraction, matching the zero anchor.
+  confidence: medium
+  uncertainty_note: A convenience helper for constructing exact-size blocks may be useful, but the EIP
+    does not establish that a new framework primitive is required.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 28-58
+    summary: The proposal consists solely of an RLP-encoded block-size cap and rejection rule.
+  rationale: No cryptographic mechanism or cryptographic functionality is introduced or modified, matching
+    the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap, lines 32-47
+    summary: A block is invalid only when its RLP-encoded length is greater than the derived maximum,
+      making equality and one byte over distinct outcomes.
+  rationale: The proposal introduces one boundary-prone mechanism, with tests needed below, exactly at,
+    and above the byte limit. This matches score 1.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap and Protocol Adjustment, lines 30-47 and 55-58
+    summary: The EIP adds one RLP block-length validity check that every client must apply during block
+      validation and propagation.
+  rationale: This is a single simple block RLP validation mechanism requiring client agreement on block
+    acceptance, exactly matching the score-1 anchor.
+  confidence: high
+  uncertainty_note: The draft's inconsistent constant names leave a minor specification ambiguity, addressed
+    separately under under-specification.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Changes to Protocol Behavior and Protocol Adjustment, lines 50-58
+    summary: The stated changes concern block creation, validation, and propagation, with no new API field,
+      endpoint, or communication mechanism.
+  rationale: No Engine API change is specified, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-58
+    summary: The specification adds constants and a client-side block validity check, not contract code
+      or state.
+  rationale: No system contract is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Changes to Protocol Behavior, lines 50-53
+    summary: The behavioral change is confined to block construction and rejection based on encoded size.
+  rationale: The proposal neither identifies nor directly or indirectly changes a pre-existing system
+    contract, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-58
+    summary: The proposal specifies only a whole-block RLP length check and corresponding block rejection.
+  rationale: No EVM opcode is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Protocol Adjustment, lines 55-58
+    summary: The rule is an independent block validation and propagation check rather than an EVM execution
+      change.
+  rationale: No pre-existing opcode behavior is modified or deprecated, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-58
+    summary: The specified feature is a client block-size validation check and contains no callable EVM
+      component.
+  rationale: No precompile is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-58
+    summary: The complete specified change is a whole-block size cap with no precompile logic or gas schedule
+      changes.
+  rationale: No pre-existing precompile is modified, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap, lines 30-47
+    summary: The new rule measures the length produced by the existing RLP encoding of a block; it does
+      not replace or modify that encoding.
+  rationale: Using an existing encoding as the input to a validity limit is not an encoding-format change,
+    so the zero anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap and Changes to Protocol Behavior, lines 30-53
+    summary: The proposal constrains total encoded block size and adds no transaction envelope or transaction
+      semantics.
+  rationale: No new transaction type is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap and Protocol Adjustment, lines 30-36 and 55-58
+    summary: Invalidity is defined for an oversized block as a whole and is explicitly independent of
+      gas-related metrics.
+  rationale: The EIP does not change any transaction type's validity rules or intrinsic gas calculation,
+    matching the zero anchor.
+  confidence: high
+  uncertainty_note: Transactions can contribute bytes to the block total, but their individual validity
+    is unchanged.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap, lines 30-47
+    summary: The proposal introduces validation constants and computes size from the existing Block object
+      without adding a block field.
+  rationale: No block or header field is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-58
+    summary: The specification defines a standing validity check and does not prescribe an activation-block
+      state or internal-variable modification.
+  rationale: No state, internal variable, or similar value is modified at a fork activation block, matching
+    the zero anchor.
+  confidence: high
+  uncertainty_note: The historical draft does not specify fork scheduling, but that omission does not
+    itself create an activation-state mechanism.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 19-26
+    summary: The EIP is motivated by oversized blocks slowing propagation and block validation and by
+      the resulting instability and denial-of-service exposure.
+  - source: eip.md
+    locator: Block Size Cap, lines 38-47
+    summary: The introduced mechanism is a length check over the RLP encoding of one block.
+  rationale: The added size calculation and rejection path warrant performance validation, but the check
+    is self-contained and can be benchmarked in isolation. This matches score 1.
+  confidence: medium
+  uncertainty_note: The EIP does not specify whether clients must re-encode a block or may track encoded
+    length, so implementation cost can vary.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 19-26
+    summary: Oversized blocks are described as creating propagation failures, temporary forks, reorgs,
+      fragmentation, and denial-of-service risks.
+  - source: eip.md
+    locator: Changes to Protocol Behavior and Protocol Adjustment, lines 50-58
+    summary: Builders, validators, and propagation paths must consistently enforce the new consensus-validity
+      boundary.
+  rationale: An incorrect or inconsistent implementation can make clients disagree on block validity or
+    allow the network attacks the cap is intended to prevent. The rule touches a limited set of critical
+    block-handling components and calls for targeted boundary review or fuzzing, matching score 2 rather
+    than the broad multi-component score 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Block Size Cap, lines 32-47
+    summary: The prose defines MAX_BLOCK_SIZE and MARGIN, while the pseudocode instead uses SAFETY_MARGIN
+      and an otherwise undefined GOSSIP_UPPER_LIMIT; it also types the measured value only as Block.
+  - source: eip.md
+    locator: Changes to Protocol Behavior and Protocol Adjustment, lines 50-58
+    summary: The draft requires the limit during validation and propagation but does not further define
+      whether enforcement measures received bytes or canonical re-encoding at each entry point.
+  rationale: A few localized drafting details are unresolved, but the numeric values, subtraction, strict
+    greater-than comparison, and intended re-encoding operation make the intended rule apparent. This
+    fits score 1.
+  confidence: medium
+  uncertainty_note: Exact serialization scope, constant nomenclature, and enforcement point should be
+    normalized before cross-client vectors are baselined.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale, lines 60-64
+    summary: The cap is motivated by a consensus-layer gossip constraint, but the proposal names no EIP
+      dependency, modification, or conflict.
+  rationale: On the sealed evidence, the execution-block validity rule is independently testable and has
+    no identified interaction with another EIP, matching the zero anchor.
+  confidence: medium
+  uncertainty_note: The EIP refers generically to consensus-layer gossip behavior without identifying
+    a numbered EIP.
+  exceptional_score_justification: null
+  interacting_eips: []
+totals:
+  primary_score: 7
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: The draft's prose and pseudocode use inconsistent names for the 10 MiB upper limit and 512
+    KiB margin, and GOSSIP_UPPER_LIMIT is not defined in the code fragment. It also does not formally
+    define the full Block serialization scope or whether each validation and propagation path measures
+    received bytes or a canonical re-encoding. The intended 10 MiB minus 512 KiB, strict greater-than
+    rule is nevertheless apparent.
+  affected_criteria:
+  - block_syncing_changes
+  - new_test_framework_primitives
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 7
+    maximum: 9
+  plausible_tiers:
+  - low
+  unresolved_questions:
+  - Is MAX_RLP_BLOCK_SIZE normatively 10,485,760 minus 524,288 bytes despite the pseudocode's undefined
+    GOSSIP_UPPER_LIMIT name?
+  - Does block size mean the canonical result of rlp.encode(Block), or the exact received byte sequence,
+    and which execution-block components are included in Block?
+  - At which validation and propagation entry points must the limit be enforced, and do exact-size test
+    construction needs require a reusable test helper?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: I assessed only the sealed historical EIP revision, the pinned assessor-view rubric, and
+    the operational files listed in provenance. I did not access the internet, follow links, consult later
+    implementations or fork outcomes, use a dedicated assessment skill, or inspect another EIP.
+notable_ambiguities:
+- The prose and pseudocode disagree on constant names, and GOSSIP_UPPER_LIMIT is undefined in the pseudocode.
+- The draft does not formally distinguish raw received RLP length from canonical re-encoding length at
+  all enforcement paths.
+overall_confidence: medium

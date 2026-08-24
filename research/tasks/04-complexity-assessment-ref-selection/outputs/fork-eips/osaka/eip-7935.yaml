@@ -1,0 +1,213 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7935
+  title: Set default gas limit to 60M
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7935.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7935.yaml
+research_run:
+  started_at: '2026-08-21T07:01:01Z'
+  completed_at: '2026-08-21T07:03:40Z'
+  researcher: claude subagent osaka/eip-7935 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7935-e1
+  alternative_event_ids: []
+  kind: normalized_proposal_equivalent
+  raw_label: EIPs Scheduled for Inclusion / Core EIPs (listed as 'Set default gas limit to XX0M')
+  effective_at: '2025-05-09T21:56:48Z'
+  recorded_at: '2025-05-09T21:56:48Z'
+  date_basis: >-
+    Task 01's occurred_at for event osaka-eip7935-e1 is the UTC committer date of the ethereum/EIPs
+    commit that edited EIPS/eip-7607.md, and that convention is adopted unchanged here. The commit is
+    9d880b910da73181fd23758f1516c325ea26e3b9 'Update EIP-7607: Add ACDE#211 SFI & CFI''d EIPs'
+    (committer 2025-05-09T21:56:48+00:00, author 2025-05-09T14:56:48-07:00, Tim Beiko), merged via
+    ethereum/EIPs#9744; effective_at and recorded_at are therefore identical because the Meta EIP
+    change itself is the recording event. The underlying AllCoreDevs decision that Task 01 identifies
+    is AllCoreDevs - Execution call #211 on 2025-05-08 (agenda item "SFI''ing EIP-7935: Set default
+    gas limit to XX0M", ethereum/pm issue #1500), i.e. approximately one day and eight hours before
+    the repository recorded it. That decision has no exact verifiable instant in primary evidence -
+    only the call date, with the call scheduled for 14:00 UTC per the agenda issue - so the exact
+    committer timestamp is used rather than a calendar-day-truncated meeting date, as the task
+    contract requires. Sensitivity check: substituting 2025-05-08T14:00:00Z (call start) for the
+    anchor changes neither bracketing candidate; the preceding candidate would then sit 224 seconds
+    before the anchor instead of 115232 seconds before it.
+  verification_status: verified
+  verification_rationale: >-
+    Verified directly against the read-only pinned clone at /home/dtopz/code/github/EIPs
+    (HEAD a08f51fec5b2b5da457adb05b8cffb487fb4f7de, the Task 01 run-wide pin), not from Task 01 prose.
+    'git log -1' on 9d880b910da73181fd23758f1516c325ea26e3b9 returns committer time
+    2025-05-09T21:56:48+00:00 and subject "Update EIP-7607: Add ACDE#211 SFI & CFI'd EIPs". 'git show
+    <sha> -- EIPS/eip-7607.md' shows exactly two added lines, one of which is
+    "* [EIP-7935](./eip-7935.md): Set default gas limit to XX0M" inserted into the '#### Core EIPs'
+    subsection of '### EIPs Scheduled for Inclusion' (the other adds EIP-7934 to 'Considered for
+    Inclusion'); the section headings were read from the file as of that commit to confirm the
+    subsection. This is a normalized proposal equivalent rather than an explicit PFI event: EIP-7935
+    never appeared in a Proposed for Inclusion or Considered for Inclusion section of EIPS/eip-7607.md.
+    That negative finding was re-verified independently of Task 01: 'git log -S eip-7935 --
+    EIPS/eip-7607.md' returns only this commit, and iterating every one of the file's revisions shows
+    9d880b910da7 is the oldest revision whose content contains 'eip-7935'. The EIP therefore entered
+    the fork document directly at Scheduled for Inclusion, per ACDE#211, and this single entry event
+    is the earliest and only defensible proposal-equivalent anchor. No competing or earlier proposal
+    cycle exists, so alternative_event_ids is empty; the two later Task 01 inclusion events
+    (osaka-eip7935-e2, an editorial Core -> Other subsection move on 2025-09-25T13:43:36Z, and
+    osaka-eip7935-e3, the Included state at the pin on 2026-02-04T22:29:12Z) are neither proposal
+    events nor plausible anchors, and no removal or re-proposal occurred.
+  confidence: high
+  source_ids:
+  - eips-commit-9d880b910da7
+  - eips-pr-9744
+  - pm-issue-1500
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7935-e01
+    event_kind: revision
+    commit: b4197cbb949c1aed8094ac33b2aa7c2260809a55
+    committed_at: '2025-05-08T13:56:16Z'
+    offset_from_anchor_seconds: -115232
+    semantic_effect: non_substantive
+    summary: >-
+      Pure rename of eip-7935.md to EIPS/eip-7935.md, verified in the clone as
+      'eip-7935.md => EIPS/eip-7935.md | 0' with 0 insertions and 0 deletions; the resulting blob
+      09ab43dc269280309f3c34cd405ba25e151690ba is byte-identical to the blob added by the creation
+      commit 636a22783f9bbbd21003be2424a75b5d76adee0a (2025-05-02T20:22:43Z, also before the anchor).
+      Content at this point is the 41-line Draft, type Informational, titled 'Set default gas limit to
+      XX0M', with the recommended value still an unfilled 'XX0M' placeholder and a
+      '<!--TODO: Fill in recommended gas limit-->' comment in the Abstract. Task 01 event
+      eip7935-e01's committer time was re-verified with git ('git log -1 --format=%cI' returns
+      2025-05-08T07:56:16-06:00 = 2025-05-08T13:56:16Z), as was the creation commit
+      (2025-05-02T14:22:43-06:00 = 2025-05-02T20:22:43Z).
+    immutable_url: https://github.com/ethereum/EIPs/blob/b4197cbb949c1aed8094ac33b2aa7c2260809a55/EIPS/eip-7935.md
+    source_ids:
+    - eips-commit-b4197cbb949c
+    - gh-pr-map-eip-7935
+  following:
+    exists: true
+    revision_event_id: eip7935-e02
+    event_kind: revision
+    commit: a5edd78f02d896016f78cf70bfd0d0c5e839ea8e
+    committed_at: '2025-09-23T16:23:48Z'
+    offset_from_anchor_seconds: 11816820
+    semantic_effect: substantive
+    summary: >-
+      Replaces the XX0M placeholder with the concrete 60M recommendation in the title, Abstract (also
+      fixing the run-together 'XX0Mby' and dropping the TODO comment) and Specification, and updates
+      discussions-to to the 60m Ethereum Magicians URL. Committer time re-verified with git
+      (2025-09-23T16:23:48+00:00). This is 11816820 seconds - 136.77 calendar days - after the anchor,
+      so it is far outside the seven-day post-anchor exception ceiling and cannot be selected.
+    immutable_url: https://github.com/ethereum/EIPs/blob/a5edd78f02d896016f78cf70bfd0d0c5e839ea8e/EIPS/eip-7935.md
+    source_ids:
+    - eips-commit-a5edd78f02d8
+    - gh-pr-map-eip-7935
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7935-e01
+    event_kind: revision
+    repository: ethereum/EIPs
+    commit: b4197cbb949c1aed8094ac33b2aa7c2260809a55
+    path: EIPS/eip-7935.md
+    committed_at: '2025-05-08T13:56:16Z'
+    offset_from_anchor_seconds: -115232
+    git_blob_sha: 09ab43dc269280309f3c34cd405ba25e151690ba
+    content_sha256: f3b99e814f33429fc7fae504117866be474062799eb0aa11563b5e385ea5991f
+    immutable_url: https://github.com/ethereum/EIPs/blob/b4197cbb949c1aed8094ac33b2aa7c2260809a55/EIPS/eip-7935.md
+    source_ids:
+    - eips-commit-b4197cbb949c
+    - eips-blob-eip7935-creation
+    - gh-pr-map-eip-7935
+  information_cutoff_at: '2025-05-09T21:56:48Z'
+  rationale: >-
+    Default preceding rule. The complete Task 01 revision history for this EIP contains seven
+    file-changing commits (one creation plus six revisions); their UTC committer times were each
+    re-verified with git in the pinned clone and are 2025-05-02T20:22:43Z, 2025-05-08T13:56:16Z,
+    2025-09-23T16:23:48Z, 2025-09-24T16:41:31Z, 2025-09-29T13:49:56Z, 2025-10-15T14:56:48Z and
+    2026-01-21T20:13:39Z. Only the first two are at or before the anchor 2025-05-09T21:56:48Z, so the
+    latest of them, b4197cbb949c1aed8094ac33b2aa7c2260809a55, is the preceding candidate and is
+    selected. Because that commit is a pure rename, the selected content is exactly the EIP as
+    created; selecting the rename commit rather than the creation commit is what puts the ref on the
+    canonical path EIPS/eip-7935.md, which was verified to exist at that commit with
+    'git ls-tree b4197cbb949c -- EIPS/eip-7935.md' (100644 blob
+    09ab43dc269280309f3c34cd405ba25e151690ba). The blob SHA was resolved with 'git rev-parse
+    b4197cbb949c:EIPS/eip-7935.md' and the content SHA-256 with 'git cat-file blob
+    b4197cbb949c:EIPS/eip-7935.md | sha256sum'. No post-anchor exception is available: the following
+    candidate is 136.77 days after the anchor. information_cutoff_at is the verified proposal anchor
+    time, per the preceding-selection rule.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: >-
+      not_applicable - no post-anchor exception is proposed. For the record, the following candidate's
+      change is substantive (it fixes the recommended gas-limit parameter at 60M), which is precisely
+      the kind of change the seven-day ceiling exists to keep out when it lands 136.77 days late.
+    diff_summary: >-
+      Not used, and ineligible on the seven-day ceiling. Recorded for transparency only: the diff from
+      the selected ref to the following candidate (reviewed directly with 'git diff b4197cbb949c
+      a5edd78f02d8 -- EIPS/eip-7935.md') touches six lines - title XX0M -> 60M, discussions-to
+      xx0m -> 60m URL, removal of the TODO comment, and the Abstract and Specification value
+      XX0M -> 60M.
+    hindsight_risk: >-
+      not_applicable - no post-anchor exception is proposed. Had the 60M revision been selected, the
+      hindsight risk would have been high: it postdates the anchor by more than four months and falls
+      after Fusaka devnet gas-limit testing and CFI/SFI-era feedback, so it would import later
+      development context into a proposal-time assessment.
+    justification: >-
+      not_applicable - the default preceding candidate exists (115232 seconds before the anchor) and is
+      selected, and the following candidate fails the seven-day eligibility ceiling by a wide margin.
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - 'Anchor kind is contestable and must be confirmed: no explicit PFI event exists for EIP-7935 in
+    EIPS/eip-7607.md, and no CFI event exists either. The EIP was added directly to ''EIPs Scheduled
+    for Inclusion / Core EIPs'' per ACDE#211, so the single SFI entry event (osaka-eip7935-e1) is used
+    as a normalized_proposal_equivalent. A reviewer preferring ''other'' for a direct-SFI entry, or
+    preferring a fallback framing, should say so; the bracketing outcome is unaffected either way.'
+  - 'Anchor instant convention must be confirmed: effective_at equals recorded_at equals the UTC
+    committer date of the Meta EIP commit (2025-05-09T21:56:48Z), following Task 01''s dating
+    convention, even though the underlying ACDE#211 decision was taken on 2025-05-08. If a reviewer
+    prefers the meeting instant, note the agenda-issue call time 2025-05-08T14:00:00Z is only 224
+    seconds after the selected revision''s committer time; the preceding and following candidates are
+    unchanged.'
+  - 'Content state at the selected ref must be confirmed as acceptable for later assessment: the
+    2025-05-08 ref still carries the unfilled ''XX0M'' placeholder and the ''Fill in recommended gas
+    limit'' TODO, because the concrete 60M value was only merged on 2025-09-23T16:23:48Z. This is
+    recorded as a factual property of the ref, with no complexity judgement attached; a reviewer may
+    decide whether an assessment of this EIP at proposal time is meaningful with the parameter
+    unspecified, but the seven-day exception ceiling forbids selecting the 60M revision here.'
+  - 'The selected ref is a rename-only commit; confirm that citing b4197cbb949c (canonical path
+    EIPS/eip-7935.md) rather than the byte-identical creation blob at 636a22783f9b (repository-root
+    path eip-7935.md) is the intended convention.'
+unknowns:
+- 'Negative finding, independently re-verified in the pinned clone: EIP-7935 never held a Proposed for
+  Inclusion or Considered for Inclusion state in EIPS/eip-7607.md. ''git log -S eip-7935 --
+  EIPS/eip-7607.md'' returns only 9d880b910da7, and iterating the content of every revision of that
+  file shows 9d880b910da7 is the oldest revision containing ''eip-7935''. Task 01''s unknown records
+  the same result and adds that Tim Beiko described inclusion as having been agreed ''on the last two
+  ACDEs'' as an unusual, direct arrangement.'
+- The exact instant of the ACDE#211 decision is not established by primary evidence. ethereum/pm at
+  the run-wide pin ecf2eecc74adc479cea38b3d3b9a670c320421b1 contains no committed minutes for
+  ACDE#211; the only contemporaneous source is the mutable agenda issue ethereum/pm#1500, retained by
+  Task 01 as a reference-only keyword extract, which dates the call to 2025-05-08 (scheduled 14:00
+  UTC).
+- The parameter this EIP exists to fix was still a placeholder at the anchor. The recommended value
+  ''XX0M'' became 60M only at 2025-09-23T16:23:48Z (commit a5edd78f02d8), 11816820 seconds after the
+  anchor. Stated as a content fact about the selected ref, not as a complexity or difficulty
+  assessment.
+- Task 01's raw label for the anchor event places EIP-7935 under 'Core EIPs' at SFI time, while the
+  fork membership record at the pin lists it under 'Included EIPs / Other EIPs' after the editorial
+  move in commit e71105761694 (osaka-eip7935-e2). Immaterial to ref selection; both labels are
+  preserved here.
+- 'No dependency events exist in Task 01''s record, but the selected ref''s Backwards Compatibility
+  text refers to ''the proposed 30M transaction gas limit'' and ''these two EIPs'' without naming an
+  EIP number (Task 01 identifies this as most plausibly EIP-7825''s then-current cap), and Security
+  Considerations refers to ''the current 10MiB CL gossip limit'' without naming EIP-7934. Resolving
+  those references is out of scope for ref selection and is left explicit here.'

@@ -1,0 +1,42 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: prague
+eip:
+  number: 2935
+  title: "Serve historical block hashes from state"
+  layers: [execution]
+  layer_classification:
+    rationale: "The pinned EIP-7600 Full Specifications section lists EIP-2935 only in the Execution Layer list; the EIP stores historical block hashes in execution-layer state via a system contract."
+    source_ids: [eips-blob-7600, eips-blob-2935]
+membership:
+  source_section: "Included EIPs > Core EIPs"
+  classification: core
+  requirement: "Listed under 'Included EIPs > Core EIPs' with no qualifying MAY/MUST language; an unconditional protocol change activated with the upgrade."
+  source_ids: [eips-blob-7600]
+inclusion_history:
+  normalized_state_counts:
+    scheduled_for_inclusion: 2
+    included: 1
+  events:
+    - id: prague-2935-e1
+      occurred_at: "2024-04-11"
+      raw_label: "EIPs Included ('ACDE 185 Updates')"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: "ACDE#185 (2024-04-11) summary row 185.3: 'Developers will include EIP 2935 and EIP 3074 in the first devnet for the Pectra upgrade'; the Meta EIP added EIP-2935 to 'EIPs Included' the same day (commit 14d770b9, PR #8403 'ACDE 185 Updates'). Pre-EIP-7723 'Included' = commitment to the upgrade's scope; normalized to scheduled_for_inclusion (see the 2024-09-27 section-rename evidence), not included, because the fork had not activated."
+      decision_body: "AllCoreDevs Execution (ACDE) #185"
+      source_ids: [pm-acde-185, eips-commit-14d770b, gh-eip7600-commit-prs]
+    - id: prague-2935-relabel-sfi
+      occurred_at: "2024-09-26"
+      raw_label: "EIPs Scheduled for Inclusion (section renamed from 'EIPs Included')"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: "ACDE#197 (2024-09-26) rescoped Pectra; the Meta EIP adopted EIP-7723's formal vocabulary and renamed 'EIPs Included' to 'EIPs Scheduled for Inclusion' (commit 1d4ce546, 2024-09-27, PR #8911). This EIP's membership carried over unchanged, so the event records the adoption of the new terminology for an unchanged state, not a state transition. occurred_at is the ACDE#197 call date; the commit landed the next day."
+      decision_body: "AllCoreDevs Execution (ACDE) #197"
+      source_ids: [pm-acde-197, eips-commit-1d4ce54, gh-eip7600-commit-prs]
+    - id: prague-2935-included
+      occurred_at: "2025-05-07T10:05:11Z"
+      raw_label: "Included EIPs (Pectra mainnet activation, epoch 364032 / timestamp 1746612311)"
+      normalized_state: included
+      normalization_rationale: "Pectra activated on Ethereum mainnet at the timestamp recorded in EIP-7600's Activation table (tentative mainnet time added 2025-04-03, commit 355b3350; 1746612311 = 2025-05-07T10:05:11Z). After activation the Meta EIP moved to Final and renamed its EIP list from 'EIPs Scheduled for Inclusion' to 'Included EIPs' (commit 78b50371, 2025-06-09) and changed its abstract from 'Scheduled for Inclusion' to 'Included' (commit 8877eaa7, 2025-06-23)."
+      decision_body: "Ethereum mainnet activation per the EIP-7600 activation table; document finalization by the Meta EIP author"
+      source_ids: [eips-blob-7600, eips-commit-355b335, eips-commit-78b5037, eips-commit-8877eaa]
+unknowns: []

@@ -1,0 +1,207 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7825
+  title: Transaction Gas Limit Cap
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7825.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7825.yaml
+research_run:
+  started_at: '2026-08-21T06:56:00Z'
+  completed_at: '2026-08-21T07:00:00Z'
+  researcher: claude subagent osaka/eip-7825 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7825-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: Proposed for Inclusion
+  effective_at: '2025-02-21T01:11:23Z'
+  recorded_at: '2025-02-21T01:11:23Z'
+  date_basis: >-
+    Task 01 records occurred_at for every osaka inclusion-state event as the UTC committer date of the
+    ethereum/EIPs commit that edited EIPS/eip-7607.md (Hardfork Meta - Fusaka); that convention is stated
+    in research/tasks/01-fork-eip-history/outputs/forks/osaka.yaml (unresolved_questions, 'Event dating
+    convention'). The PFI-setting commit is ce71fb1cd0dfa18ab337860d3611a67110f5fc14 'Update EIP-7607:
+    Proposing 7825 for Fusaka', verified in the read-only clone at the Task 01 run-wide pin
+    a08f51fec5b2b5da457adb05b8cffb487fb4f7de - committer date 2025-02-21T09:11:23+08:00 =
+    2025-02-21T01:11:23Z (epoch 1740100283), author date 2025-02-21T02:11:23+01:00 (same instant), author
+    Lukasz Rozmej. effective_at and recorded_at are therefore identical: under the EIP-7723 process PFI
+    is set when the change adding the EIP to the Meta EIP's PFI section is merged, and this is a direct
+    Meta EIP merge (squash commit of ethereum/EIPs#9392) rather than a meeting decision recorded later.
+    No AllCoreDevs decision underlies this event and Task 01 identifies none: PFI is champion-initiated
+    per EIP-7723, and Task 01 records decision_body as 'EIP champion via ethereum/EIPs pull request'.
+    The first AllCoreDevs decision in this EIP's history is the later CFI event (ACDE#209, 2025-04-10,
+    recorded in commit 9d17611c on 2025-04-14T22:10:38Z), which is not the anchor. Author time,
+    frontmatter dates and the pull-request opening time were not used.
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary Git evidence, not from Task 01 prose. (1) Timestamp:
+    `git log -1 --format='%H %cI %aI %s' ce71fb1cd0df` returns
+    'ce71fb1cd0dfa18ab337860d3611a67110f5fc14 2025-02-21T09:11:23+08:00 2025-02-21T02:11:23+01:00
+    Update EIP-7607: Proposing 7825 for Fusaka' (= 2025-02-21T01:11:23Z), matching Task 01's occurred_at
+    exactly. (2) Hunk: `git show ce71fb1cd0df -- EIPS/eip-7607.md` shows a single one-line addition,
+    '+* [EIP-7825](./eip-7825.md): Transaction Gas Limit Cap' (replacing a blank line), and the blob at
+    that commit places that line under the '### Proposed for Inclusion' heading - so the commit is
+    genuinely the inclusion-state change that set PFI, not a cosmetic edit. (3) Single cycle: every
+    revision of EIPS/eip-7607.md was walked and grepped for 'eip-7825'; the string first appears at
+    ce71fb1cd0df and is present in every subsequent revision through the pin, moving PFI (2025-02-21) ->
+    '### Considered for Inclusion' (9d17611c, 2025-04-14) -> '#### Core EIPs' under SFI/Included
+    (831645ee, 2025-05-22 onward). There is no removal and no re-proposal, so there are no alternative
+    proposal-cycle event IDs to preserve.
+  confidence: high
+  source_ids:
+  - eips-commit-ce71fb1cd0df
+  - eips-pr-9392
+  - eips-blob-eip7607-pin
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7825-e00
+    event_kind: creation
+    commit: 8096a3a13aa6bda755416d1199150f4165a36315
+    committed_at: '2024-12-02T17:16:34Z'
+    offset_from_anchor_seconds: -6940489
+    semantic_effect: substantive
+    summary: >-
+      Latest EIP-file event at or before the anchor, and the only one: the creation commit
+      'Add EIP: Transaction Gas Limit Cap' (squash merge of ethereum/EIPs#9049), which added the complete
+      initial 74-line specification with status Draft - a protocol-level cap of 30,000,000 gas on the gas
+      limit of any single transaction, enforced in txpool validation (over-cap transactions are not
+      pooled) and in block validation (a block containing one is invalid), independent of the block gas
+      limit. Committer time verified with git as 2024-12-03T01:16:34+08:00 = 2024-12-02T17:16:34Z (epoch
+      1733159794); Task 01 records the same instant with its raw +08:00 committer offset. Offset computed
+      mechanically as 1733159794 - 1740100283 = -6940489 s (about 80.3 days before the anchor).
+    immutable_url: https://github.com/ethereum/EIPs/blob/8096a3a13aa6bda755416d1199150f4165a36315/EIPS/eip-7825.md
+    source_ids:
+    - eips-commit-8096a3a13aa6
+    - eips-blob-eip7825-creation
+    - gh-pr-map-eip-7825
+  following:
+    exists: true
+    revision_event_id: eip7825-e01
+    event_kind: revision
+    commit: 705195eade05ef5326073bc3b1327fa21955a4a7
+    committed_at: '2025-06-29T00:27:36Z'
+    offset_from_anchor_seconds: 11056573
+    semantic_effect: non_substantive
+    summary: >-
+      Earliest EIP-file revision after the anchor: the automated eth-bot commit
+      '(bot 1272989785) moving EIPS/eip-7825.md to stagnant (#9870)'. Diff reviewed directly - a single
+      frontmatter line, 'status: Draft' -> 'status: Stagnant'; the specification text is untouched.
+      Committer time verified with git as 2025-06-29T08:27:36+08:00 = 2025-06-29T00:27:36Z (epoch
+      1751156856). Offset computed mechanically as 1751156856 - 1740100283 = +11056573 s (about 128.0
+      days after the anchor), far outside the seven-day post-anchor exception ceiling; it is also purely
+      process metadata, so it neither completes nor corrects the proposal made at PFI.
+    immutable_url: https://github.com/ethereum/EIPs/blob/705195eade05ef5326073bc3b1327fa21955a4a7/EIPS/eip-7825.md
+    source_ids:
+    - eips-commit-705195eade05
+    - gh-pr-map-eip-7825
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7825-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: 8096a3a13aa6bda755416d1199150f4165a36315
+    path: EIPS/eip-7825.md
+    committed_at: '2024-12-02T17:16:34Z'
+    offset_from_anchor_seconds: -6940489
+    git_blob_sha: 47cbfed315988c0bd4d10002c110ae402504cd94
+    content_sha256: d8c7ec66e85f9ccaa5ce7c3a33058902e996df621ba179a4aa9d97ae4d543523
+    immutable_url: https://github.com/ethereum/EIPs/blob/8096a3a13aa6bda755416d1199150f4165a36315/EIPS/eip-7825.md
+    source_ids:
+    - eips-commit-8096a3a13aa6
+    - eips-blob-eip7825-creation
+    - gh-pr-map-eip-7825
+  information_cutoff_at: '2025-02-21T01:11:23Z'
+  rationale: >-
+    Default preceding rule. The complete Task 01 revision_history.events list (creation eip7825-e00 plus
+    revisions eip7825-e01..e06; file_commit_count 7) was normalized to UTC and bracketed against the
+    verified anchor 2025-02-21T01:11:23Z. Exactly one event falls at or before the anchor - the creation
+    commit 8096a3a1 (2024-12-02T17:16:34Z) - so it is the preceding candidate and the selected ref; the
+    remaining six all fall after it (earliest 2025-06-29T00:27:36Z, +128.0 days). The EIP file was
+    therefore byte-identical from creation until 2025-06-29, i.e. blob 47cbfed3 is exactly the content
+    that stood in the repository at the moment PFI was set, which the pre-anchor blob comparison confirms
+    (the diff of the following commit is against index 47cbfed3). No post-anchor exception is eligible:
+    the following revision is 128 days out, breaching condition 1 of the seven-day test. Every commit
+    time was re-verified directly with git in the read-only clone at the run-wide pin
+    a08f51fec5b2b5da457adb05b8cffb487fb4f7de rather than trusted from the YAML; `git log --follow` on
+    EIPS/eip-7825.md returns exactly the same seven commits as Task 01, so the bracketing set is complete.
+    Path existence at the selected commit was confirmed with
+    `git ls-tree 8096a3a1 -- EIPS/eip-7825.md` (100644 blob 47cbfed315988c0bd4d10002c110ae402504cd94),
+    and `git cat-file blob 8096a3a1:EIPS/eip-7825.md` is 74 lines, matching Task 01's creation summary.
+    information_cutoff_at is the verified proposal anchor time because the preceding revision was
+    selected, allowing this unchanged creation-era ref to be read with the context available at PFI while
+    excluding later development history.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: null
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - >-
+    Default preceding selection with an explicit PFI event verified from primary Git evidence; no
+    post-anchor exception and no fallback anchor is involved.
+  - >-
+    Reviewer to confirm the intended consequence of the ref: the selected creation blob 47cbfed3
+    specifies the cap as 30,000,000 gas, whereas the rule that shipped in Fusaka is 16,777,216 (2**24)
+    gas. Task 01 classifies the parameter change (commit fc6c724d87ba, 2025-07-13T16:41:19Z, event
+    eip7825-e02) as the file's only substantive content change, and it lands about 142 days after the
+    anchor - well outside any exception window. Selecting the PFI-time content is exactly what this task
+    contract prescribes, but the later complexity assessment must be told that the assessed text is the
+    30M-gas formulation.
+  - >-
+    Reviewer to confirm the anchor's decision provenance: PFI here is champion-initiated (ethereum/EIPs
+    pull request #9392 by Lukasz Rozmej, per EIP-7723) and no AllCoreDevs decision underlies it, so
+    date_basis names none. The first ACD decision in this EIP's Fusaka history is the CFI event
+    (ACDE#209, 2025-04-10), which is deliberately not used as the anchor.
+  - >-
+    Reviewer to confirm the timestamp convention: effective_at uses the committer date of the Meta EIP
+    commit (2025-02-21T01:11:23Z). The archived GitHub PR metadata for ethereum/EIPs#9392 records
+    merged_at 2025-02-21T01:11:24Z, one second later. The commit timestamp is used because the task
+    contract requires the exact committer timestamp where one exists; the one-second difference cannot
+    change the bracketing.
+unknowns:
+- >-
+  The selected ref predates the anchor by about 80.3 days and the next EIP-file change comes about 128.0
+  days after it, so there is no near-anchor revision to weigh. The EIP-file content at PFI is therefore
+  unambiguous, but nothing in EIPS/eip-7825.md was written or updated in response to the act of proposing
+  it for Fusaka.
+- >-
+  Negative finding - no competing or repeated proposal cycle exists for this fork-EIP pair. Every
+  revision of EIPS/eip-7607.md through the pin was inspected: 'eip-7825' first appears at ce71fb1cd0df
+  under '### Proposed for Inclusion' and is never removed, so alternative_event_ids is legitimately
+  empty. Task 01 likewise records exactly one proposed_for_inclusion event.
+- >-
+  Negative finding - no other hardfork Meta EIP lists EIP-7825, so there is no prior-fork proposal cycle
+  whose anchor could compete. At the pin, `grep -rl 'eip-7825' EIPS/` matches only EIPS/eip-7607.md
+  (the Fusaka Meta EIP), the EIP's own file, and later unrelated EIPs that cite it (7975, 8007, 8037,
+  8101, 8123, 8141, 8148, 8184, 8295, 8296); none of these is a hardfork meta document.
+- >-
+  Timestamps in Task 01's global EIP record are reproduced with the raw committer offsets found in Git
+  (frequently +08:00, set by the merge tooling and not evidence of location). Every value in this output
+  is the UTC equivalent, re-derived from git rather than converted from the YAML text; the two agree for
+  all seven commits.
+- >-
+  Task 01's fork record notes that no local ethereum/pm checkout was available and that committed
+  AllCoreDevs minutes at the pm pin stop around ACDE#204, so the 2025 Fusaka scoping calls rest on
+  mutable agenda-issue extracts. This limitation does not affect this anchor - it is a champion-initiated
+  PFI evidenced entirely by the ethereum/EIPs commit - but it would matter to any later attempt to
+  re-date the CFI or SFI events.
+- >-
+  Out of scope and deliberately not researched: complexity or implementation difficulty, client or devnet
+  history, test coverage, development-start dates, and the supporting design material behind the proposal
+  (including assets/eip-7825/analysis.md, which was added later by commit 734ca92ab222 and is not part of
+  the selected ref).

@@ -1,0 +1,231 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7823
+  title: Set upper bounds for MODEXP
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7823.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7823.yaml
+research_run:
+  started_at: '2026-08-21T06:55:12Z'
+  completed_at: '2026-08-21T07:02:40Z'
+  researcher: claude subagent osaka/eip-7823 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7823-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: Proposed for Inclusion
+  effective_at: '2025-01-23T23:05:03Z'
+  recorded_at: '2025-01-23T23:05:03Z'
+  date_basis: >-
+    Task 01 event osaka-eip7823-e1 dates PFI to the UTC committer date of the ethereum/EIPs commit
+    that edited EIPS/eip-7607.md (the Fusaka Meta EIP) to add EIP-7823 to its 'Proposed for
+    Inclusion' section: commit a2ed82327dfeabc41f9b9d2bb884e1d7970b7b9d, committer time
+    2025-01-24T07:05:03+08:00 as recorded in Git, i.e. 2025-01-23T23:05:03Z, author time
+    2025-01-24T00:05:03+01:00. This is the run-wide Task 01 dating convention for osaka
+    inclusion-state events (see outputs/forks/osaka.yaml unresolved_questions). Under the EIP-7723
+    process PFI is champion-initiated, and Task 01 records the decision body for this event as 'EIP
+    champion via ethereum/EIPs pull request' (PR #9251, opened by EIP author Alex Beregszaszi); Task
+    01 identifies NO underlying AllCoreDevs decision for this PFI event, so none is named here. The
+    AllCoreDevs decisions Task 01 does identify for EIP-7823 belong to later states and are not the
+    anchor: ACDE#209 on 2025-04-10 (CFI, event osaka-eip7823-e2) and ACDT#36 on 2025-05-12 (SFI,
+    event osaka-eip7823-e3). effective_at and recorded_at coincide because PFI was set by the merge
+    of the Meta EIP change itself; the PR opening time was not used.
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary evidence in the read-only local clone /home/dtopz/code/github/EIPs pinned
+    at Task 01 run-wide commit a08f51fec5b2b5da457adb05b8cffb487fb4f7de (confirmed as HEAD).
+    'git log -1 --format=%H %cI %aI %s a2ed82327dfe' returns committer time
+    2025-01-24T07:05:03+08:00 (= 2025-01-23T23:05:03Z), exactly matching Task 01's occurred_at, and
+    subject 'Update EIP-7607: Add EIP-7823 (Set upper bounds for MODEXP) to proposeed-for-inclusion
+    in Fusaka'. 'git show a2ed82327dfe -- EIPS/eip-7607.md' shows a single one-line addition under
+    the '### Proposed for Inclusion' heading: '* [EIP-7823](./eip-7823.md): Set upper bounds for
+    MODEXP', with no other change to the file. 'git log -S eip-7823 -- EIPS/eip-7607.md' returns
+    only three commits (a2ed8232 adding it to PFI, 60eaabc2 on 2025-05-13 and 48d580cf on
+    2025-05-21 for the SFI edit and its duplicate fix), so there is exactly one PFI addition and no
+    removal-and-re-proposal cycle in the Meta EIP's history for this EIP.
+  confidence: high
+  source_ids:
+  - eips-commit-a2ed82327dfe
+  - eips-pr-9251
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7823-e00
+    event_kind: creation
+    commit: b16c055363024c8c7e072c32e98c390d3ad6c33e
+    committed_at: '2024-11-26T17:33:25Z'
+    offset_from_anchor_seconds: -5031098
+    semantic_effect: substantive
+    summary: >-
+      Creation commit 'Add EIP: Set upper bounds for MODEXP' (ethereum/EIPs#9046), the only
+      EIPS/eip-7823.md commit at or before the anchor. Task 01 records its committer time in the
+      committer's local offset as 2024-11-27T01:33:25+08:00; the UTC equivalent, verified with git,
+      is 2024-11-26T17:33:25Z (author time 2024-11-26T18:33:25+01:00). Adds EIP-7823 in Draft
+      status, 'requires 198', requiring each of length_of_BASE, length_of_EXPONENT and
+      length_of_MODULUS passed to the MODEXP precompile at 0x05 to be at most 8192 bits (1024
+      bytes), with larger inputs erroring and consuming all gas. Backwards Compatibility and
+      Security Considerations are TODO placeholders at this revision.
+    immutable_url: https://github.com/ethereum/EIPs/blob/b16c055363024c8c7e072c32e98c390d3ad6c33e/EIPS/eip-7823.md
+    source_ids:
+    - eips-commit-b16c05536302
+    - eips-blob-eip7823-creation
+    - gh-pr-map-eip-7823
+  following:
+    exists: true
+    revision_event_id: eip7823-e01
+    event_kind: revision
+    commit: 3502800fa31270815ac884c7b4d4c19612ecaa90
+    committed_at: '2025-01-27T18:37:06Z'
+    offset_from_anchor_seconds: 329523
+    semantic_effect: substantive
+    summary: >-
+      'Update EIP-7823: Fill in missing sections on EIP-7823' (ethereum/EIPs#9271), the earliest
+      EIPS/eip-7823.md commit after the anchor, 3.81 days later. Committer time verified with git as
+      2025-01-27T18:37:06+00:00. Adds an 'Analysis' subsection with mainnet occurrence tables for
+      base, exponent and modulus lengths between blocks 5472266 and 21550926 plus a list of invalid
+      invocations found, replaces the Backwards Compatibility placeholder with the claim that no
+      past transaction would have behaved differently, and replaces the Security Considerations
+      placeholder with 'Since only the accepted input range is reduced, no new security surface area
+      is expected.' The normative Specification, including the 8192-bit (1024-byte) bound, is
+      untouched.
+    immutable_url: https://github.com/ethereum/EIPs/blob/3502800fa31270815ac884c7b4d4c19612ecaa90/EIPS/eip-7823.md
+    source_ids:
+    - eips-commit-3502800fa312
+    - gh-pr-map-eip-7823
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7823-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: b16c055363024c8c7e072c32e98c390d3ad6c33e
+    path: EIPS/eip-7823.md
+    committed_at: '2024-11-26T17:33:25Z'
+    offset_from_anchor_seconds: -5031098
+    git_blob_sha: cf60d90b499bb8e2226c962ecebcf9a9a2618071
+    content_sha256: deefcee9cba6b82efa2dbf7e238ee30d589c8cd20bbf0d570f004611be18e410
+    immutable_url: https://github.com/ethereum/EIPs/blob/b16c055363024c8c7e072c32e98c390d3ad6c33e/EIPS/eip-7823.md
+    source_ids:
+    - eips-commit-b16c05536302
+    - eips-blob-eip7823-creation
+    - gh-pr-map-eip-7823
+  information_cutoff_at: '2025-01-23T23:05:03Z'
+  rationale: >-
+    Default preceding rule. Task 01's complete revision_history.events list for EIPS/eip-7823.md
+    contains ten file-changing commits (creation eip7823-e00 plus revisions eip7823-e01..e09); the
+    same ten commits and no others are returned by 'git log --follow -- EIPS/eip-7823.md' at the
+    pin, so the bracketing is mechanically complete. Exactly one of them, the creation commit
+    b16c0553 at 2024-11-26T17:33:25Z, is at or before the anchor 2025-01-23T23:05:03Z, and it is
+    therefore the preceding candidate; the next commit, 3502800f at 2025-01-27T18:37:06Z, is the
+    following candidate. The creation blob is the exact file content that was in the repository when
+    EIP-7823 was placed in the Fusaka Meta EIP's 'Proposed for Inclusion' section, and its normative
+    Specification is byte-identical in substance to the following revision (the 8192-bit / 1024-byte
+    bound and the all-gas-consuming error behaviour are unchanged), so nothing normative is lost by
+    the default choice. The blob was resolved with 'git rev-parse b16c0553:EIPS/eip-7823.md' ->
+    cf60d90b499bb8e2226c962ecebcf9a9a2618071, its SHA-256 with 'git cat-file blob ... | sha256sum'
+    -> deefcee9cba6b82efa2dbf7e238ee30d589c8cd20bbf0d570f004611be18e410, and path existence with
+    'git ls-tree b16c0553 -- EIPS/eip-7823.md' (100644 blob cf60d90b). information_cutoff_at is the
+    verified anchor time because the preceding candidate was selected.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: true
+    diff_semantic_effect: >-
+      Substantive but non-normative: the following candidate 3502800f resolves the two TODO
+      placeholders left at creation and adds the mainnet evidence for the chosen bound. It does not
+      change the Specification, the bound, the affected precompile, or the error/gas behaviour.
+    diff_summary: >-
+      Reviewed directly with 'git diff b16c0553 3502800f -- EIPS/eip-7823.md'. The diff touches only
+      the Rationale tail, Backwards Compatibility and Security Considerations: it inserts an
+      '### Analysis' subsection (three occurrence tables for input_of_BASE, input_of_EXPONENT and
+      input_of_MODULUS over blocks 5472266..21550926, the observation that no past successful use
+      exceeded 513 bytes, and a list of invalid invocations); it replaces 'This is a backwards
+      incompatible change. Needs thorough check of transaction history to see if this would have
+      caused failures.' with 'This is a backwards incompatible change. However, based on analysis
+      until block 21550926 (see above), no past transaction would have behaved differently after
+      this change.'; and it replaces the 'Needs discussion.' security placeholder with 'Since only
+      the accepted input range is reduced, no new security surface area is expected.' No line of the
+      Specification section is modified.
+    hindsight_risk: >-
+      Low but non-zero, and the reason the exception was not taken. The added content is the
+      champion's own pre-existing mainnet analysis (data ending at block 21550926, 2025-01-04,
+      before the anchor) and carries no CFI, SFI, devnet, client-implementation or test feedback:
+      CFI came only on 2025-04-14 (ACDE#209, 2025-04-10) and SFI on 2025-05-13 (ACDT#36,
+      2025-05-12). Selecting it would nevertheless present the specification as more complete than
+      it demonstrably was at PFI, when both Backwards Compatibility and Security Considerations were
+      explicitly unresolved ('Needs thorough check of transaction history...', 'Needs discussion.'),
+      and would move information_cutoff_at four days past the anchor.
+    justification: >-
+      Not used. All five eligibility conditions except the discretionary one are satisfied - the
+      commit is 329523 s (3.81 days) after the anchor, well inside the seven-day ceiling; its diff
+      was reviewed directly; it plausibly completes the proposal by filling the two TODO sections;
+      and it incorporates no post-PFI process feedback. It was declined because the seven-day window
+      is an eligibility ceiling rather than a nearest-commit rule and because the preceding
+      candidate is not merely closer in spirit but normatively equivalent: the implementation-facing
+      Specification is identical, so the only gain would be supporting justification produced after
+      the proposal was made. Recorded here so a human reviewer can override if the study wants the
+      completed Backwards Compatibility and Security Considerations text in the assessed ref.
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - >-
+    Anchor is an explicit PFI event under EIP-7723 with a single proposal cycle; alternative_event_ids
+    is empty because Task 01 records exactly one proposed_for_inclusion event
+    (normalized_state_counts.proposed_for_inclusion = 1) and the Meta EIP history shows no removal and
+    re-proposal of EIP-7823. Confirm that reading of the cycle.
+  - >-
+    Confirm the run-wide osaka dating convention is acceptable as the PFI effective time: the anchor is
+    the UTC committer date of the ethereum/EIPs commit that edited EIPS/eip-7607.md (2025-01-23T23:05:03Z),
+    not a meeting decision. For this event that is also the substantive moment, since PFI under EIP-7723
+    is champion-initiated and Task 01 identifies no AllCoreDevs decision behind it.
+  - >-
+    Confirm the declined post-anchor exception. Commit 3502800f (2025-01-27T18:37:06Z, +3.81 days) meets
+    the seven-day ceiling and fills the two TODO sections that were still open at PFI; the selection
+    keeps the creation blob because the normative Specification is unchanged. A reviewer who wants the
+    assessed ref to include the Analysis / Backwards Compatibility / Security Considerations text should
+    switch selection.mode to post_anchor_exception, select commit 3502800fa31270815ac884c7b4d4c19612ecaa90,
+    and move information_cutoff_at to 2025-01-27T18:37:06Z.
+  - >-
+    Confirm that selecting a creation revision dated 58.2 days before the anchor is acceptable given that
+    the EIP file was unchanged across that whole interval (no intervening commit exists to choose).
+unknowns:
+- >-
+  The selected ref is the EIP at PFI in Draft status with unresolved Backwards Compatibility ('Needs
+  thorough check of transaction history to see if this would have caused failures.') and Security
+  Considerations ('Needs discussion.') sections. This is the true state of the document at
+  2025-01-23T23:05:03Z, but it means the assessed ref contains less supporting justification for the
+  8192-bit bound than the version merged four days later.
+- >-
+  Task 01 flags event eip7823-e03 as non_substantive with medium confidence. It is irrelevant to this
+  selection: e03 (2025-01-28T12:53:47Z) is later than the following candidate e01 (2025-01-27T18:37:06Z),
+  so reclassifying it would change neither the preceding nor the following candidate.
+- >-
+  Negative finding on proposal cycles: 'git log -S eip-7823 -- EIPS/eip-7607.md' at the pin returns only
+  a2ed8232 (PFI addition, 2025-01-23T23:05:03Z), 60eaabc2 (SFI, 2025-05-13T23:08:24Z) and 48d580cf
+  (duplicate-entry fix, 2025-05-21T15:54:56Z). No commit removes EIP-7823 from the Meta EIP, so there is
+  no earlier or competing proposal cycle to preserve. The 2025-05-13..2025-05-21 window in which the EIP
+  was listed under both CFI and SFI (Task 01 unknown on the fork-EIP record) postdates the anchor and does
+  not affect bracketing.
+- >-
+  Negative finding on pre-repository history: Task 01 records an unexplained gap between the frontmatter
+  'created' date 2024-11-11 and the opening of the adding pull request on 2024-11-22T14:19:43Z, and
+  'git log --follow' at the pin reports no earlier path for EIPS/eip-7823.md. No earlier revision of the
+  file exists in ethereum/EIPs that could be a preceding candidate, so the creation commit is the earliest
+  possible ref.
+- >-
+  Task 01's source registry records content_sha256 as null for eips-blob-eip7823-creation. The SHA-256 in
+  selection.selected_revision was computed here from the immutable Git blob
+  (cf60d90b499bb8e2226c962ecebcf9a9a2618071) rather than copied from Task 01, so it is not cross-checkable
+  against an independent Task 01 value.
+- >-
+  Pull-request attribution for the anchor (PR #9251, opened by the EIP author) and for the bracketing
+  commits comes from mutable GitHub metadata archived by Task 01 (eips-pr-9251, gh-pr-map-eip-7823). It is
+  context only; every timestamp used here was re-verified from Git in the pinned read-only clone.

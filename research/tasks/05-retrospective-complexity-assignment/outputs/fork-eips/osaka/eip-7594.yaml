@@ -1,0 +1,676 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7594
+  title: PeerDAS - Peer Data Availability Sampling
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-7594 proposed replacing universal blob-data
+    download with PeerDAS, a consensus-networking protocol built on EIP-4844.
+    It extended blobs into an erasure-coded column matrix, authenticated cells
+    against blob KZG commitments, and assigned deterministic column custody to
+    nodes. Nodes would discover diverse peers, gossip and request columns,
+    sample availability each slot, and reconstruct data from at least half of
+    the columns, while the precise fork-choice integration remained unfinished.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7594/manifest.yaml
+    manifest_sha256: efb17c925cdc025340956c5f44b3e0d8b749834961d8939802d7d5a4e83767af
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 4353b530c3701b22d7d2b46f940d8b6608d7aa8a
+    path: EIPS/eip-7594.md
+    committed_at: '2024-06-17T16:19:19Z'
+    git_blob_sha: 3d9747d143e6886ba45d3b9a4d5f1a3a5f96449f
+    content_sha256: bf2501c16c94716b9d5c1bf1132792a0a39bb1417c89619458c79f8e9280913b
+    immutable_url: https://github.com/ethereum/EIPs/blob/4353b530c3701b22d7d2b46f940d8b6608d7aa8a/EIPS/eip-7594.md
+    information_cutoff_at: '2024-09-27T18:42:32Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7594.md
+    content_sha256: 943f2042342e08f52a2e61f5491b70d40c9ea0fc73735978b0182b5db99d5395
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T13:24:52+02:00'
+    session_id: assessment-run-253ddc68-3009-4d07-bb57-68c5440084f2
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4844.md
+  - supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The specified changes concern erasure-coded blob columns, custody,
+      sampling, and reconstruction; no EVM gas rule is introduced or changed.
+  rationale: >-
+    PeerDAS operates on consensus data availability and peer networking. It
+    does not alter normal EVM gas accounting, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The proposal specifies column construction, custody, peer sampling, and
+      reconstruction without specifying opcode execution or state access.
+  rationale: >-
+    No opcode gains or reorders a state access or gas charge, so there is no
+    consensus-visible state-access ordering change under this anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      EIP-7594 extends the data representation and availability protocol for
+      EIP-4844 blobs but states no fee, gas-per-blob, target, or limit change.
+  - source: supporting/eip-4844.md
+    locator: Gas accounting, lines 164-186
+    summary: >-
+      EIP-4844 already defines independent blob gas, its base-fee computation,
+      and fee deduction; EIP-7594 supplies no modification to these rules.
+  rationale: >-
+    The proposal changes how blob data is distributed and checked, not how
+    blob gas is calculated or charged. The existing mechanism is unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The complete high-level specification contains only blob data-extension
+      and peer-availability mechanisms and introduces no state writes or state
+      gas budget.
+  rationale: >-
+    No state-gas charging site, rate, budget, reservoir, or execution-gas spill
+    rule is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The proposal defines networking and data-availability behavior and no
+      EVM fee-refund behavior.
+  rationale: >-
+    No gas-refund mechanism is introduced, so the zero anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Consensus layer validation, lines 228-243
+    summary: >-
+      EIP-4844's existing consensus path requires blob availability, blob
+      sidecar gossip and sync, and validator production of sidecars.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: A note on fork choice, lines 269-279
+    summary: >-
+      PeerDAS is intended to replace the Deneb is_data_available full-download
+      call with column sampling and a new availability filter.
+  rationale: >-
+    Existing EIP-4844 consensus tests for sidecar propagation, availability,
+    and fork-choice behavior must be substantially reworked around columns and
+    samples. This is a considerable but feature-bounded category, matching 2.
+  confidence: medium
+  uncertainty_note: >-
+    The packaged work-in-progress does not enumerate the exact pre-existing
+    test inventory, so the boundary between a minor and considerable subset is
+    judgmental.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 1
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: DataColumnSidecar, lines 86-98
+    summary: >-
+      The new sidecar binds a column and per-blob KZG proofs to commitments and
+      a signed block header with an inclusion proof.
+  - source: supporting/eip-4844.md
+    locator: Consensus layer validation, lines 228-243
+    summary: >-
+      Pre-existing blob-aware consensus tests already check block-associated
+      data availability and sidecar behavior.
+  rationale: >-
+    The narrow category of existing blob-availability tests gains additional
+    assertions that sampled columns, proofs, commitments, and headers agree.
+    The requirement is not universal across fork tests, matching score 1.
+  confidence: medium
+  uncertainty_note: >-
+    Some affected tests may be wholly rewritten rather than retain their logic
+    and add assertions, making a zero score also plausible.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-32
+    summary: >-
+      The EIP defines a beacon-node networking protocol and no execution state
+      transition inputs or outputs.
+  rationale: >-
+    Nothing in the specified change requires a field or mechanism in an
+    execution transition-tool interface.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 2
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Helper functions, lines 100-196
+    summary: >-
+      The specification introduces deterministic custody selection, extended
+      matrix computation and recovery, and construction of 128 column sidecars.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Peer sampling through reconstruction, lines 239-259
+    summary: >-
+      Tests must exercise per-slot peer queries, response failures, recovery,
+      request fallback, and cross-seeding behavior.
+  rationale: >-
+    Repeatable tests require new reusable fixtures and expectations for column
+    generation/proofs, peer custody, sampling responses, and reconstruction.
+    These are substantial primitives reusable within PeerDAS's own suite, but
+    the package does not establish permanent cross-EIP framework adoption.
+  confidence: medium
+  uncertainty_note: >-
+    No test-framework design or test cases are supplied, so some cryptographic
+    fixtures might instead be implemented as ordinary test-local helpers.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-30
+    summary: >-
+      PeerDAS adds one-dimensional erasure coding, divides extended blobs into
+      cells, and authenticates those cells against blob KZG commitments.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Extended-matrix and sidecar helpers, lines 131-196
+    summary: >-
+      The design invokes cell computation, per-cell KZG-proof construction,
+      row recovery, and packaging proofs for every column sidecar.
+  rationale: >-
+    This materially extends the existing EIP-4844 KZG use to erasure-coded
+    cells, proof generation, and recovery. As a single novel or limited-resource
+    cryptographic construction at this work-in-progress stage, it matches 2.
+  confidence: medium
+  uncertainty_note: >-
+    The sealed document invokes but does not define the underlying cell-proof
+    algorithms, leaving judgment over whether this is one modified mechanism
+    or multiple mechanisms.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: get_custody_columns, lines 102-129
+    summary: >-
+      Custody selection includes a maximum node-ID wrap, a custody-count bound,
+      duplicate avoidance, subnet-to-column expansion, and deterministic order.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Peer sampling and reconstruction, lines 239-259
+    summary: >-
+      Sampling success, missing responses, the 50-percent reconstruction
+      threshold, fallback requests, timing, and message aggregation all create
+      boundary-sensitive behavior.
+  rationale: >-
+    Multiple mechanisms have boundaries, and reconstruction/sampling combines
+    column counts, peer distributions, timeouts, failures, proof validity, and
+    blob counts into an elevated test matrix. This meets score 3.
+  confidence: high
+  uncertainty_note: >-
+    Exact timeout and message-aggregation boundaries are expressly unresolved,
+    but their absence increases rather than removes the boundary-testing need.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Metadata and Specification, lines 7-11 and 24-32
+    summary: >-
+      The EIP is categorized as Networking and specifies column sidecars and
+      sampling, not a block RLP validation rule.
+  rationale: >-
+    Although peer data transfer changes, the anchor is specifically for block
+    RLP validation requiring syncing; no such mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-32
+    summary: >-
+      The proposal specifies beacon-node data-availability networking and no
+      Engine API endpoint, field, or communication mechanism.
+  rationale: >-
+    No Engine API directive changes are stated, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The specified design consists of off-EVM data coding, custody, gossip,
+      peer requests, sampling, and reconstruction.
+  rationale: >-
+    No system contract is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The PeerDAS mechanisms do not reference or change any system contract's
+      code, state, or behavior.
+  rationale: >-
+    No direct or indirect modification to a pre-existing system contract is
+    specified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      EIP-7594 defines only blob data-availability and peer-network mechanisms,
+      with no EVM instruction.
+  rationale: >-
+    No opcode is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The proposal does not specify EVM execution behavior or alter an existing
+      instruction.
+  rationale: >-
+    No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      Cell authentication and erasure coding are consensus-side PeerDAS
+      operations; no EVM precompile address or callable interface is added.
+  rationale: >-
+    The new cryptographic processing is not exposed as a new precompile.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Point evaluation precompile, lines 195-226
+    summary: >-
+      EIP-4844 already defines the point-evaluation precompile and its fixed
+      behavior and cost.
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      EIP-7594 uses blob KZG commitments for cells but states no change to the
+      EIP-4844 point-evaluation precompile.
+  rationale: >-
+    PeerDAS's consensus-side cell proofs do not modify precompile logic or gas.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Custom types and DataColumnSidecar, lines 54-98
+    summary: >-
+      The specification adds SSZ-equivalent DataColumn and ExtendedMatrix types
+      and a DataColumnSidecar container carrying cells, proofs, commitments,
+      a signed header, and an inclusion proof.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Column gossip and peer sampling, lines 231-245
+    summary: >-
+      The new sidecars are exchanged on column gossip subnets and through a
+      DataColumnSidecarsByRoot request interface.
+  rationale: >-
+    A new SSZ container and data types cross gossip and request/response
+    interfaces, which is an interface-level encoding change. The rubric assigns
+    a binary score of 3 when such a change is introduced.
+  confidence: high
+  uncertainty_note: >-
+    The anchor's examples emphasize transaction, block, and Engine interfaces;
+    this assessment treats the explicitly encoded consensus P2P interfaces as
+    interfaces within its stated scope.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Metadata and Specification, lines 7-11 and 24-32
+    summary: >-
+      EIP-7594 requires EIP-4844 and extends its blobs, but does not define an
+      additional transaction envelope or type number.
+  - source: supporting/eip-4844.md
+    locator: Blob transaction, lines 97-117
+    summary: >-
+      The blob transaction type is an existing EIP-4844 mechanism on which
+      PeerDAS builds.
+  rationale: >-
+    The dependency's blob transaction is not newly introduced by EIP-7594, so
+    this criterion scores 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation, lines 244-289
+    summary: >-
+      EIP-4844 already defines blob-transaction fee, hash-version, count, and
+      block blob-gas validity checks.
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      PeerDAS changes availability distribution and sampling but adds no
+      transaction validity or intrinsic-gas rule.
+  rationale: >-
+    The proposal does not modify the validity of an existing transaction type.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Header extension, lines 119-162
+    summary: >-
+      Blob gas fields are pre-existing EIP-4844 header extensions.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: DataColumnSidecar, lines 86-98
+    summary: >-
+      PeerDAS references an existing signed block header from a separate
+      sidecar container and does not add a field to the header itself.
+  rationale: >-
+    New sidecar fields are not new block or header fields, so the binary anchor
+    remains 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-32
+    summary: >-
+      The proposal states ongoing PeerDAS behavior but no activation-block
+      state change or modification of an existing internal variable.
+  rationale: >-
+    No fork-activation transition mechanism is specified. New constants and
+    data types do not constitute modification under the anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Configuration, lines 63-85
+    summary: >-
+      The design fixes 128 columns, up to 768 cells, 32 gossip subnets, eight
+      samples per slot, and a target of 70 peers.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Sidecar construction, lines 167-196
+    summary: >-
+      For every block, clients compute cells and KZG proofs and construct a
+      sidecar for every column across all blobs.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Discovery through DAS providers, lines 215-267
+    summary: >-
+      Runtime behavior couples peer discovery, gossip, per-slot requests,
+      scoring, reconstruction, cross-seeding, and optional high-capacity peers.
+  rationale: >-
+    CPU, memory, bandwidth, latency, peer topology, and reconstruction load
+    interact in live per-slot operation. These mechanisms cannot be fully
+    benchmarked in isolation and substantially alter existing blob propagation
+    performance, meeting score 3.
+  confidence: high
+  uncertainty_note: >-
+    Timing and aggregation choices are unresolved, so exact benchmark cases are
+    uncertain even though the need for system-level performance validation is
+    clear.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Custody and peer discovery, lines 199-225
+    summary: >-
+      Availability relies on public deterministic custody, advertised capacity,
+      diverse peers, and discovery defenses against attack and centralization.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Peer sampling through fork choice, lines 239-279
+    summary: >-
+      Peer responsiveness, reconstruction, cross-seeding, and sample timing
+      feed a data-availability filter whose choices affect reorgs and finality.
+  - source: eip.md
+    locator: Security Considerations, lines 46-48
+    summary: The EIP's own security analysis is still marked as needing discussion.
+  rationale: >-
+    Incorrect sampling, custody, discovery, proof, or fork-choice behavior can
+    cause unavailable data to be accepted or available blocks to be rejected.
+    The design changes assumptions across networking, cryptography, validators,
+    and fork choice, requiring extensive review and adversarial testing.
+  confidence: high
+  uncertainty_note: >-
+    The absent security analysis leaves attack parameters and mitigations
+    unresolved, but the cross-component critical-chain exposure supports 3.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Reconstruction and cross-seeding, lines 247-259
+    summary: >-
+      The document leaves open when samples count as missing and whether sample
+      messages are individual or aggregated, with anti-DoS and QoS unresolved.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: A note on fork choice, lines 269-279
+    summary: >-
+      Fork choice is explicitly TBD, including sampling follow distance,
+      timing, short-reorg acceptability, and confirmation effects.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip7594-das-core.md
+    locator: Subnet stability, lines 294-296
+    summary: >-
+      Subnet rotation relative to the pruning period is identified as likely
+      necessary but is not specified.
+  rationale: >-
+    Previously local network observations such as sample success and timing are
+    intended to determine consensus fork-choice eligibility. Because the WIP
+    leaves those outcomes open, clients need repeated agreement and test
+    re-baselining, matching score 3.
+  confidence: high
+  uncertainty_note: >-
+    The package contains no implementation or devnet evidence, as required by
+    the hindsight firewall; the score rests on explicit WIP and TBD passages.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Metadata, Motivation, and Specification, lines 11 and 18-32
+    summary: >-
+      EIP-7594 explicitly requires EIP-4844, extends its blobs and commitments,
+      and changes how their availability is established.
+  - source: supporting/eip-4844.md
+    locator: Consensus layer validation, lines 228-236
+    summary: >-
+      EIP-4844's sidecar design deliberately isolates is_data_available so that
+      full download can later be replaced by data-availability sampling.
+  rationale: >-
+    EIP-7594 has one strong dependency, EIP-4844, and coordinated tests must
+    cover the changed blob sidecar, commitment, and availability path. That is
+    a substantive but limited-scope interaction, matching score 2.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 4844
+totals:
+  primary_score: 24
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    Material consensus behavior remains unresolved: the fork-choice data-
+    availability filter, sampling follow distance and timing, missing-sample
+    thresholds, short-reorg treatment, request/message aggregation, anti-DoS
+    and QoS rules, and subnet rotation are not fixed. These gaps chiefly affect
+    how clients produce common outcomes and how regression and network tests
+    must be structured; they are not repaired from later knowledge.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - new_test_framework_primitives
+  - cryptography
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 20
+    maximum: 24
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - >-
+    At what slot or follow distance must successful sampling gate fork-choice
+    eligibility, and how are temporary sampling failures and short reorgs
+    treated?
+  - >-
+    When is a sample deemed missing, and when must a node request, reconstruct,
+    or cross-seed a column?
+  - >-
+    Are samples requested and propagated individually or in aggregates, and
+    what anti-DoS, rate-limit, and QoS rules are consensus-testable?
+  - >-
+    How and when do deterministic custody subnets rotate relative to the data
+    pruning period?
+  - >-
+    Which new fixtures or expectations belong in the shared test framework as
+    opposed to PeerDAS-local test helpers?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the historical EIP revision and allowlisted supporting
+    documents in the sealed package, used no internet or external information,
+    and did not use present-day implementation knowledge.
+notable_ambiguities:
+- >-
+  The rubric's encoding anchor expressly includes interfaces; this assessment
+  treats the new SSZ DataColumnSidecar on consensus gossip and request/response
+  interfaces as an interface-level encoding change.
+- >-
+  The work-in-progress does not distinguish which existing blob-availability
+  tests are rewritten versus which retain their logic and gain new assertions.
+- >-
+  The specification supplies reusable protocol helpers but no test design, so
+  the score for new test-framework primitives depends on the unavoidable need
+  to model multi-peer sampling and failure behavior.
+overall_confidence: medium

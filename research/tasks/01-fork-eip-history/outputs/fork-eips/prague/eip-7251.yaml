@@ -1,0 +1,42 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: prague
+eip:
+  number: 7251
+  title: "Increase the MAX_EFFECTIVE_BALANCE"
+  layers: [execution, consensus]
+  layer_classification:
+    rationale: "The pinned EIP-7600 Full Specifications section lists EIP-7251 in the Consensus Layer list only, but the EIP's own Specification contains 'Execution layer' sections defining the consolidation request operation and the consolidation request contract (an EIP-7685 request type produced by the execution layer) alongside its 'Consensus layer' section. Classified cross-layer on the EIP's own specification; EIP-7600's Execution Layer list omits it (omission noted in the fork record)."
+    source_ids: [eips-blob-7600, eips-blob-7251]
+membership:
+  source_section: "Included EIPs > Core EIPs"
+  classification: core
+  requirement: "Listed under 'Included EIPs > Core EIPs' with no qualifying MAY/MUST language; an unconditional protocol change activated with the upgrade."
+  source_ids: [eips-blob-7600]
+inclusion_history:
+  normalized_state_counts:
+    scheduled_for_inclusion: 2
+    included: 1
+  events:
+    - id: prague-7251-e1
+      occurred_at: "2024-03-21"
+      raw_label: "'agreed to include EIP 7251' / added to 'EIPs Included' ('Add MaxEB + ILs')"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: "ACDC#130 (2024-03-21) summary row 130.2: developers 'agreed to include EIP 7251, which aims to increase the MAX_EFFECTIVE_Balance'; the Meta EIP added EIP-7251 to 'EIPs Included' the same day (commit 810c347a, PR #8344 'Add MaxEB + ILs'). Pre-EIP-7723 'Included' = commitment to the upgrade's scope; normalized to scheduled_for_inclusion (see the 2024-09-27 section-rename evidence)."
+      decision_body: "AllCoreDevs Consensus (ACDC) #130"
+      source_ids: [pm-acdc-130, eips-commit-810c347, gh-eip7600-commit-prs]
+    - id: prague-7251-relabel-sfi
+      occurred_at: "2024-09-26"
+      raw_label: "EIPs Scheduled for Inclusion (section renamed from 'EIPs Included')"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: "ACDE#197 (2024-09-26) rescoped Pectra; the Meta EIP adopted EIP-7723's formal vocabulary and renamed 'EIPs Included' to 'EIPs Scheduled for Inclusion' (commit 1d4ce546, 2024-09-27, PR #8911). This EIP's membership carried over unchanged, so the event records the adoption of the new terminology for an unchanged state, not a state transition. occurred_at is the ACDE#197 call date; the commit landed the next day."
+      decision_body: "AllCoreDevs Execution (ACDE) #197"
+      source_ids: [pm-acde-197, eips-commit-1d4ce54, gh-eip7600-commit-prs]
+    - id: prague-7251-included
+      occurred_at: "2025-05-07T10:05:11Z"
+      raw_label: "Included EIPs (Pectra mainnet activation, epoch 364032 / timestamp 1746612311)"
+      normalized_state: included
+      normalization_rationale: "Pectra activated on Ethereum mainnet at the timestamp recorded in EIP-7600's Activation table (tentative mainnet time added 2025-04-03, commit 355b3350; 1746612311 = 2025-05-07T10:05:11Z). After activation the Meta EIP moved to Final and renamed its EIP list from 'EIPs Scheduled for Inclusion' to 'Included EIPs' (commit 78b50371, 2025-06-09) and changed its abstract from 'Scheduled for Inclusion' to 'Included' (commit 8877eaa7, 2025-06-23)."
+      decision_body: "Ethereum mainnet activation per the EIP-7600 activation table; document finalization by the Meta EIP author"
+      source_ids: [eips-blob-7600, eips-commit-355b335, eips-commit-78b5037, eips-commit-8877eaa]
+unknowns: []

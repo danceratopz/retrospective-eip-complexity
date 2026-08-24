@@ -1,0 +1,240 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7883
+  title: ModExp Gas Cost Increase
+  source_ids:
+  - eips-blob-eip7883-pin
+research_run:
+  started_at: '2026-08-20T19:56:20Z'
+  completed_at: '2026-08-21T00:37:47Z'
+  researcher: claude subagent eip-batch-13 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-02-11'
+  frontmatter_source_ids:
+  - eips-blob-eip7883-creation
+  - eips-blob-eip7883-pin
+  first_repository_commit:
+    authored_at: '2025-02-14T17:00:54Z'
+    committed_at: '2025-02-14T17:00:54Z'
+    commit: 4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b
+    path: EIPS/eip-7883.md
+    source_ids:
+    - eips-commit-4a06cae0ed50
+  discrepancy_note: The frontmatter 'created' date (2025-02-11) precedes the first repository commit (2025-02-14T17:00:54Z)
+    by three days. This is the ordinary lag between drafting the proposal and the merge of the adding PR; the frontmatter
+    value was never modified in any later commit (verified across all nine file commits). No conflict.
+revision_history:
+  summary:
+    file_commit_count: 9
+    post_creation_revision_count: 8
+    substantive_revision_count: 3
+    non_substantive_revision_count: 5
+    uncertain_revision_count: 0
+    first_revision_at: '2025-04-15T10:06:53Z'
+    last_revision_at: '2026-01-21T09:16:44Z'
+    first_substantive_revision_at: '2025-06-11T08:59:59Z'
+    last_substantive_revision_at: '2025-07-14T10:06:41Z'
+    derived_from_event_ids:
+    - eip7883-e00
+    - eip7883-e01
+    - eip7883-e02
+    - eip7883-e03
+    - eip7883-e04
+    - eip7883-e05
+    - eip7883-e06
+    - eip7883-e07
+    - eip7883-e08
+  events:
+  - id: eip7883-e00
+    event_kind: creation
+    authored_at: '2025-02-14T18:00:54+01:00'
+    committed_at: '2025-02-15T01:00:54+08:00'
+    commit: 4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b
+    path: EIPS/eip-7883.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: "Initial addition of EIP-7883 'ModExp Gas Cost Increase' (160 lines, Draft, 'requires: 2565'): reprices\
+      \ the ModExp precompile at 0x05 relative to EIP-2565 by (1) raising the minimum price from 200 to 500, (2)\
+      \ doubling the large-exponent multiplier from 8 to 16, and (3) doubling multiplication_complexity when base\
+      \ or modulus exceeds 32 bytes. Includes the full pricing pseudocode, a 29-row updated test-vector table, and\
+      \ a 'Reference Implementation: [None]' placeholder."
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-4a06cae0ed50
+    - eips-blob-eip7883-creation
+  - id: eip7883-e01
+    event_kind: revision
+    authored_at: '2025-04-15T12:06:53+02:00'
+    committed_at: '2025-04-15T10:06:53+00:00'
+    commit: e740ec8e682558ba91ad44d9f4f312b605e84fd1
+    path: EIPS/eip-7883.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Deletes the empty 'Reference Implementation' section whose body was the placeholder '[None]' (4 lines
+      removed). Despite the commit subject 'Add reference implementation', the diff only removes the placeholder
+      section; no implementation was added to the EIP file in this commit.
+    rationale: Removal of an empty placeholder section; no normative content, parameter, interface, or dependency
+      changed. The mismatch between commit subject and diff is recorded in the summary so the reviewed content,
+      not the subject line, is the evidence.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-e740ec8e6825
+  - id: eip7883-e02
+    event_kind: revision
+    authored_at: '2025-06-11T10:59:59+02:00'
+    committed_at: '2025-06-11T16:59:59+08:00'
+    commit: 5cdd75157d78522bde8dc58977717c14cd7f2789
+    path: EIPS/eip-7883.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: "Assumes a minimal base/modulus length of 32: calculate_multiplication_complexity now starts from a\
+      \ floor of 16 ('multiplication_complexity = 16; if max_length > 32: multiplication_complexity = 2 * words**2')\
+      \ instead of returning words**2 for max_length <= 32. Renames change item 3 accordingly and makes three 'This\
+      \ part of equation' -> 'This part of the equation' copy fixes."
+    rationale: Changes the normative gas-pricing formula for all calls with base and modulus of at most 32 bytes;
+      directly affects implementation and test expectations.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-5cdd75157d78
+  - id: eip7883-e03
+    event_kind: revision
+    authored_at: '2025-07-11T12:56:37+02:00'
+    committed_at: '2025-07-11T18:56:37+08:00'
+    commit: 271c8a7e10ae511534f3fe7f5b09c9a5c90e3336
+    path: EIPS/eip-7883.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: "'Triple price': removes the division by 3 from calculate_gas_cost ('max(500, floor(multiplication_complexity\
+      \ * iteration_count / 3))' -> 'max(500, floor(multiplication_complexity * iteration_count))'), tripling the\
+      \ general cost. Rewrites the Motivation (now framed around enabling block gas limit increases rather than\
+      \ matching EcRecover), the Rationale, Backwards Compatibility and Security Considerations wording, and recomputes\
+      \ every row of the 29-row test-vector table for the new formula."
+    rationale: Changes the normative gas-pricing formula and every expected test value; the largest single repricing
+      change in the EIP's history.
+    change_group: eip7883-triple-price
+    confidence: high
+    source_ids:
+    - eips-commit-271c8a7e10ae
+  - id: eip7883-e04
+    event_kind: revision
+    authored_at: '2025-07-14T12:06:41+02:00'
+    committed_at: '2025-07-14T10:06:41+00:00'
+    commit: 586025d387e92ab81f9d16b1076490288a25d700
+    path: EIPS/eip-7883.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: >-
+      Corrects one expected value in the test-vector table introduced three days earlier by the triple-price
+      commit: modexp_nagydani_5_pow0x10001 changes from 525288 to 524288 gas.
+    rationale: 'Corrects an expected gas value that a test author could copy directly, so it could affect testing.
+      Confidence medium: the corrected number is derivable from the unchanged normative formula and the table is
+      informative, so a stricter reading would classify this one-digit fix as editorial. Grouped with eip7883-e03
+      because it repairs a value that commit introduced.'
+    change_group: eip7883-triple-price
+    confidence: medium
+    source_ids:
+    - eips-commit-586025d387e9
+  - id: eip7883-e05
+    event_kind: revision
+    authored_at: '2025-08-11T09:26:31+02:00'
+    committed_at: '2025-08-11T15:26:31+08:00'
+    commit: 81c4a731b884f4b7acba5f000d640735fac6de75
+    path: EIPS/eip-7883.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds one sentence to Backwards Compatibility linking an empirical analysis of the proposal (assets/eip-7883/call_analysis.md)
+      and a per-entity breakdown (assets/eip-7883/entity_analysis.md).
+    rationale: Adds informative supporting-analysis links; no normative rule, parameter, interface, or dependency
+      changed in the EIP file. The referenced asset files themselves were not reviewed (out of scope for the EIP-file
+      history).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-81c4a731b884
+  - id: eip7883-e06
+    event_kind: revision
+    authored_at: '2025-09-17T11:09:30-07:00'
+    committed_at: '2025-09-18T02:09:30+08:00'
+    commit: e937adebdab7e1737115db5d42f29fee577f8b30
+    path: EIPS/eip-7883.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-e937adebdab7
+  - id: eip7883-e07
+    event_kind: revision
+    authored_at: '2025-10-02T15:53:18-07:00'
+    committed_at: '2025-10-03T06:53:18+08:00'
+    commit: 3891cb3a7a93499d270a6a81da151f903a19122e
+    path: EIPS/eip-7883.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Last Call, adding last-call-deadline 2025-10-28.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-3891cb3a7a93
+  - id: eip7883-e08
+    event_kind: revision
+    authored_at: '2026-01-21T04:16:44-05:00'
+    committed_at: '2026-01-21T09:16:44+00:00'
+    commit: b55cdb0ee78a696327cf76d1c5cf8088d73499ca
+    path: EIPS/eip-7883.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final (last-call-deadline removed). Bulk commit: its subject names only
+      EIP-7823, but it moves five Fusaka EIPs (7823, 7825, 7883, 7939, 7951) to Final in the same change; the EIPS/eip-7883.md
+      hunk is the three-line frontmatter status edit.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b55cdb0ee78a
+dependency_history:
+  events:
+  - id: eip7883-d01
+    target_eip: 2565
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-02-14T17:00:54Z'
+    commit: 4a06cae0ed50c22c7507ba1b6cfd76ddbc48574b
+    rationale: "Declared in the frontmatter as 'requires: 2565' at creation and unchanged through the pinned commit,\
+      \ and stated explicitly in the Abstract ('This EIP is modifying the ModExp precompile pricing algorithm introduced\
+      \ in [EIP-2565]'), in the Specification ('The specific changes from the algorithm defined in [EIP-2565]')\
+      \ and as the baseline column of the test-vector table. EIP-7883 modifies parameters of the EIP-2565 pricing\
+      \ algorithm rather than replacing the precompile, so the frontmatter relationship 'requires' is recorded as\
+      \ declared."
+    confidence: high
+    source_ids:
+    - eips-commit-4a06cae0ed50
+    - eips-blob-eip7883-creation
+    - eips-blob-eip7883-pin
+source_registry: outputs/sources/eips/eip-7883.yaml
+unknowns:
+- 'Negative search: EIP-2565 is the only EIP, ERC or RIP named anywhere in EIPS/eip-7883.md, in every revision (grep
+  for ''eip-<digits>'', ''erc-<digits>'' and ''rip-'' over the pinned blob and per-commit frontmatter checks for
+  ''requires''). No dependency was ever introduced, changed, or removed after creation.'
+- 'Classification judgement (eip7883-e04): the one-digit correction of a test-vector value (525288 -> 524288) is
+  recorded as a substantive parameter change because it could affect testing, with medium confidence; the value
+  is derivable from the unchanged normative formula, so it could also be argued to be editorial.'
+- 'Internal inconsistency observed but not classified as a separate event: commit 5cdd75157d78 (eip7883-e02) changed
+  the pricing formula without updating the test-vector table, which continued to show the pre-change values until
+  commit 271c8a7e10ae (eip7883-e03) recomputed the whole table.'
+- 'Commit-subject mismatch: commit e740ec8e6825 is titled ''Add reference implementation'' but its only change to
+  EIPS/eip-7883.md is the deletion of the empty ''Reference Implementation: [None]'' section. Classification follows
+  the diff, not the subject.'
+- No mutable (non-Git) sources were needed for this record; all evidence is reproducible from the pinned ethereum/EIPs
+  history, so raw/eips/eip-7883/ is empty.

@@ -1,0 +1,188 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7917
+  title: Deterministic proposer lookahead
+  source_ids:
+  - eips-blob-eip7917-pin
+research_run:
+  started_at: '2026-08-20T16:38:44Z'
+  completed_at: '2026-08-20T19:47:52Z'
+  researcher: claude subagent eip-batch-06 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-03-24'
+  frontmatter_source_ids:
+  - eips-blob-eip7917-creation
+  - eips-blob-eip7917-pin
+  first_repository_commit:
+    authored_at: '2025-03-25T15:19:48Z'
+    committed_at: '2025-03-25T15:19:48Z'
+    commit: 4c837b5300a0e4411eda9bcfce4b8a563278dc26
+    path: EIPS/eip-7917.md
+    source_ids:
+    - eips-commit-4c837b5300a0
+  discrepancy_note: The frontmatter 'created' date (2025-03-24) precedes the first repository commit (authored 2025-03-25T15:19:48Z,
+    committed 2025-03-25T15:19:48Z UTC) by one day. This is the ordinary lag between drafting the proposal and the
+    merge of the adding PR; no conflict.
+revision_history:
+  summary:
+    file_commit_count: 8
+    post_creation_revision_count: 7
+    substantive_revision_count: 3
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2025-04-02T13:05:57Z'
+    last_revision_at: '2025-12-16T16:26:14Z'
+    first_substantive_revision_at: '2025-06-04T20:16:16Z'
+    last_substantive_revision_at: '2025-08-22T13:05:35Z'
+    derived_from_event_ids:
+    - eip7917-e00
+    - eip7917-e01
+    - eip7917-e02
+    - eip7917-e03
+    - eip7917-e04
+    - eip7917-e05
+    - eip7917-e06
+    - eip7917-e07
+  events:
+  - id: eip7917-e00
+    event_kind: creation
+    authored_at: '2025-03-26T00:19:48+09:00'
+    committed_at: '2025-03-25T23:19:48+08:00'
+    commit: 4c837b5300a0e4411eda9bcfce4b8a563278dc26
+    path: EIPS/eip-7917.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7917 ''Deterministic proposer lookahead'': extends BeaconState with a proposer_lookahead
+      list computed deterministically at each epoch boundary (103 lines).'
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-4c837b5300a0
+  - id: eip7917-e01
+    event_kind: revision
+    authored_at: '2025-04-02T22:05:57+09:00'
+    committed_at: '2025-04-02T13:05:57+00:00'
+    commit: 184c6810863c7accdacce6a8c10bda144fb96242
+    path: EIPS/eip-7917.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Adds an image of Danny Ryan's comment on lookahead to the Motivation and expands the SSLE rationale
+      with a note that APS reduces the need for SSLE.
+    rationale: Motivation/Rationale prose and an asset reference only; the specification is unchanged.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-184c6810863c
+  - id: eip7917-e02
+    event_kind: revision
+    authored_at: '2025-06-05T05:16:16+09:00'
+    committed_at: '2025-06-04T20:16:16+00:00'
+    commit: 93f9b39b2882d37244e796bb38e8fb22574b5ad3
+    path: EIPS/eip-7917.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Changes the proposer_lookahead BeaconState field type from List to Vector (fixed length (MIN_SEED_LOOKAHEAD
+      + 1) * SLOTS_PER_EPOCH).
+    rationale: SSZ type change to a consensus data structure; affects serialization, merkleization, and implementations.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-93f9b39b2882
+  - id: eip7917-e03
+    event_kind: revision
+    authored_at: '2025-08-22T14:18:21+02:00'
+    committed_at: '2025-08-22T20:18:21+08:00'
+    commit: ff1c41222eaeeb727ecb880a3db48201673f3f82
+    path: EIPS/eip-7917.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Fixes an off-by-one error in process_proposer_lookahead: the last epoch''s proposers are computed
+      for get_current_epoch(state) + MIN_SEED_LOOKAHEAD + 1 instead of + MIN_SEED_LOOKAHEAD.'
+    rationale: Corrects the normative state-transition pseudocode; changes which epoch's proposers are filled in.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-ff1c41222eae
+  - id: eip7917-e04
+    event_kind: revision
+    authored_at: '2025-08-22T22:05:35+09:00'
+    committed_at: '2025-08-22T13:05:35+00:00'
+    commit: fe4e31c2cf6bcdbd0433ab204c72a72bd782104a
+    path: EIPS/eip-7917.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Restructures the spec pseudocode to mirror updated consensus-specs helpers: introduces get_beacon_proposer_indices()
+      and a re-signatured compute_proposer_indices(state, epoch, seed, indices), and updates the pinned consensus-specs
+      / spec-test URLs.'
+    rationale: Changes the helper-function decomposition and signatures implementers follow; same-day follow-up
+      to the off-by-one fix but a distinct logical change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-fe4e31c2cf6b
+  - id: eip7917-e05
+    event_kind: revision
+    authored_at: '2025-09-17T10:09:30-07:00'
+    committed_at: '2025-09-18T01:09:30+08:00'
+    commit: 04576bc4e42f5c45ea1f936cbeb54f5a75a958f8
+    path: EIPS/eip-7917.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-04576bc4e42f
+  - id: eip7917-e06
+    event_kind: revision
+    authored_at: '2025-09-29T06:48:22-07:00'
+    committed_at: '2025-09-29T21:48:22+08:00'
+    commit: 1a2a077abc6b5bd42dcf35527bd834344586a5ac
+    path: EIPS/eip-7917.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Last Call with last-call-deadline 2025-10-28.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-1a2a077abc6b
+  - id: eip7917-e07
+    event_kind: revision
+    authored_at: '2025-12-17T01:26:14+09:00'
+    committed_at: '2025-12-17T00:26:14+08:00'
+    commit: c397fd5d4de0ea8fd8b4dadf4e7a6c1cda666bb6
+    path: EIPS/eip-7917.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final; removes last-call-deadline.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c397fd5d4de0
+dependency_history:
+  events:
+  - id: eip7917-d01
+    target_eip: 7251
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2025-03-25T15:19:48Z'
+    commit: 4c837b5300a0e4411eda9bcfce4b8a563278dc26
+    rationale: 'Explicit reference at creation in the Motivation: ''The increase of MaxEB with [EIP-7251](./eip-7251)
+      increases effective balance unpredictability...''. EIP-7251 aggravates the problem this EIP fixes; no frontmatter
+      requires entry ever existed. The reference is unchanged at the pinned commit.'
+    confidence: high
+    source_ids:
+    - eips-commit-4c837b5300a0
+    - eips-blob-eip7917-creation
+source_registry: outputs/sources/eips/eip-7917.yaml
+unknowns:
+- The EIP has no frontmatter 'requires' field in any revision; the only explicit cross-EIP reference is the EIP-7251
+  motivation statement present from creation through the pin.

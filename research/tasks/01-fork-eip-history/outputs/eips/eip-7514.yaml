@@ -1,0 +1,240 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7514
+  title: Add Max Epoch Churn Limit
+  source_ids:
+    - eips-blob-eip7514-pin
+research_run:
+  started_at: '2026-08-21T00:37:56Z'
+  completed_at: '2026-08-21T01:00:00Z'
+  researcher: claude subagent eip-forks-close (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2023-09-07'
+  frontmatter_source_ids:
+    - eips-blob-eip7514-creation
+    - eips-blob-eip7514-pin
+  first_repository_commit:
+    authored_at: '2023-09-13T11:05:21+02:00'
+    committed_at: '2023-09-13T02:05:21-07:00'
+    commit: 2d470f8085d5c5b98e1e2f78af4ec60c2ab6738b
+    path: EIPS/eip-7514.md
+    source_ids:
+      - eips-commit-2d470f8085d5
+  discrepancy_note: >-
+    The frontmatter 'created' date (2023-09-07) precedes the first repository commit
+    (2023-09-13T09:05:21Z; the author and committer timestamps are the same instant in different
+    offsets) by six days. The declared date is the day the change was first raised with client
+    developers rather than the day the file landed in ethereum/EIPs; the Cancun fork record
+    independently places the first presentation of this proposal on 2023-09-07. The frontmatter
+    value was never edited in any later revision.
+revision_history:
+  summary:
+    file_commit_count: 7
+    post_creation_revision_count: 6
+    substantive_revision_count: 3
+    non_substantive_revision_count: 3
+    uncertain_revision_count: 0
+    first_revision_at: '2023-09-14T14:35:03Z'
+    last_revision_at: '2024-03-29T19:59:00Z'
+    first_substantive_revision_at: '2023-09-14T14:35:03Z'
+    last_substantive_revision_at: '2024-03-29T19:59:00Z'
+    derived_from_event_ids:
+      - eip7514-e00
+      - eip7514-e01
+      - eip7514-e02
+      - eip7514-e03
+      - eip7514-e04
+      - eip7514-e05
+      - eip7514-e06
+  events:
+    - id: eip7514-e00
+      event_kind: creation
+      authored_at: '2023-09-13T11:05:21+02:00'
+      committed_at: '2023-09-13T02:05:21-07:00'
+      commit: 2d470f8085d5c5b98e1e2f78af4ec60c2ab6738b
+      path: EIPS/eip-7514.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        Initial addition of EIP-7514 'Add Max Epoch Churn Limit' (status Draft, Standards
+        Track/Core). Defines the constant MAX_PER_EPOCH_CHURN_LIMIT with value 12, specifies the
+        consensus-layer change 'Modify get_validator_churn_limit function adding an upper bound
+        MAX_PER_EPOCH_CHURN_LIMIT', states that no Execution Layer change is required, and
+        includes four projection tables of validator-set growth for candidate activation dates.
+        Security Considerations reads 'Needs discussion.'
+      rationale: >-
+        Creation commit adding the complete initial specification (name-status shows a single
+        added path, no rename). Introduces the normative behavior change and its parameter.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-2d470f8085d5
+        - eips-blob-eip7514-creation
+    - id: eip7514-e01
+      event_kind: revision
+      authored_at: '2023-09-14T16:35:03+02:00'
+      committed_at: '2023-09-14T14:35:03+00:00'
+      commit: b27a4c881f5f1934816b34e9a6deb9006851d9f2
+      path: EIPS/eip-7514.md
+      change_type: parameter
+      semantic_effect: substantive
+      summary: >-
+        Changes the constant MAX_PER_EPOCH_CHURN_LIMIT from 12 to 8; adds a pointer to the full
+        specification at consensus-specs specs/_features/eip7514/beacon_chain.md pinned at
+        a56c4d026ff4fd39cbd77b7b8545eae719613018; deletes the two later-activation-date
+        projection tables and rewrites the concluding rationale sentence for the value 8, adding
+        that 8 prevents reaching 50 percent ETH staked for at least a full year even with a
+        delayed fork.
+      rationale: >-
+        Direct change to the EIP's only normative parameter, which determines the enforced
+        activation-churn bound; implementations and tests depend on the value. The merging pull
+        request (#7715, body 'Update constant value as decided in
+        https://github.com/ethereum/pm/issues/857') attributes the value to a recorded
+        AllCoreDevs decision.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-b27a4c881f5f
+        - gh-pr-7715
+    - id: eip7514-e02
+      event_kind: revision
+      authored_at: '2023-09-14T18:47:25+02:00'
+      committed_at: '2023-09-14T16:47:25+00:00'
+      commit: 4534f1e30bc55025c7ca5b871e4788173fdfdba5
+      path: EIPS/eip-7514.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        Renames the constant MAX_PER_EPOCH_CHURN_LIMIT to MAX_PER_EPOCH_ACTIVATION_CHURN_LIMIT
+        (value 8 unchanged) and replaces the single consensus-layer bullet 'Modify
+        get_validator_churn_limit function adding an upper bound' with two bullets - 'Add
+        get_validator_activation_churn_limit with upper bound
+        MAX_PER_EPOCH_ACTIVATION_CHURN_LIMIT' and 'Modify process_registry_updates to use bounded
+        activation churn limit'.
+      rationale: >-
+        More than a rename - it narrows the specified change from bounding the shared churn-limit
+        helper to adding a separate activation-only helper consumed by process_registry_updates,
+        so the bound applies to the entry queue and not to exits. Changes both the identifier
+        implementers must use and the function-level shape of the state-transition change. PR
+        #7717 records the intent as 'Align EIP variable names to
+        https://github.com/ethereum/consensus-specs/pull/3499'. Left ungrouped from eip7514-e01
+        despite landing two hours later on the same day - the parameter value change and the
+        helper-scope change are distinct decisions with distinct upstream references.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-4534f1e30bc5
+        - gh-pr-7717
+    - id: eip7514-e03
+      event_kind: revision
+      authored_at: '2023-09-20T18:17:07+03:00'
+      committed_at: '2023-09-20T08:17:07-07:00'
+      commit: 5c9a79728b34397f80814d228308a5db886cd7fa
+      path: EIPS/eip-7514.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Status change Draft -> Review; corrects the discussions-to URL slug from
+        'eip-7668-add-max-epoch-churn-limit' to 'eip-7514-add-max-epoch-churn-limit' (same
+        Ethereum Magicians thread id 15709); retargets the full-specification link from the
+        consensus-specs feature branch path specs/_features/eip7514/beacon_chain.md to
+        specs/deneb/beacon-chain.md pinned at 69d34dc4ee3d026ca437d1b6875b218e8aaf3a5c.
+      rationale: >-
+        Process metadata plus two URL corrections. The retargeted specification link follows the
+        merge of the feature spec into the deneb specification and points at the same change, so
+        no normative content of EIP-7514 was altered. Confidence is medium because a stricter
+        reading could treat the move from a feature-branch spec to the fork spec as a
+        substantive relocation of the normative reference. The stale '7668' slug is a
+        pre-assignment artefact of the Ethereum Magicians thread, not a reference to EIP-7668.
+      change_group: null
+      confidence: medium
+      source_ids:
+        - eips-commit-5c9a79728b34
+    - id: eip7514-e04
+      event_kind: revision
+      authored_at: '2023-09-22T03:08:29+02:00'
+      committed_at: '2023-09-21T21:08:29-04:00'
+      commit: 9cc70b8923e51a0f5dcc5628d160218088878843
+      path: EIPS/eip-7514.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Typographical fix in the Motivation - 'the original intented targets of stake rate'
+        becomes 'the original intended targets of stake rate'. Commit subject 'Update EIP-7514:
+        Fix typos (#7756)'.
+      rationale: Single-word spelling correction in non-normative prose.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-9cc70b8923e5
+    - id: eip7514-e05
+      event_kind: revision
+      authored_at: '2024-01-26T04:57:44-08:00'
+      committed_at: '2024-01-26T20:57:44+08:00'
+      commit: 37a5e93275c831048704f7338354cedfabb68667
+      path: EIPS/eip-7514.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: 'Status change: Review -> Last Call, adding last-call-deadline 2024-03-01.'
+      rationale: Process-metadata change only.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-37a5e93275c8
+    - id: eip7514-e06
+      event_kind: revision
+      authored_at: '2024-03-29T12:59:00-07:00'
+      committed_at: '2024-03-29T19:59:00+00:00'
+      commit: 67c43246e348c06bfa29757d2e4558a0673521e6
+      path: EIPS/eip-7514.md
+      change_type: security_assumption
+      semantic_effect: substantive
+      summary: >-
+        Status change Last Call -> Final (removing last-call-deadline); adds a Test Cases section
+        pointing at the deneb test suite of ethereum/consensus-specs pinned at
+        2297c09b7e457a13f7b2261a28cb45777be82f83; and replaces the Security Considerations
+        placeholder 'Needs discussion.' with the statement that the EIP breaks the symmetry
+        between validator entry and exit queues, the former being bound by
+        MAX_PER_EPOCH_ACTIVATION_CHURN_LIMIT while the latter is not.
+      rationale: >-
+        Substantive on the security-assumption axis - an explicitly unresolved Security
+        Considerations placeholder is replaced with a stated asymmetry consequence of the change,
+        and the previously absent test-case location is supplied. Recorded as one event because
+        it is one commit (a two-file commit also touching EIPS/eip-7044.md), merged as PR #8345
+        whose body states 'Moves EIP-7514 to Final, links the test cases and adds security
+        considerations.'
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-67c43246e348
+        - gh-pr-8345
+dependency_history:
+  events: []
+source_registry: outputs/sources/eips/eip-7514.yaml
+unknowns:
+  - >-
+    Explicit negative search for cross-EIP dependencies. EIP-7514 has no frontmatter 'requires'
+    field in any of its seven revisions, and no revision contains a textual reference to another
+    EIP or ERC number. Every blob from the creation commit through the pinned master was scanned
+    case-insensitively for 'requires:', 'eip-<n>', 'EIP <n>', 'EIP-<n>' and 'erc-<n>' excluding
+    self-references and the discussions-to URL; there were no matches. The document's external
+    references are to ethereum/consensus-specs paths only, so dependency_history.events is
+    genuinely empty rather than unresearched. Note that the creation-commit discussions-to URL
+    contained the slug 'eip-7668'; this is a stale Ethereum Magicians thread slug corrected in
+    commit 5c9a79728b34 and is not a reference to EIP-7668 (see event eip7514-e03).
+  - >-
+    Pull-request metadata was retrieved and archived for commits b27a4c881f5f (#7715),
+    4534f1e30bc5 (#7717) and 67c43246e348 (#8345). Commits 2d470f8085d5, 5c9a79728b34 and
+    37a5e93275c8 were merged by EIP-Bot and carry no PR number in their subjects; their PR
+    numbers were not resolved. Commit 9cc70b8923e5 references #7756 in its subject but that PR's
+    metadata was not separately retrieved. The git commits are sufficient primary evidence for
+    every recorded event.
+  - >-
+    PR #7715 attributes the constant change to ethereum/pm issue 857. That issue was not
+    retrieved - ethereum/pm is not available as a local read-only clone in this work unit and the
+    AllCoreDevs decision history belongs to the Cancun fork work unit - so the reference is
+    recorded as it appears in the archived PR body without independent verification.

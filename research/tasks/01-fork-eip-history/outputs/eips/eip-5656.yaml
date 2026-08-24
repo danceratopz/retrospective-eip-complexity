@@ -1,0 +1,287 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 5656
+  title: MCOPY - Memory copying instruction
+  source_ids:
+  - eips-blob-eip5656-pin
+research_run:
+  started_at: '2026-08-20T19:50:00Z'
+  completed_at: '2026-08-20T20:03:00Z'
+  researcher: claude subagent eip-batch-11 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2021-02-01'
+  frontmatter_source_ids:
+  - eips-blob-eip5656-creation
+  - eips-blob-eip5656-pin
+  first_repository_commit:
+    authored_at: '2022-11-10T13:34:15Z'
+    committed_at: '2022-11-10T13:34:15Z'
+    commit: 27548516862ec722469df0b42e3a1720e0fc4d53
+    path: EIPS/eip-5656.md
+    source_ids:
+    - eips-commit-27548516862e
+  discrepancy_note: 'Large discrepancy: the frontmatter ''created'' date is 2021-02-01, but the earliest repository
+    commit adding EIPS/eip-5656.md is 27548516862ec722469df0b42e3a1720e0fc4d53 (authored 2022-11-10T14:34:15+01:00
+    = 2022-11-10T13:34:15Z), about 21 months later. The declared date corresponds to the authors'' original drafting
+    of the MCOPY proposal, while the EIP number 5656 was only assigned when the proposal was merged into ethereum/EIPs
+    in November 2022 (creation commit subject ''Add EIP-5656: Memory Copying Instruction (#5656)''). No primary
+    source inside ethereum/EIPs explains the gap; the pre-merge drafting history is not in this repository and
+    was not researched (out of scope). The frontmatter date was never edited in any later commit, so there is no
+    conflicting declared creation date. Timestamp convention for this record: event-level authored_at/committed_at
+    reproduce the raw git %aI/%cI values (original author/committer offsets); creation.first_repository_commit
+    and the revision_history.summary dates are the same instants normalized to UTC.'
+revision_history:
+  summary:
+    file_commit_count: 11
+    post_creation_revision_count: 10
+    substantive_revision_count: 8
+    non_substantive_revision_count: 2
+    uncertain_revision_count: 0
+    first_revision_at: '2023-04-26T16:12:06Z'
+    last_revision_at: '2024-03-28T14:30:20Z'
+    first_substantive_revision_at: '2023-04-27T15:25:47Z'
+    last_substantive_revision_at: '2024-03-28T14:30:20Z'
+    derived_from_event_ids:
+    - eip5656-e00
+    - eip5656-e01
+    - eip5656-e02
+    - eip5656-e03
+    - eip5656-e04
+    - eip5656-e05
+    - eip5656-e06
+    - eip5656-e07
+    - eip5656-e08
+    - eip5656-e09
+    - eip5656-e10
+  events:
+  - id: eip5656-e00
+    event_kind: creation
+    authored_at: '2022-11-10T14:34:15+01:00'
+    committed_at: '2022-11-10T06:34:15-07:00'
+    commit: 27548516862ec722469df0b42e3a1720e0fc4d53
+    path: EIPS/eip-5656.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-5656 ''Memory copying instruction'' (104 lines, status Draft, no frontmatter
+      ''requires''). Introduces the `MCOPY` instruction at opcode `0x5c` with input stack (dst, src, length), no
+      output stack items, overlapping-safe copy semantics (''as if an intermediate buffer were used''), memory
+      expansion, and gas cost `Gverylow + Gcopy * ceil(length / 32)`. Test Cases and Security Considerations are
+      ''TBA''.'
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-27548516862e
+    - eips-blob-eip5656-creation
+  - id: eip5656-e01
+    event_kind: revision
+    authored_at: '2023-04-26T18:12:06+02:00'
+    committed_at: '2023-04-26T09:12:06-07:00'
+    commit: bd4a6ed8bb54a14d6f9a73506cf10c3ec80b0acc
+    path: EIPS/eip-5656.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review, plus one blank line inserted before the ''As example use case'' bullet
+      list (markdown lint).'
+    rationale: Process-metadata and formatting only; no specification text changed.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-bd4a6ed8bb54
+  - id: eip5656-e02
+    event_kind: revision
+    authored_at: '2023-04-27T08:25:47-07:00'
+    committed_at: '2023-04-27T15:25:47+00:00'
+    commit: 241ba31d720106fd59b08e7bccfff73c1866428a
+    path: EIPS/eip-5656.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Adds a new ''### Gas costs'' subsection to the Specification stating that MCOPY belongs to the yellow-paper
+      `W_copy` opcode group and giving the explicit formula: words_copied = (length + 31) // 32; g_verylow = 3;
+      g_copy = 3 * words_copied + memory_expansion_cost; gas_cost = g_verylow + g_copy.'
+    rationale: Makes the gas schedule explicit with concrete constants and memory-expansion accounting, where the
+      creation text only gave the symbolic `Gverylow + Gcopy * ceil(length / 32)`. Directly affects implementation
+      and test expectations, so substantive.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-241ba31d7201
+  - id: eip5656-e03
+    event_kind: revision
+    authored_at: '2023-04-29T15:35:09+08:00'
+    committed_at: '2023-04-29T00:35:09-07:00'
+    commit: c2d1a0328e2e796199e05c0be3eb979d78cbc678
+    path: EIPS/eip-5656.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Typo/grammar fixes only: ''This instructions returns'' -> ''This instruction returns''; ''as if an
+      intermediate buffer were used'' -> ''was used''; ''which did not exists previously'' -> ''did not exist previously''.'
+    rationale: Grammar only; the overlapping-copy semantics, stack layout, and gas rules are unchanged in meaning.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c2d1a0328e2e
+  - id: eip5656-e04
+    event_kind: revision
+    authored_at: '2023-05-06T12:11:15-07:00'
+    committed_at: '2023-05-06T19:11:15+00:00'
+    commit: 94d9af0d7bb2b82a418c71958bd5f1e6208f093a
+    path: EIPS/eip-5656.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Replaces the ''TBA'' Test Cases section with four concrete test vectors, including two overlapping-memory
+      cases: `MCOPY 0 32 32`, `MCOPY 0 0 32`, `MCOPY 0 1 8` (overlapping, forward), and `MCOPY 1 0 8` (overlapping,
+      backward), each with pre/post memory contents.'
+    rationale: Fixes the expected observable behaviour of the overlapping cases that the prose only described abstractly;
+      materially affects testing and implementation, so substantive under the task rubric.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-94d9af0d7bb2
+  - id: eip5656-e05
+    event_kind: revision
+    authored_at: '2023-05-11T21:30:56+02:00'
+    committed_at: '2023-05-11T12:30:56-07:00'
+    commit: e9b6a228f04f13fbfa80552210c70a03fca36928
+    path: EIPS/eip-5656.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Retitles the EIP from ''Memory copying instruction'' to ''MCOPY - Memory copying instruction'' and
+      changes the assigned opcode from `0x5c` to `0xb7`.'
+    rationale: The opcode byte is part of the EVM instruction encoding; changing it changes what every implementation
+      and test must emit and decode. The title change is editorial but is carried in the same commit.
+    change_group: eip5656-opcode-assignment
+    confidence: high
+    source_ids:
+    - eips-commit-e9b6a228f04f
+  - id: eip5656-e06
+    event_kind: revision
+    authored_at: '2023-06-08T10:05:31-07:00'
+    committed_at: '2023-06-08T17:05:31+00:00'
+    commit: 0c9832d55936dcb9d7b928ff5fa8d2ad76f4e3b0
+    path: EIPS/eip-5656.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Changes the assigned opcode from `0xb7` to `0x5E` ('update eip-5656 MCOPY opcode per cancun allocation'),
+      the value still present at the pinned commit.
+    rationale: Second and final reassignment of the instruction's opcode byte; same logical item as eip5656-e05
+      (settling the MCOPY opcode allocation), hence the shared change_group, but preserved as its own commit-level
+      event.
+    change_group: eip5656-opcode-assignment
+    confidence: high
+    source_ids:
+    - eips-commit-0c9832d55936
+  - id: eip5656-e07
+    event_kind: revision
+    authored_at: '2023-06-30T00:07:47-07:00'
+    committed_at: '2023-06-30T07:07:47+00:00'
+    commit: 63f0f5053efa306d3883172d9aef98155c934334
+    path: EIPS/eip-5656.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Adds ''gas used: 6'' to each of the four test cases and rewrites the memory illustrations of the
+      two overlapping cases; in doing so it changes the expected post-state of `MCOPY 1 0 8` from `000001020304050607`
+      to `00000102030405060708`.'
+    rationale: Adds concrete gas expectations to the test vectors and alters an expected post-state byte string;
+      both affect testing. The `MCOPY 1 0 8` post value was subsequently corrected twice (eip5656-e09, eip5656-e10),
+      so this event carries the shared change_group for that correction thread.
+    change_group: eip5656-overlap-test-vector-fix
+    confidence: high
+    source_ids:
+    - eips-commit-63f0f5053efa
+  - id: eip5656-e08
+    event_kind: revision
+    authored_at: '2024-02-08T07:05:22-08:00'
+    committed_at: '2024-02-08T23:05:22+08:00'
+    commit: c07b6a0a7acbe8729a9a55471c8390f3005971de
+    path: EIPS/eip-5656.md
+    change_type: security_assumption
+    semantic_effect: substantive
+    summary: 'Status change Review -> Last Call (last-call-deadline 2024-02-20) and replacement of the ''TBA''
+      Security Considerations with substantive guidance: implementations should not use an intermediate buffer
+      (cf. C stdlib `memmove`) because that is a potential DoS vector, and the DoS/memory-exhaustion analysis is
+      otherwise identical to other memory-touching opcodes since memory expansion follows the same pricing rules.'
+    rationale: Adds an implementation-affecting security requirement (buffer-free copy) that the earlier text left
+      unstated; substantive despite being bundled with the process-metadata status change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c07b6a0a7acb
+  - id: eip5656-e09
+    event_kind: revision
+    authored_at: '2024-02-18T07:58:34-08:00'
+    committed_at: '2024-02-18T15:58:34+00:00'
+    commit: 3720fc0e57f90e90474e614712117b603196545a
+    path: EIPS/eip-5656.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: '''fix test in eip-5656'': relabels the two overlapping test cases'' pre-state as ''pre (space at
+      byte 8)'' and regroups the hex illustrations at the 8-byte boundary; the pre-states and the `MCOPY 0 1 8`
+      post-state keep the same byte content, but the `MCOPY 1 0 8` post-state changes from `00000102030405060708`
+      to `000001020304050608`.'
+    rationale: Most of the diff is re-spacing of the hex illustration, but one expected post-state byte string
+      genuinely changes, so the commit is substantive for testing purposes. The value is still incorrect after
+      this commit and is corrected to `...0607` in eip5656-e10; the three commits form change_group eip5656-overlap-test-vector-fix.
+    change_group: eip5656-overlap-test-vector-fix
+    confidence: high
+    source_ids:
+    - eips-commit-3720fc0e57f9
+  - id: eip5656-e10
+    event_kind: revision
+    authored_at: '2024-03-28T08:30:20-06:00'
+    committed_at: '2024-03-28T22:30:20+08:00'
+    commit: 30fec793f3cb6769cb44d2d0daa5238451f67c48
+    path: EIPS/eip-5656.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Status change Last Call -> Final (last-call-deadline removed); corrects the `MCOPY 1 0 8` post-state''s
+      last copied byte from `08` to `07`; adds a ''### Full test suite'' subsection linking the execution-spec-tests
+      MCOPY suite pinned at execution-spec-tests commit c0065176a79f89d93f4c326186fc257ec5b8d5f1. Last commit touching
+      the file before the pinned repository state.'
+    rationale: Corrects an expected test post-state and adds an authoritative pinned test-suite reference; both
+      affect testing, so substantive despite being bundled with the Final status change.
+    change_group: eip5656-overlap-test-vector-fix
+    confidence: high
+    source_ids:
+    - eips-commit-30fec793f3cb
+    - eips-blob-eip5656-pin
+dependency_history:
+  events:
+  - id: eip5656-d01
+    target_eip: 2929
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2022-11-10T13:34:15Z'
+    commit: 27548516862ec722469df0b42e3a1720e0fc4d53
+    rationale: 'Relationship ''interacts_with'' rather than ''requires'': EIP-5656 has never carried a frontmatter
+      ''requires'' field, but its Motivation and Rationale explicitly reference [EIP-2929](./eip-2929.md) — ''the
+      reduction by [EIP-2929](./eip-2929.md) made it slightly more economical'', the cost comparison bullets ''at
+      least 757 gas pre-EIP-2929 … at least 157 gas post-EIP-2929 using the identity precompile'', and ''With [EIP-2929](./eip-2929.md)
+      the call overhead using the identity precompile was reduced from 700 to 100 gas''. These are motivating cost
+      comparisons, not a normative prerequisite. All four references are present at creation and unchanged at the
+      pinned commit a08f51fec5b2b5da457adb05b8cffb487fb4f7de.'
+    confidence: high
+    source_ids:
+    - eips-commit-27548516862e
+    - eips-blob-eip5656-creation
+    - eips-blob-eip5656-pin
+source_registry: outputs/sources/eips/eip-5656.yaml
+unknowns:
+- 'EIP-2929 is the only EIP explicitly identified anywhere in EIPS/eip-5656.md, at creation and at the pin; a negative
+  search for further explicit cross-EIP references was run over both blobs (`grep -nioE ''(eip|erc)-?[ ]?[0-9]{1,5}''`)
+  and returned only self-references to eip-5656 and the EIP-2929 mentions. The EIP has no frontmatter ''requires''
+  field in any revision, so only one dependency event exists.'
+- The 21-month gap between the frontmatter created date (2021-02-01) and the first repository commit (2022-11-10)
+  is not explained by any source inside ethereum/EIPs. Pre-merge drafting history (ethereum-magicians thread, earlier
+  drafts) was not researched; it is outside this work unit's scope. Recorded as a visible discrepancy rather than
+  inferred away.
+- Pull-request numbers cited in event summaries are taken from the commit subjects themselves (reproducible from
+  git); most post-creation commits are squash commits whose subject begins "Update EIP-5656" and carries no PR
+  number. No GitHub pull-request API metadata was retrieved, so no mutable source was archived and raw/eips/eip-5656/
+  is intentionally empty.
+- 'Out of scope for this work unit and deliberately not researched: fork membership, inclusion-state events, client
+  or devnet history, and any complexity judgement.'

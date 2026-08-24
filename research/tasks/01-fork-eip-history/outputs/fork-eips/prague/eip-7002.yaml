@@ -1,0 +1,51 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: prague
+eip:
+  number: 7002
+  title: "Execution layer triggerable withdrawals"
+  layers: [execution, consensus]
+  layer_classification:
+    rationale: "The pinned EIP-7600 Full Specifications section lists EIP-7002 in both the Consensus Layer and the Execution Layer lists, and the EIP's own Specification contains separate 'Execution layer' and 'Consensus layer' sections."
+    source_ids: [eips-blob-7600, eips-blob-7002]
+membership:
+  source_section: "Included EIPs > Core EIPs"
+  classification: core
+  requirement: "Listed under 'Included EIPs > Core EIPs' with no qualifying MAY/MUST language; an unconditional protocol change activated with the upgrade."
+  source_ids: [eips-blob-7600]
+inclusion_history:
+  normalized_state_counts:
+    considered_for_inclusion: 1
+    scheduled_for_inclusion: 2
+    included: 1
+  events:
+    - id: prague-7002-e1
+      occurred_at: "2024-01-18"
+      raw_label: "prioritized in the next fork / placed in the draft Meta EIP's 'CFI' bucket"
+      normalized_state: considered_for_inclusion
+      normalization_rationale: "ACDE#179 (2024-01-18) minutes summary: 'All EL teams agreed that 2537, 6110 and 7002 should be prioritized in the next fork... given 2/3rd of these EIPs also involve the CL and we didn't get a formal +1 from them, I've put all 3 in the \"CFI\" bucket for now' (draft PR ethereum/EIPs#8121). Pre-dates EIP-7723; the contemporaneous 'CFI bucket' phrasing maps directly to considered_for_inclusion."
+      decision_body: "AllCoreDevs Execution (ACDE) #179"
+      source_ids: [pm-acde-179]
+    - id: prague-7002-e2
+      occurred_at: "2024-02-12T15:36:22Z"
+      raw_label: "Included EIPs"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: "The initial merged version of EIP-7600 lists EIP-7002 under 'Included EIPs'. ACDE#181 minutes state the cross-layer EIPs were 'moved... to include[d] once the CL devs plus one[d] them', and ACDC#126 (2024-01-25) records broadly positive CL client support for EIP-7002 in Electra. No single minuted moment of the CL '+1' between the draft PR (2024-01-18) and the merge (2024-02-12) was located, so the merged document is used as the definitive record. Pre-EIP-7723 'Included' = commitment to the upgrade's scope; normalized to scheduled_for_inclusion (see the 2024-09-27 section-rename evidence)."
+      decision_body: "AllCoreDevs (EL agreement on ACDE#179; CL support signalled on ACDC#126); Meta EIP author"
+      source_ids: [eips-commit-92daa1d, pm-acde-181, pm-acdc-126, gh-eip7600-commit-prs]
+    - id: prague-7002-relabel-sfi
+      occurred_at: "2024-09-26"
+      raw_label: "EIPs Scheduled for Inclusion (section renamed from 'EIPs Included')"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: "ACDE#197 (2024-09-26) rescoped Pectra; the Meta EIP adopted EIP-7723's formal vocabulary and renamed 'EIPs Included' to 'EIPs Scheduled for Inclusion' (commit 1d4ce546, 2024-09-27, PR #8911). This EIP's membership carried over unchanged, so the event records the adoption of the new terminology for an unchanged state, not a state transition. occurred_at is the ACDE#197 call date; the commit landed the next day."
+      decision_body: "AllCoreDevs Execution (ACDE) #197"
+      source_ids: [pm-acde-197, eips-commit-1d4ce54, gh-eip7600-commit-prs]
+    - id: prague-7002-included
+      occurred_at: "2025-05-07T10:05:11Z"
+      raw_label: "Included EIPs (Pectra mainnet activation, epoch 364032 / timestamp 1746612311)"
+      normalized_state: included
+      normalization_rationale: "Pectra activated on Ethereum mainnet at the timestamp recorded in EIP-7600's Activation table (tentative mainnet time added 2025-04-03, commit 355b3350; 1746612311 = 2025-05-07T10:05:11Z). After activation the Meta EIP moved to Final and renamed its EIP list from 'EIPs Scheduled for Inclusion' to 'Included EIPs' (commit 78b50371, 2025-06-09) and changed its abstract from 'Scheduled for Inclusion' to 'Included' (commit 8877eaa7, 2025-06-23)."
+      decision_body: "Ethereum mainnet activation per the EIP-7600 activation table; document finalization by the Meta EIP author"
+      source_ids: [eips-blob-7600, eips-commit-355b335, eips-commit-78b5037, eips-commit-8877eaa]
+unknowns:
+  - "The exact contemporaneous moment of the CL '+1' that moved this EIP from the draft PR's 'CFI' bucket to 'Included EIPs' before the 2024-02-12 merge was not located; searched ACDC#126 and ACDC#127 minutes at the pinned ethereum/pm commit. ACDE#181's retrospective statement and the merged document are the closest primary evidence."

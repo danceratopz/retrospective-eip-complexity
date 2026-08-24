@@ -1,0 +1,76 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: cancun
+eip:
+  number: 7514
+  title: Add Max Epoch Churn Limit
+  layers: [consensus]
+  layer_classification:
+    rationale: >-
+      EIP-7569 "Full Specifications" lists EIP-7514 among the EIPs that "require changes to
+      Ethereum's consensus layer" (specified in the deneb folder of ethereum/consensus-specs)
+      and does not list it in the execution-layer group.
+    source_ids: [eip-7569-pinned]
+membership:
+  source_section: Included EIPs
+  classification: included
+  requirement: required
+  source_ids: [eip-7569-pinned]
+inclusion_history:
+  normalized_state_counts:
+    proposed_for_inclusion: 1
+    scheduled_for_inclusion: 2
+    included: 1
+  events:
+    - id: cancun-eip7514-e1
+      occurred_at: "2023-09-07"
+      raw_label: "proposal to limit validator churn for Dencun (ACDC #117)"
+      normalized_state: proposed_for_inclusion
+      normalization_rationale: >-
+        Dapplion raised the max-churn-limit change on ACDC #117 as a late addition candidate:
+        "it only makes sense if we want to do this for Dencun... if we want to do it... we have
+        to do it basically either now or very soon... the idea of this PR is let's limit the
+        churn." A feature put forward for the fork without a recorded commitment maps to
+        proposed_for_inclusion. The consensus-layer process used no CFI/SFI vocabulary, so no
+        considered_for_inclusion stage is imposed retroactively.
+      decision_body: "AllCoreDevs Consensus Layer call #117 (2023-09-07)"
+      source_ids: [pm-acdc-117-minutes]
+    - id: cancun-eip7514-e2
+      occurred_at: "2023-09-14"
+      raw_label: "\"we're adding EIP 7514 to Deneb\" (ACDE #170)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        On ACDE #170 the change was decided as one of the "two final additions" to the fork:
+        "in that case I guess we're adding EIP 7514 to Deneb. We'll set the constant to
+        eight... any objections or pushbacks?" An explicit commitment to add the EIP to the
+        fork before activation maps to scheduled_for_inclusion. ACDC #118 (2023-09-21)
+        corroborates: "EIP 7514 and 7516, two new EIPs that were added to the Cancun/Deneb
+        upgrade during last week's ACD call."
+      decision_body: "AllCoreDevs Execution Layer call #170 (2023-09-14), with consensus-layer participants"
+      source_ids: [pm-acde-170-minutes, pm-acdc-118-minutes]
+    - id: cancun-eip7514-e3
+      occurred_at: "2023-12-07"
+      raw_label: "Included EIPs (EIP-7569: Hardfork Meta - Dencun, at creation)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        EIP-7569 was created in Draft status listing this EIP under "Included EIPs" while the
+        upgrade was still pending activation (the activation table was empty at creation), so
+        the listing corresponds to scheduled_for_inclusion rather than included.
+      decision_body: null
+      source_ids: [eips-commit-babb441b]
+    - id: cancun-eip7514-e4
+      occurred_at: "2024-03-13T13:55:35Z"
+      raw_label: "Activation - Mainnet (epoch 269568, timestamp 1710338135)"
+      normalized_state: included
+      normalization_rationale: >-
+        Dencun activated on Ethereum mainnet at beacon epoch 269568 (timestamp 1710338135 =
+        2024-03-13T13:55:35Z) with this EIP in EIP-7569's Included list; the mainnet activation
+        row was added to EIP-7569 on 2024-02-08 and the Meta EIP was moved to Final on
+        2024-03-29 following activation.
+      decision_body: null
+      source_ids: [eip-7569-pinned, eips-commit-8e35c4a1, eips-commit-a554f59c]
+unknowns:
+  - >-
+    As a consensus-layer-only EIP, 7514 was never tracked in the execution-specs cancun.md
+    document; no repository membership change corresponds to its scheduling decision, which is
+    evidenced by meeting minutes only.

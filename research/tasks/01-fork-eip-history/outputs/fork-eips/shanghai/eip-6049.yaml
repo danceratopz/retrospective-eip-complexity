@@ -1,0 +1,55 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: shanghai
+eip:
+  number: 6049
+  title: Deprecate SELFDESTRUCT
+  layers: [execution]
+  layer_classification:
+    rationale: >-
+      EIP-6049 is a Meta EIP that deprecates the execution-layer SELFDESTRUCT opcode
+      and warns of a potential future behavior change; it makes no behavior change
+      itself. The subject matter is exclusively execution-layer (an EVM opcode), so
+      layers is [execution]; no consensus-layer content exists.
+    source_ids:
+      - eips-eip6049-blob-a08f51fe
+      - execspecs-shanghai-doc-8dbde99b
+membership:
+  source_section: Included EIPs
+  classification: meta
+  requirement: no_behavior_change_announcement
+  source_ids:
+    - execspecs-shanghai-doc-8dbde99b
+  notes:
+    - Listed under "Included EIPs" in the pinned authoritative document, but with an explicit note that it "does not change the behavior of SELFDESTRUCT in and of itself, but formally announces client developers' intention of changing it in future upgrades".
+    - Type Meta at the pinned ethereum/EIPs master commit (eips-eip6049-blob-a08f51fe). Recorded distinctly from the four core protocol changes so the Meta/informational listing is not silently treated as a required protocol change.
+    - EIP-6049 is also excluded from the authoritative document's "Implementation Progress" client table, consistent with it requiring no client code change.
+inclusion_history:
+  normalized_state_counts:
+    included: 1
+  events:
+    - id: shanghai-eip6049-included-2023-01-19
+      occurred_at: "2023-01-19"
+      raw_label: 'Added directly to "Included EIPs" as a deprecation announcement ("Decided in ACDE#153"; "the two places ... I would edit is like the Shanghai spec ... and any announcement we make of the upgrade")'
+      normalized_state: included
+      normalization_rationale: >-
+        On ACD(E) 153 (2023-01-19) the moderator proposed including the EIP-6049
+        deprecation announcement in Shanghai; after discussion and no disagreement he
+        concluded it is "still included" and that he would edit the Shanghai spec. The
+        execution-specs commit authored the same day ("Add EIP-6049", merged via PR
+        #689, body "Decided in ACDE#153", on 2023-01-23) added it directly to the
+        "Included EIPs" section with the no-behavior-change note. EIP-6049 never
+        passed through the CFI stage - as a Meta deprecation notice it required no
+        devnet testing - so the single event normalizes to included. occurred_at uses
+        the decision/commit-author date; the PR merged four days later.
+      decision_body: AllCoreDevs (ACD Execution 153)
+      source_ids:
+        - pm-acd-153-minutes
+        - execspecs-commit-075a2c09-add-6049
+        - execspecs-pr-689
+unknowns:
+  - No earlier AllCoreDevs discussion of EIP-6049 was found; Meeting 152 minutes
+    (2023-01-05, the preceding call) contain no mention of it (negative search,
+    pm-acd-152-minutes). The EIP frontmatter records creation on 2022-11-27; its
+    proposal history before ACD(E) 153 (e.g. on Ethereum Magicians) was not traced in
+    this fork work unit.

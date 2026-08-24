@@ -1,0 +1,626 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7823
+  title: Set upper bounds for MODEXP
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the selected draft revision, EIP-7823 modified the EIP-198 MODEXP
+    precompile by limiting each of its three declared input lengths to 1024
+    bytes. An over-limit length was specified to stop the precompile, return an
+    error, and consume all gas, while the existing pricing and allowed-input
+    computation were otherwise left unchanged. The draft identified the change
+    as backwards incompatible, but its compatibility and security discussions
+    remained incomplete.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7823/manifest.yaml
+    manifest_sha256: 4f9f9a1a207f98fd9c675a2d035336d7b2a866c3433d3e78052128f00b177d50
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: b16c055363024c8c7e072c32e98c390d3ad6c33e
+    path: EIPS/eip-7823.md
+    committed_at: '2024-11-26T17:33:25Z'
+    git_blob_sha: cf60d90b499bb8e2226c962ecebcf9a9a2618071
+    content_sha256: deefcee9cba6b82efa2dbf7e238ee30d589c8cd20bbf0d570f004611be18e410
+    immutable_url: https://github.com/ethereum/EIPs/blob/b16c055363024c8c7e072c32e98c390d3ad6c33e/EIPS/eip-7823.md
+    information_cutoff_at: '2025-01-23T23:05:03Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7823.md
+    content_sha256: e89351694456faab0637ba1ed1cc631662e03c8b1f11eebff513131159d9c4d0
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T11:23:32Z'
+    session_id: assessment-run-fccf81d0-38a6-4965-a800-5e63b1a09ee5
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-198.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 33-35
+    summary: >-
+      The proposal makes an over-limit length an error that consumes all gas.
+  - source: supporting/eip-198.md
+    locator: Specification, lines 21-35
+    summary: >-
+      The existing precompile uses a dynamic gas formula derived from the
+      declared lengths and adjusted exponent length.
+  rationale: >-
+    The all-gas failure rule updates gas treatment for an existing precompile,
+    but it does not introduce a new general gas-accounting mechanism. This
+    matches the score-1 anchor for updating an existing mechanism.
+  confidence: high
+  uncertainty_note: >-
+    The draft does not specify the exact sequencing of the limit check relative
+    to the existing gas calculation, but the stated all-gas outcome supports
+    the primary score.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      The only specified change is an input-length bound and failure rule for
+      MODEXP; no state access or opcode-internal access ordering is described.
+  rationale: >-
+    The precompile validation change neither accesses state nor moves a gas
+    charge relative to a state access, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 26-35
+    summary: >-
+      The proposal is confined to bounding MODEXP input lengths and contains no
+      blob-gas rule.
+  rationale: >-
+    No blob gas accounting mechanism is introduced or modified, matching the
+    score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      The change concerns precompile input validation and an execution-gas
+      failure outcome, not charging for state writes.
+  rationale: >-
+    There is no state-gas cost, charging site, budget, reservoir, or spill-path
+    change, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 33-35
+    summary: >-
+      Invalid over-limit input consumes all gas; the proposal specifies no gas
+      refund.
+  rationale: >-
+    No refund mechanism is introduced, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract and Motivation, lines 14-22
+    summary: >-
+      The proposal says MODEXP's unbounded input surface has produced numerous
+      consensus bugs from specially crafted, impractically long inputs.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 52-56
+    summary: >-
+      The draft explicitly calls the new bound backwards incompatible and says
+      historical transactions require checking.
+  - source: supporting/eip-198.md
+    locator: Specification examples, lines 63-71
+    summary: >-
+      EIP-198 includes an extreme declared-modulus-length case under its
+      previously unbounded parsing and gas rules.
+  rationale: >-
+    Existing MODEXP vectors for oversized or specially crafted length fields
+    must be reworked around the new validation outcome. This is a meaningful
+    subset of that precompile's tests, but it is confined to the contrived class
+    of over-limit inputs, matching the score-2 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test inventory, so the exact fraction of
+    pre-existing MODEXP vectors affected cannot be counted.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 33-35
+    summary: >-
+      The new result applies only when a MODEXP length field exceeds the limit.
+  rationale: >-
+    Tests unrelated to this EIP do not gain a universal or additional
+    assertion; only tests of the changed MODEXP input class need different
+    logic. The score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-35
+    summary: >-
+      The specification changes precompile execution behavior without adding
+      any transition-tool input or output field.
+  rationale: >-
+    Existing transition-tool interfaces suffice, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 33-35
+    summary: >-
+      Observable expectations are limited to a length threshold, precompile
+      error, and all-gas consumption.
+  rationale: >-
+    These outcomes can be expressed with ordinary precompile call, error, and
+    gas assertions; the proposal does not require a new reusable framework
+    abstraction. The score-0 anchor applies.
+  confidence: medium
+  uncertainty_note: >-
+    The sealed package does not describe the test framework, but no novel
+    expectation type is implied by the EIP text.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Rationale, lines 28-35 and 39-44
+    summary: >-
+      The proposal bounds operand lengths while retaining ordinary RSA and
+      elliptic-curve-sized use cases; it does not change modular exponentiation.
+  - source: supporting/eip-198.md
+    locator: Rationale, lines 96-100
+    summary: >-
+      EIP-198 already supplies the number-theoretic modular-exponentiation
+      functionality and its exponent-pricing rationale.
+  rationale: >-
+    No new cryptographic mechanism or algorithm is introduced, and the
+    computation for allowed inputs is unchanged. Merely restricting the input
+    domain does not trigger a positive cryptography anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      A single upper-bound rule is applied independently to the base, exponent,
+      and modulus length fields, with a distinct over-limit failure result.
+  - source: supporting/eip-198.md
+    locator: Specification, lines 17-27
+    summary: >-
+      The three lengths govern variable input parsing, right-padding, output
+      length, dynamic gas, and adjusted-exponent calculation.
+  rationale: >-
+    The proposal introduces one threshold mechanism that needs exact-limit and
+    just-over-limit cases for each of three fields. Although it sits atop
+    variable-length parsing, it remains one localized boundary-prone mechanism,
+    matching the score-1 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The unspecified sequencing and error semantics may add coupled boundary
+    cases; this is reflected in the under-specification range rather than in a
+    higher primary score.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-35
+    summary: >-
+      The proposal modifies MODEXP execution and introduces no block or RLP
+      validation rule.
+  rationale: >-
+    No block-RLP validation mechanism requiring client syncing is introduced,
+    so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-35
+    summary: >-
+      The complete normative change is local to MODEXP input handling and names
+      no Engine API field, endpoint, or communication mechanism.
+  rationale: >-
+    There is no Engine API change, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 26-35
+    summary: >-
+      The EIP changes an existing precompile and does not introduce contract
+      code or a new system address.
+  rationale: >-
+    No system contract is added, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      The target is the MODEXP precompile at its existing address, not a
+      pre-existing system contract's code or state.
+  rationale: >-
+    A precompile behavior change is scored in the precompile criterion and does
+    not directly or indirectly modify a system contract. The score-0 anchor
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 28-35
+    summary: >-
+      The proposal modifies the existing MODEXP precompile and defines no new
+      EVM instruction.
+  rationale: >-
+    No opcode is added, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      The changed operation is a precompile call target rather than an opcode.
+  rationale: >-
+    No pre-existing opcode behavior is modified or deprecated, so the score-0
+    anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      The EIP explicitly recaps and changes the already-existing EIP-198
+      precompile.
+  - source: supporting/eip-198.md
+    locator: Specification, lines 15-21
+    summary: >-
+      EIP-198 defines MODEXP at the existing address and its input format.
+  rationale: >-
+    No new precompile is introduced, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      EIP-7823 adds length validation and a new error/all-gas outcome to the
+      existing MODEXP precompile.
+  - source: supporting/eip-198.md
+    locator: Specification, lines 17-27
+    summary: >-
+      EIP-198 previously accepted 32-byte length words without an upper bound
+      and defined parsing, computation, output, and gas from them.
+  rationale: >-
+    This is a behavior modification to one existing complex, variable-input and
+    dynamically priced precompile, which directly matches the score-2 anchor.
+  confidence: high
+  uncertainty_note: >-
+    The exact error representation is unspecified, but the existence of a
+    consensus-visible behavior modification is unambiguous.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-35
+    summary: >-
+      The existing MODEXP calldata layout is recapped unchanged; only permitted
+      length values and their failure outcome change.
+  rationale: >-
+    There is no transaction, block, or interface-level encoding change, so the
+    score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-35
+    summary: >-
+      The proposal changes execution of an existing precompile and defines no
+      transaction envelope or type.
+  rationale: >-
+    No transaction type is introduced, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 33-35
+    summary: >-
+      Over-limit data changes the execution result of a precompile invocation;
+      it does not make the containing transaction intrinsically invalid.
+  rationale: >-
+    Existing transaction validity rules and intrinsic gas calculations are not
+    modified, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-35
+    summary: >-
+      The normative change contains no block body or header field.
+  rationale: >-
+    No new block or header field is introduced, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 26-35 and 52-56
+    summary: >-
+      The EIP specifies a backwards-incompatible execution rule but no special
+      activation-block state or internal-variable mutation.
+  rationale: >-
+    Ordinary fork-gated rule activation is not the special activation-block
+    modification described by the positive anchor. The score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract and Motivation, lines 14-22
+    summary: >-
+      The bound makes the testing surface finite; the draft notes that MODEXP's
+      existing unbounded-input pricing is complex but does not propose changing
+      that pricing.
+  - source: eip.md
+    locator: Specification, lines 33-35
+    summary: >-
+      The new mechanism is a direct comparison of three declared lengths with a
+      fixed limit and an immediate failure path.
+  rationale: >-
+    The new early-rejection path should be performance-validated, but it is
+    self-contained, benchmarkable in isolation, and leaves allowed-input
+    computation unchanged. This matches the score-1 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The draft supplies no performance plan or benchmark data, so validation
+    effort is inferred only from the specified mechanism.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 18-24
+    summary: >-
+      MODEXP is described as a source of numerous consensus bugs, especially
+      for crafted impractical lengths and complex unbounded-input pricing.
+  - source: eip.md
+    locator: Backwards Compatibility and Security Considerations, lines 52-62
+    summary: >-
+      The draft calls the change backwards incompatible, asks for historical
+      transaction analysis, and leaves security considerations for discussion.
+  rationale: >-
+    The new check interacts with the existing precompile's parsing, dynamic gas,
+    and failure behavior. A boundary or sequencing mismatch could create a
+    consensus divergence, warranting targeted review and fuzzing of this limited
+    component; this matches the score-2 anchor rather than an ecosystem-wide
+    score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The security section is unfinished, so the historical text does not resolve
+    all compatibility and failure-propagation risks.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 33-35
+    summary: >-
+      The threshold and all-gas statement are explicit, but the text says only
+      that execution stops and "returns an error" without defining the precise
+      call result, return data, or check ordering.
+  - source: eip.md
+    locator: Backwards Compatibility and Security Considerations, lines 52-62
+    summary: >-
+      Both sections remain marked TODO; compatibility needs investigation and
+      security still needs discussion.
+  - source: supporting/eip-198.md
+    locator: Specification, lines 17-27
+    summary: >-
+      EIP-198 defines successful parsing, gas, and output behavior but does not
+      supply the new over-limit error semantics.
+  rationale: >-
+    Clients can agree on the 1024-byte threshold, but tests still need a precise
+    consensus interpretation of the localized new failure path and when it is
+    selected. That requires agreement before baselining and matches score 2; it
+    does not expose a broad, previously unobservable behavior of the score-3
+    kind.
+  confidence: high
+  uncertainty_note: >-
+    General precompile-call conventions may make parts of "returns an error"
+    obvious to implementers, but those conventions are not specified in the
+    sealed sources.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Specification, lines 1-12 and 28-35
+    summary: >-
+      EIP-7823 formally requires EIP-198 and changes the accepted inputs and
+      failure behavior of the precompile that EIP-198 defines.
+  - source: supporting/eip-198.md
+    locator: Specification, lines 15-35
+    summary: >-
+      EIP-198 defines MODEXP's input parsing, output, adjusted exponent, and
+      dynamic gas formula that must be considered with the new bound.
+  rationale: >-
+    The proposal directly modifies EIP-198 and requires coordinated tests of
+    its parsing and gas rules, although that interaction is limited to one EIP
+    and one precompile. This matches the score-2 anchor. Interacting EIPs: 198.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 198
+totals:
+  primary_score: 13
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The proposal fixes the numerical threshold and states that invalid input
+    consumes all gas, but it does not define the precise consensus-visible form
+    of the returned error or the ordering of the bound check relative to
+    EIP-198's parsing and gas calculation. The unfinished compatibility and
+    security sections also leave the consequences of that failure path
+    unanalyzed. The missing behavior is localized to over-limit MODEXP calls.
+  affected_criteria:
+  - edge_boundary_conditions
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 12
+    maximum: 14
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - >-
+    What exact precompile-call success flag and return-data result does "returns
+    an error" require?
+  - >-
+    Is the length bound checked before the existing EIP-198 gas calculation and
+    before any variable-length input is accessed?
+  - >-
+    Are all combinations of multiple over-limit length fields required to have
+    exactly the same failure result and gas outcome?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed package sources at the recorded historical
+    information cutoff. I did not attempt internet access, use a prohibited
+    skill, consult external or later implementation information, inspect another
+    EIP assessment, or use present-day implementation knowledge.
+notable_ambiguities:
+- >-
+  The phrase "returns an error" does not specify the call success indicator or
+  return data for an over-limit precompile invocation.
+- >-
+  The draft does not state the order of the new limit check relative to the
+  existing dynamic gas calculation and input parsing.
+- >-
+  Backwards compatibility and security analysis are expressly incomplete at the
+  selected revision.
+overall_confidence: medium

@@ -1,0 +1,463 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7939
+  title: Count leading zeros (CLZ) opcode
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-7939 proposed one new execution-layer opcode,
+    CLZ at byte 0x1e, that consumes one 256-bit stack word and returns its count
+    of leading zero bits, with zero explicitly returning 256. The opcode is
+    stateless, has no data portion or dynamic stack behavior, and has a fixed gas
+    cost of 3; the proposal also supplied reference algorithms and representative
+    boundary test cases.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7939/manifest.yaml
+    manifest_sha256: 17c7bdf4d5ffdfd8b6fd366786d42406f172fd2a7d2853abeb4c84ccdc78e649
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: c43098e67b8fd94c5166bd7a46ec53cafac04123
+    path: EIPS/eip-7939.md
+    committed_at: '2025-06-09T10:17:58Z'
+    git_blob_sha: 1a4aed0bca3a74bc2caa37c16514098e3d072a8c
+    content_sha256: 8f03612a4d1903cebe96bef61ffffb2a392a6301ee024a43f2adb8c18848ab5b
+    immutable_url: https://github.com/ethereum/EIPs/blob/c43098e67b8fd94c5166bd7a46ec53cafac04123/EIPS/eip-7939.md
+    information_cutoff_at: '2025-07-02T17:49:36Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7939.md
+    content_sha256: a9bfa7b4d832706f57da8289396c27be5a33f95c3d6557bff59a87f708ccc710
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T13:36:48+02:00'
+    session_id: assessment-run-ff04318a-3363-4f4f-9eb2-1082f0c7164f
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 41-44 and 111
+    summary: The proposal adds CLZ and assigns it the fixed gas cost 3.
+  rationale: >-
+    Adding a fixed entry to the EVM gas schedule updates the existing constant-cost
+    accounting mechanism, matching anchor 1; it does not introduce dynamic or new
+    gas-accounting machinery.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 41-44; Security Considerations, lines 183-185
+    summary: CLZ only transforms one stack value and is expressly described as stateless.
+  rationale: >-
+    The opcode performs no state access, so neither the position of a state access
+    nor gas charging relative to one changes; this is anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-15; Specification, lines 39-44 and 111
+    summary: The entire change is a stack-word opcode with an ordinary fixed EVM gas cost.
+  rationale: >-
+    No blob object, blob validation, or blob gas rule is introduced or modified,
+    matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 41-44 and 111; Security Considerations, lines 183-185
+    summary: CLZ is a fixed-cost stateless stack operation and performs no state write.
+  rationale: >-
+    The proposal has no state-gas charging site, state-byte rate, budget, reservoir,
+    or spill interaction, so anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, line 111
+    summary: The proposal specifies only a gas charge of 3 for CLZ and no refund behavior.
+  rationale: No gas-refund mechanism is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, line 41; Backwards Compatibility, lines 135-137
+    summary: Opcode byte 0x1e becomes CLZ even though the opcode was not previously present.
+  rationale: >-
+    Existing post-activation invalid-opcode coverage that used byte 0x1e must change
+    its expected behavior. That is a minor, narrowly targeted subset of pre-existing
+    tests and matches anchor 1.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP does not enumerate existing invalid-opcode tests, so the size of the
+    affected subset is inferred from assigning a previously absent opcode byte.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 135-137; Test Cases, lines 139-180
+    summary: The change is a newly available opcode with tests local to its own outputs.
+  rationale: >-
+    Tests unrelated to CLZ do not gain a new artifact or invariant to assert; the
+    narrow invalid-opcode expectation change is a rework pattern, not an additional
+    assertion. Anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 39-44 and 111
+    summary: The specification adds only opcode semantics and a fixed gas cost.
+  rationale: >-
+    No transition-tool input or output field, endpoint, or fork-block awareness
+    interface is required, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 139-180
+    summary: The supplied tests are ordinary opcode sequences with a single expected stack word.
+  rationale: >-
+    Existing opcode execution, stack-result, exceptional-stack, and gas test
+    primitives suffice; no new expectation type, modifier, or helper abstraction is
+    implied. This matches anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 21-31; Specification, lines 41-44
+    summary: Cryptographic schemes are only listed as a possible user; CLZ itself counts bits.
+  rationale: >-
+    Counting leading zero bits introduces no cryptographic primitive or modification.
+    A possible cryptographic use case does not trigger the cryptography anchor, so
+    the score is 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-79; Test Cases, lines 139-180
+    summary: >-
+      The result changes at leading-bit positions, zero has the special result 256,
+      and the test vectors exercise zero and representative high and low boundaries.
+  rationale: >-
+    CLZ is one boundary-prone mechanism, principally around zero and each leading-bit
+    transition. This matches anchor 1 rather than the multiple-mechanism anchors.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-15; Specification, lines 39-44
+    summary: The proposal only defines an EVM stack opcode and does not alter blocks.
+  rationale: >-
+    No block RLP field or validation rule is introduced, so no client-syncing test
+    mechanism changes and anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 39-44 and 111
+    summary: The change is confined to opcode execution and its gas cost.
+  rationale: No Engine API field, endpoint, or communication mechanism changes; anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-15; Specification, lines 39-44
+    summary: EIP-7939 adds an opcode, not a contract or contract-mediated action.
+  rationale: No system contract is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 39-44; Security Considerations, lines 183-185
+    summary: CLZ is a stateless stack operation with no system-contract action.
+  rationale: >-
+    No pre-existing system-contract code, state, or behavior is directly or
+    indirectly modified, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 41-44 and 111
+    summary: >-
+      One opcode, CLZ at 0x1e, pops one word, pushes one word, and has constant gas cost 3.
+  rationale: >-
+    This is exactly one simple opcode with no data portion, no complex stack
+    mechanics, and a constant gas cost, matching anchor 1.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, line 41; Backwards Compatibility, lines 135-137
+    summary: CLZ is expressly introduced as a new opcode that was not present before.
+  rationale: No existing opcode behavior is modified or deprecated, so anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-15; Specification, line 41
+    summary: The feature is an opcode at byte 0x1e, not a precompile address.
+  rationale: No precompile is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 39-44 and 111
+    summary: Only new opcode semantics and that opcode's cost are specified.
+  rationale: No existing precompile behavior or gas schedule is modified; anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 39-44
+    summary: CLZ operates on an already-decoded EVM stack word and adds no external encoding.
+  rationale: >-
+    No transaction, block, RLP, SSZ, or interface encoding changes are introduced,
+    matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-15; Specification, lines 39-44
+    summary: The proposal adds only an opcode and defines no transaction envelope.
+  rationale: No transaction type is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 39-44 and 111
+    summary: The specified rules concern execution of CLZ and its fixed execution gas only.
+  rationale: >-
+    Transaction validity and intrinsic-gas calculation are unchanged, so anchor 0
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-15; Specification, lines 39-44
+    summary: The proposal is limited to an execution opcode and specifies no block data.
+  rationale: No block or block-header field is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 135-137; Security Considerations, lines 183-185
+    summary: CLZ is merely absent before introduction and is stateless.
+  rationale: >-
+    Activation requires no state transition or modification of an existing internal
+    variable at the activation block, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale - Gas cost, lines 127-133; Security Considerations, lines 183-185
+    summary: >-
+      CLZ is benchmarked directly against ADD and is described as having low,
+      worst-case constant compute, memory, and proving costs.
+  rationale: >-
+    The new execution mechanism warrants isolated benchmarking to substantiate its
+    gas price, but it is self-contained and does not alter existing performance
+    behavior. This matches anchor 1.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 183-185
+    summary: >-
+      The EIP describes CLZ as stateless with bounded low memory, compute, and
+      proving cost, and concludes it is not exploitable for denial of service.
+  rationale: >-
+    The new consensus operation must be implemented consistently, but its security
+    surface is self-contained, independently testable, and does not alter existing
+    state or stakeholder invariants. This matches anchor 1.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 41-111
+    summary: >-
+      The opcode byte, stack effect, result over a 256-bit word including zero, and
+      gas cost are specified, with equivalent reference algorithms.
+  rationale: >-
+    For every possible EVM word, the specification determines the CLZ result and
+    supplies the execution metadata needed for testing. No constructible case needs
+    an additional cross-client semantic agreement, so anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 39-44; Backwards Compatibility, lines 135-137
+    summary: >-
+      CLZ is defined as a standalone new opcode; the proposal identifies no EIP
+      dependency, modification, or conflict.
+  rationale: >-
+    The opcode can be specified and tested independently and no interacting EIP is
+    established by the historical text, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips: []
+totals:
+  primary_score: 6
+  complexity_tier: low
+under_specification:
+  present: false
+  summary: >-
+    No material behavioral under-specification is present. The opcode byte, stack
+    effect, result for the complete 256-bit input domain including zero, and fixed
+    gas cost are all determined by the historical proposal.
+  affected_criteria: []
+  plausible_total_range:
+    minimum: 6
+    maximum: 6
+  plausible_tiers:
+  - low
+  unresolved_questions: []
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only the sealed package sources and operational files
+    allowed by the task contract, did not attempt internet access, and did not use
+    present-day implementation knowledge or any prohibited source.
+notable_ambiguities: []
+overall_confidence: high

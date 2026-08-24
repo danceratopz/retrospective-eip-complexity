@@ -1,0 +1,292 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 8282
+  title: Builder Execution Requests
+  source_ids:
+  - eips-pin-eip-8282
+research_run:
+  started_at: '2026-08-21T00:43:01Z'
+  completed_at: '2026-08-21T00:51:28Z'
+  researcher: claude subagent eip-amsterdam-3 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2026-05-22'
+  frontmatter_source_ids:
+  - git-de4c6f02c7be
+  - eips-pin-eip-8282
+  first_repository_commit:
+    authored_at: '2026-07-03T00:35:52Z'
+    committed_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    path: EIPS/eip-8282.md
+    source_ids:
+    - git-de4c6f02c7be
+    - gh-pr-map-eip-8282
+  discrepancy_note: 'The frontmatter declares created: 2026-05-22, 42 days before the earliest repository
+    commit (2026-07-03T00:35:52Z, the squash merge of ethereum/EIPs PR #11760). The proposal was drafted
+    and dated well before its pull request merged (the linked Ethereum Magicians thread, /t/eip-8282-builder-execution-requests/28699,
+    is referenced from the creation commit). The created date is unchanged across the whole file history.'
+revision_history:
+  summary:
+    file_commit_count: 5
+    post_creation_revision_count: 4
+    substantive_revision_count: 4
+    non_substantive_revision_count: 0
+    uncertain_revision_count: 0
+    first_revision_at: '2026-07-06T17:03:24Z'
+    last_revision_at: '2026-08-10T15:23:39Z'
+    first_substantive_revision_at: '2026-07-06T17:03:24Z'
+    last_substantive_revision_at: '2026-08-10T15:23:39Z'
+    derived_from_event_ids:
+    - eip8282-e01
+    - eip8282-e02
+    - eip8282-e03
+    - eip8282-e04
+    - eip8282-e05
+  events:
+  - id: eip8282-e01
+    event_kind: creation
+    authored_at: '2026-07-03T00:35:52Z'
+    committed_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    path: EIPS/eip-8282.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition (PR #11760) as a Draft: predeploys two EIP-7685 request contracts for EIP-7732
+      builders - a 184-byte builder deposit contract (pubkey ++ withdrawal_credentials ++ amount ++ signature,
+      first deposits and top-ups) and a 48-byte builder exit contract authorized by the caller''s execution
+      address. Specifies constants (placeholder addresses and request-type bytes 0x03/0x04, per-block
+      max and target counts, MIN_REQUEST_FEE, REQUEST_FEE_UPDATE_FRACTION, EXCESS_INHIBITOR, BUILDER_MIN_DEPOSIT),
+      Nick''s-method presigned deployment, the EIP-7002/EIP-7251 storage layout and end-of-block SYSTEM_ADDRESS
+      dequeue with a 30,000,000 gas limit, an EIP-1559-style fee, the BuilderDepositRequest/BuilderExitRequest
+      SSZ containers, consensus-layer processing, and a ''Changes to EIP-7732'' section moving builder
+      onboarding and exit off the validator flows. Frontmatter requires: 1559, 7685, 7732.'
+    rationale: Adding commit that creates the EIP file with its initial normative proposal.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+    - gh-pr-map-eip-8282
+  - id: eip8282-e02
+    event_kind: revision
+    authored_at: '2026-07-06T17:03:24Z'
+    committed_at: '2026-07-06T17:03:24Z'
+    commit: 20e77b2b621041e8a82a8d0cec3beb889e589fab
+    path: EIPS/eip-8282.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Sync with the Gloas consensus-specs (PR #11859): BUILDER_WITHDRAWAL_PREFIX changes from
+      0x03 to 0xB0 in all five places it appears; the placeholder predeploy addresses change from 0x...7732/0x...7733
+      to 0x...01008282/0x...02008282; the placeholder markers on the request-type bytes are dropped; the
+      SSZ containers change base class from object to Container; and the exited-builder top-up rule is
+      tightened so withdrawable_epoch is re-armed only when the exited entry has already swept to zero
+      (withdrawable_epoch != FAR_FUTURE_EPOCH and balance == 0) rather than on every top-up.'
+    rationale: Changes a credential prefix constant, the declared predeploy addresses, an SSZ container
+      declaration and a consensus-layer state-transition condition; all are implementation- and test-visible.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-20e77b2b6210
+    - gh-pr-map-eip-8282
+  - id: eip8282-e03
+    event_kind: revision
+    authored_at: '2026-07-08T12:46:18Z'
+    committed_at: '2026-07-08T12:46:18Z'
+    commit: 554d3325e31c3f74078402d961355218ece16bee
+    path: EIPS/eip-8282.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Fixes the predeploy addresses to values derived from the current reference bytecode (PR
+      #11899): BUILDER_DEPOSIT_CONTRACT_ADDRESS becomes 0x0000bFF46984e3725691FA540a8C7589300D8282 and
+      BUILDER_EXIT_CONTRACT_ADDRESS becomes 0x000064D678505ad48F8cCb093BC65613800E8282, both without placeholder
+      markers; the Deployment paragraph is restated to say the addresses derive from the presigned deployment
+      transactions for the current reference bytecode and will change if that bytecode changes.'
+    rationale: Replaces placeholder constants with concrete addresses that implementations and tests must
+      use.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-554d3325e31c
+    - gh-pr-map-eip-8282
+  - id: eip8282-e04
+    event_kind: revision
+    authored_at: '2026-08-05T15:36:19Z'
+    committed_at: '2026-08-05T15:36:19Z'
+    commit: ba60c6474f603d93abbb4b0520f203dc8cb8c930
+    path: EIPS/eip-8282.md
+    change_type: dependency
+    semantic_effect: substantive
+    summary: 'Frontmatter status Draft to Review (PR #12108); removes the parenthetical stating that EIP-7804,
+      a Draft, also claims request type 0x03, leaving only ''The 0x03/0x04 request types MUST be unique
+      across all active EIP-7685 request types; final allocation is coordinated in consensus-specs'';
+      and empties the Reference Implementation TODO comment.'
+    rationale: Removes the EIP's only explicit statement of a request-type-byte conflict with another
+      in-flight proposal, changing its declared cross-EIP reference set; the normative uniqueness requirement
+      itself is retained. Medium confidence because the status move and comment removal alone would be
+      non_substantive and the dropped text was a coordination note rather than a rule.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - git-ba60c6474f60
+    - gh-pr-map-eip-8282
+  - id: eip8282-e05
+    event_kind: revision
+    authored_at: '2026-08-10T15:23:39Z'
+    committed_at: '2026-08-10T15:23:39Z'
+    commit: 2d3c5e59e47103df15e51aafc815ba0b234e3388
+    path: EIPS/eip-8282.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Cleanup and tweaks rewrite (PR #11869, 93 insertions / 72 deletions): adds Felix Lange as
+      an author; replaces Nick''s-method presigned deployment with deployment through the EIP-7997 CREATE2
+      factory using a mined salt; removes the EXCESS_INHIBITOR constant and its deployment-time inhibitor
+      semantics; restructures the request-queue section into Write path / Fee getter / System call and
+      adds that a SYSTEM_ADDRESS call carrying calldata permanently disables the queue via an inhibitor
+      and that non-matching calls MUST revert; states that both contracts apply fee increases per write
+      rather than at end of block, unlike EIP-7002; moves the request-type uniqueness statement below
+      the constants table with a consensus-specs permalink; simplifies the deposit acceptance condition
+      to msg.value >= amount * 1 gwei + fee; fills in Reference Implementation with ethereum/sys-asm links;
+      and condenses Motivation, Rationale, Backwards Compatibility and Security Considerations into headed
+      subsections.'
+    rationale: Changes the deployment mechanism, removes a constant, adds new system-call and revert rules
+      and changes when the fee is updated; all are implementation- and test-visible.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-2d3c5e59e471
+    - gh-pr-map-eip-8282
+dependency_history:
+  events:
+  - id: eip8282-d01
+    target_eip: 1559
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    rationale: 'Frontmatter ''requires: 1559, 7685, 7732'' at creation, plus the request-fee section describing
+      fake_exponential as the integer approximation used by [EIP-1559] and the ''[EIP-1559]-style excess
+      counter'' in the storage layout. Present at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+    - eips-pin-eip-8282
+  - id: eip8282-d02
+    target_eip: 7685
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    rationale: 'Frontmatter ''requires: 1559, 7685, 7732'' at creation; the EIP predeploys two [EIP-7685]
+      request contracts whose dequeued records become request_data committed in requests_hash. Present
+      at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+    - eips-pin-eip-8282
+  - id: eip8282-d03
+    target_eip: 7732
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    rationale: 'Frontmatter ''requires: 1559, 7685, 7732'' at creation; the EIP exists to replace [EIP-7732]''s
+      builder onboarding and exit routing and carries a dedicated ''Changes to EIP-7732'' section, so
+      it also extends/modifies EIP-7732. Present at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+    - eips-pin-eip-8282
+  - id: eip8282-d04
+    target_eip: 7002
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    rationale: 'Creation text models both predeploys on the [EIP-7002] request bus: shared storage layout,
+      SYSTEM_ADDRESS dequeue rules, fee formula, source_address authorization and little-endian amount
+      convention are all specified by reference to EIP-7002. Present at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+    - eips-pin-eip-8282
+  - id: eip8282-d05
+    target_eip: 7251
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    rationale: Creation text repeatedly pairs [EIP-7251] with EIP-7002 as the request-bus pattern, deployment
+      scheme and system-call handling this EIP reuses. Present at the pinned state.
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+    - eips-pin-eip-8282
+  - id: eip8282-d06
+    target_eip: 6110
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    rationale: Creation text states that BuilderDepositRequest is the validator [EIP-6110] DepositRequest
+      without the index field, and that removing the builder branch reverts process_deposit_request to
+      its validator-only [EIP-6110] behavior. Present at the pinned state.
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+    - eips-pin-eip-8282
+  - id: eip8282-d07
+    target_eip: 7804
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2026-07-03T00:35:52Z'
+    commit: de4c6f02c7bec4686762c55f8ab6abcf97a77d7d
+    rationale: Creation Constants section warns that the 0x03/0x04 request types MUST be unique across
+      all active EIP-7685 request types 'including in-flight proposals ([EIP-7804], a Draft, also claims
+      0x03)'. Recorded as interacts_with because the relationship is a request-type-byte allocation conflict
+      rather than a prerequisite.
+    confidence: high
+    source_ids:
+    - git-de4c6f02c7be
+  - id: eip8282-d08
+    target_eip: 7804
+    event_type: removed
+    relationship: interacts_with
+    occurred_at: '2026-08-05T15:36:19Z'
+    commit: ba60c6474f603d93abbb4b0520f203dc8cb8c930
+    rationale: 'PR #12108 deleted the EIP-7804 parenthetical; no EIP-7804 reference remains at the pinned
+      state.'
+    confidence: high
+    source_ids:
+    - git-ba60c6474f60
+    - eips-pin-eip-8282
+  - id: eip8282-d09
+    target_eip: 7997
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-08-10T15:23:39Z'
+    commit: 2d3c5e59e47103df15e51aafc815ba0b234e3388
+    rationale: 'PR #11869 replaced the Nick''s-method deployment scheme with ''Both contracts are deployed
+      by a CREATE2 factory ([EIP-7997])'', making the deployment of both predeploys depend on EIP-7997.
+      Present at the pinned state. Note that the frontmatter requires field was not updated and still
+      reads ''requires: 1559, 7685, 7732'' at the pin, so this prerequisite is textual only.'
+    confidence: high
+    source_ids:
+    - git-2d3c5e59e471
+    - eips-pin-eip-8282
+source_registry: outputs/sources/eips/eip-8282.yaml
+unknowns:
+- The frontmatter requires field ('1559, 7685, 7732') is narrower than the EIP's explicit textual dependency
+  set at the pinned state, which also names EIP-7002, EIP-7251, EIP-6110 and EIP-7997. The EIP-7997 CREATE2-factory
+  deployment dependency introduced by commit 2d3c5e59 was never reflected in requires; this is recorded
+  as an observation, not corrected.
+- Commit ba60c647 (status move plus removal of the EIP-7804 request-type-collision note) is classified
+  dependency / substantive at medium confidence; a reviewer treating the dropped parenthetical as a non-normative
+  coordination note would classify the commit non_substantive and count three substantive revisions instead
+  of four.
+- The EIP references non-EIP artifacts as normative anchors - the consensus-specs Electra beacon-chain
+  permalink for existing request-type allocation and the ethereum/sys-asm reference implementation trees,
+  both added at commit 2d3c5e59, and Gloas consensus-spec function names throughout. These are not EIPs
+  and were not recorded as dependency events.

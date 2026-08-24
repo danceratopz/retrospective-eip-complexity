@@ -1,0 +1,88 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: cancun
+eip:
+  number: 4788
+  title: Beacon block root in the EVM
+  layers: [execution, consensus]
+  layer_classification:
+    rationale: >-
+      EIP-7569 "Full Specifications" lists EIP-4788 in both groups: among the EIPs that
+      "require changes to Ethereum's consensus layer" (specified in the deneb folder of
+      ethereum/consensus-specs) and among the EIPs that "require changes to Ethereum's
+      execution layer". Contemporaneous ACDE #163 discussion likewise characterizes it:
+      "EIP 4788, this is essentially a cross layer EIP".
+    source_ids: [eip-7569-pinned, pm-acde-163-minutes]
+membership:
+  source_section: Included EIPs
+  classification: included
+  requirement: required
+  source_ids: [eip-7569-pinned]
+inclusion_history:
+  normalized_state_counts:
+    considered_for_inclusion: 1
+    scheduled_for_inclusion: 3
+    included: 1
+  events:
+    - id: cancun-eip4788-e1
+      occurred_at: "2023-04-27"
+      raw_label: "EIPs Considered for Inclusion (execution-specs cancun.md)"
+      normalized_state: considered_for_inclusion
+      normalization_rationale: >-
+        Added to cancun.md's "EIPs Considered for Inclusion" section immediately after ACDE
+        #160; the section name maps directly to considered_for_inclusion. ACDE #161
+        corroborates that "the beacon block root" was among the EIPs CFI'd on that call.
+      decision_body: "AllCoreDevs Execution Layer call #160 (2023-04-27)"
+      source_ids: [execution-specs-commit-ada4aa34, pm-acde-160-minutes, pm-acde-161-minutes]
+    - id: cancun-eip4788-e2
+      occurred_at: "2023-06-01"
+      raw_label: "features that we intend to build [down] into the Deneb spec (ACDC #110)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        The consensus-layer process used no CFI/SFI vocabulary; on ACDC #110 Danny Ryan fixed
+        the list of features to build into the Deneb consensus spec ("4788, 6988, 7045, and
+        this fixed voluntary exit domain... I see one thumbs up and hear no opposition"). An
+        explicit, unopposed commitment to build the feature into the fork's spec is normalized
+        as scheduling on the consensus layer. The execution-layer confirmation followed on
+        2023-06-08 (next event). ACDC #112 corroborates that the subsequent consensus-specs
+        release "has 4788... built into the spec".
+      decision_body: "AllCoreDevs Consensus Layer call #110 (2023-06-01)"
+      source_ids: [pm-acdc-110-minutes, pm-acdc-112-minutes]
+    - id: cancun-eip4788-e3
+      occurred_at: "2023-06-08"
+      raw_label: "Included EIPs (execution-specs cancun.md)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        Moved from "EIPs Considered for Inclusion" to "Included EIPs" in cancun.md the same day
+        as ACDE #163, where the decision was recorded ("does anyone not want to include 4788?
+        ... let's include 4788 final chance if anyone has an objection"). "Included" in the
+        pre-activation upgrade spec is normalized as scheduled_for_inclusion; "included" is
+        reserved here for post-activation.
+      decision_body: "AllCoreDevs Execution Layer call #163 (2023-06-08)"
+      source_ids: [execution-specs-commit-aa812f89, pm-acde-163-minutes]
+    - id: cancun-eip4788-e4
+      occurred_at: "2023-12-07"
+      raw_label: "Included EIPs (EIP-7569: Hardfork Meta - Dencun, at creation)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        EIP-7569 was created in Draft status listing this EIP under "Included EIPs" while the
+        upgrade was still pending activation (the activation table was empty at creation), so
+        the listing corresponds to scheduled_for_inclusion rather than included.
+      decision_body: null
+      source_ids: [eips-commit-babb441b]
+    - id: cancun-eip4788-e5
+      occurred_at: "2024-03-13T13:55:35Z"
+      raw_label: "Activation - Mainnet (epoch 269568, timestamp 1710338135)"
+      normalized_state: included
+      normalization_rationale: >-
+        Dencun activated on Ethereum mainnet at beacon epoch 269568 (timestamp 1710338135 =
+        2024-03-13T13:55:35Z) with this EIP in EIP-7569's Included list; the mainnet activation
+        row was added to EIP-7569 on 2024-02-08 and the Meta EIP was moved to Final on
+        2024-03-29 following activation.
+      decision_body: null
+      source_ids: [eip-7569-pinned, eips-commit-8e35c4a1, eips-commit-a554f59c]
+unknowns:
+  - >-
+    The consensus-layer (ACDC #110) and execution-layer (ACDE #163) commitments are modeled as
+    two separate scheduled_for_inclusion events because the two layers confirmed the EIP one
+    week apart; no single cross-layer decision record exists.

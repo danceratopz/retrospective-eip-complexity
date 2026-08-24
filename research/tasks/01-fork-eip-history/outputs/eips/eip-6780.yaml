@@ -1,0 +1,296 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 6780
+  title: SELFDESTRUCT only in same transaction
+  source_ids:
+  - eips-blob-eip6780-pin
+research_run:
+  started_at: '2026-08-20T19:56:20Z'
+  completed_at: '2026-08-21T00:37:47Z'
+  researcher: claude subagent eip-batch-13 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2023-03-25'
+  frontmatter_source_ids:
+  - eips-blob-eip6780-creation
+  - eips-blob-eip6780-pin
+  first_repository_commit:
+    authored_at: '2023-03-28T20:27:21Z'
+    committed_at: '2023-03-28T20:27:21Z'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    path: EIPS/eip-6780.md
+    source_ids:
+    - eips-commit-a3d07639302c
+  discrepancy_note: The frontmatter 'created' date (2023-03-25) precedes the first repository commit (2023-03-28T20:27:21Z,
+    author and committer timestamps identical when normalised to UTC) by three days. This is the ordinary lag between
+    drafting the proposal and the merge of the adding PR; the frontmatter 'created' value was never modified in
+    any later commit (verified across all seven file commits). No conflict.
+revision_history:
+  summary:
+    file_commit_count: 7
+    post_creation_revision_count: 6
+    substantive_revision_count: 2
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2023-09-10T03:35:59Z'
+    last_revision_at: '2024-03-29T20:44:40Z'
+    first_substantive_revision_at: '2023-09-10T03:35:59Z'
+    last_substantive_revision_at: '2023-11-01T23:55:07Z'
+    derived_from_event_ids:
+    - eip6780-e00
+    - eip6780-e01
+    - eip6780-e02
+    - eip6780-e03
+    - eip6780-e04
+    - eip6780-e05
+    - eip6780-e06
+  events:
+  - id: eip6780-e00
+    event_kind: creation
+    authored_at: '2023-03-28T21:27:21+01:00'
+    committed_at: '2023-03-28T13:27:21-07:00'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    path: EIPS/eip-6780.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: "Initial addition of EIP-6780 'SELFDESTRUCT only in same transaction' (64 lines, Draft): SELFDESTRUCT\
+      \ no longer deletes storage/code and only transfers the account balance to the target, except when executed\
+      \ in the same transaction in which the contract was created, where the original behaviour is preserved. Frontmatter\
+      \ 'requires: 2681, 2929, 3529'."
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a3d07639302c
+    - eips-blob-eip6780-creation
+  - id: eip6780-e01
+    event_kind: revision
+    authored_at: '2023-09-09T21:35:59-06:00'
+    committed_at: '2023-09-09T20:35:59-07:00'
+    commit: 22c0ef2b2a9d5ab52705c21128f99a5e082013aa
+    path: EIPS/eip-6780.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: "Rewrites the Specification bullets ('Add clarifications to EIP-6780'): states that the current execution\
+      \ frame halts, that SELFDESTRUCT deletes no data at all (storage keys, code, account) outside same-transaction\
+      \ creation, that Ether is no longer burnt when target == self for pre-existing contracts (but still burnt\
+      \ for same-transaction-created contracts), and adds a definition of when a contract is 'considered created'\
+      \ (start of a create transaction or when a CREATE-series operation begins execution, including when a balance\
+      \ already exists at the address). Also adds a counterfactual-account rationale paragraph, rewrites Backwards\
+      \ Compatibility, and fixes the mis-numbered Security Considerations list while adding the Ether-burn case."
+    rationale: Changes and materially clarifies normative EVM behaviour (self-targeting burn semantics, frame halting,
+      contract-creation definition) that implementers and testers must follow.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-22c0ef2b2a9d
+  - id: eip6780-e02
+    event_kind: revision
+    authored_at: '2023-09-28T17:55:53+02:00'
+    committed_at: '2023-09-28T15:55:53+00:00'
+    commit: 9df2962cf2e743c3d22bf75c5efbe06bea1f7331
+    path: EIPS/eip-6780.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Removes the Specification note stating that, once verkle tries are implemented, cleared storage would
+      be marked as written-before-but-empty and a created-and-deleted contract would yield a different state root
+      (single-line deletion).
+    rationale: 'Removes a forward-looking, non-normative note about hypothetical future verkle-trie behaviour; the
+      normative pre-verkle SELFDESTRUCT rules are unchanged, so implementations and tests for this fork are unaffected.
+      Judgement call: the deleted sentence sat inside the Specification section and described a state-root consequence,
+      so a stricter reading could treat the deletion as substantive. Recorded as non_substantive with medium confidence
+      and the ambiguity preserved in unknowns.'
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-9df2962cf2e7
+  - id: eip6780-e03
+    event_kind: revision
+    authored_at: '2023-11-01T23:55:07+00:00'
+    committed_at: '2023-11-02T07:55:07+08:00'
+    commit: 6acfa9be3d1c6f2af9b6081ddc3bbe0de50c3d3b
+    path: EIPS/eip-6780.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Replaces 'caller' with 'target' as the recipient of the recovered funds in both the frontmatter description
+      and the Abstract ('send all Ether in the account to the target').
+    rationale: 'Corrects a factually wrong statement about where funds go. The normative Specification section already
+      said ''transfers the entire account balance to the target'', so no rule changed, but the Abstract/description
+      previously contradicted it in a way that could mislead an implementer or test author; classified as a material
+      clarification. Confidence medium because the edit touches only summary prose.'
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-6acfa9be3d1c
+  - id: eip6780-e04
+    event_kind: revision
+    authored_at: '2023-12-11T04:01:06-08:00'
+    committed_at: '2023-12-11T20:01:06+08:00'
+    commit: 4a815c79cd77c42c90680bf8b0bdb082d8c38243
+    path: EIPS/eip-6780.md
+    change_type: dependency
+    semantic_effect: non_substantive
+    summary: 'Status Draft -> Review, and deletes the trailing Rationale clause that discussed the alternative of
+      only removing storage clearing in [EIP-6046] (''A further option that was considered was to just remove storage
+      clearing from SELFDESTRUCT in EIP-6046 while preserving removal of contracts, however this is not safe...'').'
+    rationale: Process-metadata change plus removal of the EIP's only explicit reference to EIP-6046. The removed
+      text was discursive Rationale about a rejected alternative, not a normative rule, so the semantic effect is
+      non-substantive; change_type is 'dependency' because the commit removes an explicit cross-EIP reference (see
+      eip6780-d05).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-4a815c79cd77
+  - id: eip6780-e05
+    event_kind: revision
+    authored_at: '2024-01-31T23:03:13+01:00'
+    committed_at: '2024-01-31T22:03:13+00:00'
+    commit: a9f7ddbf024a8ef672d1c7b364d13781951a7f1b
+    path: EIPS/eip-6780.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Last Call, adding last-call-deadline 2024-02-15.'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a9f7ddbf024a
+  - id: eip6780-e06
+    event_kind: revision
+    authored_at: '2024-03-29T13:44:40-07:00'
+    committed_at: '2024-03-30T04:44:40+08:00'
+    commit: 688e939c4e0968f0cbc6a4e79426b498869eec19
+    path: EIPS/eip-6780.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final (last-call-deadline removed) and addition of a Test Cases section
+      pointing at the execution-spec-tests suite ''eip6780_selfdestruct'' pinned at execution-spec-tests commit
+      1983444bbe1a471886ef7c0e82253ffe2a4053e1.'
+    rationale: Process-metadata change plus an informative pointer to an external test suite; no normative rule,
+      parameter, interface, or dependency changes.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-688e939c4e09
+dependency_history:
+  events:
+  - id: eip6780-d01
+    target_eip: 2681
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2023-03-28T20:27:21Z'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    rationale: >-
+      Listed in the frontmatter 'requires: 2681, 2929, 3529' at creation and unchanged through the pinned
+      commit. EIP-2681 (limit account nonce to 2^64-1) is referenced only via frontmatter; the body never mentions
+      it.
+    confidence: high
+    source_ids:
+    - eips-commit-a3d07639302c
+    - eips-blob-eip6780-creation
+    - eips-blob-eip6780-pin
+  - id: eip6780-d02
+    target_eip: 2929
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2023-03-28T20:27:21Z'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    rationale: 'Listed in the frontmatter ''requires: 2681, 2929, 3529'' at creation and unchanged through the pinned
+      commit; also referenced twice in the Specification (''the rules of [EIP-2929] regarding SELFDESTRUCT remain
+      unchanged'').'
+    confidence: high
+    source_ids:
+    - eips-commit-a3d07639302c
+    - eips-blob-eip6780-creation
+    - eips-blob-eip6780-pin
+  - id: eip6780-d03
+    target_eip: 3529
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2023-03-28T20:27:21Z'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    rationale: 'Listed in the frontmatter ''requires: 2681, 2929, 3529'' at creation and unchanged through the pinned
+      commit; also referenced twice in the Specification (''no refund is given, as per [EIP-3529]'').'
+    confidence: high
+    source_ids:
+    - eips-commit-a3d07639302c
+    - eips-blob-eip6780-creation
+    - eips-blob-eip6780-pin
+  - id: eip6780-d04
+    target_eip: 6049
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2023-03-28T20:27:21Z'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    rationale: 'Explicit textual reference present at creation and still present at the pin: ''The SELFDESTRUCT
+      opcode remains deprecated as specified in [EIP-6049]''. Relationship ''other'': EIP-6780 builds on the deprecation
+      declared by EIP-6049 and restates that it still holds; it is not a frontmatter ''requires'' entry and is neither
+      an extension nor a replacement of EIP-6049.'
+    confidence: high
+    source_ids:
+    - eips-commit-a3d07639302c
+    - eips-blob-eip6780-creation
+    - eips-blob-eip6780-pin
+  - id: eip6780-d05
+    target_eip: 6046
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2023-03-28T20:27:21Z'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    rationale: "Explicit textual reference present at creation in the Rationale: 'A further option that was considered\
+      \ was to just remove storage clearing from SELFDESTRUCT in [EIP-6046] while preserving removal of contracts,\
+      \ however this is not safe...'. Relationship 'other': EIP-6046 is named as a considered-and-rejected alternative\
+      \ design, not a requirement or extension."
+    confidence: high
+    source_ids:
+    - eips-commit-a3d07639302c
+    - eips-blob-eip6780-creation
+  - id: eip6780-d06
+    target_eip: 6046
+    event_type: removed
+    relationship: other
+    occurred_at: '2023-12-11T12:01:06Z'
+    commit: 4a815c79cd77c42c90680bf8b0bdb082d8c38243
+    rationale: The Rationale clause naming EIP-6046 was deleted in the 'Move to Review' commit, removing the EIP's
+      only explicit reference to EIP-6046. No reference to EIP-6046 exists at the pinned commit.
+    confidence: high
+    source_ids:
+    - eips-commit-4a815c79cd77
+    - eips-blob-eip6780-pin
+  - id: eip6780-d07
+    target_eip: 2535
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2023-03-28T20:27:21Z'
+    commit: a3d07639302c9664c11b1f2d693b4537402748f5
+    rationale: "Explicit textual reference present at creation and still present at the pin, in Security Considerations:\
+      \ 'Where CREATE2 is used to redeploy a contract in the same place in order to make a contract upgradable.\
+      \ This is not supported anymore and [ERC-2535] or other types of proxy contracts should be used instead.'\
+      \ The target is ERC-2535 (Diamonds, Multi-Facet Proxy), an ERC rather than a Core EIP, sharing the same proposal\
+      \ number space and living at EIPS/eip-2535.md in the same repository. Relationship 'other': it is recommended\
+      \ as an application-layer replacement for a broken usage pattern, not required or extended by EIP-6780."
+    confidence: high
+    source_ids:
+    - eips-commit-a3d07639302c
+    - eips-blob-eip6780-creation
+    - eips-blob-eip6780-pin
+source_registry: outputs/sources/eips/eip-6780.yaml
+unknowns:
+- 'Classification judgement (eip6780-e02): the removal of the verkle-trie note sits inside the Specification section.
+  It is recorded as clarification / non_substantive because the note described hypothetical post-verkle state-root
+  behaviour rather than a rule implementers apply at Cancun; a stricter reading would call it substantive. Confidence
+  medium.'
+- 'Classification judgement (eip6780-e03): the caller -> target fix touches only the frontmatter description and
+  the Abstract, but corrects a statement that contradicted the normative Specification. Recorded as substantive
+  (material clarification) with medium confidence.'
+- EIP-2681 appears only in the frontmatter 'requires' list; no textual justification for the dependency exists in
+  any revision of the file. The reason for the dependency was not investigated further (out of scope for this work
+  unit).
+- 'Negative search: the frontmatter fields ''created'' (2023-03-25) and ''requires'' (2681, 2929, 3529) were compared
+  across all seven file commits; neither ever changed. No commit renamed or moved the file (git log --follow reports
+  path EIPS/eip-6780.md at every commit).'
+- No mutable (non-Git) sources were needed for this record; all evidence is reproducible from the pinned ethereum/EIPs
+  history, so raw/eips/eip-6780/ is empty.

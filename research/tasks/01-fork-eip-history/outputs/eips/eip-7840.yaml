@@ -1,0 +1,201 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7840
+  title: Add blob schedule to EL config files
+  source_ids:
+    - eips-blob-eip7840-pin
+research_run:
+  started_at: '2026-08-21T00:37:56Z'
+  completed_at: '2026-08-21T01:10:00Z'
+  researcher: claude subagent eip-forks-close (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2024-12-12'
+  frontmatter_source_ids:
+    - eips-blob-eip7840-creation
+    - eips-blob-eip7840-pin
+  first_repository_commit:
+    authored_at: '2025-01-08T09:43:28-07:00'
+    committed_at: '2025-01-09T00:43:28+08:00'
+    commit: 494dfe7623d65a63cea4d1fe6652d345f995ba41
+    path: EIPS/eip-7840.md
+    source_ids:
+      - eips-commit-494dfe7623d6
+  discrepancy_note: >-
+    The frontmatter 'created' date (2024-12-12) precedes the first repository commit
+    (2025-01-08T16:43:28Z; the author and committer timestamps are the same instant in different
+    offsets) by 27 days. The declared date is the day the client-configuration approach this EIP
+    codifies was adopted on an AllCoreDevs consensus call, as recorded independently in the
+    Prague fork record; the file itself landed in ethereum/EIPs four weeks later, and the EIP was
+    added to the Prague Meta EIP a week after that. The frontmatter value was never edited in any
+    later revision.
+revision_history:
+  summary:
+    file_commit_count: 6
+    post_creation_revision_count: 5
+    substantive_revision_count: 1
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2025-01-15T16:24:59Z'
+    last_revision_at: '2026-04-07T16:52:22Z'
+    first_substantive_revision_at: '2025-01-22T17:24:19Z'
+    last_substantive_revision_at: '2025-01-22T17:24:19Z'
+    derived_from_event_ids:
+      - eip7840-e00
+      - eip7840-e01
+      - eip7840-e02
+      - eip7840-e03
+      - eip7840-e04
+      - eip7840-e05
+  events:
+    - id: eip7840-e00
+      event_kind: creation
+      authored_at: '2025-01-08T09:43:28-07:00'
+      committed_at: '2025-01-09T00:43:28+08:00'
+      commit: 494dfe7623d65a63cea4d1fe6652d345f995ba41
+      path: EIPS/eip-7840.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        Initial addition of EIP-7840 'Add blob schedule to EL config files' (status Draft, type
+        Informational). Specifies a new execution-client configuration object 'blobSchedule'
+        holding per-fork 'target' and 'max' blob counts, with the fallback rule that a fork
+        without explicit configuration uses the last specified fork's value and, absent any, zero
+        for both. Test Cases reads 'TODO' and Security Considerations reads 'Needs discussion.'
+      rationale: >-
+        Creation commit adding the complete initial document (name-status shows a single added
+        path, no rename). change_type is interface_or_data_structure because the EIP's whole
+        content is the shape of a client configuration object rather than protocol behavior; the
+        EIP is Informational and imposes no consensus rule.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-494dfe7623d6
+        - eips-blob-eip7840-creation
+    - id: eip7840-e01
+      event_kind: revision
+      authored_at: '2025-01-15T08:24:59-08:00'
+      committed_at: '2025-01-15T09:24:59-07:00'
+      commit: da129d42627c959498c3c17836e2814add9b647d
+      path: EIPS/eip-7840.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Status change Draft -> Review; deletes the 'Test Cases / TODO' section entirely; replaces
+        the Security Considerations placeholder 'Needs discussion.' with 'No security
+        considerations found.'
+      rationale: >-
+        Process metadata plus resolution of two placeholders to explicit negatives. Nothing is
+        added to the configuration schema and no constraint is introduced, so the effect is
+        non-substantive. Confidence is medium because replacing a Security Considerations
+        placeholder is a statement about security assumptions, which a stricter reading could
+        treat as substantive.
+      change_group: null
+      confidence: medium
+      source_ids:
+        - eips-commit-da129d42627c
+    - id: eip7840-e02
+      event_kind: revision
+      authored_at: '2025-01-22T18:24:19+01:00'
+      committed_at: '2025-01-22T17:24:19+00:00'
+      commit: b3b84e06f7639394165be6cd86bc5298fa9c6706
+      path: EIPS/eip-7840.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        Adds a third per-fork field 'baseFeeUpdateFraction' to the blobSchedule object (example
+        values cancun 3338477, prague 5007716), with a matching Motivation bullet and Rationale
+        sentence; and replaces the fallback rule with a requirement that clients configure
+        target, max and baseFeeUpdateFraction per fork, declaring the behavior undefined and
+        client-chosen when the configuration is missing or incomplete. Frontmatter description is
+        reworded from 'Include a per-fork schedule of max and target blob counts in client
+        configuration files' to 'Include a per-fork blob parameters in client configuration
+        files'.
+      rationale: >-
+        Extends the configuration data structure with a new required field carrying the blob base
+        fee update fraction, and simultaneously removes the previously specified default/fallback
+        behavior, replacing it with undefined behavior. Both changes affect what execution clients
+        must read from their configuration files. The merging pull request (#9240, author
+        @MarekM25) carries only the repository's PR-template boilerplate, so no author rationale
+        is on record beyond the diff itself.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-b3b84e06f763
+        - gh-pr-9240
+    - id: eip7840-e03
+      event_kind: revision
+      authored_at: '2025-02-12T08:16:10-08:00'
+      committed_at: '2025-02-13T00:16:10+08:00'
+      commit: 58a3715c0f4ce036600fbedad33a0ec1e1695dc0
+      path: EIPS/eip-7840.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: 'Status change: Review -> Last Call, adding last-call-deadline 2025-04-01.'
+      rationale: Process-metadata change only.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-58a3715c0f4c
+    - id: eip7840-e04
+      event_kind: revision
+      authored_at: '2025-05-15T11:02:02-06:00'
+      committed_at: '2025-05-16T01:02:02+08:00'
+      commit: d4c67cdfe5d75b142d7740fb60d55be2cd6d4f1e
+      path: EIPS/eip-7840.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: 'Status change: Last Call -> Final; removes last-call-deadline.'
+      rationale: Process-metadata change only, eight days after mainnet activation of the fork that carries the EIP.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-d4c67cdfe5d7
+    - id: eip7840-e05
+      event_kind: revision
+      authored_at: '2026-04-07T19:52:22+03:00'
+      committed_at: '2026-04-07T12:52:22-04:00'
+      commit: ef69a66822c047a8721945f1fcc1ce91da6be27a
+      path: EIPS/eip-7840.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Grammar fix in the frontmatter description - 'Include a per-fork blob parameters in
+        client configuration files' becomes 'Include per-fork blob parameters in client
+        configuration files'. Commit subject 'Update EIP-7840: fix grammar (#10308)'.
+      rationale: Removes a stray article introduced by commit b3b84e06f763; no content change.
+      change_group: null
+      confidence: high
+      source_ids:
+        - eips-commit-ef69a66822c0
+dependency_history:
+  events: []
+source_registry: outputs/sources/eips/eip-7840.yaml
+unknowns:
+  - >-
+    Explicit negative search for cross-EIP dependencies. EIP-7840 has no frontmatter 'requires'
+    field in any of its six revisions, and no revision contains any textual reference to another
+    EIP or ERC number. Every blob from the creation commit through the pinned master was scanned
+    case-insensitively for 'requires:', 'eip-<n>', 'EIP <n>', 'EIP-<n>', 'erc-<n>' and '4844'
+    excluding self-references and the discussions-to URL; there were no matches. The document
+    discusses blob target/max counts and the blob base fee update fraction, and mentions the
+    eth_feeHistory RPC field blobGasUsedRatio, but never names EIP-4844 or any other EIP, so
+    dependency_history.events is genuinely empty rather than unresearched. The coupling to the
+    blob mechanism is therefore implicit architectural coupling, which this task explicitly does
+    not record.
+  - >-
+    Pull-request metadata was retrieved and archived only for commit b3b84e06f763 (PR #9240).
+    Commits 494dfe7623d6, 58a3715c0f4c and d4c67cdfe5d7 were merged by EIP-Bot and carry no PR
+    number in their subjects; their PR numbers were not resolved. Commits da129d42627c (#9223)
+    and ef69a66822c0 (#10308) reference PR numbers in their subjects but that metadata was not
+    separately retrieved. The git commits are sufficient primary evidence for every recorded
+    event.
+  - >-
+    No rationale for adding baseFeeUpdateFraction (event eip7840-e02) is recorded in the commit
+    or in PR #9240, whose body is the repository's PR-template boilerplate. Discussion on the
+    ethereum-magicians thread linked from discussions-to was not traced; it is a non-archived
+    mutable source outside this work unit's git-based evidence, and the corresponding AllCoreDevs
+    decision history belongs to the Prague fork work unit.

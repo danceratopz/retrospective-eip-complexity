@@ -1,0 +1,451 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7708
+  title: ETH transfers emit a log
+  source_ids:
+  - eips-blob-eip7708-pin
+research_run:
+  started_at: '2026-08-21T00:41:14Z'
+  completed_at: '2026-08-21T00:55:00Z'
+  researcher: claude subagent eip-amsterdam-1 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2024-05-17'
+  frontmatter_source_ids:
+  - eips-blob-eip7708-creation
+  - eips-blob-eip7708-pin
+  first_repository_commit:
+    authored_at: '2024-06-11T14:06:54Z'
+    committed_at: '2024-06-11T14:06:54Z'
+    commit: f25c6c8e18e60247e7e6c2b52986f56ad3e9f1f8
+    path: EIPS/eip-7708.md
+    source_ids:
+    - eips-commit-f25c6c8e18e6
+    - gh-pr-map-eip-7708
+  discrepancy_note: 'The frontmatter ''created'' date (2024-05-17) precedes the first repository commit (f25c6c8e18e60247e7e6c2b52986f56ad3e9f1f8,
+    authored and committed 2024-06-11T14:06:54Z) by 25 days. The adding pull request, ethereum/EIPs#8575 ''Add
+    EIP: ETH transfers emit a log'', was opened 2024-05-17T12:10:15Z - the same calendar day as the declared
+    creation date - and merged 2024-06-11T14:06:54Z. The gap is therefore EIP-editor review latency between
+    opening the submission pull request and merging it; the two dates do not conflict. The frontmatter ''created''
+    value is unchanged at the pinned state.'
+revision_history:
+  summary:
+    file_commit_count: 13
+    post_creation_revision_count: 12
+    substantive_revision_count: 10
+    non_substantive_revision_count: 2
+    uncertain_revision_count: 0
+    first_revision_at: '2025-04-13T00:47:51Z'
+    last_revision_at: '2026-07-10T12:48:21Z'
+    first_substantive_revision_at: '2026-01-20T13:05:18Z'
+    last_substantive_revision_at: '2026-05-16T20:59:25Z'
+    derived_from_event_ids:
+    - eip7708-e00
+    - eip7708-e01
+    - eip7708-e02
+    - eip7708-e03
+    - eip7708-e04
+    - eip7708-e05
+    - eip7708-e06
+    - eip7708-e07
+    - eip7708-e08
+    - eip7708-e09
+    - eip7708-e10
+    - eip7708-e11
+    - eip7708-e12
+  events:
+  - id: eip7708-e00
+    event_kind: creation
+    authored_at: '2024-06-11T16:06:54+02:00'
+    committed_at: '2024-06-11T22:06:54+08:00'
+    commit: f25c6c8e18e60247e7e6c2b52986f56ad3e9f1f8
+    path: EIPS/eip-7708.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7708 ''ETH transfers emit a log'' (status Draft, authors Vitalik Buterin
+      and Peter Davies): every nonzero-value CALL, nonzero-value-transferring SELFDESTRUCT and nonzero-value-transferring
+      transaction issues a log identical to a LOG3 with topics (MAGIC, sender, recipient) and a big-endian
+      32-byte value as data. MAGIC is left as ''TBD''. Transaction-level logs precede EVM-execution logs; the
+      other two are emitted when the transfer executes. Two open questions are recorded (withdrawals, fee payments)
+      and the Test Cases section is ''TODO''.'
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-f25c6c8e18e6
+    - eips-blob-eip7708-creation
+    - gh-pr-map-eip-7708
+  - id: eip7708-e01
+    event_kind: revision
+    authored_at: '2025-04-13T08:47:51+08:00'
+    committed_at: '2025-04-13T08:47:51+08:00'
+    commit: 7466599174141c30561e1366d5aead63080c277a
+    path: EIPS/eip-7708.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Automated eth-bot status change Draft -> Stagnant (one frontmatter line), applied after the file
+      received no merged change for the bot's inactivity window.
+    rationale: Process-metadata change only; no specification text is touched. Recorded because it is a file-changing
+      commit and marks the ten-month dormancy that ended on 2026-01-20.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-746659917414
+    - gh-pr-map-eip-7708
+  - id: eip7708-e02
+    event_kind: revision
+    authored_at: '2026-01-20T14:05:18+01:00'
+    committed_at: '2026-01-20T21:05:18+08:00'
+    commit: e8f1b9a9cd4803e6e84c25a6afce0f980c7c9483
+    path: EIPS/eip-7708.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Revival and first full specification pass (PR open for fourteen months). Status Stagnant -> Draft;
+      adds Etan Kissling, Gajinder Singh and Carson as co-authors. Replaces the placeholder ''Parameters /
+      MAGIC: TBD'' section with a concrete ''ETH transfer logs'' section: the emitting address becomes SYSTEM_ADDRESS
+      0xfff...ffe (citing EIP-4788), topics[0] becomes keccak256(''Transfer(address,address,uint256)'') (0xddf252ad...),
+      topics[1]/topics[2] the zero-padded from/to addresses and data the big-endian uint256 amount, explicitly
+      matching the ERC-20 Transfer event. Restricts the SELFDESTRUCT transfer log to SELFDESTRUCT to a different
+      account and adds a new ''Selfdestruct processing'' section defining a LOG2-shaped log with topics[0]
+      = keccak256(''Selfdestruct(address,uint256)'') (0x4bfaba34...) for SELFDESTRUCT to the same account.
+      Rewrites the open questions to ask which magic emitter address to use.'
+    rationale: 'Turns an under-specified sketch into an implementable log encoding: it fixes the emitter address,
+      the topic hashes, the data encoding and the log arity, and adds an entirely new log kind for self-directed
+      SELFDESTRUCT. Every one of these changes affects client implementation and test generation.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-e8f1b9a9cd48
+    - gh-pr-map-eip-7708
+  - id: eip7708-e03
+    event_kind: revision
+    authored_at: '2026-01-21T10:52:30+01:00'
+    committed_at: '2026-01-21T09:52:30+00:00'
+    commit: b6ddf5a275423a31497411acab623fea3e46bbe2
+    path: EIPS/eip-7708.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds Jared Wasinger as co-author and broadens the LOG2 selfdestruct log into an account closure
+      log: besides SELFDESTRUCT to self it is now also emitted for ''any nonzero-value-holding account closure'',
+      placed after all EVM-execution logs but before charging the EIP-1559 priority fee, in lexicographical
+      order of closed account address. topics[1] is redefined from the ''from'' address to the closed contract_address,
+      and an explanatory sentence covers the case of a contract already flagged for SELFDESTRUCT that receives
+      further ETH.'
+    rationale: Adds a new emission trigger, a new block-position rule and a new ordering rule, and redefines
+      a topic's meaning; all are directly implementation- and test-visible.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b6ddf5a27542
+    - gh-pr-map-eip-7708
+  - id: eip7708-e04
+    event_kind: revision
+    authored_at: '2026-01-27T22:49:10+01:00'
+    committed_at: '2026-01-28T05:49:10+08:00'
+    commit: 723c1b17e541193088d3c0f2ba3dba8f73cd7616
+    path: EIPS/eip-7708.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Restricts the CALL transfer-log bullet to 'any nonzero-value-transferring CALL to a different
+      account', so a self-directed CALL emits no transfer log.
+    rationale: A one-line change that materially narrows which executions emit a log; implementations and tests
+      must special-case CALL to self.
+    change_group: eip7708-self-transfer-exclusion
+    confidence: high
+    source_ids:
+    - eips-commit-723c1b17e541
+    - gh-pr-map-eip-7708
+  - id: eip7708-e05
+    event_kind: revision
+    authored_at: '2026-01-28T04:38:52+01:00'
+    committed_at: '2026-01-28T11:38:52+08:00'
+    commit: 6c494074402e3ab1fad2e199ba69382fbaf423d7
+    path: EIPS/eip-7708.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Applies the same restriction to the transaction-level bullet: ''any nonzero-value-transferring
+      transaction to a different account'' emits the log.'
+    rationale: 'Second half of the same logical update as event eip7708-e04 (same reviewer, adjacent PRs #11187
+      and #11188, merged within six hours): value transfers to self never emit a transfer log. Materially narrows
+      normative behaviour.'
+    change_group: eip7708-self-transfer-exclusion
+    confidence: high
+    source_ids:
+    - eips-commit-6c494074402e
+    - gh-pr-map-eip-7708
+  - id: eip7708-e06
+    event_kind: revision
+    authored_at: '2026-01-28T13:05:09-05:00'
+    committed_at: '2026-01-28T18:05:09+00:00'
+    commit: 04026e96ac58077f98a848d0e15ae0e8a599875f
+    path: EIPS/eip-7708.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds the frontmatter field ''requires: 1559, 4788, 6780'' and rewrites the two LOG2 bullets.
+      The self-SELFDESTRUCT bullet is narrowed to a contract created in the same transaction; the account-closure
+      bullet is restated as ''each account which has been marked for deletion and holds a balance at the time
+      of removal during transaction finalization''. The emission point is moved from before to AFTER payment
+      of the EIP-1559 priority fee to the coinbase.'
+    rationale: Reverses the ordering of burn logs relative to the coinbase priority-fee payment and narrows
+      the trigger conditions, both of which change the log sequence a client must produce. It also introduces
+      the EIP's first declared cross-EIP requirements.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-04026e96ac58
+    - gh-pr-map-eip-7708
+  - id: eip7708-e07
+    event_kind: revision
+    authored_at: '2026-02-13T23:32:21+01:00'
+    committed_at: '2026-02-14T06:32:21+08:00'
+    commit: 61c13e975ab3f077d4d3c2adec95c41b82f05d15
+    path: EIPS/eip-7708.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Renames the EIP to 'ETH transfers and burns emit a log' (title and description), rewrites the
+      Abstract accordingly, renames the 'Selfdestruct processing' section to 'ETH burn logs', and changes the
+      burn log's topics[0] from keccak256('Selfdestruct(address,uint256)') (0x4bfaba34...) to keccak256('Burn(address,uint256)')
+      (0xcc16f5db...). topics[1] is relabelled to a plain 'address', the ordering paragraph is separated from
+      the bullet list and the trailing explanatory sentence is dropped.
+    rationale: Changes a normative topic hash - the on-chain identifier consumers filter on - and the EIP's
+      declared scope. Any implementation or indexer written against the previous hash breaks.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-61c13e975ab3
+    - gh-pr-map-eip-7708
+  - id: eip7708-e08
+    event_kind: revision
+    authored_at: '2026-04-15T21:43:48+02:00'
+    committed_at: '2026-04-15T19:43:48+00:00'
+    commit: dca0b20ee11516155d0e94756507e85106eb31ff
+    path: EIPS/eip-7708.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Adds 'with non-zero balances' to the burn-log ordering sentence, so lexicographic ordering is
+      stated over the accounts marked for deletion that actually hold a balance.
+    rationale: Resolves an ambiguity between the bullet list (which already restricts emission to nonzero-balance
+      accounts) and the ordering sentence (which did not), fixing the set over which log order is defined.
+      Classified substantive because a reader following only the ordering sentence could have produced a different
+      log sequence; the alternative reading, that the bullets already implied it and this is redundant wording,
+      is why confidence is recorded as medium rather than high.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-dca0b20ee115
+    - gh-pr-map-eip-7708
+  - id: eip7708-e09
+    event_kind: revision
+    authored_at: '2026-04-20T18:04:31+02:00'
+    committed_at: '2026-04-21T00:04:31+08:00'
+    commit: 1e2f3319997b1725e05f69dfc438db59a666b86d
+    path: EIPS/eip-7708.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds a fourth transfer-log trigger: ''any nonzero-value-transferring CREATE or CREATE2 to the
+      created account, at the time that the value transfer executes''.'
+    rationale: Adds a new class of emitting operation (contract-creation endowments), expanding the set of
+      logs a client must produce.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-1e2f3319997b
+    - gh-pr-map-eip-7708
+  - id: eip7708-e10
+    event_kind: revision
+    authored_at: '2026-05-04T01:54:47+02:00'
+    committed_at: '2026-05-03T23:54:47+00:00'
+    commit: 100615c2c6f34b6105d3de22a1f3390ff3e1e232
+    path: EIPS/eip-7708.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Records the Soldogn interop breakout decisions. Replaces the three ''Open questions'' with settled
+      Rationale prose: SYSTEM_ADDRESS is confirmed as the emitter for consistency with EIP-4788 and to distinguish
+      protocol logs from contract logs; priority-fee and base-fee logs are rejected (log-volume cost, already
+      derivable from header and receipt); withdrawal logs are rejected (no natural emission point, already
+      derivable) and clients MAY instead expose an aggregating RPC. Replaces the ''TODO'' Test Cases section
+      with a ten-item test list and a link to the execution-specs suite eip7708_eth_transfer_logs pinned at
+      tree 155c3e136d81dcd5c61086c9d832595b7641db4a. Also changes ''non-zero'' to ''nonzero'' in the ordering
+      sentence.'
+    rationale: Closes the three outstanding design questions that determined the EIP's scope (which value flows
+      emit logs) and defines the required test surface, including fork-transition behaviour. Both are inputs
+      to implementation and testing even though no existing normative rule is reworded.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-100615c2c6f3
+    - gh-pr-map-eip-7708
+  - id: eip7708-e11
+    event_kind: revision
+    authored_at: '2026-05-16T14:59:25-06:00'
+    committed_at: '2026-05-17T04:59:25+08:00'
+    commit: 4c64c876efe01ab44aa92d2de961b20d3ffa06da
+    path: EIPS/eip-7708.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Simplifies the EIP by delegating the burn case to EIP-8246. Reverts the title and description
+      to 'ETH transfers emit a log' and the Abstract to 'All ETH transfers emit a log'; adds 8246 to 'requires';
+      deletes the entire 'ETH burn logs' section (the LOG2 Burn event, its topic hash, its two triggers and
+      its ordering rule); replaces 'No backward compatibility issues found' with a Backwards Compatibility
+      subsection stating that after EIP-8246 ETH can no longer be burned via SELFDESTRUCT to self or by sending
+      ETH to an account marked for selfdestruction, so the edge case is not specified here; and removes the
+      two burn-log test cases.
+    rationale: Removes an entire normative log kind from the EIP and makes the remaining specification conditional
+      on another proposal. This is the largest scope reduction in the file's history and directly changes what
+      clients must implement.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-4c64c876efe0
+    - gh-pr-map-eip-7708
+  - id: eip7708-e12
+    event_kind: revision
+    authored_at: '2026-07-10T08:48:21-04:00'
+    committed_at: '2026-07-10T20:48:21+08:00'
+    commit: f7230c46a743313957d8f38a159bda934cc735b2
+    path: EIPS/eip-7708.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review (one frontmatter line).'
+    rationale: Process-metadata change only. This is the last commit touching the file at the pinned repository
+      state.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-f7230c46a743
+    - gh-pr-map-eip-7708
+    - eips-blob-eip7708-pin
+dependency_history:
+  events:
+  - id: eip7708-d00
+    target_eip: 20
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2024-06-11T14:06:54Z'
+    commit: f25c6c8e18e60247e7e6c2b52986f56ad3e9f1f8
+    rationale: 'The creation text links ERC-20 (./eip-20.md) twice: the Motivation contrasts working ERC-20
+      token logs with the absence of ETH logs, and the Rationale states that the new log type ''is compatible
+      with the ERC-20 token standard, but does not introduce any overly-specific ERC-20 features (eg. ABI encodings)''.
+      Relationship ''other'' because at creation ERC-20 is cited as a design model and compatibility target,
+      not required, extended or superseded.'
+    confidence: high
+    source_ids:
+    - eips-commit-f25c6c8e18e6
+    - eips-blob-eip7708-creation
+  - id: eip7708-d01
+    target_eip: 4788
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-01-20T13:05:18Z'
+    commit: e8f1b9a9cd4803e6e84c25a6afce0f980c7c9483
+    rationale: 'Commit e8f1b9a9cd48 introduces the first link to EIP-4788 (./eip-4788.md): the transfer log
+      and the selfdestruct log are both emitted from 0xfff...ffe, identified in the specification tables as
+      SYSTEM_ADDRESS as defined by EIP-4788. The reference reuses another EIP''s defined constant.'
+    confidence: high
+    source_ids:
+    - eips-commit-e8f1b9a9cd48
+  - id: eip7708-d02
+    target_eip: 20
+    event_type: changed
+    relationship: interacts_with
+    occurred_at: '2026-01-20T13:05:18Z'
+    commit: e8f1b9a9cd4803e6e84c25a6afce0f980c7c9483
+    rationale: 'The same commit turns the ERC-20 reference from a motivational analogy into a normative format
+      constraint: topics[0] is fixed to keccak256(''Transfer(address,address,uint256)'') and the text states
+      ''This matches the ERC-20 Transfer event definition''. Relationship changes from ''other'' to ''interacts_with''
+      because ETH transfer logs now share the ERC-20 Transfer event signature that ERC-20 indexers already
+      consume.'
+    confidence: high
+    source_ids:
+    - eips-commit-e8f1b9a9cd48
+  - id: eip7708-d03
+    target_eip: 1559
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-01-21T09:52:30Z'
+    commit: b6ddf5a275423a31497411acab623fea3e46bbe2
+    rationale: Commit b6ddf5a27542 introduces the first link to EIP-1559 (./eip-1559.md), positioning account-closure
+      logs relative to the EIP-1559 priority-fee payment to the coinbase.
+    confidence: high
+    source_ids:
+    - eips-commit-b6ddf5a27542
+  - id: eip7708-d04
+    target_eip: 6780
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-01-28T18:05:09Z'
+    commit: 04026e96ac58077f98a848d0e15ae0e8a599875f
+    rationale: 'Commit 04026e96ac58 adds the frontmatter field ''requires: 1559, 4788, 6780''. EIP-6780 appears
+      only in that field (never as a body link), and the same commit narrows the burn trigger to a contract
+      created in the same transaction, which is the EIP-6780 SELFDESTRUCT semantics. Recorded as an explicit
+      frontmatter-declared requirement. Note that the field is retained at the pinned state even though the
+      burn section was later deleted (event eip7708-e11).'
+    confidence: high
+    source_ids:
+    - eips-commit-04026e96ac58
+  - id: eip7708-d05
+    target_eip: 1559
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-01-28T18:05:09Z'
+    commit: 04026e96ac58077f98a848d0e15ae0e8a599875f
+    rationale: 'The same commit elevates the existing body reference to EIP-1559 into a declared frontmatter
+      requirement (''requires: 1559, 4788, 6780'').'
+    confidence: high
+    source_ids:
+    - eips-commit-04026e96ac58
+  - id: eip7708-d06
+    target_eip: 4788
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-01-28T18:05:09Z'
+    commit: 04026e96ac58077f98a848d0e15ae0e8a599875f
+    rationale: 'The same commit elevates the existing body reference to EIP-4788 into a declared frontmatter
+      requirement (''requires: 1559, 4788, 6780'').'
+    confidence: high
+    source_ids:
+    - eips-commit-04026e96ac58
+  - id: eip7708-d07
+    target_eip: 8246
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-05-16T20:59:25Z'
+    commit: 4c64c876efe01ab44aa92d2de961b20d3ffa06da
+    rationale: Commit 4c64c876efe0 adds 8246 to the frontmatter 'requires' list and adds a Backwards Compatibility
+      subsection stating that after EIP-8246 ETH can no longer be burned via SELFDESTRUCT to self or by sending
+      ETH to an account marked for selfdestruction, which is why this EIP no longer specifies burn logs. EIP-7708's
+      specification at the pin is therefore conditional on EIP-8246.
+    confidence: high
+    source_ids:
+    - eips-commit-4c64c876efe0
+  - id: eip7708-d08
+    target_eip: 1559
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-05-16T20:59:25Z'
+    commit: 4c64c876efe01ab44aa92d2de961b20d3ffa06da
+    rationale: 'The same commit deletes the ''ETH burn logs'' section, which carried the only body link to
+      EIP-1559. The declaration ''requires: 1559, 4788, 6780, 8246'' is retained in the frontmatter at the
+      pinned state, so the explicit reference survives only as a frontmatter requirement with no remaining
+      in-body justification.'
+    confidence: medium
+    source_ids:
+    - eips-commit-4c64c876efe0
+source_registry: outputs/sources/eips/eip-7708.yaml
+unknowns:
+- Frontmatter 'requires' at the pinned state lists 1559, 4788, 6780 and 8246, but only 4788 and 8246 still
+  have body references after commit 4c64c876efe0 removed the 'ETH burn logs' section. Whether the retention
+  of 1559 and 6780 is deliberate or a stale leftover is not stated in any commit, pull request title or file
+  text reviewed; the dependency events record the retention rather than inferring an intent.
+- The 'Soldogn interop breakout' cited by commit 100615c2c6f3 / PR ethereum/EIPs#11596 is an off-repository
+  meeting. No contemporaneous minutes were retrieved for this work unit, and the commit itself is the primary
+  evidence for the recorded decisions (no fee-payment logs, no withdrawal logs, SYSTEM_ADDRESS confirmed).
+  Meeting-level evidence is fork-work-unit scope.
+- Negative search - no commit in the reviewed history renames or moves EIPS/eip-7708.md, and 'git log --follow'
+  reports a single added path, so no pre-rename history exists to review.
+- Event timestamps are reproduced with the offsets recorded in Git. Committer timezone offsets in this repository
+  are set by the merge tooling (frequently +08:00) and are not evidence of where a change was made; all summary
+  and creation dates are the equivalent UTC instants.

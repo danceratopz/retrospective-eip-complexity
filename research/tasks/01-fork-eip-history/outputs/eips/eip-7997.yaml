@@ -1,0 +1,467 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7997
+  title: Deterministic Factory Contract
+  source_ids:
+  - eips-blob-eip7997-pin
+research_run:
+  started_at: '2026-08-21T00:41:14Z'
+  completed_at: '2026-08-21T01:10:00Z'
+  researcher: claude subagent eip-amsterdam-1 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-08-03'
+  frontmatter_source_ids:
+  - eips-blob-eip7997-creation
+  - eips-blob-eip7997-pin
+  first_repository_commit:
+    authored_at: '2025-08-19T16:32:51Z'
+    committed_at: '2025-08-19T16:32:51Z'
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    path: EIPS/eip-7997.md
+    source_ids:
+    - eips-commit-f8be9ce27bdb
+    - gh-pr-map-eip-7997
+  discrepancy_note: 'The frontmatter ''created'' date (2025-08-03) precedes the first repository commit (f8be9ce27bdb513ba72abddde06cb5e806447230,
+    authored and committed 2025-08-19T16:32:51Z) by 16 days. The adding pull request, ethereum/EIPs#10092 ''Add
+    EIP: Deterministic Factory Predeploy'', was opened 2025-08-04T01:53:31Z - which is still 2025-08-03 in
+    the author''s Americas timezone, matching the declared creation date - and merged 2025-08-19T16:32:52Z.
+    The gap is therefore EIP-editor review latency between opening the submission pull request and merging
+    it; the two dates do not conflict. The frontmatter ''created'' value is unchanged at the pinned state,
+    including across the 2026-06-09 redesign that replaced the entire specification.'
+revision_history:
+  summary:
+    file_commit_count: 13
+    post_creation_revision_count: 12
+    substantive_revision_count: 7
+    non_substantive_revision_count: 5
+    uncertain_revision_count: 0
+    first_revision_at: '2025-08-30T23:11:58Z'
+    last_revision_at: '2026-07-17T13:03:30Z'
+    first_substantive_revision_at: '2025-08-30T23:11:58Z'
+    last_substantive_revision_at: '2026-07-17T13:03:30Z'
+    derived_from_event_ids:
+    - eip7997-e00
+    - eip7997-e01
+    - eip7997-e02
+    - eip7997-e03
+    - eip7997-e04
+    - eip7997-e05
+    - eip7997-e06
+    - eip7997-e07
+    - eip7997-e08
+    - eip7997-e09
+    - eip7997-e10
+    - eip7997-e11
+    - eip7997-e12
+  events:
+  - id: eip7997-e00
+    event_kind: creation
+    authored_at: '2025-08-19T13:32:51-03:00'
+    committed_at: '2025-08-19T16:32:51+00:00'
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    path: EIPS/eip-7997.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Initial addition of EIP-7997 'Deterministic Factory Predeploy' (status Draft, author Francisco
+      Giordano, requires 211 and 1014). Specifies FACTORY_ADDRESS = 0x0B and, upon activation, setting that
+      account's code to the 52-byte minimal CREATE2 factory 60203610602f57...60006000fd, given in full as a
+      Constantinople-targeted assembly listing (input = 32-byte salt followed by init code; revert if input
+      is shorter than 32 bytes; forward callvalue to CREATE2; propagate the creation frame's return data on
+      failure; return the 32-byte-padded created address on success). Motivation enumerates four existing workarounds
+      for bootstrapping a multi-chain factory and their problems; Rationale covers the precompile-range placement,
+      input validation, the deliberate absence of frontrunning protection, why not a new transaction type,
+      and the Constantinople/no-PUSH0 target. Test Cases are 'TBD'.
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-f8be9ce27bdb
+    - eips-blob-eip7997-creation
+    - gh-pr-map-eip-7997
+  - id: eip7997-e01
+    event_kind: revision
+    authored_at: '2025-08-30T20:11:58-03:00'
+    committed_at: '2025-08-30T23:11:58+00:00'
+    commit: 85d76ebe7795c478efecc119054744ac492709e9
+    path: EIPS/eip-7997.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Rewrites the Abstract and two Motivation paragraphs, and - the substantive part - adds a prose
+      normative specification of the factory''s behaviour ahead of the bytecode: when called, the account invokes
+      CREATE2 (linking EIP-1014) with salt = first 32 bytes of input, init code = the remaining input and value
+      = the call''s value; the call reverts with empty return data if input is shorter than 32 bytes; if CREATE2
+      outputs 0 the call reverts with the creation frame''s return data. The bytecode is retained and is now
+      described as implementing that specification.'
+    rationale: Before this commit the only normative statement of behaviour was the opaque hex blob plus an
+      assembly listing. Stating the interface and the two failure modes in prose is what clients and test authors
+      implement against, and it is the first appearance of the EIP-1014 body reference.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-85d76ebe7795
+    - gh-pr-map-eip-7997
+  - id: eip7997-e02
+    event_kind: revision
+    authored_at: '2025-09-02T21:25:47-03:00'
+    committed_at: '2025-09-03T00:25:47+00:00'
+    commit: 42fe603d7c85a6a303e48549f2e24052c98403ef
+    path: EIPS/eip-7997.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter description reworded from 'A minimal `CREATE2` factory usable across EVM chains.'
+      to 'A minimal `CREATE2` factory shared by EVM chains.'
+    rationale: Single-line metadata wording change; no normative content is touched.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-42fe603d7c85
+    - gh-pr-map-eip-7997
+  - id: eip7997-e03
+    event_kind: revision
+    authored_at: '2025-10-27T21:03:10+03:00'
+    committed_at: '2025-10-28T02:03:10+08:00'
+    commit: a9ca3432e0541a23f17d18c8c22cdaa2dabbb014
+    path: EIPS/eip-7997.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Rationale ''Input validation'' paragraph: ''the minimum size that contains a nonce'' becomes
+      ''the minimum size that contains the salt''.'
+    rationale: Corrects a wrong term in explanatory prose. The Specification already called the first 32 bytes
+      a salt, so no normative rule changes and no implementation could have differed.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a9ca3432e054
+    - gh-pr-map-eip-7997
+  - id: eip7997-e04
+    event_kind: revision
+    authored_at: '2025-11-05T19:05:32-03:00'
+    committed_at: '2025-11-05T22:05:32+00:00'
+    commit: ec05b85e530a7ea97ea52a1f0312d88eb0eb1be2
+    path: EIPS/eip-7997.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Changes the single parameter FACTORY_ADDRESS from 0x0B to 0x12 (and the matching Rationale text,
+      now 'the next lowest address after currently accepted precompiles'), and adds a Backwards Compatibility
+      section requiring that FACTORY_ADDRESS not be used by other precompiles or predeploys on a chain, with
+      the constant chosen to minimise that risk.
+    rationale: Changes the address at which every deterministic deployment resolves - the EIP's defining constant
+      - and adds a new compatibility requirement on chains adopting it.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-ec05b85e530a
+    - gh-pr-map-eip-7997
+  - id: eip7997-e05
+    event_kind: revision
+    authored_at: '2026-06-09T17:01:38-03:00'
+    committed_at: '2026-06-09T20:01:38+00:00'
+    commit: a0a7f5adb491fc6ad4b008f307899c30f348db22
+    path: EIPS/eip-7997.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Complete redesign: the EIP stops specifying a new predeploy and instead formalises the already-deployed
+      ''Arachnid'' keyless factory. Title becomes ''Deterministic Factory Contract''; Toni Wahrstaetter and
+      Nick Johnson are added as co-authors; ''requires'' drops 211 and keeps 1014. FACTORY_ADDRESS becomes
+      0x4e59b44847b379578588920cA78FbF26c0B4956C and the runtime code becomes 0x7fffffff...6014600cf3. The
+      requirement is restated as ''the chain''s state MUST include FACTORY_ADDRESS with nonce 1 and this runtime
+      code'', satisfiable by an ordinary (including keyless) transaction, by genesis inclusion, or by an irregular
+      state transition. Behaviour differences from the previous factory are spelled out: an input shorter than
+      32 bytes causes an attempted ~2^256-byte calldatacopy and reverts as a result; a failed creation reverts
+      with EMPTY return data rather than propagating the creation frame''s data; the created address is returned
+      as exactly 20 unpadded bytes. Motivation is condensed and re-argued around keyless transactions becoming
+      undeployable as gas schedules change. The whole previous Rationale is replaced by a ''Choice of factory''
+      section (about 25000 mainnet uses, hundreds of chains, EIP-1014 compatibility, no PUSH0 dependency per
+      EIP-3855, and the two accepted downsides). Backwards Compatibility becomes ''no issues; a no-op on chains
+      that already have it''. The Test Cases section is deleted and a Yul-equivalent listing replaces the assembly
+      listing.'
+    rationale: Replaces the specified contract, its address, its bytecode, its revert and return-data semantics,
+      and the mechanism by which a chain satisfies the EIP. Nothing normative survives from the previous specification;
+      this is the single largest change in the file's history.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a0a7f5adb491
+    - gh-pr-map-eip-7997
+  - id: eip7997-e06
+    event_kind: revision
+    authored_at: '2026-07-02T07:27:44+02:00'
+    committed_at: '2026-07-02T13:27:44+08:00'
+    commit: 0b59e164e21764ffdc5bca33ee0cf191e73b6002
+    path: EIPS/eip-7997.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Removes the nonce from the state requirement: ''MUST include FACTORY_ADDRESS with nonce 1 and
+      this runtime code'' becomes ''MUST include FACTORY_ADDRESS with this runtime code'', and the closing
+      sentence drops ''MUST have the nonce and runtime code'' in favour of ''MUST have the runtime code specified
+      above. If deployed using an irregular state transition, the nonce SHOULD be set to 1.'''
+    rationale: Downgrades a MUST on account nonce to a conditional SHOULD, changing what a conforming chain
+      state and any state test must assert.
+    change_group: eip7997-factory-nonce
+    confidence: high
+    source_ids:
+    - eips-commit-0b59e164e217
+    - gh-pr-map-eip-7997
+  - id: eip7997-e07
+    event_kind: revision
+    authored_at: '2026-07-02T08:42:54+02:00'
+    committed_at: '2026-07-02T06:42:54+00:00'
+    commit: f63ba053296dbb684aafdcfb9e4be7c972e88f5d
+    path: EIPS/eip-7997.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Replaces the SHOULD introduced by the previous commit with an explicit rule: ''When deployed
+      using an irregular state transition, if the account nonce is 0, it MUST be set to 1, and if the account
+      nonce is already nonzero, it MUST NOT be modified.'''
+    rationale: Restores normative force to the nonce handling and adds the preserve-existing-nonce case. Part
+      of the same three-commit nonce rework as events eip7997-e06 and eip7997-e08, merged within eight hours
+      of each other.
+    change_group: eip7997-factory-nonce
+    confidence: high
+    source_ids:
+    - eips-commit-f63ba053296d
+    - gh-pr-map-eip-7997
+  - id: eip7997-e08
+    event_kind: revision
+    authored_at: '2026-07-02T10:09:57-03:00'
+    committed_at: '2026-07-02T13:09:57+00:00'
+    commit: f0015e02590db2a44cc0597e37075c5a2c3cf61d
+    path: EIPS/eip-7997.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds the nonce back to the summary requirement sentence: the chain''s state ''MUST include FACTORY_ADDRESS
+      with nonzero nonce and this runtime code''.'
+    rationale: Reinstates a nonce condition at the top-level MUST, this time as 'nonzero' rather than '1',
+      so the summary matches the detailed irregular-state-transition rule. Completes the nonce rework change
+      group.
+    change_group: eip7997-factory-nonce
+    confidence: high
+    source_ids:
+    - eips-commit-f0015e02590d
+    - gh-pr-map-eip-7997
+  - id: eip7997-e09
+    event_kind: revision
+    authored_at: '2026-07-04T15:24:33-03:00'
+    committed_at: '2026-07-04T18:24:33+00:00'
+    commit: 40ff72bf386aa554ebaeca9c8ae62d8d8762af83
+    path: EIPS/eip-7997.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Replaces the five-line 'equivalent runtime Yul code when compiled for Constantinople' with a byte-offset
+      disassembly of the actual runtime bytecode (PUSH32 0xff..e0, CALLDATASIZE, ADD, ... PUSH1 0x14, PUSH1
+      0x0c, RETURN).
+    rationale: The normative artefact is the hex runtime code, which is byte-identical before and after. This
+      commit only changes the human-readable rendering beside it - from a Yul program the bytecode was never
+      actually compiled from, to an exact disassembly. Confidence is medium rather than high because an alternative
+      reading is that replacing an inexact equivalent with an exact one materially aids implementation review.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-40ff72bf386a
+    - gh-pr-map-eip-7997
+  - id: eip7997-e10
+    event_kind: revision
+    authored_at: '2026-07-05T01:39:04+02:00'
+    committed_at: '2026-07-05T07:39:04+08:00'
+    commit: d490ca552a36b103426fac04fd0bb4eab82e6165
+    path: EIPS/eip-7997.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds Jochem Brouwer as co-author and reformats the disassembly into a lowercase ```asm block grouped
+      into blank-line-separated stanzas, dropping the byte offsets. The instruction sequence is unchanged.
+    rationale: 'Author metadata plus presentation of an already-informative listing. Note that the pull request
+      title, ''Add EAS-like bytecode + add required EIP'', announces a change to the ''requires'' field, but
+      the merged diff makes no such change: ''requires: 1014'' is identical before and after this commit and
+      at the pinned state. The classification follows the merged diff, not the title.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-d490ca552a36
+    - gh-pr-map-eip-7997
+  - id: eip7997-e11
+    event_kind: revision
+    authored_at: '2026-07-07T12:42:51-04:00'
+    committed_at: '2026-07-08T00:42:51+08:00'
+    commit: e960dd69bd7b6d81647db09bdfd985a3706bc3f9
+    path: EIPS/eip-7997.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review (one frontmatter line).'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-e960dd69bd7b
+    - gh-pr-map-eip-7997
+  - id: eip7997-e12
+    event_kind: revision
+    authored_at: '2026-07-17T16:03:30+03:00'
+    committed_at: '2026-07-17T13:03:30+00:00'
+    commit: e239a2e8a2a7f4100f5c6605805ae0ca8624b5b9
+    path: EIPS/eip-7997.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Removes the irregular state transition as a way of satisfying the EIP and removes the nonce rules
+      that went with it. The Motivation sentence drops ''or added via irregular state transition''; the Specification
+      now allows only an ordinary (including keyless) transaction or genesis inclusion with a nonce equal to
+      1, deletes the nonce-0-MUST-be-set-to-1 / nonzero-MUST-NOT-be-modified rules, and adds: if a chain''s
+      gas parameters no longer allow the keyless transaction, the only remedy is a coordinated irregular state
+      transition that is out of scope, and ''Client software MUST NOT check for the existence of the contract
+      at the fork boundary.'''
+    rationale: Turns the EIP from something a client executes at activation into a chain-state expectation
+      with an explicit prohibition on any fork-boundary check, and removes the nonce rules established by the
+      preceding three commits. Directly changes what clients implement and what a fork-transition test may
+      assert. This is the last commit touching the file at the pinned repository state.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-e239a2e8a2a7
+    - gh-pr-map-eip-7997
+    - eips-blob-eip7997-pin
+dependency_history:
+  events:
+  - id: eip7997-d00
+    target_eip: 211
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-08-19T16:32:51Z'
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    rationale: 'The creation frontmatter declares ''requires: 211, 1014''. EIP-211 (RETURNDATASIZE / RETURNDATACOPY)
+      is not linked in the body, but the specified factory bytecode uses returndatasize and returndatacopy
+      to propagate the creation frame''s revert data.'
+    confidence: high
+    source_ids:
+    - eips-commit-f8be9ce27bdb
+    - eips-blob-eip7997-creation
+  - id: eip7997-d01
+    target_eip: 1014
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-08-19T16:32:51Z'
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    rationale: 'The creation frontmatter declares ''requires: 211, 1014''. EIP-1014 defines the CREATE2 instruction
+      the factory is built around. At creation the reference is frontmatter-only.'
+    confidence: high
+    source_ids:
+    - eips-commit-f8be9ce27bdb
+    - eips-blob-eip7997-creation
+  - id: eip7997-d02
+    target_eip: 155
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2025-08-19T16:32:51Z'
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    rationale: 'The creation Motivation links EIP-155 (./eip-155.md) when describing workaround 1: Nick''s
+      keyless transaction only works on chains that ''support legacy transactions without EIP-155 replay protection''.
+      Relationship ''other'' - the reference describes a constraint on an alternative approach the EIP rejects,
+      not a requirement of this EIP.'
+    confidence: high
+    source_ids:
+    - eips-commit-f8be9ce27bdb
+    - eips-blob-eip7997-creation
+  - id: eip7997-d03
+    target_eip: 7702
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2025-08-19T16:32:51Z'
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    rationale: The creation Motivation links EIP-7702 (./eip-7702.md) when describing workaround 3 (leaked
+      private key plus an EIP-7702 delegation) and argues against depending on it. Relationship 'other' - cited
+      as a rejected alternative mechanism, not required or extended.
+    confidence: high
+    source_ids:
+    - eips-commit-f8be9ce27bdb
+    - eips-blob-eip7997-creation
+  - id: eip7997-d04
+    target_eip: 5792
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2025-08-19T16:32:51Z'
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    rationale: The creation Motivation links EIP-5792 (./eip-5792.md) as the abstraction through which applications
+      access account-abstraction capabilities, arguing that ecosystem pressure to adopt EIP-7702 is weak. Relationship
+      'other' - a contextual citation in an argument, with no technical dependency.
+    confidence: high
+    source_ids:
+    - eips-commit-f8be9ce27bdb
+    - eips-blob-eip7997-creation
+  - id: eip7997-d05
+    target_eip: 1014
+    event_type: changed
+    relationship: requires
+    occurred_at: '2025-08-30T23:11:58Z'
+    commit: 85d76ebe7795c478efecc119054744ac492709e9
+    rationale: Commit 85d76ebe7795 adds the first body link to EIP-1014 (./eip-1014.md) inside the new prose
+      specification ('invokes the `CREATE2` instruction (EIP-1014)'), so the frontmatter-only requirement becomes
+      an in-text normative reference. The declared 'requires' entry is unchanged.
+    confidence: high
+    source_ids:
+    - eips-commit-85d76ebe7795
+  - id: eip7997-d06
+    target_eip: 211
+    event_type: removed
+    relationship: requires
+    occurred_at: '2026-06-09T20:01:38Z'
+    commit: a0a7f5adb491fc6ad4b008f307899c30f348db22
+    rationale: 'Commit a0a7f5adb491 changes the frontmatter from ''requires: 211, 1014'' to ''requires: 1014''.
+      Consistent with the switch to the Arachnid factory, whose bytecode reverts with empty return data instead
+      of propagating the creation frame''s data and therefore no longer uses the EIP-211 return-data opcodes.'
+    confidence: high
+    source_ids:
+    - eips-commit-a0a7f5adb491
+  - id: eip7997-d07
+    target_eip: 155
+    event_type: removed
+    relationship: other
+    occurred_at: '2026-06-09T20:01:38Z'
+    commit: a0a7f5adb491fc6ad4b008f307899c30f348db22
+    rationale: The same commit condenses the four-workaround list to one line each, deleting the ./eip-155.md
+      link. No reference to EIP-155 remains at the pinned state.
+    confidence: high
+    source_ids:
+    - eips-commit-a0a7f5adb491
+  - id: eip7997-d08
+    target_eip: 5792
+    event_type: removed
+    relationship: other
+    occurred_at: '2026-06-09T20:01:38Z'
+    commit: a0a7f5adb491fc6ad4b008f307899c30f348db22
+    rationale: The same commit deletes the ./eip-5792.md link together with the long-form argument against
+      workaround 3. No reference to EIP-5792 remains at the pinned state.
+    confidence: high
+    source_ids:
+    - eips-commit-a0a7f5adb491
+  - id: eip7997-d09
+    target_eip: 3855
+    event_type: introduced
+    relationship: other
+    occurred_at: '2026-06-09T20:01:38Z'
+    commit: a0a7f5adb491fc6ad4b008f307899c30f348db22
+    rationale: The same commit adds the 'Choice of factory' Rationale, which links EIP-3855 (./eip-3855.md)
+      to state that the factory bytecode 'does not depend on the more recent `PUSH0`'. Relationship 'other'
+      - an explicit non-dependency claim, recorded because it is an explicit cross-EIP reference in the EIP's
+      own text.
+    confidence: high
+    source_ids:
+    - eips-commit-a0a7f5adb491
+source_registry: outputs/sources/eips/eip-7997.yaml
+unknowns:
+- 'The pull request for commit d490ca552a36 (ethereum/EIPs#11856) is titled ''Add EAS-like bytecode + add required
+  EIP'', but the merged diff changes only the author line and the disassembly formatting; ''requires: 1014''
+  is byte-identical before and after. Whether a ''requires'' change was dropped during review is not determinable
+  from the repository history reviewed here, and no dependency event is recorded for this commit.'
+- EIP-7773 (the Amsterdam Meta EIP) lists this proposal under its former title 'Deterministic Factory Predeploy';
+  the file title became 'Deterministic Factory Contract' at commit a0a7f5adb491 (2026-06-09T20:01:38Z). Reconciling
+  Meta EIP text is fork-work-unit scope and is recorded here only so the title change is visible.
+- RIP-7740 is named in the Motivation from creation until commit a0a7f5adb491 removed the long-form workaround
+  list. It is a Rollup Improvement Proposal, not an EIP, and is not linked as ./eip-7740.md, so it is not recorded
+  as a cross-EIP dependency event. Recorded here as a visible negative decision rather than a silent omission.
+- Negative search - no commit in the reviewed history renames or moves EIPS/eip-7997.md, and 'git log --follow'
+  reports a single added path, so no pre-rename history exists to review.
+- Event timestamps are reproduced with the offsets recorded in Git. Committer timezone offsets in this repository
+  are set by the merge tooling and are not evidence of where a change was made; all summary and creation dates
+  are the equivalent UTC instants.

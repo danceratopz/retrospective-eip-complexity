@@ -1,0 +1,497 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7642
+  title: eth/69 - history expiry and simpler receipts
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: EIP-7642 introduces eth/69 by removing the obsolete total-difficulty field
+    from the Status message and omitting the bloom field from both legacy and typed receipts sent in the
+    Receipts message. Receiving peers reconstruct a receipt bloom from its logs. The change is versioned
+    so older peers can continue using eth/68, and the proposal expressly makes no EVM consensus change
+    and requires no hard fork.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7642/manifest.yaml
+    manifest_sha256: bcca74a5152ef19a6a36e0c7c4467bdb05ab0e1c81bdd885b5b0b94125a6aa42
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 1632462ccf6dfb5d27b7e4bd2cacf0ac122ad4b2
+    path: EIPS/eip-7642.md
+    committed_at: '2025-01-08T16:54:23Z'
+    git_blob_sha: 2a8835e5d926895fc0e0b77675bd4bcf846abb16
+    content_sha256: 3a81334713ccb1643370a4135d8bb91348851efd032ca3bcf1c20418f4354b48
+    immutable_url: https://github.com/ethereum/EIPs/blob/1632462ccf6dfb5d27b7e4bd2cacf0ac122ad4b2/EIPS/eip-7642.md
+    information_cutoff_at: '2025-02-21T16:21:57Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7642.md
+    content_sha256: a8c6d008ee9e2dd07b138e9b6bffeced49cb53495856d773c362807cf7ca9720
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T13:23:46+02:00'
+    session_id: assessment-run-5cd349e3-8047-4f5b-b83c-4d582b401f7d
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-5793.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+  assessor_raw_output:
+    path: outputs/raw/fork-eips/osaka/eip-7642.yaml
+    content_sha256: 337c337d693c43662cd0cf05d70fc3254b9a944904596690ca94a9f119bab8f0
+  postprocessing:
+  - id: task05_first_run_schema_normalization_v1
+    applied_at: '2026-08-21T11:27:20.959583Z'
+    semantic_scores_changed: false
+    changes:
+    - normalized EIP-prefixed interaction identifiers to integers
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The specification changes only eth protocol message fields, and the EIP expressly states
+      that it does not change EVM consensus rules.
+  rationale: Neither EVM execution nor any gas-accounting rule is changed, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64
+    summary: The only specified operations remove fields from the Status and Receipts wire messages and
+      reconstruct receipt blooms from logs.
+  rationale: No opcode execution or ordering between a state access and a gas charge is modified, satisfying
+    the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The proposal is limited to networking-message encodings and disclaims an EVM consensus change.
+  rationale: No blob-gas mechanism or value is introduced or updated, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The specified changes concern two eth wire messages and do not change EVM consensus rules.
+  rationale: The proposal neither charges for state writes nor alters a state-gas budget, rate, reservoir,
+    or spill path, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The EIP specifies only wire-message field removal and states that EVM consensus rules do
+      not change.
+  rationale: No EVM gas-refund mechanism is introduced, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-64
+    summary: eth/69 changes the established field layouts of Status and Receipts, including both legacy
+      and typed receipt encodings.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: The changed wire format is isolated behind a new protocol version while older clients may
+      continue using eth/68.
+  rationale: Existing protocol tests for the two affected messages must use the eth/69 layouts, but this
+    is a minor, narrow subset rather than a considerable or diverse share of pre-existing tests, matching
+    score 1.
+  confidence: medium
+  uncertainty_note: The package does not describe the breadth or organization of the existing networking
+    test corpus.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-64
+    summary: The proposal replaces the expected layouts of two versioned messages; it does not specify
+      an additional result that unrelated tests must assert.
+  rationale: Tests of the affected message formats change their expectations, but pre-existing tests outside
+    that scope gain no new invariant, satisfying the zero anchor.
+  confidence: medium
+  uncertainty_note: No test-suite structure is included, but the EIP states no cross-cutting assertion.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: The EIP changes a versioned wire protocol, makes no EVM consensus change, and requires no
+      hard fork.
+  rationale: A state-transition tool has no new field or mechanism to expose, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-64
+    summary: The change consists of explicit old and new message schemas plus a deterministic bloom reconstruction
+      from receipt logs.
+  rationale: The text gives no need for a new reusable expectation, modifier, or framework abstraction
+    beyond ordinary encoding and decoding test cases, so existing primitives reasonably suffice.
+  confidence: medium
+  uncertainty_note: The historical test framework is not part of the sealed package.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 14-18; Specification, lines 32-64
+    summary: The proposal removes two networking fields and derives an existing bloom value from receipt
+      logs; it introduces no cryptographic primitive.
+  rationale: No cryptographic mechanism is added or modified, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-64
+    summary: Two message layouts change at the eth/68-to-eth/69 boundary, and receipt handling spans both
+      legacy and typed forms while deriving blooms from possibly varying log lists.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: Nodes may support both wire-protocol versions, creating a negotiated version boundary without
+      a hard-fork boundary.
+  rationale: 'There are multiple boundary-prone mechanisms: version-specific Status field counts and version-
+    plus receipt-form-specific Receipts decoding and bloom reconstruction. None is shown to demand an
+    elevated case explosion, so score 2 is the best-fitting anchor.'
+  confidence: medium
+  uncertainty_note: Malformed and mixed-version message handling is not specified, so the exact number
+    of negative boundary cases is uncertain.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 22-27; Specification, lines 40-64
+    summary: The EIP reduces data sent during sync by changing receipt-message encoding; it does not modify
+      block RLP or block-validation encoding.
+  rationale: Although the Receipts message is used in syncing, the anchor specifically concerns block
+    RLP validation. No such validation mechanism is introduced, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64
+    summary: All changes are to the peer-to-peer eth Status and Receipts messages.
+  rationale: No Engine API endpoint, field, or communication mechanism is added or modified, satisfying
+    the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The proposal changes only wire-message fields and does not change EVM consensus rules.
+  rationale: No system contract is introduced, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The proposal is confined to eth wire-message representations and has no EVM consensus effect.
+  rationale: No existing system contract code, state, or behavior is directly or indirectly modified,
+    satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: The EIP is a wire-protocol version change and expressly leaves EVM consensus rules unchanged.
+  rationale: No opcode is introduced, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: The proposal changes the eth protocol but not EVM consensus rules.
+  rationale: No existing opcode behavior is modified or deprecated, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The specified scope is two networking messages with no EVM consensus change.
+  rationale: No precompile is introduced, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 32-64; Backwards Compatibility, lines 76-80
+    summary: The proposal changes networking encodings only and leaves EVM consensus rules unchanged.
+  rationale: No precompile logic or gas schedule is modified, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-64
+    summary: eth/69 removes td from the Status field sequence and bloom from the receipt-data sequence
+      used for both legacy and typed Receipts payloads.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: The altered interface is deployed as a new eth wire-protocol version.
+  rationale: The ordered encoding of two peer interface messages changes. The rubric's binary encoding-change
+    anchor assigns score 3 when an encoding change is introduced at an interface level.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-64
+    summary: The Receipts grammar retains the existing distinction between legacy and typed receipts and
+      merely omits bloom from their receipt data.
+  rationale: No transaction type is introduced, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-64; Backwards Compatibility, lines 76-80
+    summary: Only the network representation of receipts changes, and the EIP states that EVM consensus
+      rules are unchanged.
+  rationale: No transaction validity rule or intrinsic-gas calculation is added or modified, satisfying
+    the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-64
+    summary: The Status schema retains existing blockhash and genesis elements while removing td, and
+      the other change concerns receipt-message payloads.
+  rationale: No new block or block-header field is introduced, satisfying the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: Rollout occurs through a new negotiated wire-protocol version; the EIP expressly requires
+      no hard fork.
+  rationale: No state or internal variable is modified at a fork-activation block, satisfying the zero
+    anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 22-27
+    summary: Existing sync behavior is said to regenerate, transmit, and verify about 530 GB of receipt
+      blooms per syncing peer.
+  - source: eip.md
+    locator: Rationale, lines 73-74
+    summary: The proposal shifts work by reducing serving-node CPU and at least 95 GiB of compressed bandwidth
+      while requiring receivers to recompute blooms.
+  rationale: Validating the claimed effect requires end-to-end sync behavior, including serving CPU, receiver
+    recomputation, compression, and network transfer; it cannot be fully benchmarked in isolation and
+    substantially changes existing sync performance. This matches score 3.
+  confidence: medium
+  uncertainty_note: The package contains estimates and qualitative CPU claims but no benchmark method
+    or measurements with which to bound the validation work.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80; Security Considerations, lines 82-84
+    summary: The change is isolated behind eth/69, older peers may retain eth/68, no consensus rule changes,
+      and the EIP records no security considerations.
+  - source: eip.md
+    locator: Specification, lines 40-64
+    summary: Receivers deterministically reconstruct an omitted bloom from the logs in the received receipt.
+  rationale: Incorrect encoding, decoding, or reconstruction could disrupt eth/69 peer interoperability
+    or syncing, but the mechanism is self-contained and does not alter a chain-consensus security invariant.
+    That fits the isolated mechanism at score 1.
+  confidence: medium
+  uncertainty_note: The proposal does not specify malformed-message handling, so availability implications
+    cannot be completely assessed from the package.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-64
+    summary: The happy-path eth/69 receipt shape and derivation of bloom from logs are stated, but receiver
+      requirements and invalid or old-layout receipt handling are not expressly defined.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 76-80
+    summary: Multiple protocol versions may coexist, with old peers continuing to use eth/68.
+  rationale: A few negative-path and reconstruction-timing details remain unstated, but the obvious intended
+    reading is to apply the specified schema for the negotiated version and derive the existing bloom
+    value from logs. This fits score 1 rather than a detail requiring broad redesign.
+  confidence: medium
+  uncertainty_note: The package contains no general eth protocol error-handling rules, implementation
+    status, devnet record, or discussion record from which to determine whether those details were already
+    shared assumptions.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Front matter, lines 1-12
+    summary: EIP-7642 explicitly requires EIP-5793.
+  - source: supporting/eip-5793.md
+    locator: Specification, lines 26-36; Backwards Compatibility, lines 46-50
+    summary: EIP-5793 defines the eth/68 predecessor message change and its coexistence with eth/67, providing
+      the version on which eth/69 builds.
+  rationale: 'The sole direct interaction is EIP-5793: EIP-7642 advances its eth/68 base protocol to eth/69.
+    Coordinated version and regression cases are needed, but the interaction is limited and the two message
+    changes can mostly be tested independently, matching score 1.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 5793
+totals:
+  primary_score: 12
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: Localized under-specification remains around receiver behavior for malformed or mixed-version
+    receipt encodings and whether or when bloom reconstruction is mandatory. The intended happy-path schema
+    and derivation are nevertheless clear.
+  affected_criteria:
+  - edge_boundary_conditions
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 11
+    maximum: 15
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - Must an eth/69 receiver reject a receipt carrying the old bloom field, and what peer error or disconnect
+    behavior applies?
+  - Must the receiver reconstruct every bloom while decoding, before receipt verification or use, or only
+    on demand?
+  - Which malformed combinations of typed or legacy receipt payloads are valid enough to decode under
+    eth/69?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: This assessment used only PROMPT.md, TASK.md, the sealed package manifest and output template
+    for operational instructions and provenance, and the three pre-populated admissible assessment sources.
+    No internet access was attempted, no links were followed, no skill was invoked, and no prohibited
+    or later implementation information was consulted.
+notable_ambiguities:
+- The manifest and output template title EIP-7642 as "eth/69 - history expiry and simpler receipts," while
+  the sealed EIP front matter titles it "eth/69 - Drop pre-merge fields." The EIP number and sealed blob
+  identity match, so the assessment follows the contents of that blob while preserving populated provenance.
+- The manifest labels the layer as execution, whereas the sealed EIP categorizes itself as Networking
+  and specifies peer wire messages; the rubric is applied to that historical networking scope without
+  changing the populated layer.
+overall_confidence: medium

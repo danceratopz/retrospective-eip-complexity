@@ -1,0 +1,454 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7981
+  title: Increase Access List Cost
+  source_ids:
+  - eips-blob-eip7981-pin
+research_run:
+  started_at: '2026-08-21T00:41:14Z'
+  completed_at: '2026-08-21T01:40:00Z'
+  researcher: claude subagent eip-amsterdam-1 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2024-12-27'
+  frontmatter_source_ids:
+  - eips-blob-eip7981-creation
+  - eips-blob-eip7981-pin
+  first_repository_commit:
+    authored_at: '2025-07-13T13:11:37Z'
+    committed_at: '2025-07-13T13:11:37Z'
+    commit: a18e17596411029b0b9e96034d0f66ec9c493d41
+    path: EIPS/eip-7981.md
+    source_ids:
+    - eips-commit-a18e17596411
+    - gh-pr-map-eip-7981
+    - eips-blob-eip7976-pin
+  discrepancy_note: 'The frontmatter ''created'' date (2024-12-27) precedes the first repository commit (a18e17596411029b0b9e96034d0f66ec9c493d41,
+    authored and committed 2025-07-13T13:11:37Z) by just over six months, and it also precedes the opening
+    of the adding pull request, ethereum/EIPs#9946 ''Add EIP: Increase access list cost'', by six months (opened
+    2025-06-27T10:29:46Z, merged 2025-07-13T13:11:37Z). This is NOT the ordinary open-to-merge review latency
+    seen in most EIPs: the declared creation date is unsupported by any repository event. The pull request
+    body is a single sentence with no date, and the frontmatter value is never edited in any of the twelve
+    reviewed commits. As neighbouring evidence, the closely related EIP-7976 by the same author declares created
+    2025-06-18 and was first committed 2025-06-24, so EIP numbers in this range were being allocated in mid-2025.
+    The discrepancy is recorded as unexplained; see unknowns. The earliest independently verifiable repository
+    event is the 2025-07-13 creation commit.'
+revision_history:
+  summary:
+    file_commit_count: 12
+    post_creation_revision_count: 11
+    substantive_revision_count: 8
+    non_substantive_revision_count: 3
+    uncertain_revision_count: 0
+    first_revision_at: '2025-08-21T14:36:01Z'
+    last_revision_at: '2026-07-07T17:08:18Z'
+    first_substantive_revision_at: '2025-08-21T14:36:01Z'
+    last_substantive_revision_at: '2026-05-07T09:28:59Z'
+    derived_from_event_ids:
+    - eip7981-e00
+    - eip7981-e01
+    - eip7981-e02
+    - eip7981-e03
+    - eip7981-e04
+    - eip7981-e05
+    - eip7981-e06
+    - eip7981-e07
+    - eip7981-e08
+    - eip7981-e09
+    - eip7981-e10
+    - eip7981-e11
+  events:
+  - id: eip7981-e00
+    event_kind: creation
+    authored_at: '2025-07-13T15:11:37+02:00'
+    committed_at: '2025-07-13T21:11:37+08:00'
+    commit: a18e17596411029b0b9e96034d0f66ec9c493d41
+    path: EIPS/eip-7981.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Initial addition of EIP-7981 'Increase access list cost' (status Draft, author Toni Wahrstaetter,
+      requires 2930). Adds a flat data charge of ACCESS_LIST_DATA_COST_PER_BYTE = 16 gas per byte of access-list
+      data on top of the existing EIP-2930 costs (ACCESS_LIST_ADDRESS_COST 2400, ACCESS_LIST_STORAGE_KEY_COST
+      1900), with access_list_data_bytes = addresses * 20 + storage_keys * 32, giving 2720 gas per address
+      and 2412 gas per storage key. Motivated as closing the loophole that lets access lists circumvent EIP-7623
+      floor pricing. Includes a maximum-block-size analysis at a 36M gas limit (607 KB down to 478 KB) and
+      three worked test cases.
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a18e17596411
+    - eips-blob-eip7981-creation
+    - gh-pr-map-eip-7981
+  - id: eip7981-e01
+    event_kind: revision
+    authored_at: '2025-08-21T16:36:01+02:00'
+    committed_at: '2025-08-21T14:36:01+00:00'
+    commit: 2fbffe5f4d590876fba00489a597e2a0ef675a5b
+    path: EIPS/eip-7981.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Replaces the single per-byte charge with a zero/non-zero split: ACCESS_LIST_DATA_COST_PER_BYTE
+      = 16 is removed and ACCESS_LIST_NONZERO_BYTE_COST = 40 and ACCESS_LIST_ZERO_BYTE_COST = 10 are introduced,
+      counted over the serialized access list data. A ''Source'' column is added to the parameter table. Effective
+      costs rise to ~3200 gas per address and ~3180 gas per storage key; the block-size analysis (478 KB ->
+      362 KB) and all three test cases are recomputed.'
+    rationale: More than doubles the data surcharge and changes its shape from uniform per-byte to zero/non-zero
+      weighted, which changes the gas charged for every access-list-bearing transaction.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-2fbffe5f4d59
+    - gh-pr-map-eip-7981
+  - id: eip7981-e02
+    event_kind: revision
+    authored_at: '2025-08-24T12:46:57+02:00'
+    committed_at: '2025-08-24T10:46:57+00:00'
+    commit: acc2533ec925d0659d2001d64edc3e6466e62400
+    path: EIPS/eip-7981.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Pins down what is counted - ''the addresses (20 bytes each) and storage keys (32 bytes each)
+      contained within the access list'' replaces ''the serialized access list data'' - and adds a Reference
+      Implementation section giving EELS Python: a count_access_list_bytes helper and the calculate_intrinsic_cost
+      integration that adds access_list_data_cost to the intrinsic gas for AccessList, FeeMarket, Blob and
+      SetCode transactions. Also removes a stray blank line.'
+    rationale: 'Removes a real ambiguity: ''serialized access list data'' could have been read as including
+      RLP framing, whereas the new wording and the reference implementation count exactly 20 bytes per address
+      and 32 bytes per key. The reference implementation also fixes which transaction types are affected and
+      where in the intrinsic-cost calculation the charge lands.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-acc2533ec925
+    - gh-pr-map-eip-7981
+  - id: eip7981-e03
+    event_kind: revision
+    authored_at: '2025-09-04T14:47:19+02:00'
+    committed_at: '2025-09-04T12:47:19+00:00'
+    commit: 5aea12c20ee27b3d85f7c2ec9e6a09e451fd81f0
+    path: EIPS/eip-7981.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Re-parameterises the surcharge in terms of the EIP-7623 token abstraction. The two EIP-owned constants
+      ACCESS_LIST_NONZERO_BYTE_COST and ACCESS_LIST_ZERO_BYTE_COST are replaced in the parameter table by TOTAL_COST_FLOOR_PER_TOKEN
+      = 10, sourced from EIP-7623, and the formula becomes access_list_tokens = nonzero * 4 + zero followed
+      by access_list_data_cost = access_list_tokens * TOTAL_COST_FLOOR_PER_TOKEN. Description, Abstract and
+      Motivation are rewritten (adding the '~21% worst-case block size reduction' claim and the 'contributing
+      to EVM gas while still leaving a non-negligible data footprint' framing); 'Maximum Block Size Impact'
+      is renamed 'Access List Size Impact' and recomputed at a 60M gas limit (1012 KB -> 604 KB); a new 'Maximum
+      Block Size Impact' section states the Snappy-compressed maximum falls from 2.71 MiB to 2.13 MiB. The
+      description acquires the typo 'footpring'.
+    rationale: The effective rates are numerically unchanged (4 tokens * 10 = 40 gas per non-zero byte, 1 token
+      * 10 = 10 gas per zero byte), but the EIP stops owning its pricing constants and instead derives them
+      from another EIP's TOTAL_COST_FLOOR_PER_TOKEN. That makes the charge track future changes to EIP-7623
+      - as the next two revisions demonstrate - so it is a substantive change to the specification even though
+      no gas value moves in this commit.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-5aea12c20ee2
+    - gh-pr-map-eip-7981
+  - id: eip7981-e04
+    event_kind: revision
+    authored_at: '2026-01-20T12:36:27+01:00'
+    committed_at: '2026-01-20T11:36:27+00:00'
+    commit: 0fdeb4ce5d592907b12532dc9aa0da62899d786d
+    path: EIPS/eip-7981.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Retargets the floor constant from EIP-7623 to EIP-7976: ''requires'' becomes 2930, 7976 and TOTAL_COST_FLOOR_PER_TOKEN
+      becomes 15 (sourced from EIP-7976) instead of 10, raising the surcharge to 60 gas per non-zero byte and
+      15 per zero byte (~3600 gas per address, ~3820 per storage key). The Motivation''s floor-pricing reference
+      switches to EIP-7976, all worked numbers and the reference-implementation constants are recomputed, and
+      the compressed-block-size claim moves from 2.13 MiB to approximately 1.7 MiB. The title is capitalised
+      to ''Increase Access List Cost'' and the description typo ''footpring'' is corrected to ''Price access
+      lists for data to reduce maximum block size''.'
+    rationale: A 50 per cent increase in the data surcharge, driven by adopting a different EIP's floor constant.
+      Both the gas values and the declared dependency change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-0fdeb4ce5d59
+    - gh-pr-map-eip-7981
+  - id: eip7981-e05
+    event_kind: revision
+    authored_at: '2026-01-21T18:40:01+01:00'
+    committed_at: '2026-01-21T17:40:01+00:00'
+    commit: 1356811a1522f1be9df1a2a600f2ac7a750cf7ba
+    path: EIPS/eip-7981.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Restructures the EIP from a standalone surcharge into a modification of the EIP-7623 floor itself.
+      ''requires'' becomes 2930, 7623 and TOTAL_COST_FLOOR_PER_TOKEN returns to 10 sourced from EIP-7623 (Motivation
+      reference reverted too). Access list tokens are now added to access_list_cost AND folded into the floor:
+      total_data_tokens = tokens_in_calldata + tokens_in_access_list, data_floor_gas_cost = TX_BASE_COST +
+      TOTAL_COST_FLOOR_PER_TOKEN * total_data_tokens. A full tx.gasUsed formula with the max() of execution-side
+      and floor-side costs is given, plus a new validity rule: a transaction with a gas limit below 21000 +
+      TOTAL_COST_FLOOR_PER_TOKEN * total_data_tokens, or below its intrinsic gas cost, is invalid. The Rationale
+      is replaced, ALL THREE test cases are deleted, the reference implementation is rewritten around calculate_access_list_tokens
+      and a combined intrinsic/floor return, and Security Considerations is rewritten.'
+    rationale: 'Changes what the EIP does: access list data now participates in the transaction floor calculation
+      rather than only being surcharged, and a new transaction-validity condition is introduced. This changes
+      gas outcomes for transactions whose execution cost sits below the floor, and adds a new invalidity case
+      clients must enforce.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-1356811a1522
+    - gh-pr-map-eip-7981
+  - id: eip7981-e06
+    event_kind: revision
+    authored_at: '2026-03-27T13:15:07+01:00'
+    committed_at: '2026-03-27T20:15:07+08:00'
+    commit: 87def23e7d59b4c01a28744a23c42edde0c97938
+    path: EIPS/eip-7981.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Aligns with EIP-7976''s updated calldata floor. ''requires'' becomes 2930, 7623, 7976 and TOTAL_COST_FLOOR_PER_TOKEN
+      becomes 16, sourced from EIP-7976. The zero/non-zero weighting is dropped from the floor: floor_tokens_in_access_list
+      = access_list_bytes * 4 and floor_tokens_in_calldata = (zero_bytes + nonzero_bytes) * 4, so every byte
+      now counts as four tokens regardless of value; total_data_tokens is renamed total_floor_data_tokens throughout,
+      including in the validity rule. The reference implementation is rewritten to sum byte lengths instead
+      of inspecting byte values.'
+    rationale: 'Both the constant (10 -> 16) and the tokenisation rule change: a zero byte in an access list
+      goes from 1 token to 4 tokens, so the surcharge rises from 10 to 64 gas per zero byte and from 40 to
+      64 gas per non-zero byte. Implementations and tests must change.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-87def23e7d59
+    - gh-pr-map-eip-7981
+  - id: eip7981-e07
+    event_kind: revision
+    authored_at: '2026-04-15T15:59:42+02:00'
+    committed_at: '2026-04-15T13:59:42+00:00'
+    commit: 15e4f96ccd6a2e9d5dd307a52be1d4e60ec6eed1
+    path: EIPS/eip-7981.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Adds one sentence after the token definition: the access list data is ''equivalently'' charged
+      64 gas per byte, i.e. 1280 gas per address and 2048 gas per storage key, and the token abstraction is
+      retained only for consistency with EIP-7623 and EIP-7976.'
+    rationale: An arithmetic restatement of the rule established by the preceding commit (4 tokens per byte
+      * 16 gas per token = 64 gas per byte); no rule, constant or formula changes and no ambiguity is resolved.
+      Confidence is medium rather than high because stating the effective per-byte rate explicitly does make
+      the cost easier to implement, and the next revision adopts exactly this framing as the normative one.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-15e4f96ccd6a
+    - gh-pr-map-eip-7981
+  - id: eip7981-e08
+    event_kind: revision
+    authored_at: '2026-04-23T13:15:54+02:00'
+    committed_at: '2026-04-23T11:15:54+00:00'
+    commit: 706296e06bf9b700bf046cfaa80bd5c3ebbc89c3
+    path: EIPS/eip-7981.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Rewrites the reference implementation in plainer Python: type annotations and the Uint wrapper
+      are dropped, calculate_access_list_floor_tokens becomes a one-line sum() comprehension, calldata zero-byte
+      counting moves into a count_zero_bytes helper, and TX_ACCESS_LIST_* constant names become ACCESS_LIST_*.
+      The computed values are unchanged.'
+    rationale: Presentation of illustrative pseudocode. Every arithmetic result the reference implementation
+      produces is identical before and after.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-706296e06bf9
+    - gh-pr-map-eip-7981
+  - id: eip7981-e09
+    event_kind: revision
+    authored_at: '2026-05-05T11:16:00+02:00'
+    committed_at: '2026-05-05T17:16:00+08:00'
+    commit: 71d3353c3f6776485539fe2ec526b7cc80780bfc
+    path: EIPS/eip-7981.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Simplifies the specification back to a flat surcharge (contributed by Pawel Bylica). The access
+      list floor-token machinery is deleted: access_list_data_cost = 64 * access_list_bytes (1280 per address,
+      2048 per storage key), stated to match the EIP-7976 calldata floor rate, and this surcharge is added
+      to tx.gasUsed OUTSIDE the max(), leaving the EIP-2930 access_list_cost and the EIP-7976 floor calculation
+      untouched - the floor term reverts to TOTAL_COST_FLOOR_PER_TOKEN * floor_tokens_in_calldata. The validity
+      rule becomes ''any transaction with a gas limit below tx.gasUsed evaluated with execution_gas_used =
+      0 is invalid''.'
+    rationale: 'Reverses the structural change made on 2026-01-21: access list data no longer enters the floor
+      calculation and is charged unconditionally instead. The specification''s shape, the validity rule and
+      the interaction with EIP-7976 all change, even though the effective 64 gas per byte matches the preceding
+      revision for transactions above the floor.'
+    change_group: eip7981-flat-surcharge
+    confidence: high
+    source_ids:
+    - eips-commit-71d3353c3f67
+    - gh-pr-map-eip-7981
+  - id: eip7981-e10
+    event_kind: revision
+    authored_at: '2026-05-07T11:28:59+02:00'
+    committed_at: '2026-05-07T09:28:59+00:00'
+    commit: ff38d6d99bc34721d33b77d79dd3ab4b86079cb7
+    path: EIPS/eip-7981.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Brings the reference implementation into line with the flat-surcharge specification: calculate_access_list_floor_tokens
+      becomes calculate_access_list_data_cost returning total_bytes * 64, the surcharge is kept separate from
+      the EIP-2930 access_list_cost, and it is added to BOTH the returned intrinsic_gas and the returned floor_gas.
+      The docstring now states the intended identity tx.gasUsed = max(intrinsic_gas + execution_gas_used, floor_gas).'
+    rationale: The preceding commit changed the prose but left a reference implementation that still folded
+      access list tokens into the floor, so the document was internally inconsistent for two days. This commit
+      resolves that and, in doing so, states how the surcharge-outside-the-max formulation is realised in code
+      (added to both branches) - a detail the prose does not spell out and that implementations and tests depend
+      on. Grouped with the flat-surcharge rework it completes. This is the last substantive revision at the
+      pinned state.
+    change_group: eip7981-flat-surcharge
+    confidence: high
+    source_ids:
+    - eips-commit-ff38d6d99bc3
+    - gh-pr-map-eip-7981
+  - id: eip7981-e11
+    event_kind: revision
+    authored_at: '2026-07-07T13:08:18-04:00'
+    committed_at: '2026-07-07T17:08:18+00:00'
+    commit: 747b78c0edfdf04e9e2933ad1bec592d3318e1d9
+    path: EIPS/eip-7981.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review (one frontmatter line).'
+    rationale: Process-metadata change only. This is the last commit touching the file at the pinned repository
+      state.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-747b78c0edfd
+    - gh-pr-map-eip-7981
+    - eips-blob-eip7981-pin
+dependency_history:
+  events:
+  - id: eip7981-d00
+    target_eip: 2930
+    event_type: present_at_creation
+    relationship: extends
+    occurred_at: '2025-07-13T13:11:37Z'
+    commit: a18e17596411029b0b9e96034d0f66ec9c493d41
+    rationale: 'The creation frontmatter declares ''requires: 2930'' and the Specification quotes the existing
+      EIP-2930 access list cost formula (./eip-2930.md) and adds a term to it. Relationship ''extends'' - the
+      EIP keeps EIP-2930''s transaction type and its two cost constants and adds a data charge on top.'
+    confidence: high
+    source_ids:
+    - eips-commit-a18e17596411
+    - eips-blob-eip7981-creation
+  - id: eip7981-d01
+    target_eip: 7623
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2025-07-13T13:11:37Z'
+    commit: a18e17596411029b0b9e96034d0f66ec9c493d41
+    rationale: 'The creation Abstract, Motivation, test case 3 and Security Considerations all link EIP-7623
+      (./eip-7623.md): the EIP exists to close a loophole that lets access lists circumvent EIP-7623 floor
+      pricing. EIP-7623 is not in the creation ''requires'' field.'
+    confidence: high
+    source_ids:
+    - eips-commit-a18e17596411
+    - eips-blob-eip7981-creation
+  - id: eip7981-d02
+    target_eip: 7623
+    event_type: changed
+    relationship: interacts_with
+    occurred_at: '2025-09-04T12:47:19Z'
+    commit: 5aea12c20ee27b3d85f7c2ec9e6a09e451fd81f0
+    rationale: 'Commit 5aea12c20ee2 makes the reference load-bearing: the parameter table now lists TOTAL_COST_FLOOR_PER_TOKEN
+      = 10 with EIP-7623 named as its source, and the surcharge is computed from that constant. The dependency
+      moves from motivational to arithmetic while still not being declared in ''requires''.'
+    confidence: high
+    source_ids:
+    - eips-commit-5aea12c20ee2
+  - id: eip7981-d03
+    target_eip: 7976
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-01-20T11:36:27Z'
+    commit: 0fdeb4ce5d592907b12532dc9aa0da62899d786d
+    rationale: 'Commit 0fdeb4ce5d59 adds 7976 to the frontmatter (''requires: 2930, 7976''), sources TOTAL_COST_FLOOR_PER_TOKEN
+      = 15 from EIP-7976 (./eip-7976.md) in the parameter table, and switches the Motivation and test-case
+      floor references from EIP-7623 to EIP-7976.'
+    confidence: high
+    source_ids:
+    - eips-commit-0fdeb4ce5d59
+  - id: eip7981-d04
+    target_eip: 7623
+    event_type: changed
+    relationship: interacts_with
+    occurred_at: '2026-01-20T11:36:27Z'
+    commit: 0fdeb4ce5d592907b12532dc9aa0da62899d786d
+    rationale: 'The same commit demotes EIP-7623: its constant is no longer used and the Motivation and test-case
+      references move to EIP-7976. The link ./eip-7623.md survives only in the Abstract. EIP-7623 is still
+      not in ''requires'' at this point.'
+    confidence: high
+    source_ids:
+    - eips-commit-0fdeb4ce5d59
+  - id: eip7981-d05
+    target_eip: 7623
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-01-21T17:40:01Z'
+    commit: 1356811a1522f1be9df1a2a600f2ac7a750cf7ba
+    rationale: 'Commit 1356811a1522 declares EIP-7623 in the frontmatter for the first time (''requires: 2930,
+      7623''), restores TOTAL_COST_FLOOR_PER_TOKEN = 10 sourced from EIP-7623, and makes the EIP explicitly
+      modify the EIP-7623 floor calculation to include access list tokens. Relationship becomes ''requires''
+      - the EIP now edits another EIP''s formula.'
+    confidence: high
+    source_ids:
+    - eips-commit-1356811a1522
+  - id: eip7981-d06
+    target_eip: 7976
+    event_type: removed
+    relationship: requires
+    occurred_at: '2026-01-21T17:40:01Z'
+    commit: 1356811a1522f1be9df1a2a600f2ac7a750cf7ba
+    rationale: 'The same commit removes 7976 from ''requires'' (''requires: 2930, 7976'' becomes ''requires:
+      2930, 7623'') and deletes every ./eip-7976.md link, one day after they were added.'
+    confidence: high
+    source_ids:
+    - eips-commit-1356811a1522
+  - id: eip7981-d07
+    target_eip: 7976
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2026-03-27T12:15:07Z'
+    commit: 87def23e7d59b4c01a28744a23c42edde0c97938
+    rationale: 'Commit 87def23e7d59 re-adds 7976 to the frontmatter (''requires: 2930, 7623, 7976'' - the value
+      at the pinned state) and sources TOTAL_COST_FLOOR_PER_TOKEN = 16 from EIP-7976, whose calldata floor
+      this revision aligns with. Both EIP-7623 and EIP-7976 are declared from here on.'
+    confidence: high
+    source_ids:
+    - eips-commit-87def23e7d59
+source_registry: outputs/sources/eips/eip-7981.yaml
+unknowns:
+- 'Unresolved creation-date discrepancy. The frontmatter ''created'' date 2024-12-27 precedes the adding pull
+  request (ethereum/EIPs#9946, opened 2025-06-27T10:29:46Z) by six months, unlike the same-day pattern seen
+  in the other EIPs reviewed by this worker. No primary source explaining the date was found. Negative searches
+  performed: the pull request body is one sentence (''Proposal to reprice EIP-2930 Access Lists.'') and gives
+  no date; no earlier commit in ethereum/EIPs touches EIPS/eip-7981.md at the pinned state; and the frontmatter
+  value is never edited in any of the twelve reviewed commits. The linked discussions-to thread (ethereum-magicians.org/t/eip-7981-increase-access-list-cost/24680)
+  was NOT retrieved for this work unit, so the date remains unexplained rather than resolved.'
+- 'Context for the above, recorded as an observation and not as a conclusion: the neighbouring EIP-7976, also
+  authored by Toni Wahrstaetter, declares created 2025-06-18 and was first committed 2025-06-24, so numbers
+  in the 79xx range were being allocated in mid-2025. Whether EIP-7981''s 2024-12-27 value reflects genuine
+  earlier work, a copied template or a typographical error cannot be determined from the sources reviewed.'
+- 'Two commits in this EIP''s history carry subjects and pull-request titles naming EIP-7976 while changing
+  EIPS/eip-7981.md: 5aea12c20ee2 ''Update EIP-7976: improve wording'' (changes both files) and 15e4f96ccd6a
+  ''Update EIP-7976: clarify token abstraction'' (changes both files). They are correctly part of this EIP''s
+  --follow history; the mismatched titles are noted so the commit-subject evidence is not read as belonging
+  to another EIP.'
+- The EIP's pricing constant changed source four times in six months (EIP-owned constants -> EIP-7623's TOTAL_COST_FLOOR_PER_TOKEN
+  = 10 -> EIP-7976's 15 -> EIP-7623's 10 -> EIP-7976's 16). No contemporaneous AllCoreDevs record was retrieved
+  for this work unit to explain the oscillation; the dependency events record what the file says at each commit
+  without inferring why.
+- Negative search - no commit in the reviewed history renames or moves EIPS/eip-7981.md, and 'git log --follow'
+  reports a single added path, so no pre-rename history exists to review.
+- Event timestamps are reproduced with the offsets recorded in Git. Committer timezone offsets in this repository
+  are set by the merge tooling (frequently +08:00) and are not evidence of where a change was made; all summary
+  and creation dates are the equivalent UTC instants.

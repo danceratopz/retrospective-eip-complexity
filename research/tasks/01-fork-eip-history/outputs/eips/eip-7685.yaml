@@ -1,0 +1,328 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7685
+  title: "General purpose execution layer requests"
+  source_ids: [blob-pinned]
+research_run:
+  started_at: "2026-08-20T19:40:52Z"
+  completed_at: "2026-08-20T19:55:22Z"
+  researcher: "claude subagent eip-batch-08 (coordinated)"
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: "2024-04-14"
+  frontmatter_source_ids: [blob-creation, blob-pinned]
+  first_repository_commit:
+    authored_at: "2024-04-16T08:51:45-06:00"
+    committed_at: "2024-04-16T22:51:45+08:00"
+    commit: a2c4300a9b691bc3d372dce22142f45db1c3c25a
+    path: EIPS/eip-7685.md
+    source_ids: [c-a2c4300a]
+  discrepancy_note: >-
+    The frontmatter declares created 2024-04-14 but the file first entered ethereum/EIPs
+    on 2024-04-16 (commit a2c4300a, "Add EIP: General purpose execution layer requests"),
+    two days later. The frontmatter date is the author's declared proposal-creation date;
+    the Git commit is the earliest independently verifiable repository event. The file was
+    created at EIPS/eip-7685.md and was never renamed; the frontmatter created value was
+    never changed in any later commit.
+revision_history:
+  summary:
+    file_commit_count: 15
+    post_creation_revision_count: 14
+    substantive_revision_count: 7
+    non_substantive_revision_count: 7
+    uncertain_revision_count: 0
+    first_revision_at: "2024-04-17T20:01:03Z"
+    last_revision_at: "2025-05-15T16:29:03Z"
+    first_substantive_revision_at: "2024-04-17T20:01:03Z"
+    last_substantive_revision_at: "2025-02-13T13:55:18Z"
+    derived_from_event_ids: [eip7685-e01, eip7685-e02, eip7685-e03, eip7685-e04,
+      eip7685-e05, eip7685-e06, eip7685-e07, eip7685-e08, eip7685-e09, eip7685-e10,
+      eip7685-e11, eip7685-e12, eip7685-e13, eip7685-e14, eip7685-e15]
+  events:
+    - id: eip7685-e01
+      event_kind: creation
+      authored_at: "2024-04-16T08:51:45-06:00"
+      committed_at: "2024-04-16T22:51:45+08:00"
+      commit: a2c4300a9b691bc3d372dce22142f45db1c3c25a
+      path: EIPS/eip-7685.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        Adds the EIP in Draft: a general purpose framework for propagating
+        contract-triggered requests from the execution layer to the consensus layer. A
+        Request is RequestType ++ RequestData; the header is extended with a 32-byte
+        RequestsRoot computed as an MPT trie root keyed by index; the CL is told to extend
+        ExecutionPayload and add a processing step in process_execution_payload.
+      rationale: >-
+        Initial proposal text establishing the entire framework; the adding commit is the
+        creation event.
+      change_group: null
+      confidence: high
+      source_ids: [c-a2c4300a, blob-creation]
+    - id: eip7685-e02
+      event_kind: revision
+      authored_at: "2024-04-17T14:01:03-06:00"
+      committed_at: "2024-04-17T20:01:03+00:00"
+      commit: 0e0600ed164db7875be38548bfb26ec24ff78e01
+      path: EIPS/eip-7685.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        "Simplify cl behavior": removes the requirement that "A additional processing step
+        is be added to process_execution_payload to iterate over and process all
+        requests", leaving each proposal free to choose how to extend ExecutionPayload and
+        "how and when the request is processed".
+      rationale: >-
+        Deletes a consensus-layer processing requirement and delegates the decision to
+        each request-type proposal; changes what implementers must do.
+      change_group: null
+      confidence: high
+      source_ids: [c-0e0600ed]
+    - id: eip7685-e03
+      event_kind: revision
+      authored_at: "2024-04-18T16:38:06-06:00"
+      committed_at: "2024-04-18T22:38:06+00:00"
+      commit: e2a66831fcc5984f478513ce298607e178c364e8
+      path: EIPS/eip-7685.md
+      change_type: interface_or_data_structure
+      semantic_effect: substantive
+      summary: >-
+        Substantial specification build-out: renames the CamelCase types to snake_case
+        (request_type / request_data / requests_root); adds a "Block structure" section
+        appending a list of requests to the RLP block body; specifies requests_root
+        computation with explicit compute_trie_root_from_indexed_data pseudocode; adds
+        cross-type and intra-type ordering rationale sections; reflows the prose.
+      rationale: >-
+        Defines the block body structure and the header commitment computation that were
+        previously only described in prose; changes the data structures implementers must
+        produce.
+      change_group: null
+      confidence: high
+      source_ids: [c-e2a66831]
+    - id: eip7685-e04
+      event_kind: revision
+      authored_at: "2024-04-25T14:32:17-06:00"
+      committed_at: "2024-04-25T20:32:17+00:00"
+      commit: 67c96916b9714b8ddc917d56705f3f9dfb468126
+      path: EIPS/eip-7685.md
+      change_type: clarification
+      semantic_effect: non_substantive
+      summary: >-
+        "Clarify intra-type ordering": drops the claim that lexicographical ordering of
+        the opaque byte data would be the only valid scheme, keeping the same rule that
+        intra-type order is determined by each request type individually.
+      rationale: >-
+        Rationale-section rewording; the normative rule (intra-type order undefined here,
+        set per request type) is unchanged.
+      change_group: null
+      confidence: high
+      source_ids: [c-67c96916]
+    - id: eip7685-e05
+      event_kind: revision
+      authored_at: "2024-05-21T18:08:10+03:00"
+      committed_at: "2024-05-21T23:08:10+08:00"
+      commit: 2d06fd44d18f22c4b302e3237e9b8f4c5f6001b4
+      path: EIPS/eip-7685.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Two typo fixes in the Rationale: names the opaque array explicitly ("the bytes of
+        `request_data` array from second byte on") and fixes the ungrammatical "authority
+        on their own unilaterally catalyze and action" to "authority on their own to
+        unilaterally catalyze an action".
+      rationale: Grammar and wording fixes in non-normative rationale text.
+      change_group: null
+      confidence: high
+      source_ids: [c-2d06fd44]
+    - id: eip7685-e06
+      event_kind: revision
+      authored_at: "2024-06-17T08:16:13-07:00"
+      committed_at: "2024-06-17T23:16:13+08:00"
+      commit: b27b3f1c1b8252d178c0a7d4bcf6480c8bcb2159
+      path: EIPS/eip-7685.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: "Status frontmatter changed from Draft to Review."
+      rationale: Process-metadata-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-b27b3f1c]
+    - id: eip7685-e07
+      event_kind: revision
+      authored_at: "2024-09-26T04:07:15+02:00"
+      committed_at: "2024-09-25T20:07:15-06:00"
+      commit: 73629679582e2f06f4abfcabfd1c7615bc65df08
+      path: EIPS/eip-7685.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        "Change requests hash to flat hash" (PR #8854): replaces the Merkle-Patricia trie
+        requests_root with a flat commitment, renaming the header field to requests_hash
+        and defining compute_requests_hash(list) = keccak256(rlp.encode([rlp.encode(req)
+        for req in list])); also rewords the opaque-byte-array rationale
+        ("transaction payload" -> "request payload").
+      rationale: >-
+        Changes the header field name and the commitment algorithm; directly affects block
+        validity computation.
+      change_group: eip7685-flat-hash
+      confidence: high
+      source_ids: [c-73629679]
+    - id: eip7685-e08
+      event_kind: revision
+      authored_at: "2024-09-26T07:38:35-06:00"
+      committed_at: "2024-09-26T07:38:35-06:00"
+      commit: 4dc51ba1e3cdd63439247415da7edf36b32f9e79
+      path: EIPS/eip-7685.md
+      change_type: clarification
+      semantic_effect: substantive
+      summary: >-
+        "Fix stale function name" (PR #8907): the assignment line still called
+        compute_trie_root_from_indexed_data, removed by the previous commit; it now calls
+        compute_requests_hash.
+      rationale: >-
+        Repairs the normative pseudocode left inconsistent by the flat-hash change so that
+        the specified computation is unambiguous; same logical update as commit 73629679.
+      change_group: eip7685-flat-hash
+      confidence: medium
+      source_ids: [c-4dc51ba1]
+    - id: eip7685-e09
+      event_kind: revision
+      authored_at: "2024-10-07T08:31:38-06:00"
+      committed_at: "2024-10-07T22:31:38+08:00"
+      commit: a360757d75893fb9e7a9c37c98e05481d671f68f
+      path: EIPS/eip-7685.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        "Group requests into request-data": removes the block-body extension entirely (the
+        header alone carries the commitment); redefines a `requests` object as
+        request_type ++ request_data where request_data holds zero or more encoded request
+        objects of that type; replaces the keccak256/RLP commitment with
+        sha256(sha256(requests_0) ++ sha256(requests_1) ++ ...); updates the abstract and
+        the ordering rationale accordingly.
+      rationale: >-
+        Changes the block structure, the grouping of requests, and the hash function and
+        construction of the header commitment.
+      change_group: null
+      confidence: high
+      source_ids: [c-a360757d]
+    - id: eip7685-e10
+      event_kind: revision
+      authored_at: "2024-10-07T15:41:32-06:00"
+      committed_at: "2024-10-07T21:41:32+00:00"
+      commit: 5070adf3537d1d3b811f06124a112e3d8ea295e4
+      path: EIPS/eip-7685.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: "Removes a stray trailing backtick from the sha256 construction code block."
+      rationale: Markdown formatting fix only.
+      change_group: null
+      confidence: high
+      source_ids: [c-5070adf3]
+    - id: eip7685-e11
+      event_kind: revision
+      authored_at: "2024-11-26T14:42:50+01:00"
+      committed_at: "2024-11-26T21:42:50+08:00"
+      commit: 5ac0297b9ac29255e785ff305feea940db5ac6b4
+      path: EIPS/eip-7685.md
+      change_type: normative_behavior
+      semantic_effect: substantive
+      summary: >-
+        "Exclude empty requests data in commitment": items whose request_data is empty
+        (length 1, type byte only) are skipped when building the intermediate hash list;
+        the intermediate list must be ordered by request_type ascending; the pseudocode is
+        corrected to hash digests (m.update(sha256(r).digest())) over a
+        Sequence[bytes] block_requests; adds a rationale explaining that a block with no
+        requests then commits to sha256("").
+      rationale: >-
+        Changes which elements enter the commitment and therefore the value of
+        requests_hash; directly affects block validity.
+      change_group: null
+      confidence: high
+      source_ids: [c-5ac0297b]
+    - id: eip7685-e12
+      event_kind: revision
+      authored_at: "2025-02-13T14:55:18+01:00"
+      committed_at: "2025-02-13T21:55:18+08:00"
+      commit: 3fa94a7bc98d3a53e4fa54c7399b91a0d538b5ce
+      path: EIPS/eip-7685.md
+      change_type: clarification
+      semantic_effect: substantive
+      summary: >-
+        "Clarify the size of `request_type`": states that a `request_type` *byte* is
+        prepended to request_data (previously unqualified); also fixes "will defines" to
+        "will define".
+      rationale: >-
+        Pins down the width of the type prefix, which implementations must encode and
+        parse; materially clarifies the wire format.
+      change_group: null
+      confidence: high
+      source_ids: [c-3fa94a7b]
+    - id: eip7685-e13
+      event_kind: revision
+      authored_at: "2025-02-13T18:55:46+05:00"
+      committed_at: "2025-02-13T21:55:46+08:00"
+      commit: 991f6c7e4293a73491315e398ca9feebc3e4f595
+      path: EIPS/eip-7685.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: "Status changed from Review to Last Call with last-call-deadline 2025-02-21."
+      rationale: Process-metadata-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-991f6c7e]
+    - id: eip7685-e14
+      event_kind: revision
+      authored_at: "2025-03-08T22:42:59+01:00"
+      committed_at: "2025-03-08T21:42:59+00:00"
+      commit: 6097373070b12f44d10d11d5908c42557ee618eb
+      path: EIPS/eip-7685.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: >-
+        Adds Felix Lange (@fjl) as a second author (commit subject "Update EIP-7002: Add
+        felix to request eips" - a multi-EIP author update that also touched this file).
+      rationale: Author-metadata-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-60973730]
+    - id: eip7685-e15
+      event_kind: revision
+      authored_at: "2025-05-15T10:29:03-06:00"
+      committed_at: "2025-05-16T00:29:03+08:00"
+      commit: 1cbdd6783f77042ff55592eeef937f945705e1d8
+      path: EIPS/eip-7685.md
+      change_type: editorial
+      semantic_effect: non_substantive
+      summary: "'Move to Final': status Last Call -> Final and the last-call-deadline field removed."
+      rationale: Process-metadata-only change.
+      change_group: null
+      confidence: high
+      source_ids: [c-1cbdd678]
+dependency_history:
+  events: []
+unknowns:
+  - >-
+    Negative search, explicit cross-EIP dependencies: EIP-7685 has no `requires`
+    frontmatter field in any of its 15 file versions, and no version of the text contains
+    any EIP-#### reference or ./eip-####.md link. Verified mechanically by grepping every
+    historical blob of EIPS/eip-7685.md between the creation commit and the pin
+    (a08f51fec5b2b5da457adb05b8cffb487fb4f7de): the only match in any version is the
+    EIP's own discussions-to URL (ethereum-magicians.org/t/eip-7685-...). dependency_history
+    is therefore empty by evidence, not by omission.
+  - >-
+    Several Prague/Pectra EIPs (for example EIP-6110, EIP-7002, EIP-7251, EIP-7251-related
+    request types) reference EIP-7685 as their framework, but per the task definition only
+    dependencies stated by this EIP's own text are recorded here; inbound references belong
+    to the referring EIPs' records.
+  - >-
+    Summary first/last dates are the commit (committer) timestamps normalized to UTC;
+    per-event authored_at/committed_at preserve git's original zone offsets verbatim.
+  - >-
+    Commits 73629679 and 4dc51ba1 share change_group eip7685-flat-hash: the second repairs
+    a stale function name left by the first. Group membership was inferred from the git
+    diffs (subject line "fix stale function name" plus the exact line the prior commit
+    orphaned); pull-request discussion was not consulted.

@@ -1,0 +1,364 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7778
+  title: Block Gas Accounting without Refunds
+  source_ids:
+  - eips-blob-eip7778-pin
+research_run:
+  started_at: '2026-08-21T00:41:14Z'
+  completed_at: '2026-08-21T01:25:00Z'
+  researcher: claude subagent eip-amsterdam-1 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2024-10-01'
+  frontmatter_source_ids:
+  - eips-blob-eip7778-creation
+  - eips-blob-eip7778-pin
+  first_repository_commit:
+    authored_at: '2024-10-04T17:55:44Z'
+    committed_at: '2024-10-04T17:55:44Z'
+    commit: a4c28b13dddab767190adf1bcfe7ff79dfeb20d2
+    path: EIPS/eip-7778.md
+    source_ids:
+    - eips-commit-a4c28b13ddda
+    - gh-pr-map-eip-7778
+  discrepancy_note: 'The frontmatter ''created'' date (2024-10-01) precedes the first repository commit (a4c28b13dddab767190adf1bcfe7ff79dfeb20d2,
+    authored and committed 2024-10-04T17:55:44Z) by three days. The adding pull request, ethereum/EIPs#8918
+    ''Add EIP: Prevent Block Gas Smuggling'', was opened 2024-10-01T15:28:19Z - the same calendar day as the
+    declared creation date - and merged 2024-10-04T17:55:45Z. The gap is therefore EIP-editor review latency
+    between opening the submission pull request and merging it; the two dates do not conflict. The frontmatter
+    ''created'' value is unchanged at the pinned state, including across the 2025-06-09 rewrite that replaced
+    the whole document and its title.'
+revision_history:
+  summary:
+    file_commit_count: 11
+    post_creation_revision_count: 10
+    substantive_revision_count: 6
+    non_substantive_revision_count: 4
+    uncertain_revision_count: 0
+    first_revision_at: '2025-04-27T00:24:51Z'
+    last_revision_at: '2026-07-10T00:15:45Z'
+    first_substantive_revision_at: '2025-06-09T08:45:46Z'
+    last_substantive_revision_at: '2026-01-28T11:40:54Z'
+    derived_from_event_ids:
+    - eip7778-e00
+    - eip7778-e01
+    - eip7778-e02
+    - eip7778-e03
+    - eip7778-e04
+    - eip7778-e05
+    - eip7778-e06
+    - eip7778-e07
+    - eip7778-e08
+    - eip7778-e09
+    - eip7778-e10
+  events:
+  - id: eip7778-e00
+    event_kind: creation
+    authored_at: '2024-10-04T18:55:44+01:00'
+    committed_at: '2024-10-05T01:55:44+08:00'
+    commit: a4c28b13dddab767190adf1bcfe7ff79dfeb20d2
+    path: EIPS/eip-7778.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Initial addition of EIP-7778 'Prevent Block Gas Smuggling' (status Draft, author Ben Adams, no
+      'requires' field, 193 lines). Proposes excluding from block gas accounting every gas discount and refund
+      that does not correspond to an actual reduction in computational work, while leaving user-facing gas
+      costs unchanged. Warm-access discounts and SSTORE reverts to the original value stay discounted in block
+      accounting; SSTORE to zero is charged at full cost in block accounting. Gives block 20878522 as evidence
+      (28.5 MGas net, 4.01 MGas refunds, 32.51 MGas gross). Frames the EIP throughout as complementing EIP-7623
+      and gives a combined tx.gasUsed formula on top of the EIP-7623 calldata floor, plus tx.evm_gas_used =
+      evm_gas_used - evm_gas_refund and block.evm_gas_used += evm_gas_used. Includes an Implementation section,
+      five test-case groups and a non-standard 'Copyright and related rights waived via CC0 1.0 Universal.'
+      notice.
+    rationale: Creation commit adding the complete initial specification.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-a4c28b13ddda
+    - eips-blob-eip7778-creation
+    - gh-pr-map-eip-7778
+  - id: eip7778-e01
+    event_kind: revision
+    authored_at: '2025-04-27T08:24:51+08:00'
+    committed_at: '2025-04-27T08:24:51+08:00'
+    commit: 02d3e12b6cd7f9e1ec6fdd45ede682cc9dcf2864
+    path: EIPS/eip-7778.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Automated eth-bot status change Draft -> Stagnant (one frontmatter line) after the file received
+      no merged change for the bot's inactivity window.
+    rationale: Process-metadata change only; no specification text is touched. Recorded because it is a file-changing
+      commit and marks the six-month dormancy that ended on 2025-06-09.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-02d3e12b6cd7
+    - gh-pr-map-eip-7778
+  - id: eip7778-e02
+    event_kind: revision
+    authored_at: '2025-06-09T10:45:46+02:00'
+    committed_at: '2025-06-09T16:45:46+08:00'
+    commit: b18c23c9f03f53f20903fa9f537694862ac987e8
+    path: EIPS/eip-7778.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Revival and complete rewrite, 193 lines down to 88. Status Stagnant -> Draft; title becomes 'Block
+      Gas Limit Accounting without Refunds' and the description 'Prevent Block Gas Limit Circumvention by Excluding
+      Refunds from Block Gas Accounting'; Toni Wahrstaetter is added as co-author. The scope narrows from 'certain
+      gas discounts and refunds' to refunds alone (specifically SSTORE-to-zero), with warm-access and revert-to-original
+      discounts explicitly retained in block accounting. The specification is restated as two rules - user
+      gas cost stays tx.gas_used = gas_used - gas_refund, and block gas accounting becomes block.gas_used +=
+      gas_used with refunds not subtracted - plus a Block Gas Limit Enforcement section. The whole EIP-7623/EIP-4844
+      data-availability framing, the combined calldata-floor formula, the Implementation section and the DA-heavy
+      test cases are removed; the document is reorganised into standard EIP sections with new Rationale, Backwards
+      Compatibility, Test Cases and Security Considerations.
+    rationale: Rewrites every normative statement in the EIP, narrows what is excluded from block gas accounting,
+      and removes the coupling to EIP-7623 that the original specification was built on. The resulting rule
+      is what later revisions refine.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b18c23c9f03f
+    - gh-pr-map-eip-7778
+  - id: eip7778-e03
+    event_kind: revision
+    authored_at: '2025-09-03T10:03:05+02:00'
+    committed_at: '2025-09-03T08:03:05+00:00'
+    commit: 9f795ed2983dc76b5c6138a507751d2a760030e3
+    path: EIPS/eip-7778.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter title shortened from 'Block Gas Limit Accounting without Refunds' to 'Block Gas Accounting
+      without Refunds'. This is the title at the pinned state.
+    rationale: Single-line metadata wording change; no normative content is touched.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-9f795ed2983d
+    - gh-pr-map-eip-7778
+  - id: eip7778-e04
+    event_kind: revision
+    authored_at: '2025-12-04T16:21:25-07:00'
+    committed_at: '2025-12-04T23:21:25+00:00'
+    commit: 3a8ab8c6bc1a4df8f413d198005e2a1b09577621
+    path: EIPS/eip-7778.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Adds a note to the user gas-cost rule: because receipts store the post-refund gas_used value,
+      validating block gas limits from receipts requires tracking refunds during transaction execution and
+      adding them back to each transaction''s gas_used when computing cumulative block gas usage.'
+    rationale: First statement of how the new block accounting interacts with the existing receipt encoding.
+      It tells implementers that receipts alone are insufficient for block gas-limit validation, which is directly
+      implementation- and test-relevant even though no rule is restated.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-3a8ab8c6bc1a
+    - gh-pr-map-eip-7778
+  - id: eip7778-e05
+    event_kind: revision
+    authored_at: '2026-01-13T18:09:12+01:00'
+    committed_at: '2026-01-13T17:09:12+00:00'
+    commit: 82d8f97b1371115fad7ff45a10a842e1044199fe
+    path: EIPS/eip-7778.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Converts three bullet lists (Block Gas Limit Enforcement, and the two Rationale subsections) into
+      running prose with identical content, drops the word 'Only' from a Backwards Compatibility bullet, and
+      replaces the free-text copyright notice with the repository-standard 'Copyright and related rights waived
+      via [CC0](../LICENSE.md).'
+    rationale: Formatting, one word of hedging removed, and a licence-notice correction required by the EIPs
+      repository's own template. No normative statement changes.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-82d8f97b1371
+    - gh-pr-map-eip-7778
+  - id: eip7778-e06
+    event_kind: revision
+    authored_at: '2026-01-16T07:34:39+01:00'
+    committed_at: '2026-01-16T06:34:39+00:00'
+    commit: 5903a619bf35ac3f6519cb85622667be1c9f16a5
+    path: EIPS/eip-7778.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Brings the EIP-7623 calldata floor back into both accounting formulas. Section 1 is retitled 'User
+      and Receipt Gas Accounting (Unchanged)' and its rule becomes gas_used = max(tx_gas_used - gas_refund,
+      calldata_floor_gas_cost); the block rule becomes block.gas_used += max(tx_gas_used, calldata_floor_gas_cost),
+      explicitly citing the calldata floor from EIP-7623 (./eip-7623.md). The receipt note added by the previous
+      revision and the separate 'Block Gas Limit Enforcement' section are deleted.
+    rationale: Changes both normative formulas by introducing a max() against the calldata floor, which alters
+      the gas charged for calldata-heavy transactions at both levels, and reintroduces an explicit dependency
+      on EIP-7623.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-5903a619bf35
+    - gh-pr-map-eip-7778
+  - id: eip7778-e07
+    event_kind: revision
+    authored_at: '2026-01-19T17:30:45+01:00'
+    committed_at: '2026-01-20T00:30:45+08:00'
+    commit: af1a46dfb4b24fb4bc62b8a13a22621ddedd5513
+    path: EIPS/eip-7778.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Adds a ''Receipt Changes'' rule: cumulative_gas_used now carries gas before refunds so it matches
+      block gas accounting, and a NEW receipt field gas_spent carries the post-refund gas the user pays. The
+      ''User and Receipt Gas Accounting (Unchanged)'' item is deleted, block accounting becomes item 1, Backwards
+      Compatibility is rewritten to announce the receipt structure change, and test case 3 becomes ''Receipt
+      Fields''.'
+    rationale: Changes the receipt data structure - a consensus-relevant, RPC-visible object - by redefining
+      an existing field's semantics and adding a new one. This is the widest blast radius any revision of this
+      EIP reached.
+    change_group: eip7778-receipt-gas-spent-field
+    confidence: high
+    source_ids:
+    - eips-commit-af1a46dfb4b2
+    - gh-pr-map-eip-7778
+  - id: eip7778-e08
+    event_kind: revision
+    authored_at: '2026-01-21T16:34:47+01:00'
+    committed_at: '2026-01-21T15:34:47+00:00'
+    commit: 5f39588a18582804d63a59ee8cc1d3dba1fc0d68
+    path: EIPS/eip-7778.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Reinstates an explicit 'User Gas Accounting (Unchanged)' item ahead of the block rule, stating
+      that users still receive refunds and that transaction gas is gas_spent = max(tx_gas_used - gas_refund,
+      calldata_floor_gas_cost); the block and receipt items are renumbered to 2 and 3.
+    rationale: The preceding commit had deleted the user-facing rule while introducing the receipt field, leaving
+      the user cost formula unstated. Restoring it - now naming the quantity gas_spent to match the new receipt
+      field - resolves that gap in the normative text. Grouped with the receipt-field episode it belongs to.
+    change_group: eip7778-receipt-gas-spent-field
+    confidence: high
+    source_ids:
+    - eips-commit-5f39588a1858
+    - gh-pr-map-eip-7778
+  - id: eip7778-e09
+    event_kind: revision
+    authored_at: '2026-01-28T12:40:54+01:00'
+    committed_at: '2026-01-28T11:40:54+00:00'
+    commit: 3929b1aab57b493417eccec7457d1485eccb9768
+    path: EIPS/eip-7778.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Reverts the receipt change: the whole ''Receipt Changes'' item (cumulative_gas_used semantics
+      plus the new gas_spent field) is deleted, the Backwards Compatibility bullet returns to ''User and developer
+      experience for individual transactions remains unchanged'', and test case 3 returns to ''Transaction
+      Gas vs Block Gas''. Blank lines are inserted after the two remaining list headings. The user gas accounting
+      item added by the previous commit is kept.'
+    rationale: Removes a receipt-structure change from the specification nine days after it was added, returning
+      the EIP to a pure block-accounting change. Closes the receipt-field change group. This is the last substantive
+      revision at the pinned state.
+    change_group: eip7778-receipt-gas-spent-field
+    confidence: high
+    source_ids:
+    - eips-commit-3929b1aab57b
+    - gh-pr-map-eip-7778
+  - id: eip7778-e10
+    event_kind: revision
+    authored_at: '2026-07-09T20:15:45-04:00'
+    committed_at: '2026-07-10T08:15:45+08:00'
+    commit: 295064f75fb2084196dd2e247a4abf6074defe9c
+    path: EIPS/eip-7778.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review (one frontmatter line).'
+    rationale: Process-metadata change only. This is the last commit touching the file at the pinned repository
+      state.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-295064f75fb2
+    - gh-pr-map-eip-7778
+    - eips-blob-eip7778-pin
+dependency_history:
+  events:
+  - id: eip7778-d00
+    target_eip: 7623
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2024-10-04T17:55:44Z'
+    commit: a4c28b13dddab767190adf1bcfe7ff79dfeb20d2
+    rationale: 'The creation text links EIP-7623 (as ./eip-7623, without the .md suffix) six times: the introduction
+      and Abstract state that this EIP ''complements EIP-7623'', the Motivation has a dedicated ''Complementing
+      EIP-7623'' subsection, the Specification gives the adjusted tx.gasUsed formula ''With EIP-7623 for transactions'',
+      and the Implementation section tells clients to integrate both. Relationship ''interacts_with'' - the
+      EIP is stated to work alongside EIP-7623 rather than requiring or extending it, and no ''requires'' frontmatter
+      field is declared at creation or at any later revision.'
+    confidence: high
+    source_ids:
+    - eips-commit-a4c28b13ddda
+    - eips-blob-eip7778-creation
+  - id: eip7778-d01
+    target_eip: 4844
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2024-10-04T17:55:44Z'
+    commit: a4c28b13dddab767190adf1bcfe7ff79dfeb20d2
+    rationale: The creation Motivation links EIP-4844 (as ./eip-4844) when describing EIP-7623's goal of encouraging
+      'more efficient data availability solutions (e.g., blobs from EIP-4844)'. Relationship 'other' - a contextual
+      citation inside an argument about another EIP, with no technical dependency on this EIP's rules.
+    confidence: high
+    source_ids:
+    - eips-commit-a4c28b13ddda
+    - eips-blob-eip7778-creation
+  - id: eip7778-d02
+    target_eip: 7623
+    event_type: removed
+    relationship: interacts_with
+    occurred_at: '2025-06-09T08:45:46Z'
+    commit: b18c23c9f03f53f20903fa9f537694862ac987e8
+    rationale: Commit b18c23c9f03f rewrites the EIP from scratch and deletes every EIP-7623 reference along
+      with the data-availability framing and the combined calldata-floor formula. Between this commit and commit
+      5903a619bf35 the file contains no cross-EIP reference at all.
+    confidence: high
+    source_ids:
+    - eips-commit-b18c23c9f03f
+  - id: eip7778-d03
+    target_eip: 4844
+    event_type: removed
+    relationship: other
+    occurred_at: '2025-06-09T08:45:46Z'
+    commit: b18c23c9f03f53f20903fa9f537694862ac987e8
+    rationale: The same rewrite deletes the 'Complementing EIP-7623' subsection that carried the only EIP-4844
+      link. No reference to EIP-4844 exists anywhere in the file at the pinned state.
+    confidence: high
+    source_ids:
+    - eips-commit-b18c23c9f03f
+  - id: eip7778-d04
+    target_eip: 7623
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2026-01-16T06:34:39Z'
+    commit: 5903a619bf35ac3f6519cb85622667be1c9f16a5
+    rationale: 'Commit 5903a619bf35 reintroduces EIP-7623, this time as a properly suffixed link (./eip-7623.md),
+      inside the normative block accounting rule: ''block.gas_used += max(tx_gas_used, calldata_floor_gas_cost)
+      (incorporating the calldata floor from EIP-7623)''. This is the only cross-EIP reference in the file
+      at the pinned state, and it is now load-bearing for the formula rather than framing.'
+    confidence: high
+    source_ids:
+    - eips-commit-5903a619bf35
+source_registry: outputs/sources/eips/eip-7778.yaml
+unknowns:
+- EIP-7778 never declares a 'requires' frontmatter field, at creation or at the pinned state, even though the
+  block gas accounting formula at the pin depends on the EIP-7623 calldata floor. The dependency is recorded
+  from the body reference only; no primary source explains the absence of the frontmatter declaration.
+- The creation commit's EIP-7623 and EIP-4844 links are written as ./eip-7623 and ./eip-4844 without the .md
+  suffix used everywhere else in the repository. Whether this was intentional is not recorded; the references
+  are counted as explicit cross-EIP references regardless, and the suffixed form ./eip-7623.md appears when
+  the reference returns at commit 5903a619bf35.
+- The gas_spent receipt field lived in the specification for only nine days (commit af1a46dfb4b2, 2026-01-19,
+  to commit 3929b1aab57b, 2026-01-28). Pull request ethereum/EIPs#11191 is titled 'Revert back to not having
+  a receipt field' but its merged diff contains no stated reason, and no contemporaneous AllCoreDevs record
+  was retrieved for this work unit, so why the field was dropped is unknown from the sources reviewed here.
+- Negative search - no commit in the reviewed history renames or moves EIPS/eip-7778.md, and 'git log --follow'
+  reports a single added path, so no pre-rename history exists to review.
+- Event timestamps are reproduced with the offsets recorded in Git. Committer timezone offsets in this repository
+  are set by the merge tooling (frequently +08:00) and are not evidence of where a change was made; all summary
+  and creation dates are the equivalent UTC instants.

@@ -1,0 +1,386 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 4895
+  title: Beacon chain push withdrawals as operations
+  source_ids:
+  - blob-eip4895-pin
+  - blob-eip4895-creation
+research_run:
+  started_at: '2026-08-20T19:20:00Z'
+  completed_at: '2026-08-20T20:10:00Z'
+  researcher: claude subagent eip-batch-09 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2022-03-10'
+  frontmatter_source_ids:
+  - blob-eip4895-creation
+  - blob-eip4895-pin
+  first_repository_commit:
+    authored_at: '2022-03-11T05:28:57-07:00'
+    committed_at: '2022-03-11T12:28:57+00:00'
+    commit: 1ce607ac37433c566f9ee5ecad817693da1fcd3f
+    path: EIPS/eip-4895.md
+    source_ids:
+    - commit-1ce607ac37
+  discrepancy_note: The frontmatter declares created 2022-03-10, while the earliest repository commit adding EIPS/eip-4895.md
+    is 1ce607ac (authored 2022-03-11T05:28:57-07:00, committed 2022-03-11T12:28:57+00:00, merged from PR ethereum/EIPs#4895).
+    The one-day gap is the interval between the declared drafting date and the merge of the opening pull request.
+    The Git event is the earliest independently verifiable repository event; the frontmatter date is the proposal's
+    declared creation date and is unchanged at the pinned state.
+revision_history:
+  summary:
+    file_commit_count: 14
+    post_creation_revision_count: 13
+    substantive_revision_count: 8
+    non_substantive_revision_count: 5
+    uncertain_revision_count: 0
+    first_revision_at: '2022-03-31T15:08:34+00:00'
+    last_revision_at: '2023-04-19T09:04:21-07:00'
+    first_substantive_revision_at: '2022-03-31T15:08:34+00:00'
+    last_substantive_revision_at: '2023-03-30T05:40:48+00:00'
+    derived_from_event_ids:
+    - eip4895-e01
+    - eip4895-e02
+    - eip4895-e03
+    - eip4895-e04
+    - eip4895-e05
+    - eip4895-e06
+    - eip4895-e07
+    - eip4895-e08
+    - eip4895-e09
+    - eip4895-e10
+    - eip4895-e11
+    - eip4895-e12
+    - eip4895-e13
+    - eip4895-e14
+  events:
+  - id: eip4895-e01
+    event_kind: creation
+    authored_at: '2022-03-11T05:28:57-07:00'
+    committed_at: '2022-03-11T12:28:57+00:00'
+    commit: 1ce607ac37433c566f9ee5ecad817693da1fcd3f
+    path: EIPS/eip-4895.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-4895 (merged from PR #4895): a new system-level ''withdrawal'' operation pushed
+      from the beacon chain into the EVM, with a Withdrawal object of (index, address, amount) serialised as RLP([index,
+      address, amount]), a new block-level `withdrawals` list, a `withdrawals_root` header commitment built as an
+      index-keyed Merkle-Patricia trie, an additional block validity check, and an unconditional post-transaction
+      balance increase with no gas cost. Frontmatter: status Draft, created 2022-03-10, no `requires` field. Includes
+      an open TODO about withdrawal logs/receipts.'
+    rationale: Adding commit; recorded as event_kind creation and excluded from revision counts.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-1ce607ac37
+    - blob-eip4895-creation
+  - id: eip4895-e02
+    event_kind: revision
+    authored_at: '2022-03-31T09:08:34-06:00'
+    committed_at: '2022-03-31T15:08:34+00:00'
+    commit: b4b1218d0807ac75c86f4d0eae82e89b1fa91f39
+    path: EIPS/eip-4895.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Specifies the serialisation position of the new fields: block body becomes RLP([transactions, ommers,
+      withdrawals]) and block RLP becomes RLP([header, transactions, ommers, withdrawals]); adds a dedicated ''New
+      field in the execution block header: withdrawals root'' section with the full 16-element header RLP list ending
+      in `withdrawals_root`; adds two NOTEs referring to EIP-3675 for the fixed ommers value and other fixed header
+      values; drops the TODO about logs and receipts; expands the rationale on operations vs transactions and on
+      the block-footprint bound (~1% of average block size).'
+    rationale: Defines the concrete block-body and block-header encodings that clients must implement, and removes
+      an unresolved specification TODO.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-b4b1218d08
+  - id: eip4895-e03
+    event_kind: revision
+    authored_at: '2022-04-01T14:28:36-06:00'
+    committed_at: '2022-04-01T20:28:36+00:00'
+    commit: cadc5928642c3e12d48109767721f33e822a0bb6
+    path: EIPS/eip-4895.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Removes the nested RLP encoding of withdrawals: `Withdrawal` objects are now serialised as an RLP
+      list with the schema `[index, address, amount]` rather than `RLP([index, address, amount])`, and the worked
+      example uses plain lists; also fixes the ''dataa'' typo.'
+    rationale: Changes the wire encoding of every withdrawal and therefore the withdrawals_root computation; a consensus-relevant
+      serialisation change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-cadc592864
+  - id: eip4895-e04
+    event_kind: revision
+    authored_at: '2022-05-06T03:29:09-04:00'
+    committed_at: '2022-05-06T00:29:09-07:00'
+    commit: 9e393a79d9937f579acbdcb234a67869259d5a96
+    path: EIPS/eip-4895.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Repo-wide sweep pointing the copyright waiver at the in-repo LICENSE file (PR #5055).'
+    rationale: Link-only change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-9e393a79d9
+  - id: eip4895-e05
+    event_kind: revision
+    authored_at: '2022-09-20T15:24:27+02:00'
+    committed_at: '2022-09-20T13:24:27+00:00'
+    commit: 85f10e690d10087adfa6817a9b4958256ec10e23
+    path: EIPS/eip-4895.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Editing pass (PR #5697) that re-frames the whole specification from ''block'' to ''execution payload''
+      terminology and corrects the header RLP illustration: the fixed ommers hash constant, difficulty 0 and the
+      zero nonce are inlined, `bloom`/`time`/`mix_hash` are renamed to `logs_bloom`/`timestamp`/`prev_randao`, and
+      the previously missing `base_fee_per_gas` field is added before `withdrawals_root`; the ''Commitment to withdrawals''
+      and ''New field in the header'' sections are merged; the note now cites EIP-3675 and EIP-4399; state-transition
+      wording changes from ''should increase'' to ''increases''; the `index` is described as uniquely identifying
+      each withdrawal.'
+    rationale: Corrects the illustrated header field list (adding base_fee_per_gas) and firms up normative wording;
+      the header layout is consensus-critical.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-85f10e690d
+  - id: eip4895-e06
+    event_kind: revision
+    authored_at: '2022-10-25T14:15:15-06:00'
+    committed_at: '2022-10-25T20:15:15+00:00'
+    commit: 773f0248efadc3ce4b8a07c172ea14da31d5281d
+    path: EIPS/eip-4895.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Adds a fourth field to the Withdrawal object: the consensus-layer `validator_index`. The schema becomes
+      `[index, validator_index, address, amount]`, examples are updated, and the `index` is documented as a global
+      counter starting at 0 and incrementing by 1 per withdrawal. Also introduces the ''compuggational'' typo in
+      the rationale.'
+    rationale: Adds a field to the serialised withdrawal structure and pins down index semantics.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-773f0248ef
+  - id: eip4895-e07
+    event_kind: revision
+    authored_at: '2022-10-25T14:54:31-06:00'
+    committed_at: '2022-10-25T20:54:31+00:00'
+    commit: 4e83ad5184fbe5136d67c16ac9005142ba77678f
+    path: EIPS/eip-4895.md
+    change_type: dependency
+    semantic_effect: non_substantive
+    summary: 'Status Draft -> Review (PR #5822) and removal of the two comparative EIP references from the Motivation:
+      ''[EIP-4863](./eip-4863.md)'' becomes ''the prior approach introducing a new transaction type'' and the ''[EIP-4788](./eip-4788.md)
+      + user-space withdrawal contract'' example is dropped.'
+    rationale: Process-status change plus removal of informative comparative references; no normative behaviour,
+      parameter or encoding changes. Recorded as change_type dependency because the substantive part of the diff
+      is the removal of two explicit cross-EIP references (see dependency_history).
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-4e83ad5184
+  - id: eip4895-e08
+    event_kind: revision
+    authored_at: '2022-11-22T18:13:39-03:00'
+    committed_at: '2022-11-22T13:13:39-08:00'
+    commit: e3eb747282a87b96317f45a4a1ec779d42a4ecdf
+    path: EIPS/eip-4895.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Typo fix ''compuggational'' -> ''computational'' in the rationale (PR #6029).'
+    rationale: Spelling-only change reverting the typo introduced by commit 773f0248.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-e3eb747282
+  - id: eip4895-e09
+    event_kind: revision
+    authored_at: '2022-12-06T09:56:04-07:00'
+    committed_at: '2022-12-06T16:56:04+00:00'
+    commit: 6d0e7420ba8663f486e65415b6aa451842d4dea3
+    path: EIPS/eip-4895.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Clarifies withdrawal field types and allowed values (PR #6089): `validator_index` is typed as a `uint64`,
+      and `amount` changes from ''an amount of ether given in wei as a 256-bit value'' to ''a nonzero amount of
+      ether given in wei as a uint64 value''.'
+    rationale: Changes the declared width of the amount field and adds a nonzero constraint; directly affects encoding
+      and validation.
+    change_group: 4895-amount-type-2022-12
+    confidence: high
+    source_ids:
+    - commit-6d0e7420ba
+  - id: eip4895-e10
+    event_kind: revision
+    authored_at: '2022-12-06T11:29:27-07:00'
+    committed_at: '2022-12-06T18:29:27+00:00'
+    commit: 0fa80ec53554671d55b07f19712cbc589b4a1f33
+    path: EIPS/eip-4895.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Corrects the amount type introduced ~1.5 hours earlier: `uint64` -> `uint256` (PR #6090, described
+      in its subject as fixing a typo from PR #6089).'
+    rationale: Reverses the width change of the previous commit; same logical update.
+    change_group: 4895-amount-type-2022-12
+    confidence: high
+    source_ids:
+    - commit-0fa80ec535
+  - id: eip4895-e11
+    event_kind: revision
+    authored_at: '2023-01-16T11:17:11-07:00'
+    committed_at: '2023-01-16T10:17:11-08:00'
+    commit: b56a299fbad4ee701e6d4cea025096effaf301fa
+    path: EIPS/eip-4895.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'CL-EL withdrawals harmonisation (PR #6325): `amount` becomes ''a nonzero amount of ether given in
+      Gwei (1e9 wei) as a uint64 value'', and the State transition section gains an explicit reminder that the amount
+      is in Gwei and must be converted to wei when updating account balances.'
+    rationale: Changes both the unit and the width of the amount field and adds a conversion requirement to the
+      state transition; a consensus-critical change affecting both layers.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-b56a299fba
+  - id: eip4895-e12
+    event_kind: revision
+    authored_at: '2023-03-30T14:40:48+09:00'
+    committed_at: '2023-03-30T05:40:48+00:00'
+    commit: 0e082fe43387ab82511988b0a0fafd0ae416324b
+    path: EIPS/eip-4895.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Sets `FORK_TIMESTAMP` from TBD to the Shanghai mainnet value 1681338455.
+    rationale: Assigns the concrete activation parameter used by implementations.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-0e082fe433
+  - id: eip4895-e13
+    event_kind: revision
+    authored_at: '2023-04-07T09:13:59-04:00'
+    committed_at: '2023-04-07T06:13:59-07:00'
+    commit: 3029eb65a518995a2b0d7331bff6e53ca68d396b
+    path: EIPS/eip-4895.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Status Review -> Last Call with last-call-deadline 2023-04-12.
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-3029eb65a5
+  - id: eip4895-e14
+    event_kind: revision
+    authored_at: '2023-04-19T12:04:21-04:00'
+    committed_at: '2023-04-19T09:04:21-07:00'
+    commit: f575390d52da8ebec2c69f5b0ac51bbd0ebf5538
+    path: EIPS/eip-4895.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Status Last Call -> Final (last-call-deadline removed).
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-f575390d52
+dependency_history:
+  events:
+  - id: eip4895-dep-e1
+    target_eip: 4788
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2022-03-11T12:28:57+00:00'
+    commit: 1ce607ac37433c566f9ee5ecad817693da1fcd3f
+    rationale: 'Explanation of ''other'': the creation text''s Motivation names EIP-4788 as an example of the ''pull''-based
+      alternative it is being compared against (''e.g. [EIP-4788](./eip-4788.md) + user-space withdrawal contract'').
+      This is an explicit comparative reference to an alternative design, not a normative requirement; EIP-4895
+      never carried a `requires` frontmatter field.'
+    confidence: high
+    source_ids:
+    - commit-1ce607ac37
+    - blob-eip4895-creation
+  - id: eip4895-dep-e2
+    target_eip: 4863
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2022-03-11T12:28:57+00:00'
+    commit: 1ce607ac37433c566f9ee5ecad817693da1fcd3f
+    rationale: 'Explanation of ''other'': the creation text states ''This approach is more involved than the prior
+      [EIP-4863](./eip-4863.md)'', an explicit reference to the earlier transaction-type withdrawal design that
+      EIP-4895 was proposed as an alternative to. Comparative/lineage reference, not a normative requirement.'
+    confidence: high
+    source_ids:
+    - commit-1ce607ac37
+    - blob-eip4895-creation
+  - id: eip4895-dep-e3
+    target_eip: 3675
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2022-03-31T15:08:34+00:00'
+    commit: b4b1218d0807ac75c86f4d0eae82e89b1fa91f39
+    rationale: This commit adds two explicit NOTEs stating that the `ommers` value in the new body serialisation
+      is the RLP encoding of an empty list 'due to [EIP-3675](./eip-3675.md)' and that some header RLP values 'have
+      fixed values that MUST be used' per EIP-3675. The statement is normative for anyone encoding the block, so
+      the relationship is recorded as `requires` even though EIP-4895 has no `requires` frontmatter field. The reference
+      persists through the pinned state.
+    confidence: medium
+    source_ids:
+    - commit-b4b1218d08
+  - id: eip4895-dep-e4
+    target_eip: 4399
+    event_type: introduced
+    relationship: requires
+    occurred_at: '2022-09-20T13:24:27+00:00'
+    commit: 85f10e690d10087adfa6817a9b4958256ec10e23
+    rationale: The rewritten header RLP illustration renames `mix_hash` to `prev_randao` and adds the NOTE 'field
+      names and constant value in this example reflect [EIP-3675](./eip-3675.md) and [EIP-4399](./eip-4399.md).
+      Refer to those EIPs for further information.' Recorded as `requires` because the header field semantics are
+      taken from EIP-4399; textual only, no `requires` frontmatter. The reference persists through the pinned state.
+    confidence: medium
+    source_ids:
+    - commit-85f10e690d
+  - id: eip4895-dep-e5
+    target_eip: 4863
+    event_type: removed
+    relationship: other
+    occurred_at: '2022-10-25T20:54:31+00:00'
+    commit: 4e83ad5184fbe5136d67c16ac9005142ba77678f
+    rationale: The 'move to review' commit replaces '[EIP-4863](./eip-4863.md)' with the generic phrase 'the prior
+      approach introducing a new transaction type', removing the document's last explicit EIP-4863 reference (verified
+      by scanning every historical version of the file for EIP-number mentions).
+    confidence: high
+    source_ids:
+    - commit-4e83ad5184
+  - id: eip4895-dep-e6
+    target_eip: 4788
+    event_type: removed
+    relationship: other
+    occurred_at: '2022-10-25T20:54:31+00:00'
+    commit: 4e83ad5184fbe5136d67c16ac9005142ba77678f
+    rationale: The same commit drops the parenthetical 'e.g. [EIP-4788](./eip-4788.md) + user-space withdrawal contract',
+      removing the document's last explicit EIP-4788 reference (verified by scanning every historical version of
+      the file for EIP-number mentions).
+    confidence: high
+    source_ids:
+    - commit-4e83ad5184
+source_registry: outputs/sources/eips/eip-4895.yaml
+unknowns:
+- EIP-4895 never carried a `requires` frontmatter field at any of its 14 file versions (verified by checking the
+  frontmatter of every historical version at the pin). All recorded dependencies are textual.
+- The frontmatter `created` date (2022-03-10) precedes the earliest repository commit (2022-03-11) by one day; no
+  separate primary source for the 2022-03-10 date was located beyond the frontmatter itself.
+- Summary first/last revision dates use the committer timestamps (committed_at) of the referenced events; authored
+  timestamps are also recorded per event. Note that commits 773f0248 and 4e83ad51 landed on the same day 39 minutes
+  apart, and 6d0e7420 / 0fa80ec5 on the same day ~1.5 hours apart.
+- PR numbers cited in event summaries come from the merge-commit subjects in ethereum/EIPs; PR metadata itself (GitHub
+  API) was not consulted or archived, so no mutable sources were relied upon and the raw/ directory for this work
+  unit is empty.
+- The consensus-layer half of withdrawals (Capella `Withdrawal` container and `process_withdrawals`) is specified
+  in ethereum/consensus-specs rather than in this EIP file; its history is out of scope for this per-file EIP work
+  unit and was not reconstructed here.

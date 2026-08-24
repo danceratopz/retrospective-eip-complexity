@@ -1,0 +1,206 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7918
+  title: Blob base fee bounded by execution cost
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7918.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7918.yaml
+research_run:
+  started_at: '2026-08-21T06:56:00Z'
+  completed_at: '2026-08-21T07:01:15Z'
+  researcher: claude subagent osaka/eip-7918 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7918-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: Proposed for Inclusion
+  effective_at: '2025-03-26T23:25:10Z'
+  recorded_at: '2025-03-26T23:25:10Z'
+  date_basis: >-
+    Task 01's occurred_at for osaka-eip7918-e1 is the UTC committer date of the ethereum/EIPs commit that
+    edited EIPS/eip-7607.md (Hardfork Meta - Fusaka), per the fork record's stated event dating convention
+    ("occurred_at on every inclusion-state event is the UTC committer date of the ethereum/EIPs commit that
+    changed EIPS/eip-7607.md"). That commit is a86dce8773ac667e01a4e1de56ba286c64c297d3, whose committer
+    timestamp is 2025-03-27T07:25:10+08:00 = 2025-03-26T23:25:10Z (author time 2025-03-27T01:25:10+02:00 =
+    2025-03-26T23:25:10Z; the two agree in UTC). Under the EIP-7723 process PFI is set when the change adding
+    the EIP to the Meta EIP's PFI section is merged, so effective_at and recorded_at are the same instant here;
+    Task 01 additionally records PR ethereum/EIPs#9545 as merged at 2025-03-26T23:25:10Z, consistent with the
+    squash commit. No AllCoreDevs decision underlies this event: Task 01 names the decision body as "EIP
+    champion via ethereum/EIPs pull request (PFI is champion-initiated per EIP-7723)", and PR #9545 was opened
+    by the EIP author, so no ACD call or date is available or required for this anchor (contrast the CFI event
+    osaka-eip7918-e2, which Task 01 attributes to ACDE#209 on 2025-04-10).
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary evidence in the read-only clone at the Task 01 run-wide pin
+    a08f51fec5b2b5da457adb05b8cffb487fb4f7de. `git log -1 --format='%H %cI %aI %s'
+    a86dce8773ac667e01a4e1de56ba286c64c297d3` returns committer time 2025-03-27T07:25:10+08:00
+    (= 2025-03-26T23:25:10Z), author time 2025-03-27T01:25:10+02:00 (= 2025-03-26T23:25:10Z) and subject
+    "Update EIP-7607: Switch out EIP-7915 in favor of new EIP *Blob base fee bounded by execution cost*".
+    `git show a86dce8773ac667e01a4e1de56ba286c64c297d3 -- EIPS/eip-7607.md` shows a single one-line hunk
+    replacing "* [EIP-7915](./eip-7915.md): Adaptive mean reversion blob pricing" with
+    "* [EIP-7918](./eip-7918.md): Blob base fee bounded by execution cost". Reading
+    `git show a86dce8773ac...:EIPS/eip-7607.md` confirms that line sits inside the "### Proposed for
+    Inclusion" list, so the commit is an inclusion-state change placing EIP-7918 in explicit PFI. The
+    timestamp is therefore an exact committer timestamp, not a calendar-day truncation or a PR-open time.
+  confidence: high
+  source_ids:
+  - eips-commit-a86dce8773ac
+  - eips-pr-9545
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7918-e01
+    event_kind: creation
+    commit: d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680
+    committed_at: '2025-03-26T19:04:25Z'
+    offset_from_anchor_seconds: -15645
+    semantic_effect: substantive
+    summary: >-
+      Initial addition of EIPS/eip-7918.md, "Blob base fee bounded by execution cost": modifies
+      `calc_excess_blob_gas()` from EIP-4844 so that `TARGET_BLOB_GAS_PER_BLOCK` is not subtracted when
+      `TX_BASE_COST * parent.base_fee_per_gas > TARGET_BLOB_GAS_PER_BLOCK * get_base_fee_per_blob_gas(parent)`,
+      returning `parent.excess_blob_gas + parent.blob_gas_used` instead. Includes Figure 1, the
+      fee-inelasticity rationale, the "designing for the future" square-root variant and two alternative
+      specifications. Frontmatter: status Draft, created 2025-03-25, `requires: 4844`. Task 01 records this as
+      the only EIP-file event at or before the anchor; it is the latest such event and therefore the preceding
+      candidate. Its Task 01 committed_at is written in local offset form as '2025-03-27T03:04:25+08:00',
+      which is 2025-03-26T19:04:25Z; verified directly with
+      `git log -1 --format=%cI d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680`.
+    immutable_url: https://github.com/ethereum/EIPs/blob/d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680/EIPS/eip-7918.md
+    source_ids:
+    - commit-d4a7453aac
+    - blob-eip7918-creation
+  following:
+    exists: true
+    revision_event_id: eip7918-e02
+    event_kind: revision
+    commit: 4d6081ceb9d3d65e22971544b3831a74e881a1e4
+    committed_at: '2025-03-27T07:26:26Z'
+    offset_from_anchor_seconds: 28876
+    semantic_effect: non_substantive
+    summary: >-
+      "Update EIP-7918: Added a new figure and shifted the previous to another section." Adds Figure 2
+      (permitted/restricted regions plotted against the execution base fee, assets/eip-7918/2.png), moves the
+      old Figure 1 caption content into the new Figure 2 caption, rewrites the Motivation and the "Designing
+      for the future" rationale around the two figures, and adds a paragraph arguing the bound is justified
+      even if demand were inelastic at zero execution cost. Diff reviewed directly
+      (`git diff 4d6081ceb9^ 4d6081ceb9 -- EIPS/eip-7918.md`, 13 insertions / 7 deletions): the normative
+      `calc_excess_blob_gas()` code block is untouched, matching Task 01's non_substantive classification.
+      This is the earliest EIP-file revision after the anchor and therefore the following candidate. Verified
+      with `git log -1 --format=%cI 4d6081ceb9d3d65e22971544b3831a74e881a1e4`.
+    immutable_url: https://github.com/ethereum/EIPs/blob/4d6081ceb9d3d65e22971544b3831a74e881a1e4/EIPS/eip-7918.md
+    source_ids:
+    - commit-4d6081ceb9
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7918-e01
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680
+    path: EIPS/eip-7918.md
+    committed_at: '2025-03-26T19:04:25Z'
+    offset_from_anchor_seconds: -15645
+    git_blob_sha: bd5700342ad5e1b41f973cc46b569a9a639694ee
+    content_sha256: eeca54feba9d22411496c6d0020ffe41b174d465361abfc6790e349ab14fbd8d
+    immutable_url: https://github.com/ethereum/EIPs/blob/d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680/EIPS/eip-7918.md
+    source_ids:
+    - commit-d4a7453aac
+    - blob-eip7918-creation
+  information_cutoff_at: '2025-03-26T23:25:10Z'
+  rationale: >-
+    Default preceding rule. All 18 commits touching EIPS/eip-7918.md in Task 01's complete
+    revision_history.events list were re-timed with git and normalized to UTC; exactly one falls at or before
+    the anchor 2025-03-26T23:25:10Z, namely the creation commit d4a7453a at 2025-03-26T19:04:25Z (-15645 s),
+    and the next is 4d6081ce at 2025-03-27T07:26:26Z (+28876 s). `git log --format='%h %cI' -- EIPS/eip-7918.md`
+    confirms no other commit touches the file inside that window, so the bracketing is unambiguous. The file
+    existed for only about 4 h 21 min before PFI was set, so the content at the anchor is the EIP exactly as
+    first submitted, which is what the PFI proposal placed before AllCoreDevs. The selected blob was resolved
+    at the pinned clone: `git ls-tree d4a7453aac -- EIPS/eip-7918.md` shows the path present as blob
+    bd5700342ad5e1b41f973cc46b569a9a639694ee, `git rev-parse d4a7453aac:EIPS/eip-7918.md` gives the same blob
+    SHA, and `git cat-file blob d4a7453aac:EIPS/eip-7918.md | sha256sum` gives
+    eeca54feba9d22411496c6d0020ffe41b174d465361abfc6790e349ab14fbd8d. No post-anchor exception is needed: a
+    preceding candidate exists, and the following commit is presentation-only.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: true
+    diff_semantic_effect: non_substantive
+    diff_summary: >-
+      Recorded for completeness only, since the exception was not used. The following candidate 4d6081ce is
+      8 h 1 min 16 s after the anchor, inside the seven-day eligibility ceiling, so its diff against the
+      preceding candidate was reviewed directly. It adds Figure 2 and its caption, retitles and relocates the
+      old Figure 1 caption text, rewrites Motivation and "Designing for the future" prose around the two
+      figures, adds a paragraph on inelasticity at zero execution cost, and drops one "the black line in
+      Figure 1" cross-reference. The `calc_excess_blob_gas()` specification block, the `if`-clause condition
+      and the returned expressions are byte-identical.
+    hindsight_risk: >-
+      None realized, because the exception was not taken. Had it been taken the risk would have been low: the
+      commit is 8 h after PFI, predates the 2025-04-10 ACDE#209 CFI decision by two weeks, and contains no
+      devnet, client-implementation, testing or later-design-feedback content. The countervailing point is
+      that it also adds nothing normative, so selecting it would enlarge the assessed text without changing
+      the specification.
+    justification: >-
+      Not used. The preceding candidate exists and is the default; the contract states the seven-day window is
+      an eligibility ceiling rather than a nearest-commit rule, and the following commit is closer in absolute
+      time only. Because 4d6081ce is purely figures and rationale prose, selecting it would not change the
+      specification a later complexity assessment must read.
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - >-
+    Confirm the anchor kind. PFI here was champion-initiated under EIP-7723 (PR #9545 opened by the EIP
+    author, anderselowsson) rather than set by an AllCoreDevs decision, so anchor.kind is explicit_pfi with no
+    underlying ACD call or date. Task 01 identifies the first ACD-backed event for this EIP as the CFI move at
+    ACDE#209 on 2025-04-10 (osaka-eip7918-e2).
+  - >-
+    Confirm that selecting the creation commit is acceptable even though it is an event_kind of creation
+    rather than revision. It is the latest Task 01 EIP-file event at or before the anchor, and the contract
+    defines the preceding candidate over "creation or revision" events, so the default preceding rule points
+    at it. The EIP file was only about 4 h 21 min old when PFI was set.
+  - >-
+    Confirm that the selected content is materially earlier than the specification Fusaka finally shipped. The
+    ref is the initial draft: `TX_BASE_COST`-based `if`-clause and `parent.excess_blob_gas +
+    parent.blob_gas_used`. The `// 3` rebalancing (2025-04-10), the `BLOB_BASE_COST` reserve-price
+    respecification (2025-05-26), the 2**14 -> 2**13 constant change (2025-07-03) and the blobSchedule-derived
+    target (2025-08-14) all post-date the anchor. That is the intended semantics of a PFI-time ref, but a
+    reviewer should confirm the study wants the proposal as submitted rather than as scheduled or shipped.
+  - >-
+    Confirm the information cutoff. Because the preceding candidate is selected, information_cutoff_at is the
+    verified anchor time 2025-03-26T23:25:10Z, permitting context available at PFI while excluding all later
+    development history.
+unknowns:
+- >-
+  Task 01's inclusion_history for this fork-EIP records exactly one proposed_for_inclusion event
+  (normalized_state_counts.proposed_for_inclusion: 1), so there is no earlier or competing proposal cycle for
+  EIP-7918 and alternative_event_ids is empty. Negative finding, not an omission. The commit that set PFI also
+  removed EIP-7915 ("Adaptive mean reversion blob pricing") from the same list; that removal belongs to
+  EIP-7915's history and was not treated as an EIP-7918 proposal cycle.
+- >-
+  Task 01 records several EIP-7918 committer timestamps in non-UTC local offsets, including the selected
+  creation commit ('2025-03-27T03:04:25+08:00') and the anchor commit as reported by git
+  ('2025-03-27T07:25:10+08:00'). Every timestamp in this record is the UTC equivalent, re-derived from git
+  rather than from the Task 01 YAML text; the raw local-offset forms are quoted in the neighbouring prose
+  fields. The apparent +08:00 committer zone on EIP-Bot squash commits is a property of the merge tooling and
+  does not affect any UTC instant used here.
+- >-
+  The frontmatter of the selected revision declares `created: 2025-03-25`, one to two days before the earliest
+  repository commit (Task 01 discrepancy_note). Per the contract, frontmatter `created` was not used for
+  bracketing; only committer times were.
+- >-
+  Task 01's EIP-7918 record notes that GitHub PR metadata was not consulted for the EIP-file commits (their
+  subjects carry no PR numbers), so the only evidence for those revisions is Git. The anchor, by contrast,
+  cites eips-pr-9545, a reference-only archived PR extract; the PR merge time was not relied on beyond
+  corroborating the squash commit's committer time, which was verified independently from Git.
+- >-
+  ethereum/EIPs was read only at the Task 01 run-wide pin a08f51fec5b2b5da457adb05b8cffb487fb4f7de (confirmed
+  as the clone's HEAD). No fetch, checkout or write was performed, so any commit added to master after that
+  pin is outside this record's evidence.

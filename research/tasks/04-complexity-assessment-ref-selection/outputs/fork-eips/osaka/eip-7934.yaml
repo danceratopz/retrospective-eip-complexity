@@ -1,0 +1,202 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7934
+  title: RLP Execution Block Size Limit
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7934.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7934.yaml
+research_run:
+  started_at: '2026-08-21T07:00:07Z'
+  completed_at: '2026-08-21T07:02:01Z'
+  researcher: claude subagent osaka/eip-7934 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7934-e1
+  alternative_event_ids: []
+  kind: fallback_cfi
+  raw_label: Considered for Inclusion
+  effective_at: '2025-05-09T21:56:48Z'
+  recorded_at: '2025-05-09T21:56:48Z'
+  date_basis: >-
+    Task 01's occurred_at for event osaka-eip7934-e1 is the UTC committer date of the ethereum/EIPs
+    commit that edited EIPS/eip-7607.md (the Fusaka Meta EIP), and that convention is stated
+    run-wide in research/tasks/01-fork-eip-history/outputs/forks/osaka.yaml. Verified directly from
+    the read-only clone at the Task 01 run-wide pin a08f51fec5b2b5da457adb05b8cffb487fb4f7de:
+    'git log -1' for commit 9d880b910da73181fd23758f1516c325ea26e3b9 reports committer date
+    2025-05-09T21:56:48+00:00 (author date 2025-05-09T14:56:48-07:00, subject "Update EIP-7607: Add
+    ACDE#211 SFI & CFI'd EIPs", author Tim Beiko, merged by EIP-Bot). 'git show <sha> -- EIPS/eip-7607.md'
+    shows exactly two added lines, one of which is "* [EIP-7934](./eip-7934.md): RLP Execution Block
+    Size Limit"; rendering the file at that commit places that line under the "### Considered for
+    Inclusion" heading, so this commit is the inclusion-state change that first placed EIP-7934 in a
+    Fusaka inclusion state. The underlying AllCoreDevs decision Task 01 identifies is
+    AllCoreDevs - Execution (ACDE) #211, held 2025-05-08 (ethereum/pm issue 1500, source pm-issue-1500),
+    at which EIP-7934 was CFI'd and EIP-7935 was SFI'd; Task 01 records no minute-level timestamp for
+    that call, so the exactly-timed repository record (2025-05-09T21:56:48Z) is used as both
+    effective_at and recorded_at rather than a calendar-day-truncated meeting date. effective_at and
+    recorded_at are therefore identical here; the ACDE#211 decision preceded the repository record by
+    roughly 1.3 days.
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary Git evidence rather than Task 01 prose: (a) the commit exists at the pinned
+    clone and its exact committer timestamp is 2025-05-09T21:56:48+00:00; (b) the actual hunk adds
+    EIP-7934 to EIPS/eip-7607.md; (c) the added line sits under "### Considered for Inclusion" at that
+    commit, not under any Proposed-for-Inclusion heading; (d) an independent negative search over all
+    53 commits of EIPS/eip-7607.md - for each commit, resolving the enclosing '###' heading of the
+    'eip-7934.md' link - produced no commit in which EIP-7934 was ever listed under a section whose
+    heading contains "Proposed", reproducing Task 01's negative finding; (e) at the anchor commit
+    EIPS/eip-7607.md contains no "Proposed for Inclusion" section at all, only a pointer to the EIP-7723
+    definitions, so no explicit-PFI event could have existed for this EIP in this document. What is
+    verified is the existence, exact time and content of the CFI-equivalent event; the judgement that
+    this CFI event is the best available stand-in for PFI is a documented fallback, not a verified fact.
+  confidence: medium
+  source_ids:
+  - eips-commit-9d880b910da7
+  - eips-pr-9744
+  - pm-issue-1500
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7934-e00
+    event_kind: creation
+    commit: 040800a32544ba8819ce7b9feaad9c8bb4400f62
+    committed_at: '2025-05-06T12:39:57Z'
+    offset_from_anchor_seconds: -292611
+    semantic_effect: substantive
+    summary: >-
+      Creation commit adding EIPS/eip-7934.md (77 lines, status Draft, change_type normative_behavior):
+      introduces MAX_BLOCK_SIZE = 10 MiB (10,485,760 bytes) and a MARGIN of 512 KiB (524,288 bytes),
+      defines MAX_RLP_BLOCK_SIZE as MAX_BLOCK_SIZE - MARGIN, and makes any block whose RLP encoding
+      exceeds MAX_RLP_BLOCK_SIZE invalid at both construction and validation, motivated by the consensus
+      layer's 10 MiB gossip limit. Git records committer time as 2025-05-06T20:39:57+08:00, i.e.
+      2025-05-06T12:39:57Z; the +08:00 offset is merge tooling, per the Task 01 timezone caveat.
+    immutable_url: https://github.com/ethereum/EIPs/blob/040800a32544ba8819ce7b9feaad9c8bb4400f62/EIPS/eip-7934.md
+    source_ids:
+    - eips-commit-040800a32544
+    - eips-blob-eip7934-creation
+    - gh-pr-map-eip-7934
+  following:
+    exists: true
+    revision_event_id: eip7934-e01
+    event_kind: revision
+    commit: 9076d228026a5ea6b9c7367c91d626c597d525a0
+    committed_at: '2025-06-10T10:22:38Z'
+    offset_from_anchor_seconds: 2723150
+    semantic_effect: substantive
+    summary: >-
+      Constant-name fix (change_type clarification, Task 01 semantic_effect substantive with medium
+      confidence): the Specification bullet list introduces SAFETY_MARGIN instead of MARGIN and the
+      pseudocode computes MAX_RLP_BLOCK_SIZE = MAX_BLOCK_SIZE - SAFETY_MARGIN instead of
+      GOSSIP_UPPER_LIMIT - SAFETY_MARGIN, removing an identifier the document never defined. Git
+      committer time 2025-06-10T10:22:38+00:00. This is 2,723,150 seconds (31.5 days) after the anchor,
+      so it is ineligible for the post-anchor exception's seven-day ceiling.
+    immutable_url: https://github.com/ethereum/EIPs/blob/9076d228026a5ea6b9c7367c91d626c597d525a0/EIPS/eip-7934.md
+    source_ids:
+    - eips-commit-9076d228026a
+    - gh-pr-map-eip-7934
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7934-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: 040800a32544ba8819ce7b9feaad9c8bb4400f62
+    path: EIPS/eip-7934.md
+    committed_at: '2025-05-06T12:39:57Z'
+    offset_from_anchor_seconds: -292611
+    git_blob_sha: 028e8657abdf9fa3f2159e639bccd2f66f88be1c
+    content_sha256: 29c5f346e4a9e09f18e7ba5296b49fc0b250e913e2fa02870402d1ea76da5e77
+    immutable_url: https://github.com/ethereum/EIPs/blob/040800a32544ba8819ce7b9feaad9c8bb4400f62/EIPS/eip-7934.md
+    source_ids:
+    - eips-commit-040800a32544
+    - eips-blob-eip7934-creation
+    - gh-pr-map-eip-7934
+  information_cutoff_at: '2025-05-09T21:56:48Z'
+  rationale: >-
+    Default preceding rule applied. The complete Task 01 revision_history.events list for EIP-7934 has
+    seven events (creation eip7934-e00 plus revisions eip7934-e01..e06); the seven commits touching
+    EIPS/eip-7934.md were re-listed directly from the pinned clone and their committer times normalized
+    to UTC, matching Task 01 exactly. Exactly one event falls at or before the anchor
+    (2025-05-09T21:56:48Z): the creation commit 040800a32544 at 2025-05-06T12:39:57Z, 292,611 seconds
+    (3.39 days) earlier. The next event is 9076d228026a at 2025-06-10T10:22:38Z, 2,723,150 seconds
+    (31.5 days) after the anchor - well outside the seven-day eligibility ceiling - so no post-anchor
+    exception is available and none is proposed. The selected content is therefore the EIP exactly as
+    it stood when ACDE#211's inclusion decision was recorded: 512 KiB SAFETY_MARGIN wording (as MARGIN),
+    the undefined GOSSIP_UPPER_LIMIT identifier in the pseudocode, and status Draft. Resolution verified
+    at the pin: 'git ls-tree 040800a32544 -- EIPS/eip-7934.md' confirms the path existed and yields blob
+    028e8657abdf9fa3f2159e639bccd2f66f88be1c; 'git cat-file blob' piped to sha256sum yields
+    29c5f346e4a9e09f18e7ba5296b49fc0b250e913e2fa02870402d1ea76da5e77 over 3,548 bytes / 77 lines.
+    information_cutoff_at is the verified anchor time because the preceding revision was selected.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: >-
+      Not applicable - no post-anchor exception is proposed. For the record, the diff from the selected
+      creation revision to the following candidate (9076d228026a) renames MARGIN to SAFETY_MARGIN in the
+      Specification bullet and replaces the undefined GOSSIP_UPPER_LIMIT with MAX_BLOCK_SIZE in the
+      pseudocode; Task 01 classifies it as a substantive clarification with medium confidence.
+    diff_summary: >-
+      Not applicable - the exception test fails at condition 1. The following revision is
+      2025-06-10T10:22:38Z, 2,723,150 seconds (31.5 calendar days) after the anchor
+      2025-05-09T21:56:48Z, exceeding the seven-day ceiling, so no direct diff review was conducted for
+      exception purposes.
+    hindsight_risk: >-
+      Not applicable - none incurred. Selecting the pre-anchor creation revision imports no post-anchor
+      information. Had the following revision been selected it would have carried a month of post-CFI
+      review context, including the 2 MiB SAFETY_MARGIN discussion that landed 82 minutes after it.
+    justification: >-
+      Not applicable - the default preceding candidate exists, precedes the anchor by 3.39 days, and is
+      the only candidate at or before the anchor.
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - 'Anchor kind is fallback_cfi, not explicit_pfi: EIP-7934 was never listed under a Proposed for
+    Inclusion section of EIPS/eip-7607.md in any of that file''s 53 commits (independently re-verified
+    here), and the Meta EIP carried no PFI section at the anchor commit. Its first Fusaka inclusion state
+    is Considered for Inclusion, added per ACDE#211. A human must confirm that the earliest
+    CFI-equivalent event is the accepted stand-in for PFI for this EIP, since the contract requires a
+    fallback anchor''s limitation to be explicit.'
+  - 'Anchor timing convention: effective_at uses the exactly-timed ethereum/EIPs commit
+    (2025-05-09T21:56:48Z) rather than the ACDE#211 call date (2025-05-08), for which Task 01 records no
+    minute-level timestamp. A reviewer should confirm this reading of effective_at vs recorded_at for a
+    meeting-driven event. The choice does not affect the outcome: the creation commit (2025-05-06T12:39:57Z)
+    precedes either candidate anchor, and the following revision (2025-06-10T10:22:38Z) is more than seven
+    days after either.'
+  - 'Selected content caveat for downstream complexity work: the selected creation revision specifies a
+    512 KiB margin (MAX_RLP_BLOCK_SIZE = 9,961,472 bytes) and derives the bound from GOSSIP_UPPER_LIMIT,
+    an identifier the document never defines. The 2 MiB SAFETY_MARGIN that shipped in Fusaka post-dates
+    the anchor by a month (eip7934-e02, 2025-06-10T11:44:27Z). A reviewer should confirm that assessing
+    the pre-anchor text - not the shipped parameter - is intended.'
+  - 'Confidence on the following candidate''s substantive classification is medium in Task 01 (a reviewer
+    could call eip7934-e01 editorial). This has no effect on the selection, which is decided by time, but
+    is noted because it would matter if the anchor were ever moved later than 2025-06-10.'
+unknowns:
+- 'Negative finding, independently reproduced: no Proposed-for-Inclusion event exists for EIP-7934 in the
+  Fusaka Meta EIP. For every one of the 53 commits touching EIPS/eip-7607.md, the enclosing level-3
+  heading of the ''eip-7934.md'' link was resolved; the link is absent before commit 9d880b910da7, sits
+  under ''### Considered for Inclusion'' from 9d880b910da7 until commit ca4fda0074fe, and under ''####
+  Core EIPs'' of the Scheduled/Included section thereafter. No commit ever placed it under a heading
+  containing ''Proposed''.'
+- 'The exact instant at which ACDE#211 (2025-05-08) resolved to CFI EIP-7934 is unknown. Task 01 cites
+  ethereum/pm issue 1500 as a reference-only keyword extract and records that ethereum/pm at the run-wide
+  pin ecf2eecc74adc479cea38b3d3b9a670c320421b1 contains no committed minutes for ACDE >= 205, so no
+  minute-level decision timestamp is recoverable from the pinned evidence. The anchor is therefore the
+  repository-record time; see review notes for the demonstrated insensitivity of the selection to this.'
+- 'The frontmatter created date (2025-04-16) precedes the selected creation commit
+  (2025-05-06T12:39:57Z) by twenty days, and the adding pull request ethereum/EIPs#9658 opened
+  2025-04-17T20:46:19Z. Per the contract, frontmatter created and PR-open times were not used for
+  bracketing. Any pre-repository draft of the EIP that circulated between 2025-04-16 and 2025-05-06 is
+  not addressable as an immutable ethereum/EIPs ref and was not sought.'
+- 'Task 01 records committer timezone offsets as stored in Git (frequently +08:00 from merge tooling).
+  All timestamps in this record are the equivalent UTC instants, re-derived from the pinned clone; no
+  Task 01 local-offset value is preserved verbatim in a timestamp field here.'
+- 'No Task 01 error was found. The seven commits touching EIPS/eip-7934.md, their committer instants, and
+  the anchor commit''s timestamp and hunk all match the Task 01 records exactly, so no Task 01 correction
+  is requested.'

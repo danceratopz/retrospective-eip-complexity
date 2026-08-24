@@ -1,0 +1,279 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7823
+  title: Set upper bounds for MODEXP
+  source_ids:
+  - eips-blob-eip7823-pin
+research_run:
+  started_at: '2026-08-20T19:56:19Z'
+  completed_at: '2026-08-21T02:55:00Z'
+  researcher: claude subagent eip-batch-12 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2024-11-11'
+  frontmatter_source_ids:
+  - eips-blob-eip7823-creation
+  - eips-blob-eip7823-pin
+  first_repository_commit:
+    authored_at: '2024-11-26T17:33:25Z'
+    committed_at: '2024-11-26T17:33:25Z'
+    commit: b16c055363024c8c7e072c32e98c390d3ad6c33e
+    path: EIPS/eip-7823.md
+    source_ids:
+    - eips-commit-b16c05536302
+    - gh-pr-map-eip-7823
+  discrepancy_note: >-
+    The frontmatter 'created' date (2024-11-11) precedes the first repository commit
+    (2024-11-26T17:33:25Z UTC) by fifteen days. Four of those days are review latency: the
+    adding pull request (ethereum/EIPs#9046, "Add EIP: Set upper bounds for MODEXP") was opened
+    on 2024-11-22T14:19:43Z and merged on 2024-11-26T17:33:25Z. The remaining eleven days lie
+    between the declared creation date and the opening of the PR, consistent with the proposal
+    being drafted and discussed before submission (discussions-to
+    https://ethereum-magicians.org/t/eip-7823-set-upper-bounds-for-modexp/21798); no primary
+    source reviewed here states this explicitly. The 'created' value was never edited.
+revision_history:
+  summary:
+    file_commit_count: 10
+    post_creation_revision_count: 9
+    substantive_revision_count: 1
+    non_substantive_revision_count: 8
+    uncertain_revision_count: 0
+    first_revision_at: '2025-01-27T18:37:06Z'
+    last_revision_at: '2026-01-21T09:16:44Z'
+    first_substantive_revision_at: '2025-01-27T18:37:06Z'
+    last_substantive_revision_at: '2025-01-27T18:37:06Z'
+    derived_from_event_ids:
+    - eip7823-e00
+    - eip7823-e01
+    - eip7823-e02
+    - eip7823-e03
+    - eip7823-e04
+    - eip7823-e05
+    - eip7823-e06
+    - eip7823-e07
+    - eip7823-e08
+    - eip7823-e09
+  events:
+  - id: eip7823-e00
+    event_kind: creation
+    authored_at: '2024-11-26T18:33:25+01:00'
+    committed_at: '2024-11-27T01:33:25+08:00'
+    commit: b16c055363024c8c7e072c32e98c390d3ad6c33e
+    path: EIPS/eip-7823.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: >-
+      Initial addition of EIP-7823 'Set upper bounds for MODEXP' in Draft status (65 lines) with
+      frontmatter 'requires 198'. Requires each of length_of_BASE, length_of_EXPONENT and
+      length_of_MODULUS passed to the MODEXP precompile at address 0x05 to be at most 8192 bits
+      (1024 bytes); a larger input makes the precompile return an error and consume all gas. The
+      Backwards Compatibility and Security Considerations sections are TODO placeholders.
+    rationale: Creation commit adding the initial specification (merged via ethereum/EIPs#9046).
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b16c05536302
+    - eips-blob-eip7823-creation
+    - gh-pr-map-eip-7823
+  - id: eip7823-e01
+    event_kind: revision
+    authored_at: '2025-01-27T19:37:06+01:00'
+    committed_at: '2025-01-27T18:37:06+00:00'
+    commit: 3502800fa31270815ac884c7b4d4c19612ecaa90
+    path: EIPS/eip-7823.md
+    change_type: security_assumption
+    semantic_effect: substantive
+    summary: >-
+      'Fill in missing sections' (ethereum/EIPs#9271). Adds an Analysis subsection with mainnet
+      occurrence tables for base, exponent and modulus lengths between blocks 5472266 and
+      21550926 and a list of the invalid invocations found; replaces the Backwards Compatibility
+      placeholder with the claim that no past transaction would have behaved differently under
+      the new bound; replaces the Security Considerations placeholder with "Since only the
+      accepted input range is reduced, no new security surface area is expected."
+    rationale: >-
+      Turns two TODO placeholders into stated backwards-compatibility and security assumptions
+      and supplies the mainnet evidence backing the 1024-byte bound, all of which downstream
+      review and testing rely on. The normative limit itself is unchanged.
+    change_group: eip7823-mainnet-analysis-section
+    confidence: high
+    source_ids:
+    - eips-commit-3502800fa312
+    - gh-pr-map-eip-7823
+  - id: eip7823-e02
+    event_kind: revision
+    authored_at: '2025-01-28T12:29:05+01:00'
+    committed_at: '2025-01-28T11:29:05+00:00'
+    commit: b7e64e90682317cc5f666d350611e1c1d9c3dacf
+    path: EIPS/eip-7823.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: >-
+      'Use decimal numbers for input length' (ethereum/EIPs#9283): the length column of the three
+      Analysis tables loses its floating-point formatting, for example '32.0' becomes '32'.
+    rationale: >-
+      Presentation of the previous day's analysis tables; the counts and lengths are identical.
+      Same logical update as eip7823-e01.
+    change_group: eip7823-mainnet-analysis-section
+    confidence: high
+    source_ids:
+    - eips-commit-b7e64e906823
+    - gh-pr-map-eip-7823
+  - id: eip7823-e03
+    event_kind: revision
+    authored_at: '2025-01-28T13:53:47+01:00'
+    committed_at: '2025-01-28T12:53:47+00:00'
+    commit: 55ad72cafe4449e21c8568a114718827c7fef100
+    path: EIPS/eip-7823.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: >-
+      'Clarify analysis results values' (ethereum/EIPs#9284): adds "All lengths of inputs are
+      expressed in bytes." to the Analysis introduction and "513 bytes" in the sentence
+      summarising the largest observed input.
+    rationale: >-
+      States the unit of the Analysis tables. Recorded as non_substantive because it affects only
+      the supporting data in the Rationale, not the Specification, whose bound already reads
+      "8192 bits (1024 bytes)"; confidence medium because the clarification does change how a
+      reader interprets the evidence for that bound. Same logical update as eip7823-e01.
+    change_group: eip7823-mainnet-analysis-section
+    confidence: medium
+    source_ids:
+    - eips-commit-55ad72cafe44
+    - gh-pr-map-eip-7823
+  - id: eip7823-e04
+    event_kind: revision
+    authored_at: '2025-01-28T17:08:14+01:00'
+    committed_at: '2025-01-29T00:08:14+08:00'
+    commit: 81a96924a6f55614fbdef070a484486c4808b011
+    path: EIPS/eip-7823.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Draft -> Review (ethereum/EIPs#9272).'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-81a96924a6f5
+    - gh-pr-map-eip-7823
+  - id: eip7823-e05
+    event_kind: revision
+    authored_at: '2025-08-24T08:26:05+08:00'
+    committed_at: '2025-08-24T08:26:05+08:00'
+    commit: 13e6e06ff23252427d2692aea54da05e8c85b520
+    path: EIPS/eip-7823.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Stagnant, applied automatically by eth-bot (ethereum/EIPs#10086).'
+    rationale: Process-metadata change only, generated by the repository's stagnation bot.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-13e6e06ff232
+    - gh-pr-map-eip-7823
+  - id: eip7823-e06
+    event_kind: revision
+    authored_at: '2025-09-02T14:29:45+02:00'
+    committed_at: '2025-09-02T06:29:45-06:00'
+    commit: c77aeaccce65328087c1170d023cf8aa1b6240b3
+    path: EIPS/eip-7823.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: >-
+      Status change Stagnant -> Review (ethereum/EIPs#10250), reverting the bot's stagnation nine
+      days earlier while the EIP was scheduled for Fusaka.
+    rationale: Process-metadata change only; the diff is the exact inverse of eip7823-e05.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c77aeaccce65
+    - gh-pr-map-eip-7823
+  - id: eip7823-e07
+    event_kind: revision
+    authored_at: '2025-09-29T00:18:45+03:00'
+    committed_at: '2025-09-29T05:18:45+08:00'
+    commit: 323844d325f543a597f9f2104d27a25395070c4a
+    path: EIPS/eip-7823.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: >-
+      'Correct RSA key size from 4196 to 4096 bits' (ethereum/EIPs#10106) in the Rationale
+      sentence listing commonly used RSA key sizes.
+    rationale: >-
+      Corrects a typo in an illustrative list of RSA key sizes; the normative 8192-bit bound and
+      every other value are unchanged, and no implementation or test depends on the sentence.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-323844d325f5
+    - gh-pr-map-eip-7823
+  - id: eip7823-e08
+    event_kind: revision
+    authored_at: '2025-10-01T00:12:26-07:00'
+    committed_at: '2025-10-01T15:12:26+08:00'
+    commit: c4f5e0de8e26c37a116ac03020356d352d5335bd
+    path: EIPS/eip-7823.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Review -> Last Call with last-call-deadline 2025-10-28 (ethereum/EIPs#10412).'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c4f5e0de8e26
+    - gh-pr-map-eip-7823
+  - id: eip7823-e09
+    event_kind: revision
+    authored_at: '2026-01-21T04:16:44-05:00'
+    committed_at: '2026-01-21T09:16:44+00:00'
+    commit: b55cdb0ee78a696327cf76d1c5cf8088d73499ca
+    path: EIPS/eip-7823.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Status change: Last Call -> Final; last-call-deadline removed (ethereum/EIPs#11113).'
+    rationale: Process-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-b55cdb0ee78a
+    - gh-pr-map-eip-7823
+dependency_history:
+  events:
+  - id: eip7823-d01
+    target_eip: 198
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2024-11-26T17:33:25Z'
+    commit: b16c055363024c8c7e072c32e98c390d3ad6c33e
+    rationale: >-
+      Declared in the frontmatter as 'requires 198' at creation and quoted in the Specification,
+      which opens "Recap from [EIP-198](./eip-198.md)" followed by that EIP's input format for
+      the precompile at address 0x05. EIP-7823 constrains the interface EIP-198 defines, so the
+      dependency is normative. Present and unchanged at the pin.
+    confidence: high
+    source_ids:
+    - eips-commit-b16c05536302
+    - eips-blob-eip7823-creation
+    - eips-blob-eip7823-pin
+source_registry: outputs/sources/eips/eip-7823.yaml
+unknowns:
+- >-
+  The eleven days between the frontmatter 'created' date (2024-11-11) and the opening of the
+  adding pull request (2024-11-22) are not accounted for by any primary source reviewed here.
+  Negative search: git log --follow at the pin reports no earlier path for this file.
+- >-
+  EIP-198 is the only explicit cross-EIP reference in the file's entire history, at creation and
+  at the pin. The Rationale repeatedly discusses EVMMAX as the motivation for bounding the
+  precompile, but never names an EIP number for it, so no dependency event is recorded for it
+  (negative search over every revision of EIPS/eip-7823.md at the pin).
+- >-
+  Event eip7823-e03 (adding "All lengths of inputs are expressed in bytes") is recorded as
+  non_substantive with medium confidence; it clarifies the units of the supporting analysis
+  rather than the normative bound. Treating it as substantive would move
+  last_substantive_revision_at from 2025-01-27T18:37:06Z to 2025-01-28T12:53:47Z.
+- >-
+  Pull-request metadata used for event attribution is mutable GitHub API data archived under
+  raw/eips/eip-7823/ (source gh-pr-map-eip-7823); it supplements, and never replaces, the Git
+  commit evidence.

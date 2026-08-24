@@ -1,0 +1,537 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7935
+  title: Set default gas limit to 60M
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-7935 was a draft informational proposal asking
+    execution-layer clients to raise the gas limit produced by their default
+    configurations for the Fusaka release. It introduced no new protocol feature
+    or gas-accounting rule, but called for full-block, multi-client devnet testing
+    and incremental increases to establish that the higher operational limit was
+    safe. The normative target was still written as XX0M, while the security
+    section discussed testing 60M.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7935/manifest.yaml
+    manifest_sha256: 77e430fbb50a5d127549d3a59442e9bf09f9d83003b2bd9f1185f04254cda8e0
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: b4197cbb949c1aed8094ac33b2aa7c2260809a55
+    path: EIPS/eip-7935.md
+    committed_at: '2025-05-08T13:56:16Z'
+    git_blob_sha: 09ab43dc269280309f3c34cd405ba25e151690ba
+    content_sha256: f3b99e814f33429fc7fae504117866be474062799eb0aa11563b5e385ea5991f
+    immutable_url: https://github.com/ethereum/EIPs/blob/b4197cbb949c1aed8094ac33b2aa7c2260809a55/EIPS/eip-7935.md
+    information_cutoff_at: '2025-05-09T21:56:48Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7935.md
+    content_sha256: 1d22bf52c30b77be92c0b566d50f30d02fde8912afc53a3e9a309096594c29ed
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T13:34:26+02:00'
+    session_id: assessment-run-2765d76d-e10a-4b09-a31a-b5c8df1c0f10
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The only specified action is changing the block gas-limit value generated
+      by each execution client's default configuration.
+  rationale: >-
+    Changing a default block gas-limit value does not alter EVM instruction gas
+    charges or introduce an EVM gas-accounting mechanism, so the zero anchor
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The specification changes only the default configured gas limit and says
+      nothing about opcode execution or state-access sequencing.
+  rationale: >-
+    No opcode's state-access position or gas-charge ordering is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The specified configuration update concerns the ordinary block gas limit;
+      no blob-gas rule or parameter is specified.
+  rationale: No blob gas accounting changes are introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The proposal changes a client default for the block gas limit and does not
+      define a cost for writing state, a state-gas budget, or a spill path.
+  rationale: No state gas accounting mechanism or rate is changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The specification contains only a default gas-limit configuration change
+      and defines no refund behavior.
+  rationale: No new EVM gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23; Security Considerations, lines 33-35
+    summary: >-
+      The EIP asks clients to change a generated default and proposes new
+      multi-client, full-block operational testing; it does not introduce a new
+      validation rule that reworks existing consensus tests.
+  rationale: >-
+    The planned devnet campaign adds workload testing, but the proposal does not
+    change existing test logic or validation patterns, matching score 0.
+  confidence: medium
+  uncertainty_note: >-
+    Client-specific tests of default configuration output may need a value update,
+    but that is not a new validation mechanism under this anchor.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The configuration recommendation does not require unrelated tests to assert
+      any newly produced protocol property.
+  rationale: Pre-existing tests gain no new invariant to assert.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The specified change is confined to execution-client default configuration
+      values; no transition-tool input or output is added.
+  rationale: No transition-tool interface field or mechanism is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 33-35
+    summary: >-
+      Testing is described in terms of devnets, synthetic full blocks, and
+      monitoring network and node health, without specifying a new reusable test
+      abstraction.
+  rationale: >-
+    The described campaign can be expressed with existing workload generation and
+    monitoring capabilities; no new framework primitive is required by the text.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP does not describe the available framework, but it also specifies no
+    novel expectation, modifier, or helper abstraction.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: The default gas-limit update contains no cryptographic mechanism.
+  rationale: No cryptography is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 33-37
+    summary: >-
+      The proposal requires full blocks, incremental gas-limit increases, and
+      consideration of worst-case block size relative to the CL gossip limit.
+  rationale: >-
+    Raising one block-capacity parameter creates a single boundary-prone mechanism:
+    behavior near full blocks and resource limits must be exercised. That matches
+    the score-1 anchor rather than multiple independently introduced mechanisms.
+  confidence: medium
+  uncertainty_note: >-
+    The unresolved target value determines how close testing comes to the cited
+    size boundary.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The proposal updates the value generated in default configurations and does
+      not alter block RLP validation.
+  rationale: No new block RLP validation mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The only specified surface is execution-client default configuration; no
+      Engine API endpoint, field, or communication mechanism is changed.
+  rationale: No Engine API change is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: The specified configuration update deploys no contract.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      Changing the default configured block gas limit neither changes system
+      contract code or state nor specifies an indirect system-contract effect.
+  rationale: No pre-existing system contract is modified directly or indirectly.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: The specification contains no opcode addition.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The default block gas-limit configuration update does not change the
+      behavior of any existing opcode.
+  rationale: No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: The specified configuration update adds no precompile.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The proposal does not change any precompile's logic or gas schedule.
+  rationale: No existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      Updating a value in client-specific default configuration formats does not
+      change transaction, block, or protocol-interface encoding.
+  rationale: No RLP, SSZ, or other protocol encoding change is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: The client default update defines no transaction type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 29-31
+    summary: >-
+      The EIP notes that larger transactions could interact with a separately
+      proposed 30M transaction gas limit, but it defines no transaction validity
+      or intrinsic-gas change of its own.
+  rationale: >-
+    A higher default block gas limit changes block capacity, not the validity rules
+    or intrinsic gas of transactions, so the zero anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-23
+    summary: >-
+      The proposal changes the default value generated for the gas limit; it does
+      not introduce a new block or header field.
+  rationale: No new block or header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale, lines 25-27
+    summary: >-
+      The new default is coordinated with a hard-fork release, but the EIP does
+      not specify a state transition or internal-variable modification at the
+      activation block.
+  rationale: >-
+    Release coordination for a configuration default is not a fork-block state or
+    internal-variable modification under this anchor.
+  confidence: high
+  uncertainty_note: >-
+    The exact release timing is unresolved, but no activation-block mechanism is
+    described.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 17-19; Security Considerations, lines 33-35
+    summary: >-
+      The authors expect client bugs at higher limits and require devnets covering
+      all EL/CL client combinations, synthetic full blocks, node and network health
+      monitoring, iterative fixes, and incremental increases.
+  rationale: >-
+    The performance effect cannot be validated fully in isolation: it depends on
+    sustained full blocks, heterogeneous clients, and network behavior, with an
+    explicitly anticipated need to find and fix client bugs. This substantially
+    affects existing execution and propagation performance and matches score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The normative target is unresolved, so the magnitude of the load increase is
+    not fixed even though the required system-wide validation is explicit.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 33-37
+    summary: >-
+      Safety testing spans all EL/CL combinations, full synthetic blocks, network
+      and node health, repeated patch-and-retest cycles, incremental increases,
+      and worst-case block size relative to the CL gossip limit.
+  rationale: >-
+    A substantially higher default block capacity stresses multiple critical
+    components across execution, propagation, and consensus-client networking.
+    The prescribed system-wide adversarial and health testing indicates security
+    assumptions cannot be validated as a self-contained mechanism, matching
+    score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The exact target and objective safety thresholds are not normatively fixed,
+    which limits precision about the severity of the risk.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 12-15; Specification, lines 21-23
+    summary: >-
+      The abstract contains a TODO and both the abstract and normative
+      specification use XX0M rather than a concrete default value.
+  - source: eip.md
+    locator: Security Considerations, lines 33-35
+    summary: >-
+      The testing plan instead names 60M, leaving the normative placeholder and
+      the tested candidate inconsistent in the assessment-time text.
+  rationale: >-
+    Clients cannot baseline the required default-configuration result until they
+    agree on the exact value. The gap is central but localized to the configured
+    target and release coordination, so score 2 fits better than an obvious minor
+    detail or a newly observable class of consensus behavior.
+  confidence: high
+  uncertainty_note: >-
+    The 60M testing reference makes the intended value inferable, but it does not
+    replace the unresolved value in the specification.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 29-31
+    summary: >-
+      The EIP says larger transactions admitted by the higher block limit could
+      exceed a proposed 30M transaction gas limit and explicitly calls for the two
+      EIPs' scheduling to be coordinated.
+  rationale: >-
+    This is one limited interaction with another proposal and primarily requires
+    scheduling and compatibility coordination, while EIP-7935 can otherwise be
+    tested independently. The historical text does not provide the other EIP's
+    numeric identifier, so none can be truthfully recorded in interacting_eips.
+  confidence: medium
+  uncertainty_note: >-
+    The interacting proposal is described but not numbered, and the exact behavior
+    when its transaction cap is active is not specified.
+  exceptional_score_justification: null
+  interacting_eips: []
+totals:
+  primary_score: 10
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: >-
+    Material under-specification is present. The normative target remains XX0M
+    even though 60M is discussed for safety testing; the affected default
+    configurations and release timing are not enumerated; objective safety gates
+    and the incremental increase procedure are not defined; and the interacting
+    transaction-limit EIP is unnamed.
+  affected_criteria:
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 7
+    maximum: 11
+  plausible_tiers:
+  - low
+  unresolved_questions:
+  - >-
+    Is the required default gas limit 60M, or another value represented by XX0M?
+  - >-
+    Which generated default configurations must change, and precisely when does
+    the new default take effect relative to the fork release?
+  - >-
+    What workload duration, health thresholds, and pass/fail criteria establish
+    that a candidate gas limit is safe, and what increments are required?
+  - >-
+    What is the numeric identifier of the proposed 30M transaction-gas-limit EIP,
+    and what coordination beyond scheduling is required?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP and assessor rubric at the recorded
+    information cutoff. I did not access the internet, follow document links, use
+    present-day implementation knowledge, inspect prohibited records, or consult
+    any other EIP or assessment.
+notable_ambiguities:
+- >-
+  The manifest identifies the assignment as "Set default gas limit to 60M," but
+  the sealed EIP's title and specification retain XX0M; only its security section
+  names 60M.
+- >-
+  The backwards-compatibility section requires coordination with another EIP but
+  gives no identifier that can be entered as a bare integer.
+- >-
+  The proposal ties a client-default update to a hard-fork release without
+  defining an activation-block consensus transition.
+overall_confidence: medium

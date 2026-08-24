@@ -1,0 +1,341 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7594
+  title: PeerDAS - Peer Data Availability Sampling
+  source_ids:
+  - blob-eip7594-pin
+  - blob-eip7594-creation
+research_run:
+  started_at: '2026-08-20T19:20:00Z'
+  completed_at: '2026-08-20T19:58:00Z'
+  researcher: claude subagent eip-batch-10 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2024-01-12'
+  frontmatter_source_ids:
+  - blob-eip7594-creation
+  - blob-eip7594-pin
+  first_repository_commit:
+    authored_at: '2024-05-12T16:49:39+08:00'
+    committed_at: '2024-05-12T11:49:39+03:00'
+    commit: 7b973becb40673add5854412fc70b4c2e82841e9
+    path: EIPS/eip-7594.md
+    source_ids:
+    - commit-7b973becb4
+  discrepancy_note: The frontmatter declares created 2024-01-12, while the earliest repository commit
+    adding EIPS/eip-7594.md is 7b973becb4, committed 2024-05-12T11:49:39+03:00 - a gap of about four months.
+    The declared date matches the period in which the PeerDAS proposal was opened for discussion (the
+    discussions-to Ethereum Magicians thread carries the same eip-7594 slug and was already referenced
+    in the creation commit), while PR ethereum/EIPs#8105 was only merged in May 2024. The frontmatter
+    `created` value was never changed by any later commit (verified against every historical version at
+    the pin). The Git event is the earliest independently verifiable repository event.
+revision_history:
+  summary:
+    file_commit_count: 14
+    post_creation_revision_count: 13
+    substantive_revision_count: 4
+    non_substantive_revision_count: 9
+    uncertain_revision_count: 0
+    first_revision_at: '2024-06-17T10:19:19-06:00'
+    last_revision_at: '2026-02-04T00:23:45+08:00'
+    first_substantive_revision_at: '2025-04-02T01:36:08+08:00'
+    last_substantive_revision_at: '2026-02-02T23:19:18+00:00'
+    derived_from_event_ids:
+    - eip7594-e01
+    - eip7594-e02
+    - eip7594-e03
+    - eip7594-e04
+    - eip7594-e05
+    - eip7594-e06
+    - eip7594-e07
+    - eip7594-e08
+    - eip7594-e09
+    - eip7594-e10
+    - eip7594-e11
+    - eip7594-e12
+    - eip7594-e13
+    - eip7594-e14
+  events:
+  - id: eip7594-e01
+    event_kind: creation
+    authored_at: '2024-05-12T16:49:39+08:00'
+    committed_at: '2024-05-12T11:49:39+03:00'
+    commit: 7b973becb40673add5854412fc70b4c2e82841e9
+    path: EIPS/eip-7594.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7594 (merged from PR #8105): a 52-line Networking-category proposal
+      describing PeerDAS at a high level - one-dimensional erasure-coded extension of EIP-4844 blobs into
+      rows/cells, column-per-gossip-subnet layout, deterministic per-node-ID custody, peer sampling every
+      slot, and 50% column reconstruction threshold. The detailed specification is delegated by link to
+      ethereum/consensus-specs (specs/_features/eip7594/das-core.md at consensus-specs commit b4188829).
+      Rationale is ''TBD''; Backwards Compatibility, Test Cases and Reference Implementation are empty;
+      Security Considerations says ''Needs discussion''. Frontmatter: status Draft, type Standards Track,
+      category Networking, created 2024-01-12, requires 4844.'
+    rationale: Adding commit; recorded as event_kind creation and excluded from revision counts.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-7b973becb4
+    - blob-eip7594-creation
+  - id: eip7594-e02
+    event_kind: revision
+    authored_at: '2024-06-17T10:19:19-06:00'
+    committed_at: '2024-06-17T10:19:19-06:00'
+    commit: 4353b530c3701b22d7d2b46f940d8b6608d7aa8a
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter status Draft -> Review; no other change.
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-4353b530c3
+  - id: eip7594-e03
+    event_kind: revision
+    authored_at: '2025-01-12T08:23:21+08:00'
+    committed_at: '2025-01-12T08:23:21+08:00'
+    commit: 62f28725e80dd8cd1c3b27e3dab40e27362541fb
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: EIP-bot moves frontmatter status Review -> Stagnant after inactivity; no other change.
+    rationale: Automated process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-62f28725e8
+  - id: eip7594-e04
+    event_kind: revision
+    authored_at: '2025-04-01T19:36:08+02:00'
+    committed_at: '2025-04-02T01:36:08+08:00'
+    commit: b447dd78664f3b9df005e0987b40b2e97a6c38f2
+    path: EIPS/eip-7594.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Adds a new ''### Networking'' subsection to the Specification defining a replacement for
+      the EIP-4844 blob-transaction pool wrapper used in PooledTransactions responses: rlp([tx_payload_body,
+      wrapper_version, blobs, commitments, cell_proofs]), with wrapper_version = 1, cell_proofs carrying
+      CELLS_PER_EXT_BLOB proofs per blob (extension cells included, blobs sent unextended), the indexing
+      rule cell_proofs[i * CELLS_PER_EXT_BLOB + j], and four MUST validation conditions the receiving
+      node applies (equal counts, exact cell-proof count, versioned-hash match, commitment/blob/cell-proof
+      consistency with batch verification). Also repoints the detailed-specification link from consensus-specs
+      specs/_features/eip7594/das-core.md (commit b4188829) to the specs/fulu/ tree (commit 9d377fd5).'
+    rationale: Introduces a new normative wire data structure and validation rules for blob transactions;
+      the first execution-layer-observable requirement in the document.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-b447dd7866
+  - id: eip7594-e05
+    event_kind: revision
+    authored_at: '2025-04-03T11:27:57-06:00'
+    committed_at: '2025-04-04T01:27:57+08:00'
+    commit: 6e2a4dfd670d6b346913d87101ea540ff44f6ee8
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter status Stagnant -> Review; removes trailing whitespace on three blank lines and
+      a trailing space at the end of the cell_proofs bullet.
+    rationale: Process-status frontmatter change plus whitespace cleanup; no content change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-6e2a4dfd67
+  - id: eip7594-e06
+    event_kind: revision
+    authored_at: '2025-07-14T17:14:09+03:00'
+    committed_at: '2025-07-14T22:14:09+08:00'
+    commit: cf1a3edbdd400eb85e0819dd36c20206b0bde5be
+    path: EIPS/eip-7594.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds the normative sentence 'Additionally, a limit of 6 blobs per transaction is introduced.
+      Clients MUST enforce this limit when validating blob transactions at submission time, when received
+      from the network, and during block production and processing.' to the Specification, and removes
+      two stray blank lines. The same commit deletes the corresponding max-blobs-per-transaction text
+      from EIPS/eip-7892.md (11 lines removed there), moving the requirement from EIP-7892 into EIP-7594.
+    rationale: Adds a concrete normative limit that execution clients MUST enforce at three distinct points;
+      also relocates a requirement between two EIP documents in one commit.
+    change_group: 7594-7892-blob-per-tx-limit-relocation-2025-07
+    confidence: high
+    source_ids:
+    - commit-cf1a3edbdd
+  - id: eip7594-e07
+    event_kind: revision
+    authored_at: '2025-09-05T07:52:36-06:00'
+    committed_at: '2025-09-05T21:52:36+08:00'
+    commit: ff212a26b1a4886b18fdf82a48ec4533b60e902a
+    path: EIPS/eip-7594.md
+    change_type: security_assumption
+    semantic_effect: substantive
+    summary: 'Large content expansion ahead of Last Call. Frontmatter: category Networking -> Core and
+      author Alex Stokes (@ralexstokes) added. Replaces the ''TBD'' Rationale with five subsections (why
+      DAS scales the DA layer and the 1/8 sampling fraction, what peer sampling provides, why the parameters
+      were chosen, why validators have a custody requirement beyond full nodes, column vs row sampling).
+      Adds a Backwards Compatibility statement (''fully backwards compatible with EIP-4844''), replaces
+      the empty Reference Implementation heading with a Test Cases pointer to the consensus and execution
+      spec tests, and replaces ''Needs discussion'' in Security Considerations with a data-withholding
+      analysis including the explicit upper bound P(tricking n*epsilon nodes) <= C(n, n*eps) * C(m, m/2
+      - 1) * 2^(-k*n*eps) and a table of bounds for 10,000 nodes. Wording touch-ups in the abstract and
+      specification (beacon nodes -> nodes, custody phrasing, wrapper_version emphasis, compute_cells
+      / verify_cell_kzg_proof_batch named).'
+    rationale: Adds the document's security argument and its formal withholding bound, and reclassifies
+      the EIP from Networking to Core. Classified security_assumption because the security analysis is
+      the largest normative-relevant addition; no MUST requirement changed. Medium confidence on the change_type
+      because the commit is a mixed rationale/security/metadata update.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-ff212a26b1
+  - id: eip7594-e08
+    event_kind: revision
+    authored_at: '2025-09-05T09:17:28-06:00'
+    committed_at: '2025-09-05T15:17:28+00:00'
+    commit: a77250a6e966649fa9538bd88691aef9c04cbeec
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Rendering fixes in the Security Considerations section added earlier the same day: the ```math
+      fenced block becomes a $$...$$ display block, inline $`\epsilon`$ becomes $\epsilon$, and the bounds
+      table is realigned with the node counts written as 100/200/300/400/500 instead of ''1 00''/''2 00''/...
+      and the bounds typeset as $10^{...}$. No numeric value changes.'
+    rationale: Markdown/LaTeX rendering and table formatting only; the same numbers are preserved.
+    change_group: 7594-security-section-rendering-2025-09
+    confidence: high
+    source_ids:
+    - commit-a77250a6e9
+  - id: eip7594-e09
+    event_kind: revision
+    authored_at: '2025-09-05T09:53:32-06:00'
+    committed_at: '2025-09-05T15:53:32+00:00'
+    commit: 6efbef40bff5a7335c8de86efc25d7b8843ff1fc
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Replaces the $$...$$ LaTeX display block with an image reference to ../assets/eip-7594/withholding-probability.svg
+      (the SVG is added by the same commit). The formula content is unchanged, only its rendering mechanism.
+    rationale: Rendering-only change; the same bound is now shown as a pre-rendered SVG because the EIPs
+      site does not render LaTeX.
+    change_group: 7594-security-section-rendering-2025-09
+    confidence: high
+    source_ids:
+    - commit-6efbef40bf
+  - id: eip7594-e10
+    event_kind: revision
+    authored_at: '2025-09-29T06:48:28-07:00'
+    committed_at: '2025-09-29T21:48:28+08:00'
+    commit: 2c39832ac6005e5dc7b0bb37320377a796f4692d
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Frontmatter status Review -> Last Call and adds last-call-deadline: 2025-10-28.'
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-2c39832ac6
+  - id: eip7594-e11
+    event_kind: revision
+    authored_at: '2025-11-04T17:32:35+01:00'
+    committed_at: '2025-11-05T00:32:35+08:00'
+    commit: 36de9763d57f64a069c6663a9c7baf5ce0fb67e9
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Typo fix 'pratical' -> 'practical' in the 'What does peer sampling provide?' rationale subsection.
+    rationale: Spelling-only change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-36de9763d5
+  - id: eip7594-e12
+    event_kind: revision
+    authored_at: '2025-11-20T19:31:29+01:00'
+    committed_at: '2025-11-20T18:31:29+00:00'
+    commit: cb0a51678e2745e14d2462a4e20996badae6eedf
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds backticks around NUMBER_OF_CUSTODY_GROUPS, rewords 'we can compute upper bounds of attack
+      success at various node counts' to '... for varying $\epsilon$:', and relabels the table column
+      '$n\epsilon$ (nodes)' to '$n\epsilon$ (target nodes)'.
+    rationale: Formatting and wording only; no numeric or normative change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-cb0a51678e
+  - id: eip7594-e13
+    event_kind: revision
+    authored_at: '2026-02-03T00:19:18+01:00'
+    committed_at: '2026-02-02T23:19:18+00:00'
+    commit: a128473e77d7ddb10d24d47c1a0803c3f7da88c4
+    path: EIPS/eip-7594.md
+    change_type: security_assumption
+    semantic_effect: substantive
+    summary: 'Corrects the first row of the withholding-attack bounds table: for epsilon = 0.01 (100 target
+      nodes) the upper bound changes from $10^{38.36}$ to $1$.'
+    rationale: Corrects a stated security bound; the previous value exceeded 1 and was therefore vacuous.
+      Materially clarifies the security analysis, though it changes no normative requirement, parameter
+      or interface. Medium confidence on semantic_effect for that reason.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-a128473e77
+  - id: eip7594-e14
+    event_kind: revision
+    authored_at: '2026-02-03T11:23:45-05:00'
+    committed_at: '2026-02-04T00:23:45+08:00'
+    commit: eda011bdbfa08f9002df103c8143937a643c677a
+    path: EIPS/eip-7594.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter status Last Call -> Final; the last-call-deadline field is removed.
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-eda011bdbf
+dependency_history:
+  events:
+  - id: eip7594-dep-e1
+    target_eip: 4844
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2024-05-12T11:49:39+03:00'
+    commit: 7b973becb40673add5854412fc70b4c2e82841e9
+    rationale: 'The creation commit''s frontmatter carries `requires: 4844`, and the body states that
+      PeerDAS extends ''the blobs introduced in EIP-4844'' and scales data availability ''beyond the levels
+      of [EIP-4844](./eip-4844.md)''. The `requires: 4844` field is unchanged in every one of the 14 historical
+      versions of the file at the pin, and EIP-4844 is the only EIP number referenced anywhere in the
+      document at the pinned state (verified by grepping each version for EIP-number patterns).'
+    confidence: high
+    source_ids:
+    - commit-7b973becb4
+    - blob-eip7594-creation
+    - blob-eip7594-pin
+source_registry: outputs/sources/eips/eip-7594.yaml
+unknowns:
+- 'EIP-7594''s `requires` frontmatter field is `4844` at creation and at every later revision; no dependency
+  was ever introduced, changed or removed. Negative search: grepping every historical version of EIPS/eip-7594.md
+  for `eip-?[0-9]{3,4}` returns only EIP-4844 references plus the EIP''s own number in its discussions-to
+  URL and asset path.'
+- As noted in the task brief, EIP-7594 delegates its detailed specification to ethereum/consensus-specs
+  (specs/_features/eip7594/das-core.md at creation; repointed to the specs/fulu/ tree by commit b447dd7866).
+  Those consensus-specs documents are not EIPs and their revision history is outside this work unit's
+  scope; only explicit EIP references inside EIPS/eip-7594.md are recorded here.
+- 'Commit cf1a3edbdd is one commit touching two EIP files: it adds the 6-blobs-per-transaction limit to
+  EIPS/eip-7594.md while deleting the equivalent text from EIPS/eip-7892.md. It is recorded as a revision
+  event in both EIP records with the shared change_group ''7594-7892-blob-per-tx-limit-relocation-2025-07'';
+  the EIP-7892 side is recorded in outputs/eips/eip-7892.yaml.'
+- Summary first/last revision dates use the committer timestamps (committed_at) of the referenced events;
+  authored timestamps are recorded per event as well.
+- PR numbers cited in event summaries come from the merge-commit subjects in ethereum/EIPs. Only three
+  of the fourteen commit subjects carry a PR number; GitHub PR metadata was not consulted or archived,
+  so no mutable sources were relied upon and the raw/ directory for this work unit is empty.
+- research_run.started_at reflects the coordinated batch start; the session was interrupted by a model
+  usage limit and resumed, so wall-clock duration is not a measure of review effort.

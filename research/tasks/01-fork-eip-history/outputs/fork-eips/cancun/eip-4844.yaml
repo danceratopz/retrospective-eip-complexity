@@ -1,0 +1,69 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: cancun
+eip:
+  number: 4844
+  title: Shard Blob Transactions
+  layers: [execution, consensus]
+  layer_classification:
+    rationale: >-
+      EIP-7569 "Full Specifications" lists EIP-4844 in both groups: among the EIPs that
+      "require changes to Ethereum's consensus layer" (specified in the deneb folder of
+      ethereum/consensus-specs) and among the EIPs that "require changes to Ethereum's
+      execution layer".
+    source_ids: [eip-7569-pinned]
+membership:
+  source_section: Included EIPs
+  classification: included
+  requirement: required
+  source_ids: [eip-7569-pinned]
+inclusion_history:
+  normalized_state_counts:
+    scheduled_for_inclusion: 2
+    included: 1
+  events:
+    - id: cancun-eip4844-e1
+      occurred_at: "2022-12-08"
+      raw_label: "Included EIPs (execution-specs cancun.md at creation)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        The Cancun upgrade spec was created with EIP-4844 as its sole "Included" EIP on the day
+        of ACD call #151, whose written summary records: "We agreed that EIP-4844 should be
+        included in the fork after Shanghai, to reflect how the CL specs are right now...
+        for now I'll create cancun.md and list EIP-4844 as Included." In the 2022-2023 process,
+        "Included" in the pre-activation upgrade spec meant client teams had committed to ship
+        the EIP in the upgrade, i.e. what later vocabulary calls Scheduled for Inclusion.
+        EIP-4844's earlier consideration for Shanghai (it appeared in shanghai.md's CFI list,
+        removed by this same commit) is a Shanghai fork relationship and is not modeled as a
+        Cancun event. Note: the minutes file header misdates the call to 2022-11-10; the agenda
+        issue and matching YouTube link establish 2022-12-08 (see pm-issue-675).
+      decision_body: "AllCoreDevs call #151 (2022-12-08)"
+      source_ids: [execution-specs-commit-b11cdefd, pm-acd-151-minutes, pm-issue-675]
+    - id: cancun-eip4844-e2
+      occurred_at: "2023-12-07"
+      raw_label: "Included EIPs (EIP-7569: Hardfork Meta - Dencun, at creation)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        EIP-7569 was created in Draft status listing this EIP under "Included EIPs" while the
+        upgrade was still pending activation (the activation table was empty at creation), so
+        the listing corresponds to scheduled_for_inclusion rather than included.
+      decision_body: null
+      source_ids: [eips-commit-babb441b]
+    - id: cancun-eip4844-e3
+      occurred_at: "2024-03-13T13:55:35Z"
+      raw_label: "Activation - Mainnet (epoch 269568, timestamp 1710338135)"
+      normalized_state: included
+      normalization_rationale: >-
+        Dencun activated on Ethereum mainnet at beacon epoch 269568 (timestamp 1710338135 =
+        2024-03-13T13:55:35Z) with this EIP in EIP-7569's Included list; the mainnet activation
+        row was added to EIP-7569 on 2024-02-08 and the Meta EIP was moved to Final on
+        2024-03-29 following activation.
+      decision_body: null
+      source_ids: [eip-7569-pinned, eips-commit-8e35c4a1, eips-commit-a554f59c]
+unknowns:
+  - >-
+    EIP-4844's pre-Cancun decision trail (proposal and consideration while Shanghai scope was
+    being negotiated during 2022, including its listing in shanghai.md's "EIPs Considered for
+    Inclusion") belongs to the Shanghai fork relationship and was deliberately not
+    reconstructed here; within the Cancun relationship the EIP entered directly at
+    scheduled_for_inclusion.

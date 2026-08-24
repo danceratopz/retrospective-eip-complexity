@@ -1,0 +1,631 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: osaka
+eip:
+  number: 7892
+  title: Blob Parameter Only Hardforks
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, draft informational EIP-7892 defined Blob
+    Parameter Only hard forks as changes restricted to the blob target, blob
+    limit, and blob base-fee update fraction. It extended EIP-7840's execution
+    layer blobSchedule to arbitrary timestamp entries and added consensus-layer
+    epoch/max-blob configuration, with cross-layer alignment, equality, and
+    non-conflict requirements. Concrete parameter values and activation
+    schedules were explicitly outside the proposal's scope, while the stated
+    purpose was repeated capacity scaling after observing demand and network
+    performance, including around EIP-7594.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7892/manifest.yaml
+    manifest_sha256: e558fa958def6ebe2316ca362b495dcd99c07c1e6098ffe2b23f38086759e709
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f
+    path: EIPS/eip-7892.md
+    committed_at: '2025-03-24T16:26:03Z'
+    git_blob_sha: 6076cad2adb6f6d35bcbbaf9d5fc327453f28f06
+    content_sha256: 78546589d5cebf184aa6983758a8f5b2a71884a7e8ef2161f1313f0a80b779fc
+    immutable_url: https://github.com/ethereum/EIPs/blob/216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f/EIPS/eip-7892.md
+    information_cutoff_at: '2025-03-25T15:44:57Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: f23e54b025b7f05da41204ab9e4c9f053fb4931302e51ba57fad5bfcf328cd6e
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/osaka/eip-7892.md
+    content_sha256: 00aac0e4347a7330e78e271b09f3851be04dda8a240431c7a396a1102058f989
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-21T13:29:09+02:00'
+    session_id: assessment-run-cafe278b-81d6-4d47-bd54-7a4df8987124
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7594.md
+  - supporting/eip-7840.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      BPO forks are restricted to the blob target, blob limit, and blob
+      base-fee update fraction, implemented through the blob schedule.
+  rationale: >-
+    The proposal changes blob-specific parameters, not EVM execution-gas
+    accounting, so it meets the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      The exhaustive BPO change set contains only three blob parameters and no
+      opcode-execution or state-access rule.
+  rationale: >-
+    Nothing moves a state access or a gas charge within opcode execution, so no
+    state-access ordering change is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      A BPO fork may change the blob target, maximum blob count, and
+      baseFeeUpdateFraction at scheduled timestamps.
+  rationale: >-
+    The blob target and update fraction are parameters of the existing blob-gas
+    pricing mechanism, and the blob limit constrains existing blob processing.
+    This updates the existing mechanism without introducing a new accounting
+    mechanism, matching score 1.
+  confidence: high
+  uncertainty_note: >-
+    The actual values and schedules are not specified, but that does not change
+    the kind of accounting mechanism affected.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      The permitted changes are exclusively blob-capacity and blob-fee
+      parameters; no state-write cost or budget is introduced.
+  rationale: >-
+    The proposal does not alter state-gas costs, charging sites, budgets,
+    reservoirs, or spill behavior and therefore meets the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      The defined mechanism changes only blob target, limit, and fee-update
+      parameters and contains no refund rule.
+  rationale: >-
+    No new EVM gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification and Requirements, lines 42-48 and 83-90
+    summary: >-
+      Existing blob parameters may change at any number of new timestamped
+      boundaries, and execution/consensus schedules must align, avoid conflicts,
+      and carry equal maximum values.
+  rationale: >-
+    Pre-existing blob-limit, excess-blob-gas, blob-fee, and fork-boundary tests
+    must be reworked to select parameters from successive BPO schedule entries.
+    This is a considerable but blob-confined category rather than a diverse
+    majority of execution tests, matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    Concrete schedules are outside scope, so the exact number of affected
+    vectors cannot be determined from this revision.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Requirements, lines 85-90
+    summary: >-
+      The new equality and alignment requirements concern the BPO configuration
+      itself rather than outputs that every unrelated fork test must assert.
+  rationale: >-
+    Tests specifically exercising BPO schedules need these checks, but the text
+    does not make tests unrelated to the EIP additionally assert a new produced
+    value. The zero anchor therefore applies.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal does not specify a test-suite integration model, but it defines
+    no universal per-test assertion.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Rationale, lines 48-81 and 98-100
+    summary: >-
+      Parameter schedules are placed in execution- and consensus-client
+      configuration; no transition-tool request or response field is defined.
+  rationale: >-
+    A client configuration extension is not, by itself, a transition-tool
+    interface change. The historical text mandates no new transition-tool field
+    or mechanism, so the best-supported score is 0.
+  confidence: medium
+  uncertainty_note: >-
+    How test transition tools receive or model arbitrary BPO schedules is not
+    specified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale, lines 98-100
+    summary: >-
+      External configuration is intended to let testing teams vary parameters,
+      but the proposal defines no expectation, modifier, or helper primitive.
+  rationale: >-
+    The EIP supplies configuration data rather than a new test-framework
+    abstraction. On the available text, existing primitives can consume varied
+    configurations, so score 0 is best supported.
+  confidence: medium
+  uncertainty_note: >-
+    The historical proposal contains no test-framework design, so a later need
+    for a reusable schedule modifier cannot be excluded.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      The change set consists solely of numeric blob parameters and schedule
+      entries, with no cryptographic construction or operation.
+  rationale: >-
+    No cryptographic mechanism is introduced or modified by EIP-7892.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification and Requirements, lines 48-90
+    summary: >-
+      The schedule accepts an arbitrary number of timestamped changes, while
+      execution timestamps must align to consensus epoch starts, schedules must
+      not conflict, and maximum values must match across layers.
+  rationale: >-
+    The mechanism introduces multiple boundary-prone dimensions: before/at/after
+    each activation, successive entries, independent changes to three
+    parameters, epoch/timestamp alignment, and cross-layer equality. The
+    arbitrary number of entries makes the boundary matrix elevated rather than
+    a small fixed set, satisfying score 3.
+  confidence: high
+  uncertainty_note: >-
+    Invalid-schedule handling and concrete schedules are unspecified, so the
+    exact case matrix remains open even though its elevated nature is clear.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-81
+    summary: >-
+      The proposal changes configured blob parameters at time/epoch boundaries
+      and introduces no block RLP field or RLP decoding rule.
+  rationale: >-
+    Although blob-count validation can vary by schedule, no new block RLP
+    validation mechanism is introduced, which is the rubric's syncing trigger.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: supporting/eip-7840.md
+    locator: Motivation and Specification, lines 19-29
+    summary: >-
+      EIP-7840 places blob parameters in client configuration specifically to
+      avoid a complex Engine API handshake.
+  - source: eip.md
+    locator: Specification, lines 48-81
+    summary: >-
+      EIP-7892 extends configuration schedules and adds consensus configuration,
+      without specifying an Engine API field or endpoint.
+  rationale: >-
+    The design intentionally uses configuration instead of Engine API
+    communication, so no Engine API field, endpoint, or mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-81
+    summary: >-
+      The complete mechanism is expressed through blob parameters and client
+      configuration and contains no contract deployment.
+  rationale: >-
+    No system contract, stateful or otherwise, is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-81
+    summary: >-
+      The parameter schedule has no specified direct or indirect system-contract
+      action.
+  rationale: >-
+    No pre-existing system-contract code, state, or behavior is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      The exhaustive set of permitted BPO changes contains only blob parameters
+      and no new EVM instruction.
+  rationale: >-
+    No opcode is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      Blob parameter changes do not specify any alteration to an existing
+      opcode's result or behavior.
+  rationale: >-
+    No pre-existing opcode behavior is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      The proposal's allowed changes are confined to blob parameters and do not
+      define a precompile.
+  rationale: >-
+    No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      No precompile logic or gas schedule appears among the permitted BPO
+      parameter changes.
+  rationale: >-
+    No existing precompile logic or gas accounting is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-81
+    summary: >-
+      New values are represented in node configuration schedules; no transaction,
+      block, or interface serialization is changed.
+  rationale: >-
+    Configuration syntax is not an RLP/SSZ transaction, block, or interface
+    encoding change under this anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-48
+    summary: >-
+      The EIP adjusts blob-related parameters but defines no transaction envelope
+      or transaction type.
+  rationale: >-
+    No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-90
+    summary: >-
+      The maximum applies to blobs per block and the normative requirements
+      concern schedule consistency; no per-transaction validity or intrinsic-gas
+      rule is stated.
+  rationale: >-
+    A scheduled block blob limit is not a change to transaction validity or
+    intrinsic gas as defined by this anchor. The proposal specifies no such
+    transaction-level mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-81
+    summary: >-
+      The new schedule entries live in execution and consensus node
+      configuration rather than in a block or block header.
+  rationale: >-
+    No block or header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification and Requirements, lines 42-90
+    summary: >-
+      Existing blob parameters may switch at arbitrary execution timestamps and
+      corresponding consensus epoch starts, with the two schedules required to
+      align.
+  rationale: >-
+    Each BPO activation modifies existing internal protocol parameters at its
+    activation boundary. That directly satisfies the rubric's binary score-3
+    condition for modifying internal variables or similar at a fork activation
+    block.
+  confidence: high
+  uncertainty_note: >-
+    Concrete activation points are outside scope, but the activation mechanism
+    and parameter modification are explicit.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 19-34
+    summary: >-
+      BPO forks are intended to increase saturated blob capacity, with increases
+      chosen after observing mainnet performance and stability around new scaling
+      technology such as EIP-7594.
+  - source: supporting/eip-7594.md
+    locator: Specification, lines 24-30
+    summary: >-
+      PeerDAS distributes cells from all blob rows through custody, gossip, peer
+      sampling, and reconstruction every slot, tying blob volume to network work.
+  rationale: >-
+    Raising blob target and limit affects block-wide data volume and existing
+    networking/availability work, and the proposal itself relies on real-world
+    observation rather than isolated benchmarking. The impact can be substantial
+    and interacts with existing DA mechanisms, matching score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal deliberately omits actual parameter values, so the magnitude of
+    any particular BPO fork cannot be quantified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Requirements, lines 85-90
+    summary: >-
+      Execution and consensus clients must share schedules, avoid conflicting
+      forks, align timestamp and epoch boundaries, and agree on maximum blobs.
+  - source: eip.md
+    locator: Security Considerations, lines 109-115
+    summary: >-
+      The draft states that no security risks had been identified at the cutoff.
+  rationale: >-
+    Despite the draft's conclusion, an incorrect or inconsistent implementation
+    touches the limited but critical set of EL/CL schedule selection and
+    blob-limit validation components and can make the layers or clients disagree
+    at activation. This warrants targeted review and cross-client negative
+    testing, matching score 2 rather than an extensive multi-component redesign.
+  confidence: medium
+  uncertainty_note: >-
+    Concrete capacity values and behavior for invalid configurations are absent,
+    so their validator/network safety implications cannot be fully assessed.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification and Requirements, lines 83-90
+    summary: >-
+      Values and schedules are illustrative, while consistency, non-conflict,
+      alignment, and equality are required without defining failure handling or
+      what constitutes a conflict.
+  - source: supporting/eip-7840.md
+    locator: Specification, lines 46-48
+    summary: >-
+      Missing or incomplete blobSchedule configuration is expressly undefined,
+      and clients are free to choose how to handle it.
+  rationale: >-
+    Clients need common baselines for missing/incomplete entries, invalid
+    alignment, schedule conflicts, and mismatched layer values before negative
+    and boundary tests can assert results. These gaps are localized to schedule
+    configuration and activation, fitting score 2 rather than a pervasive new
+    consensus-observability problem.
+  confidence: high
+  uncertainty_note: >-
+    The sealed package contains no discussion-thread or implementation evidence
+    showing whether these draft questions had converged by the cutoff.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter, Motivation, and Specification, lines 10 and 32-48
+    summary: >-
+      EIP-7892 requires and extends EIP-7840 and identifies EIP-7594 as the
+      scaling technology motivating staged blob-capacity adjustment.
+  - source: supporting/eip-7594.md
+    locator: Front matter and Specification, lines 11 and 24-30
+    summary: >-
+      EIP-7594 itself builds on EIP-4844 blobs and applies per-blob-row networking
+      and availability work, linking capacity changes to both mechanisms.
+  rationale: >-
+    Interacting EIPs are EIP-7840 (the schedule format directly extended),
+    EIP-7594 (the DA/networking mechanism whose observed capacity informs BPO
+    increases), and EIP-4844 (the underlying blob mechanism whose parameters are
+    changed). Coordinated schedule, boundary, blob-accounting, and DA-capacity
+    testing is required, but the interactions remain confined to the blob stack,
+    matching score 2; there are no additional EIPs beyond the first three for an
+    uncapped increment.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal's direct normative dependency is only EIP-7840; its interaction
+    with EIP-7594 and EIP-4844 is architectural and motivational rather than a
+    new normative dependency.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7840
+  - 7594
+  - 4844
+totals:
+  primary_score: 18
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    Concrete parameter values and activation schedules are intentionally out of
+    scope, and the draft does not define parsing/selection and failure behavior
+    for missing, incomplete, conflicting, misaligned, or cross-layer-mismatched
+    schedules. It also does not say how transition tools or test frameworks
+    represent an arbitrary sequence of BPO activations. These gaps chiefly vary
+    the size and baseline of schedule-boundary, regression, performance, and
+    security testing; they are not counted as separate high-complexity mechanisms.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 13
+    maximum: 21
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - >-
+    How must clients handle a missing or incomplete entry for a scheduled BPO
+    activation, including omission of only one of the three parameters?
+  - >-
+    What precisely constitutes a conflict with another fork schedule, and must
+    clients reject conflicting configuration or apply a deterministic precedence?
+  - >-
+    What behavior is required when execution and consensus schedules disagree on
+    activation alignment or maximum blob count?
+  - >-
+    How are multiple consensus-layer BPO_FORK entries uniquely represented and
+    selected at and around epoch boundaries?
+  - >-
+    Which concrete values and activation points define the test matrix for any
+    actual BPO fork?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision, pinned assessor-view
+    rubric, and allowlisted supporting documents at the recorded information
+    cutoff. I did not use internet access, later EIP text, implementations, fork
+    outcomes, other assessments, project-management records, or any other
+    prohibited source.
+notable_ambiguities:
+- >-
+  The phrase that any of the three parameters MAY change does not specify whether
+  unchanged fields must be repeated or inherited in each timestamp entry.
+- >-
+  The repeated BPO_FORK consensus configuration example is illustrative rather
+  than a complete schema, leaving uniqueness and malformed-entry behavior open.
+- >-
+  The non-conflict requirement does not define conflict or resolution behavior.
+- >-
+  Actual BPO values and dates are excluded, so this assessment covers the
+  mechanism rather than the risk magnitude of a particular capacity increase.
+overall_confidence: medium

@@ -1,0 +1,84 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+fork_id: cancun
+eip:
+  number: 7044
+  title: Perpetually Valid Signed Voluntary Exits
+  layers: [consensus]
+  layer_classification:
+    rationale: >-
+      EIP-7569 "Full Specifications" lists EIP-7044 among the EIPs that "require changes to
+      Ethereum's consensus layer" (specified in the deneb folder of ethereum/consensus-specs)
+      and does not list it in the execution-layer group.
+    source_ids: [eip-7569-pinned]
+membership:
+  source_section: Included EIPs
+  classification: included
+  requirement: required
+  source_ids: [eip-7569-pinned]
+inclusion_history:
+  normalized_state_counts:
+    proposed_for_inclusion: 1
+    scheduled_for_inclusion: 2
+    included: 1
+  events:
+    - id: cancun-eip7044-e1
+      occurred_at: "2023-05-18"
+      raw_label: "proposal to lock the voluntary-exit signature domain to Capella (ACDC #109, pre-EIP)"
+      normalized_state: proposed_for_inclusion
+      normalization_rationale: >-
+        Dapplion presented the change on ACDC #109 before it had an EIP number: "it'll allow
+        participants to submit a[n] exit which is valid indefinitely... you will lock the epoch
+        that you use for verifying the signature to Capella... I think this should be able to
+        include it for [Deneb]." A feature being put forward for the fork without a recorded
+        commitment maps to proposed_for_inclusion. The consensus-layer process used no CFI/SFI
+        vocabulary, so no considered_for_inclusion stage is imposed retroactively.
+      decision_body: "AllCoreDevs Consensus Layer call #109 (2023-05-18)"
+      source_ids: [pm-acdc-109-minutes]
+    - id: cancun-eip7044-e2
+      occurred_at: "2023-06-01"
+      raw_label: "features that we intend to build [down] into the Deneb spec (ACDC #110)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        On ACDC #110 Danny Ryan fixed the list of features to build into the Deneb consensus
+        spec, including "this fixed voluntary exit domain, which might have an EIP as well",
+        with "one thumbs up and... no opposition". An explicit, unopposed commitment to build
+        the feature into the fork's spec is normalized as scheduling on the consensus layer.
+        The item's identity with EIP-7044 is established by ACDC #111, which lists "#7044...
+        changing how we process voluntary exits so that they once made are... valid forever...
+        it's been merged into the specs already", and ACDC #112 confirms the consensus-specs
+        release "has... 7044... built into the spec".
+      decision_body: "AllCoreDevs Consensus Layer call #110 (2023-06-01)"
+      source_ids: [pm-acdc-110-minutes, pm-acdc-111-minutes, pm-acdc-112-minutes]
+    - id: cancun-eip7044-e3
+      occurred_at: "2023-12-07"
+      raw_label: "Included EIPs (EIP-7569: Hardfork Meta - Dencun, at creation)"
+      normalized_state: scheduled_for_inclusion
+      normalization_rationale: >-
+        EIP-7569 was created in Draft status listing this EIP under "Included EIPs" while the
+        upgrade was still pending activation (the activation table was empty at creation), so
+        the listing corresponds to scheduled_for_inclusion rather than included.
+      decision_body: null
+      source_ids: [eips-commit-babb441b]
+    - id: cancun-eip7044-e4
+      occurred_at: "2024-03-13T13:55:35Z"
+      raw_label: "Activation - Mainnet (epoch 269568, timestamp 1710338135)"
+      normalized_state: included
+      normalization_rationale: >-
+        Dencun activated on Ethereum mainnet at beacon epoch 269568 (timestamp 1710338135 =
+        2024-03-13T13:55:35Z) with this EIP in EIP-7569's Included list; the mainnet activation
+        row was added to EIP-7569 on 2024-02-08 and the Meta EIP was moved to Final on
+        2024-03-29 following activation.
+      decision_body: null
+      source_ids: [eip-7569-pinned, eips-commit-8e35c4a1, eips-commit-a554f59c]
+unknowns:
+  - >-
+    The EIP number 7044 was assigned between ACDC #110 (2023-06-01, feature still described as
+    "the fixed voluntary exit domain, which might have an EIP as well") and ACDC #111
+    (2023-06-15, listed as #7044). The scheduling decision therefore predates the EIP number;
+    the identification is evidenced by the matching feature description across the two calls.
+  - >-
+    The consensus-layer tracking had no document analogous to execution-specs cancun.md, so CL
+    inclusion events are evidenced by ACDC meeting minutes rather than repository membership
+    changes; the consensus-specs deneb spec merge history was not inventoried (per-EIP spec
+    history belongs to other work units).

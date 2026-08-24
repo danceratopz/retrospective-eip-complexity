@@ -1,0 +1,319 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 8024
+  title: Backward compatible SWAPN, DUPN, EXCHANGE
+  source_ids:
+  - eips-blob-eip8024-pin
+research_run:
+  started_at: '2026-08-21T00:42:51Z'
+  completed_at: '2026-08-21T00:57:18Z'
+  researcher: claude subagent eip-amsterdam-2 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-08-16'
+  frontmatter_source_ids:
+  - eips-blob-eip8024-creation
+  - eips-blob-eip8024-pin
+  first_repository_commit:
+    authored_at: '2025-09-17T17:24:56Z'
+    committed_at: '2025-09-17T17:24:56Z'
+    commit: 28578c7ba0e3c7831a91a9784e85ce9b400c29a8
+    path: EIPS/eip-8024.md
+    source_ids:
+    - eips-commit-28578c7ba0e3
+    - gh-pr-map-eip-8024
+    - eips-blob-eip8024-creation
+  discrepancy_note: 'The frontmatter ''created'' date (2025-08-16) precedes the first repository commit (authored
+    and committed 2025-09-17T17:24:56Z) by 32 days - the largest gap of the four EIPs in this batch. The adding
+    pull request, ethereum/EIPs#10298 ''Add EIP: Backward compatible SWAPN, DUPN, EXCHANGE'', was opened 2025-09-07T01:05:22Z
+    - 22 days after the declared creation date - and merged 2025-09-17T17:24:57Z, so the gap is three weeks of
+    drafting before submission plus ten days of editor review, not a conflict. A second detail matters when reading
+    the record: the EIP was merged directly at status Review rather than Draft, so no Draft-to-Review transition
+    appears in its history. The file was added directly at EIPS/eip-8024.md; there is no rename in its history,
+    so ''git log --follow'' and a plain ''git log'' report the same commit set.'
+revision_history:
+  summary:
+    file_commit_count: 11
+    post_creation_revision_count: 10
+    substantive_revision_count: 7
+    non_substantive_revision_count: 3
+    uncertain_revision_count: 0
+    first_revision_at: '2025-11-04T03:54:51Z'
+    last_revision_at: '2026-06-10T19:38:35Z'
+    first_substantive_revision_at: '2025-11-04T03:54:51Z'
+    last_substantive_revision_at: '2026-02-25T13:39:44Z'
+    derived_from_event_ids:
+    - eip8024-e00
+    - eip8024-e01
+    - eip8024-e02
+    - eip8024-e03
+    - eip8024-e04
+    - eip8024-e05
+    - eip8024-e06
+    - eip8024-e07
+    - eip8024-e08
+    - eip8024-e09
+    - eip8024-e10
+  events:
+  - id: eip8024-e00
+    event_kind: creation
+    authored_at: '2025-09-17T14:24:56-03:00'
+    committed_at: '2025-09-18T01:24:56+08:00'
+    commit: 28578c7ba0e3c7831a91a9784e85ce9b400c29a8
+    path: EIPS/eip-8024.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-8024 ''Backward compatible SWAPN, DUPN, EXCHANGE'' (183 lines, merged directly
+      in status Review, type Standards Track, category Core, three authors: Francisco Giordano, Charles Cooper,
+      Alex Beregszaszi). It introduces DUPN (0xe6), SWAPN (0xe7) and EXCHANGE (0xe8), each taking a one-byte immediate,
+      each charging 3 gas and advancing pc by 2. Immediate values in the ranges 90 < x < 128 (DUPN, SWAPN) and
+      79 < x < 128 (EXCHANGE) revert consuming all gas, which is what keeps JUMPDEST analysis unchanged and preserves
+      existing jump targets. decode_single / decode_pair and the matching encode_single / encode_pair are given
+      as branching Python; EXCHANGE n m at this version swaps stack items n + 1 and m + 1 with decode_pair returning
+      (q + 2, r + 2) or (r + 2, 30 - q). Rationale (immediate operand, disallowed immediate range, EXCHANGE immediate
+      and its addressing trade-off, immediate size, gas cost, EXCHANGE vs SWAPN), Backwards Compatibility, ten
+      assembly/disassembly and five execution test cases, and Security Considerations are included.'
+    rationale: 'Creation commit adding the complete initial document: three new instructions, their encodings,
+      gas costs, immediate validity ranges and test vectors. Note that this EIP was merged directly at status
+      Review rather than Draft.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-28578c7ba0e3
+    - gh-pr-map-eip-8024
+    - eips-blob-eip8024-creation
+  - id: eip8024-e01
+    event_kind: revision
+    authored_at: '2025-11-04T00:54:51-03:00'
+    committed_at: '2025-11-04T03:54:51+00:00'
+    commit: db5c483ea122c6735cd92ff135de985f0e9253e2
+    path: EIPS/eip-8024.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Shifts the EXCHANGE operand encoding down by one so the assembly operands match the intended SWAP-like
+      indexing. decode_pair returns (q + 1, r + 1) / (r + 1, 29 - q) instead of (q + 2, r + 2) / (r + 2, 30 -
+      q), and encode_pair's assertion and arithmetic change from '2 <= n <= 14 and n < m <= 30 and n + m <= 32'
+      with the m <= 17 branch to '1 <= n <= 13 and n < m <= 29 and n + m <= 30' with the m <= 16 branch. A Rationale
+      paragraph is added explaining that the operands look off by one because EXCHANGE n m operates on stack depths
+      n + 1 and m + 1, chosen so that EXCHANGE n m is equivalent to SWAP{n} SWAP{m} SWAP{n}. Two disassembly test
+      cases are renumbered accordingly (e812 becomes EXCHANGE 2 3, e8d0 becomes EXCHANGE 1 19).
+    rationale: Changes the immediate-to-operand mapping of a new instruction, so every assembler, disassembler
+      and EVM implementation of EXCHANGE, and its test vectors, change with it.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-db5c483ea122
+    - gh-pr-map-eip-8024
+  - id: eip8024-e02
+    event_kind: revision
+    authored_at: '2025-12-01T16:08:43-03:00'
+    committed_at: '2025-12-01T19:08:43+00:00'
+    commit: 5e6b0c27237e369623376cbfc02d887848e9c21b
+    path: EIPS/eip-8024.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Adds one execution test case: ''600060006000e80115 results in 3 stack items, the top of the stack
+      valued 1, the rest valued 0'', pinning down that pc advances past the immediate so the trailing 15 (ISZERO)
+      executes.'
+    rationale: Recorded as substantive because the rubric counts a detail that could affect testing, and this
+      vector is precisely what a client or test-filler uses to confirm the pc increment already stated in step
+      6 of each instruction's algorithm. Confidence is medium because the commit adds no new rule - the behaviour
+      was already specified - so a stricter reading would call it non-substantive.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - eips-commit-5e6b0c27237e
+    - gh-pr-map-eip-8024
+  - id: eip8024-e03
+    event_kind: revision
+    authored_at: '2025-12-10T22:20:09-03:00'
+    committed_at: '2025-12-11T01:20:09+00:00'
+    commit: dcbc74e19eb66678144dcc43ec40d1ac660843d6
+    path: EIPS/eip-8024.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Replaces ''revert, consuming all gas'' with ''halt with exceptional failure'' in the invalid-immediate
+      step of all three instructions, and adds an explicit stack-underflow check to each: DUPN halts if n > len(stack),
+      SWAPN if n + 1 > len(stack), EXCHANGE if m + 1 > len(stack). (The inserted checks and the following steps
+      are both numbered 5 in the resulting lists.)'
+    rationale: Fixes the failure mode in EVM terms and specifies underflow behaviour that the creation version
+      left unstated, both of which implementations and consensus tests must match.
+    change_group: eip8024-cg-halting-conditions
+    confidence: high
+    source_ids:
+    - eips-commit-dcbc74e19eb6
+    - gh-pr-map-eip-8024
+  - id: eip8024-e04
+    event_kind: revision
+    authored_at: '2025-12-10T22:59:50-03:00'
+    committed_at: '2025-12-11T01:59:50+00:00'
+    commit: 0377ea19d4d7e0cffeded97e01ce4d5293e83260
+    path: EIPS/eip-8024.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Adds the companion execution test case for the previous commit: ''6000808080808080808080808080808080e600
+      results in exceptional halt''.'
+    rationale: 'Same change group as eip8024-e03, merged 40 minutes later: the halting conditions and their test
+      vector are one logical update split across two pull requests (#10897 and #10898). Substantive on the same
+      testing-impact grounds as eip8024-e02, with the same medium confidence.'
+    change_group: eip8024-cg-halting-conditions
+    confidence: medium
+    source_ids:
+    - eips-commit-0377ea19d4d7
+    - gh-pr-map-eip-8024
+  - id: eip8024-e05
+    event_kind: revision
+    authored_at: '2026-01-15T11:26:30-03:00'
+    committed_at: '2026-01-15T14:26:30+00:00'
+    commit: 099cdbc4d8c83a2d04b086b93453bb525301091e
+    path: EIPS/eip-8024.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Specifies the truncated-code case: ''code[pc + 1] evaluates to 0 if beyond the end of the code,
+      matching PUSH behavior.'' The existing note defining ''top'' is promoted from a blockquote to plain text
+      in the same diff.'
+    rationale: Defines the value of the immediate when one of the three instructions is the last byte of the code
+      - previously undefined, and a real divergence risk between implementations.
+    change_group: eip8024-cg-end-of-code
+    confidence: high
+    source_ids:
+    - eips-commit-099cdbc4d8c8
+    - gh-pr-map-eip-8024
+  - id: eip8024-e06
+    event_kind: revision
+    authored_at: '2026-01-16T07:58:14-06:00'
+    committed_at: '2026-01-16T06:58:14-07:00'
+    commit: 0f224ab230ffbdcfa28aa69b8aa78e20fe293360
+    path: EIPS/eip-8024.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Adds three execution test cases for the end-of-code rule: truncated DUPN and SWAPN sequences declared
+      equivalent to their zero-immediate forms, and a 30-item EXCHANGE case ending in a bare e8.'
+    rationale: 'Same change group as eip8024-e05, merged the next day: the end-of-code rule and its test vectors
+      are one logical update split across pull requests #11085 and #11095. Note that this commit was contributed
+      by jrhea rather than by the EIP''s authors. Substantive on the same testing-impact grounds as eip8024-e02,
+      with the same medium confidence.'
+    change_group: eip8024-cg-end-of-code
+    confidence: medium
+    source_ids:
+    - eips-commit-0f224ab230ff
+    - gh-pr-map-eip-8024
+  - id: eip8024-e07
+    event_kind: revision
+    authored_at: '2026-02-06T22:32:09-03:00'
+    committed_at: '2026-02-07T01:32:09+00:00'
+    commit: 05146bfcf2a3b0b5962b289ab2bd79b706a45906
+    path: EIPS/eip-8024.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Rewrites the 'Disallowed immediate range' rationale. The new text first states the EVM property being
+      preserved (it is not possible to jump into the middle of an instruction, which PUSH immediates uphold by
+      being masked from JUMPDEST analysis), then explains that these instructions preserve it without changing
+      JUMPDEST analysis by forbidding 0x5b and 0x60-0x7f in their immediates, then gives the masked-opcode alternative
+      and why it would break backwards compatibility without bytecode versioning (EOF), and finally notes that
+      the encoding can be reused by future immediate-carrying instructions. 'counterfactual deployments-in-waiting'
+      becomes 'included in transactions yet to be published on chain'. The sentence saying it would be safe to
+      allow 0x5c to 0x5f is deleted.
+    rationale: Confined to the Rationale section. The disallowed immediate ranges, the instruction algorithms,
+      the encode/decode functions and every test vector are unchanged, so nothing an implementer or test author
+      consumes moves.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-05146bfcf2a3
+    - gh-pr-map-eip-8024
+  - id: eip8024-e08
+    event_kind: revision
+    authored_at: '2026-02-25T10:39:44-03:00'
+    committed_at: '2026-02-25T21:39:44+08:00'
+    commit: d0b75a60e8b8cd79048a439c78fb3b3d1c3c9adb
+    path: EIPS/eip-8024.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Re-encodes all three immediates branchlessly and widens EXCHANGE. decode_single becomes (x + 145)
+      % 256 and encode_single (n + 111) % 256, replacing the two-branch +17 / -20 form; decode_pair replaces 'k
+      = x if x <= 79 else x - 48' with 'k = x ^ 143' and encode_pair returns 'k ^ 143'. EXCHANGE's invalid immediate
+      range widens from 79 < x < 128 to 81 < x < 128 (so 0x50 and 0x51 become valid), decode_pair's assertion
+      admits x <= 81 and encode_pair's admits n <= 14. Every assembly and execution test vector is re-encoded
+      to the new immediates (for example DUPN 17 is now e680 rather than e600, EXCHANGE 2 3 is e89d rather than
+      e812), e850 changes from INVALID_EXCHANGE, POP to EXCHANGE 14 16, and e851 / e852 are added.
+    rationale: 'Changes the byte-level encoding of every immediate for all three instructions and the set of valid
+      EXCHANGE operand pairs. The most disruptive revision after creation: all previously published bytecode examples
+      and test vectors become invalid.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-d0b75a60e8b8
+    - gh-pr-map-eip-8024
+  - id: eip8024-e09
+    event_kind: revision
+    authored_at: '2026-02-25T12:46:37-03:00'
+    committed_at: '2026-02-25T15:46:37+00:00'
+    commit: c0aa8d79038e0bf60ab8f15ff32ef17ba3b80882
+    path: EIPS/eip-8024.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Adds docstrings recording the output ranges of the decoders ('Returns n with 17 <= n <= 235' and
+      'Returns (n, m) with 1 <= n <= 14 and n < m <= 30 - n') and simplifies encode_pair's assertion from '1 <=
+      n <= 14 and n < m <= 29 and n + m <= 30' to '1 <= n < m and n + m <= 30'.
+    rationale: 'The simplified assertion is equivalent to the one it replaces: given 1 <= n < m and n + m <= 30,
+      n <= 14 and m <= 29 both follow. The docstrings restate ranges already implied by the assertions. No behaviour,
+      encoding or test vector changes.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-c0aa8d79038e
+    - gh-pr-map-eip-8024
+  - id: eip8024-e10
+    event_kind: revision
+    authored_at: '2026-06-10T16:38:35-03:00'
+    committed_at: '2026-06-10T19:38:35+00:00'
+    commit: 34b49095ca5f7343045da279f04e7ecd1e451393
+    path: EIPS/eip-8024.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'One-word correction in the ''Disallowed immediate range'' rationale: in the hypothetical where jumpdest
+      analysis were changed to mask a DUPN operand, the byte that would become an invalid jump target is ''5b'',
+      not ''e6''.'
+    rationale: Corrects a factual slip in a worked example inside the Rationale. The normative text and the backwards-compatibility
+      guarantee it illustrates are unchanged, and this is the state of the file at the pinned repository commit.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-34b49095ca5f
+    - gh-pr-map-eip-8024
+dependency_history:
+  events: []
+source_registry: outputs/sources/eips/eip-8024.yaml
+unknowns:
+- Explicit cross-EIP dependency search - genuine zero-dependency result. Every one of the eleven blob versions
+  of EIPS/eip-8024.md was matched case-insensitively against 'eip[- _]?<digits>' and 'erc[- _]?<digits>'; the
+  only match at every version is the EIP's own number in the frontmatter, in the discussions-to URL and in the
+  phrase 'the opcodes allocated by this EIP'. No version has a 'requires' frontmatter field. dependency_history.events
+  is therefore empty by evidence, not by omission.
+- Unnamed cross-EIP references, recorded rather than converted into dependency events. From eip8024-e07 (2026-02-07)
+  onwards the Rationale says the masked-opcode alternative 'would create a backwards incompatibility if done without
+  bytecode versioning (EOF)', and the EIP's whole premise is that it provides SWAPN, DUPN and EXCHANGE - instructions
+  first specified for EOF - in a form that works on legacy bytecode. Neither EOF nor any EOF EIP number (for example
+  the EIP-663 stack instructions or the EIP-3540 container format) is ever cited, so under this task's definition
+  of an explicit cross-EIP dependency no dependency event is recorded; identifying the intended targets would
+  require inference and is left to a later analysis step.
+- EIP-8024 was merged directly at status Review (ethereum/EIPs#10298) and is still at status Review at the pinned
+  repository commit, so unlike the other EIPs in this batch its history contains no status transition and no editorial
+  status-only commit.
+- 'Two change groups are recorded because one logical update spans two commits each: eip8024-cg-halting-conditions
+  (eip8024-e03 and eip8024-e04, pull requests #10897 and #10898, merged 40 minutes apart) and eip8024-cg-end-of-code
+  (eip8024-e05 and eip8024-e06, pull requests #11085 and #11095, merged the next day). Aggregating by change group
+  gives eight logical post-creation updates rather than ten commits.'
+- Four test-vector commits (eip8024-e02, eip8024-e04, eip8024-e06 and the test half of eip8024-e08) are classified
+  substantive with medium confidence on the rubric's 'could affect implementation or testing' clause. A stricter
+  reading that counts only changes to normative rules would move eip8024-e02, eip8024-e04 and eip8024-e06 to non-substantive,
+  reducing the substantive revision count from seven to four. The classification is flagged here so that later
+  analysis can apply either convention.
+- 'Event timestamps are reproduced with the offsets recorded in Git. Committer timezone offsets in this repository
+  are set by the merge tooling and are not evidence of where a change was made; every summary date is the equivalent
+  UTC instant of the commit''s committer date. Commit 0f224ab230ff is the clearest example: its committer date
+  carries a -07:00 offset while its author date carries -06:00, and both resolve to 2026-01-16T13:58:14Z.'

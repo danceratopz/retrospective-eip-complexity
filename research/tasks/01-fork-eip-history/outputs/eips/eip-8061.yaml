@@ -1,0 +1,233 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 8061
+  title: Increase exit and consolidation churn
+  source_ids:
+  - eips-pin-eip-8061
+research_run:
+  started_at: '2026-08-21T00:43:01Z'
+  completed_at: '2026-08-21T00:51:28Z'
+  researcher: claude subagent eip-amsterdam-3 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-10-17'
+  frontmatter_source_ids:
+  - git-5f6918c73ae7
+  - eips-pin-eip-8061
+  first_repository_commit:
+    authored_at: '2025-10-29T02:01:56Z'
+    committed_at: '2025-10-29T02:01:56Z'
+    commit: 5f6918c73ae7526eed55083889124a1c4063d5b6
+    path: EIPS/eip-8061.md
+    source_ids:
+    - git-5f6918c73ae7
+    - gh-pr-map-eip-8061
+  discrepancy_note: 'The frontmatter declares created: 2025-10-17, 12 days before the earliest repository
+    commit (2025-10-29T02:01:56Z, the squash merge of ethereum/EIPs PR #10623). Normal authoring-to-merge
+    lag. The created date is unchanged across the whole file history. Note that the title at creation
+    was ''Increase churn limits''; the current title ''Increase exit and consolidation churn'' was set
+    at commit 98ac01ed (2025-11-10).'
+revision_history:
+  summary:
+    file_commit_count: 4
+    post_creation_revision_count: 3
+    substantive_revision_count: 3
+    non_substantive_revision_count: 0
+    uncertain_revision_count: 0
+    first_revision_at: '2025-11-10T14:10:24Z'
+    last_revision_at: '2026-07-30T15:31:25Z'
+    first_substantive_revision_at: '2025-11-10T14:10:24Z'
+    last_substantive_revision_at: '2026-07-30T15:31:25Z'
+    derived_from_event_ids:
+    - eip8061-e01
+    - eip8061-e02
+    - eip8061-e03
+    - eip8061-e04
+  events:
+  - id: eip8061-e01
+    event_kind: creation
+    authored_at: '2025-10-29T02:01:56Z'
+    committed_at: '2025-10-29T02:01:56Z'
+    commit: 5f6918c73ae7526eed55083889124a1c4063d5b6
+    path: EIPS/eip-8061.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition (PR #10623) as a Draft titled ''Increase churn limits'': halves CHURN_LIMIT_QUOTIENT
+      from 2**16 to 2**15 as CHURN_LIMIT_QUOTIENT_GLOAS dedicated to activations and exits, introduces
+      CONSOLIDATION_CHURN_LIMIT_QUOTIENT = 2**16 with a new get_consolidation_churn_limit, and redefines
+      get_balance_churn_limit as the sum of the two churns for weak-subjectivity accounting (~6 day weak
+      subjectivity period). Frontmatter requires: 7521.'
+    rationale: Adding commit that creates the EIP file with its initial normative proposal.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-5f6918c73ae7
+    - gh-pr-map-eip-8061
+  - id: eip8061-e02
+    event_kind: revision
+    authored_at: '2025-11-10T14:10:24Z'
+    committed_at: '2025-11-10T14:10:24Z'
+    commit: 98ac01edc3fbcd16e9856b172f0c6b4f9a2c29c2
+    path: EIPS/eip-8061.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Major respecification (PR #10765, 181 insertions / 60 deletions): retitles to ''Increase
+      exit and consolidation churn''; reinstates the activation cap as MAX_PER_EPOCH_ACTIVATION_CHURN_LIMIT
+      = 2**8, replacing MAX_PER_EPOCH_ACTIVATION_EXIT_CHURN_LIMIT; splits get_activation_exit_churn_limit
+      into a capped get_activation_churn_limit and an uncapped get_exit_churn_limit; replaces get_balance_churn_limit
+      with a rewritten compute_weak_subjectivity_period that weights exit churn 2/3, activation churn
+      1/3 and consolidation churn 1; routes exits through the consolidation queue whenever earliest_exit_epoch
+      > earliest_consolidation_epoch using compute_consolidation_epoch_and_update_churn with 2 * exit_balance
+      // 3; and adds full process_pending_deposits and compute_exit_epoch_and_update_churn listings plus
+      reworked rationale and weak-subjectivity figures (~7 days). Introduces an [EIP-8071] reference.'
+    rationale: Wholesale change of the specified constants, churn functions, exit routing and weak-subjectivity
+      formula.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-98ac01edc3fb
+    - gh-pr-map-eip-8061
+  - id: eip8061-e03
+    event_kind: revision
+    authored_at: '2025-12-01T23:44:59Z'
+    committed_at: '2025-12-01T23:44:59Z'
+    commit: 01f15c37c64114c478cb1136e0a6966084e4db14
+    path: EIPS/eip-8061.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Removes the exits-use-consolidation-queue mechanism (PR #10860, ''remove the overlap with
+      EIP-8080''): compute_exit_epoch_and_update_churn no longer redirects to compute_consolidation_epoch_and_update_churn,
+      the corresponding Abstract sentence, Motivation bullet (which carried the only [EIP-8071] reference),
+      Rationale bullet and ''Can also be used by exits'' docstring line are deleted; also fixes compute_weak_subjectivity_period
+      to call get_exit_churn_limit instead of the removed get_activation_exit_churn_limit, and rewrites
+      a Motivation sentence about which stakers benefit from illiquidity.'
+    rationale: Removes a specified state-transition behavior and corrects a function call in the weak-subjectivity
+      computation; directly implementation-visible.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-01f15c37c641
+    - gh-pr-map-eip-8061
+  - id: eip8061-e04
+    event_kind: revision
+    authored_at: '2026-07-30T15:31:25Z'
+    committed_at: '2026-07-30T15:31:25Z'
+    commit: b282adbbc56828f6b07fe70555c0cd4783b28272
+    path: EIPS/eip-8061.md
+    change_type: dependency
+    semantic_effect: substantive
+    summary: 'Frontmatter status Draft to Review and requires changed from 7521 to 7251 (PR #11887); also
+      deletes the empty ''Test Cases / TODO'' section.'
+    rationale: 'Corrects the declared prerequisite. EIPS/eip-7521.md is an ERC that was moved out of the
+      EIPs repository and is unrelated to churn, so ''requires: 7521'' was an error; EIP-7251 introduced
+      consolidations and the exit cap this EIP modifies and was already referenced in the prose. Changing
+      the declared dependency set is treated as substantive.'
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-b282adbbc568
+    - gh-pr-map-eip-8061
+dependency_history:
+  events:
+  - id: eip8061-d01
+    target_eip: 7521
+    event_type: present_at_creation
+    relationship: requires
+    occurred_at: '2025-10-29T02:01:56Z'
+    commit: 5f6918c73ae7526eed55083889124a1c4063d5b6
+    rationale: 'Frontmatter ''requires: 7521'' at creation, plus the get_consolidation_churn_limit docstring
+      ''Per-epoch churn limit reserved for consolidations (EIP-7521)''. EIPS/eip-7521.md at the pinned
+      state is a moved ERC stub unrelated to churn, so this reference appears to be an error for EIP-7251.'
+    confidence: high
+    source_ids:
+    - git-5f6918c73ae7
+  - id: eip8061-d02
+    target_eip: 7514
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2025-10-29T02:01:56Z'
+    commit: 5f6918c73ae7526eed55083889124a1c4063d5b6
+    rationale: Creation Motivation states '[EIP-7514] introduced an activation cap of 8 validators per
+      epoch' and the Specification says the quotient is dedicated to activations and exits 'as it was
+      prior to the introduction of a cap in [EIP-7514]'. Present at the pinned state, where the Specification
+      and Rationale additionally state that the activation cap from EIP-7514 is maintained.
+    confidence: high
+    source_ids:
+    - git-5f6918c73ae7
+    - eips-pin-eip-8061
+  - id: eip8061-d03
+    target_eip: 7251
+    event_type: present_at_creation
+    relationship: interacts_with
+    occurred_at: '2025-10-29T02:01:56Z'
+    commit: 5f6918c73ae7526eed55083889124a1c4063d5b6
+    rationale: Creation Motivation states '[EIP-7251] extended this cap to exits ... to make room for
+      the newly introduced consolidation operations'. A prose reference only at this point; not yet in
+      frontmatter requires.
+    confidence: high
+    source_ids:
+    - git-5f6918c73ae7
+  - id: eip8061-d04
+    target_eip: 8071
+    event_type: introduced
+    relationship: interacts_with
+    occurred_at: '2025-11-10T14:10:24Z'
+    commit: 98ac01edc3fbcd16e9856b172f0c6b4f9a2c29c2
+    rationale: 'PR #10765 added the Motivation bullet noting that exits can already be routed through
+      the consolidation queue ''due to a loophole in the consolidation logic, which [EIP-8071] proposes
+      to fix'', and arguing this EIP''s mechanism is simpler.'
+    confidence: high
+    source_ids:
+    - git-98ac01edc3fb
+  - id: eip8061-d05
+    target_eip: 8071
+    event_type: removed
+    relationship: interacts_with
+    occurred_at: '2025-12-01T23:44:59Z'
+    commit: 01f15c37c64114c478cb1136e0a6966084e4db14
+    rationale: 'PR #10860 deleted that Motivation bullet together with the exits-use-consolidation-queue
+      mechanism; no EIP-8071 reference remains at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-01f15c37c641
+    - eips-pin-eip-8061
+  - id: eip8061-d06
+    target_eip: 7521
+    event_type: changed
+    relationship: interacts_with
+    occurred_at: '2026-07-30T15:31:25Z'
+    commit: b282adbbc56828f6b07fe70555c0cd4783b28272
+    rationale: 'PR #11887 replaced ''requires: 7521'' with ''requires: 7251'', downgrading EIP-7521 from
+      a declared frontmatter prerequisite to a residual prose mention. One stale EIP-7521 reference survives
+      at the pinned state, in the get_consolidation_churn_limit docstring.'
+    confidence: high
+    source_ids:
+    - git-b282adbbc568
+    - eips-pin-eip-8061
+  - id: eip8061-d07
+    target_eip: 7251
+    event_type: changed
+    relationship: requires
+    occurred_at: '2026-07-30T15:31:25Z'
+    commit: b282adbbc56828f6b07fe70555c0cd4783b28272
+    rationale: 'PR #11887 promoted EIP-7251 from a prose-only Motivation reference to the declared frontmatter
+      prerequisite (''requires: 7251''). Present at the pinned state.'
+    confidence: high
+    source_ids:
+    - git-b282adbbc568
+    - eips-pin-eip-8061
+source_registry: outputs/sources/eips/eip-8061.yaml
+unknowns:
+- 'The commit that removed the exits-use-consolidation-queue mechanism is titled ''remove the overlap
+  with EIP-8080'' (PR #10860), but EIP-8080 is never named in the EIP text at any revision. Per the task''s
+  explicit-reference rule the EIP-8080 relationship is not recorded as a dependency event; it is noted
+  here as PR-title-only evidence of the motivation for commit 01f15c37.'
+- EIP-7521 is recorded as a declared dependency because it appeared in frontmatter requires from creation,
+  but EIPS/eip-7521.md at the pinned state is a stub recording that ERC-7521 moved to ethereum/ercs; the
+  reference is therefore almost certainly a typo for EIP-7251, which is how commit b282adbb resolved it.
+  One stale '(EIP-7521)' docstring mention remains at the pinned state.
+- The Test Cases section was 'TODO' from creation until commit b282adbb removed it entirely; the EIP has
+  no test cases at the pinned state.

@@ -1,0 +1,271 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7951
+  title: Precompile for secp256r1 Curve Support
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7951.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7951.yaml
+research_run:
+  started_at: '2026-08-21T07:03:18Z'
+  completed_at: '2026-08-21T07:12:44Z'
+  researcher: claude subagent osaka/eip-7951 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7951-e2
+  alternative_event_ids:
+  - osaka-eip7951-e1
+  kind: normalized_proposal_equivalent
+  raw_label: EIPs Scheduled for Inclusion / Core EIPs
+  effective_at: '2025-07-02T17:49:36Z'
+  recorded_at: '2025-07-02T17:49:36Z'
+  date_basis: >-
+    Task 01's occurred_at for event osaka-eip7951-e2 is the UTC committer date of the ethereum/EIPs
+    commit that edited EIPS/eip-7607.md (the Fusaka Meta EIP); that dating convention is stated
+    run-wide in research/tasks/01-fork-eip-history/outputs/forks/osaka.yaml ("occurred_at on every
+    inclusion-state event is the UTC committer date of the ethereum/EIPs commit that changed
+    EIPS/eip-7607.md"). Verified directly from the read-only clone at the Task 01 run-wide pin
+    a08f51fec5b2b5da457adb05b8cffb487fb4f7de: 'git log -1' for commit
+    ca4fda0074fe0298f56abd0ffa7286de8d30531e reports committer date 2025-07-02T17:49:36+00:00
+    (author date 2025-07-02T10:49:36-07:00, subject "Update EIP-7607: ACDE#214 changes", author
+    Tim Beiko, merged by EIP-Bot). The underlying AllCoreDevs decision Task 01 identifies is
+    AllCoreDevs - Execution (ACDE) #214, held 2025-06-19 14:00 UTC (ethereum/pm issue 1569, source
+    pm-issue-1569), at which EIP-7907, EIP-7934, EIP-7939 and EIP-7951 were SFI'd for
+    fusaka-devnet-2. Task 01 records no minute-level timestamp for that call (ethereum/pm at the
+    run-wide pin ecf2eecc74adc479cea38b3d3b9a670c320421b1 holds no committed minutes for ACDE >= 205),
+    so the exactly-timed repository record is used for both effective_at and recorded_at rather than a
+    calendar-day-truncated meeting date; the ACDE#214 decision preceded the repository record by
+    roughly 13.2 days, the largest such gap in this fork per the Task 01 fork record.
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary Git evidence rather than Task 01 prose. (a) Commit
+    ca4fda0074fe0298f56abd0ffa7286de8d30531e exists at the pinned clone with committer instant
+    2025-07-02T17:49:36+00:00. (b) 'git show <sha> -- EIPS/eip-7607.md' shows the actual hunk: it adds
+    "* [EIP-7951](./eip-7951.md): Precompile for secp256r1 Curve Support" (together with EIP-7907,
+    EIP-7934 and EIP-7939) under the "### EIPs Scheduled for Inclusion" / "#### Core EIPs" heading and
+    in the same hunk deletes the entire "### Considered for Inclusion" section, whose only remaining
+    entries were "RIP-7212: Precompile for secp256r1 Curve Support", EIP-7907 and EIP-7934. This is
+    the single repository event that both retires the RIP-7212 CFI entry and installs the EIP-7951 SFI
+    entry, exactly as Task 01 describes. (c) Independent negative search over all 53 commits touching
+    EIPS/eip-7607.md: for each version the enclosing heading of every line matching 7951, 7212 or
+    secp256r1 was resolved. The secp256r1/RIP-7212 entry sits under "### Considered for Inclusion"
+    continuously from commit 1d4ce5462677 (2024-09-27T18:42:32Z) until this commit, and
+    "[EIP-7951](./eip-7951.md)" sits under "#### Core EIPs" of the Scheduled/Included section from this
+    commit onwards. No commit ever placed EIP-7951, RIP-7212 or the secp256r1 precompile under the
+    "### Proposed for Inclusion" heading - even though that heading existed throughout and was actively
+    used for Fusaka (empty at 1d4ce5462677, populated with 1 to 28 entries between commit
+    b282200fd91c on 2024-12-19T19:52:19Z and commit 9d17611c8710 on 2025-04-14T22:10:38Z, and emptied
+    again by commit fc9a8d9a4d43 on 2025-04-19T00:32:43Z, well before EIPS/eip-7951.md existed). So no
+    explicit-PFI event for this EIP can exist in the authoritative fork document. What is verified here
+    is the existence, exact instant and content of the SFI event; the judgement that this SFI event is
+    the best available proposal-anchor stand-in for this document is a documented normalization, not a
+    verified fact.
+  confidence: medium
+  source_ids:
+  - eips-commit-ca4fda0074fe
+  - eips-pr-9957
+  - pm-issue-1569
+  - eips-blob-eip7607-pin
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7951-e00
+    event_kind: creation
+    commit: d386b29b5a31bd5cfd8d21bbf4e8a0c87734085e
+    committed_at: '2025-07-01T20:21:20Z'
+    offset_from_anchor_seconds: -77296
+    semantic_effect: substantive
+    summary: >-
+      Creation commit adding EIPS/eip-7951.md (281 lines, 12,408 bytes, status Draft, Task 01
+      change_type normative_behavior): introduces the P256VERIFY precompile at address 0x100 for
+      secp256r1 ECDSA signature verification at 3450 gas, and specifies the curve parameters, the
+      field and point encodings, the 160-byte input ABI, the 32-byte success versus empty failure
+      output, five mandatory input-validation checks, the verification algorithm including the
+      point-at-infinity check and the modular comparison r' = r (mod n), and the rule that the
+      precompile must not revert and must consume full gas on failure. Git records the committer time
+      as 2025-07-01T20:21:20+00:00, identical to the Task 01 value and already UTC. This is the only
+      EIP-file event at or before the anchor; it precedes it by 77,296 seconds (0.89 days).
+    immutable_url: https://github.com/ethereum/EIPs/blob/d386b29b5a31bd5cfd8d21bbf4e8a0c87734085e/EIPS/eip-7951.md
+    source_ids:
+    - eips-commit-d386b29b5a31
+    - eips-blob-eip7951-creation
+  following:
+    exists: true
+    revision_event_id: eip7951-e01
+    event_kind: revision
+    commit: 75a5ba89571165ae11368d791cc5816bdb01546a
+    committed_at: '2025-07-04T09:19:01Z'
+    offset_from_anchor_seconds: 142165
+    semantic_effect: substantive
+    summary: >-
+      Doubles the normative P256VERIFY gas cost from 3450 to 6900 in both the Precompile section and
+      the Gas Schedule (Task 01 change_type parameter, semantic_effect substantive, confidence high),
+      replaces the "approximately 15% more expensive than secp256k1" justification with a statement
+      that benchmarking found R1 verification significantly slower than ECRECOVER, restates the Gas
+      Cost Justification as "does not maintain compatibility with L2s, but ... matches closer the
+      benchmarks of actual implementations", and weakens the Interface Compatibility list from "the
+      exact same interface as RIP-7212" / "Same gas cost: 3450 gas" to "a similar interface" /
+      "Different gas cost: 3450 gas vs 6900 gas". Task 01 records committer time as
+      2025-07-04T17:19:01+08:00 (merge-tooling offset); the equivalent UTC instant, re-derived from the
+      pinned clone, is 2025-07-04T09:19:01Z, 142,165 seconds (1.65 days) after the anchor.
+    immutable_url: https://github.com/ethereum/EIPs/blob/75a5ba89571165ae11368d791cc5816bdb01546a/EIPS/eip-7951.md
+    source_ids:
+    - eips-commit-75a5ba895711
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7951-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: d386b29b5a31bd5cfd8d21bbf4e8a0c87734085e
+    path: EIPS/eip-7951.md
+    committed_at: '2025-07-01T20:21:20Z'
+    offset_from_anchor_seconds: -77296
+    git_blob_sha: f4600e688beaeaf11fa6292ea3477e9ca3febe56
+    content_sha256: 4fca0c5daef344b79ec1d19297ecf6a36f41bf31e02a29038a05701948aeebed
+    immutable_url: https://github.com/ethereum/EIPs/blob/d386b29b5a31bd5cfd8d21bbf4e8a0c87734085e/EIPS/eip-7951.md
+    source_ids:
+    - eips-commit-d386b29b5a31
+    - eips-blob-eip7951-creation
+  information_cutoff_at: '2025-07-02T17:49:36Z'
+  rationale: >-
+    Default preceding rule applied. The complete Task 01 revision_history.events list for EIP-7951 has
+    five events (creation eip7951-e00 plus revisions eip7951-e01..e04); all five commits touching
+    EIPS/eip-7951.md were re-listed from the pinned clone with 'git log --follow' and each committer
+    instant re-derived in UTC, matching Task 01 exactly: 2025-07-01T20:21:20Z, 2025-07-04T09:19:01Z,
+    2025-09-24T21:46:32Z, 2025-09-30T23:59:10Z and 2026-01-21T09:16:44Z. Exactly one falls at or
+    before the anchor 2025-07-02T17:49:36Z - the creation commit d386b29b5a31, 77,296 seconds
+    (0.89 days) earlier - so it is the preceding candidate and, by default, the selection. The
+    following candidate 75a5ba895711 is 142,165 seconds (1.65 days) after the anchor and therefore
+    inside the seven-day eligibility ceiling, but the exception test fails on its merits (see
+    post_anchor_exception): it is a normative gas-cost change explicitly driven by implementation
+    benchmarking, i.e. exactly the later client-implementation feedback the contract excludes, and the
+    contract states that seven days is a ceiling rather than a nearest-commit rule. The selected
+    content is therefore the EIP exactly as it stood when the ACDE#214 inclusion decision was recorded
+    in the Meta EIP: P256VERIFY at address 0x100 for 3450 gas, claiming the exact same interface and
+    gas cost as RIP-7212, status Draft. Resolution verified at the pin: 'git ls-tree
+    d386b29b5a31bd5cfd8d21bbf4e8a0c87734085e -- EIPS/eip-7951.md' confirms the path existed at that
+    commit and yields blob f4600e688beaeaf11fa6292ea3477e9ca3febe56 (mode 100644); 'git cat-file blob'
+    piped to sha256sum yields 4fca0c5daef344b79ec1d19297ecf6a36f41bf31e02a29038a05701948aeebed over
+    12,408 bytes / 281 lines. information_cutoff_at is the verified anchor time because the preceding
+    revision was selected.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: true
+    diff_semantic_effect: >-
+      Not applicable as a selection - no post-anchor exception is proposed - but the diff was reviewed
+      directly because the following candidate is inside the seven-day ceiling. 'git diff
+      d386b29b5a31 75a5ba895711 -- EIPS/eip-7951.md' contains five hunks and changes only gas-cost
+      text: 3450 -> 6900 in the Precompile sentence and in the Gas Schedule heading; the benchmarking
+      paragraph rewritten from "approximately 15% more expensive than secp256k1 recovery" to "the
+      actual cost of R1 verification was significantly slower than the ECRECOVER precompile and the
+      decision was made to increase the gas cost to 6900 gas"; the Gas Cost Justification rewritten
+      from "maintains consistency with RIP-7212 implementations" to "does not maintain compatibility
+      with L2s, but it matches closer the benchmarks of actual implementations"; and Interface
+      Compatibility weakened from "the exact same interface as RIP-7212" / "Same gas cost: 3450 gas"
+      to "a similar interface" / "Different gas cost: 3450 gas vs 6900 gas". Semantic effect:
+      substantive - it doubles a normative gas parameter that every client implementation and gas test
+      must follow, and it retracts the L2 bytecode-compatibility claim that motivated the EIP.
+    diff_summary: >-
+      The exception test fails at conditions 3 and 4, not at the seven-day ceiling. Condition 1 holds
+      (142,165 seconds, 1.65 calendar days after the anchor) and condition 2 holds (the diff was
+      reviewed directly, above). Condition 3 fails: the change does not complete or correct the
+      proposal submitted at the anchor, it reverses one of its central design claims - interface and
+      gas-cost parity with the RIP-7212 deployments the EIP supersedes. Condition 4 fails decisively:
+      the commit's own subject ("update gas costs for R1 verification") and its new text attribute the
+      change to implementation benchmarks, which is client-implementation feedback arriving after the
+      SFI decision. The contract's preference for the preceding candidate when the following commit is
+      merely closer in absolute time therefore applies.
+    hindsight_risk: >-
+      None incurred by this selection: the pre-anchor creation revision imports no post-anchor
+      information. Had the following revision been selected, the assessment would have read a gas
+      parameter set by post-SFI benchmarking of real client implementations - direct hindsight about
+      implementation cost, the very quantity a retrospective complexity study is trying to predict
+      from the proposal text. The residual risk of the chosen direction is the opposite and much
+      milder: the selected text understates the eventual cost of the precompile (3450 rather than the
+      6900 gas that shipped) and asserts an L2 compatibility that the specification abandoned 1.65
+      days later, so a reader must not treat the selected blob as the shipped Fusaka specification.
+    justification: >-
+      Not needed - the default preceding candidate exists, precedes the anchor by 0.89 days, and is the
+      only EIP-file event at or before the anchor.
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - 'Anchor kind is a judgement call and is materially contestable: no explicit PFI event exists for
+    EIP-7951. The Fusaka Meta EIP EIPS/eip-7607.md did carry a "Proposed for Inclusion" section (and
+    used it for up to 28 other EIPs between 2024-12-19 and 2025-04-14), but it was emptied on
+    2025-04-19, before EIPS/eip-7951.md existed, and it never listed EIP-7951, RIP-7212 or the
+    secp256r1 precompile in any of that file''s 53 commits. This record therefore anchors on the SFI
+    event osaka-eip7951-e2 as a normalized_proposal_equivalent: it is the only Fusaka inclusion-state
+    event that names the EIP-7951 document, and the ACDE#214 decision behind it is where this document
+    entered the fork scope. A human must confirm that label; a reviewer could reasonably prefer
+    "other" (SFI is downstream of PFI in the EIP-7723 ordering) or "fallback_cfi" on
+    osaka-eip7951-e1.'
+  - 'Alternative proposal cycle preserved, and the selection is insensitive to it: osaka-eip7951-e1
+    (2024-09-27T18:42:32Z, commit 1d4ce5462677, ACDE#197) placed the secp256r1 precompile in Fusaka
+    "Considered for Inclusion" under the precursor identifier RIP-7212 - a Rollup Improvement Proposal
+    in ethereum/RIPs, not an ethereum/EIPs document - 277 days before EIPS/eip-7951.md was created.
+    Anchoring there would leave no preceding candidate and would force the contract''s "file created
+    after the anchor" branch, selecting the same creation commit d386b29b5a31 as a
+    post_anchor_exception with information_cutoff_at 2025-07-01T20:21:20Z. The selected commit, blob
+    and content hash are identical under either anchor; only selection.mode and the cutoff (by about
+    21 hours) differ. This is not a removal-and-re-proposal cycle: the RIP-7212 CFI line stood
+    unbroken from 2024-09-27 until it was replaced by the EIP-7951 SFI line in the same commit
+    ca4fda0074fe (verified across every version of EIPS/eip-7607.md).'
+  - 'Anchor timing convention: effective_at uses the exactly-timed ethereum/EIPs commit
+    (2025-07-02T17:49:36Z) rather than the ACDE#214 call date (2025-06-19 14:00 UTC), for which Task 01
+    records no minute-level timestamp. This gap is the largest in the fork (13.2 days) and it straddles
+    the EIP file''s creation: if a reviewer instead treats the ACDE#214 decision date as effective_at,
+    the EIP file did not yet exist at the anchor, no preceding candidate exists, and the same commit
+    d386b29b5a31 would be selected as a post_anchor_exception (12.3 days after that anchor, outside the
+    seven-day ceiling but inside the contract''s "no preceding candidate" branch) with
+    information_cutoff_at 2025-07-01T20:21:20Z. Again the selected content does not change.'
+  - 'Selected content caveat for downstream complexity work: the selected creation revision prices
+    P256VERIFY at 3450 gas and claims "the exact same interface" and "Same gas cost" as RIP-7212. The
+    parameter that shipped in Fusaka is 6900 gas, set 1.65 days after the anchor (eip7951-e01,
+    2025-07-04T09:19:01Z) on the basis of implementation benchmarking. A reviewer should confirm that
+    assessing the pre-anchor text - not the shipped parameter - is intended, and that the deliberate
+    exclusion of that benchmark-driven revision is accepted.'
+  - 'The Task 01 fork record''s own unknown is inherited: treating the RIP-7212 CFI event as part of
+    this fork-EIP relationship is an identity judgement. This record does not rely on it for the
+    selected ref, but a reviewer who rejects the identity judgement should note that EIP-7951''s Fusaka
+    inclusion history then begins at osaka-eip7951-e2, which is exactly the anchor used here.'
+unknowns:
+- 'Negative finding, independently reproduced from primary evidence: no Proposed-for-Inclusion event
+  exists for EIP-7951 (or for its precursor RIP-7212) in the Fusaka Meta EIP. For every one of the 53
+  commits touching EIPS/eip-7607.md, the enclosing heading of each line matching 7951, 7212 or
+  secp256r1 was resolved; the entry sits under "### Considered for Inclusion" from commit 1d4ce5462677
+  (2024-09-27T18:42:32Z) to commit ca4fda0074fe (2025-07-02T17:49:36Z) and under "#### Core EIPs" of the
+  Scheduled/Included section thereafter. No version placed it under a heading containing "Proposed".'
+- 'The exact instant at which ACDE#214 (2025-06-19, 14:00 UTC start) resolved to SFI EIP-7951 is
+  unknown. Task 01 cites ethereum/pm issue 1569 as a mutable, reference-only keyword extract and
+  records that ethereum/pm at the run-wide pin ecf2eecc74adc479cea38b3d3b9a670c320421b1 contains no
+  committed minutes for ACDE >= 205, so no minute-level decision timestamp is recoverable from the
+  pinned evidence. See the review notes for the demonstrated insensitivity of the selected ref to this.'
+- 'Chronology oddity carried over from Task 01 and not resolved here: the ACDE#214 SFI decision
+  (2025-06-19) predates the first repository commit of EIPS/eip-7951.md (2025-07-01T20:21:20Z) by
+  about 12.3 days, and the frontmatter created date (2025-05-27, unmodified in all five commits)
+  predates it by 35 days. Task 01 records that the ACDE#214 agenda linked the then-open creation pull
+  request ethereum/EIPs#9833. Per the contract, frontmatter created dates and pull-request times were
+  not used for bracketing, and the pull request was not investigated in this task. Any draft that
+  circulated between 2025-05-27 and 2025-07-01 is not addressable as an immutable ethereum/EIPs ref.'
+- 'Task 01 stores committer timezone offsets as recorded in Git (here +08:00 on eip7951-e01/e02/e03,
+  merge tooling). Every timestamp in this record is the equivalent UTC instant, re-derived from the
+  pinned clone; no Task 01 local-offset value is preserved verbatim in a timestamp field. Two Task 01
+  UTC-normalization details differ from the raw offsets but do not affect this selection: e02
+  2025-09-25T05:46:32+08:00 is 2025-09-24T21:46:32Z and e03 2025-10-01T07:59:10+08:00 is
+  2025-09-30T23:59:10Z; both are months after the anchor.'
+- 'The referenced test-vector asset assets/eip-7951/test-vectors.json was not inspected; consistent
+  with Task 01, this record covers EIPS/eip-7951.md only. A downstream reader of the selected blob
+  should be aware that the Test Cases section points at an asset file whose state at the selected
+  commit was not separately resolved or hashed here.'
+- 'No Task 01 error was found. The five commits touching EIPS/eip-7951.md, their committer instants,
+  the anchor commit''s timestamp and the anchor hunk all match the Task 01 records exactly, so no
+  Task 01 correction is requested.'

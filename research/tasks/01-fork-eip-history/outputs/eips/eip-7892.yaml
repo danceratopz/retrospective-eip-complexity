@@ -1,0 +1,397 @@
+schema_version: 3
+task_id: 01-fork-eip-history
+eip:
+  number: 7892
+  title: Blob Parameter Only Hardforks
+  source_ids:
+  - blob-eip7892-pin
+  - blob-eip7892-creation
+research_run:
+  started_at: '2026-08-20T19:58:00Z'
+  completed_at: '2026-08-20T20:12:00Z'
+  researcher: claude subagent eip-batch-10 (coordinated)
+revision_classification:
+  rubric_version: 1
+  method: manual_diff_review
+creation:
+  frontmatter_date: '2025-02-28'
+  frontmatter_source_ids:
+  - blob-eip7892-creation
+  - blob-eip7892-pin
+  first_repository_commit:
+    authored_at: '2025-03-24T11:26:03-05:00'
+    committed_at: '2025-03-24T16:26:03+00:00'
+    commit: 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f
+    path: EIPS/eip-7892.md
+    source_ids:
+    - commit-216ebd2f32
+  discrepancy_note: The frontmatter declares created 2025-02-28, while the earliest repository commit
+    adding EIPS/eip-7892.md is 216ebd2f32, committed 2025-03-24T16:26:03+00:00 - a gap of 24 days. The
+    declared date matches the opening of the discussions-to Ethereum Magicians thread referenced in the
+    creation commit (eip-7892-blob-parameter-only-hardforks/23018); the pull request adding the file was
+    merged about three and a half weeks later. The frontmatter `created` value was never changed by any
+    later commit (verified against every historical version at the pin). The Git event is the earliest
+    independently verifiable repository event.
+revision_history:
+  summary:
+    file_commit_count: 12
+    post_creation_revision_count: 11
+    substantive_revision_count: 6
+    non_substantive_revision_count: 5
+    uncertain_revision_count: 0
+    first_revision_at: '2025-04-10T14:39:51+00:00'
+    last_revision_at: '2026-01-22T15:28:44+00:00'
+    first_substantive_revision_at: '2025-04-10T14:39:51+00:00'
+    last_substantive_revision_at: '2025-10-06T21:45:52+08:00'
+    derived_from_event_ids:
+    - eip7892-e01
+    - eip7892-e02
+    - eip7892-e03
+    - eip7892-e04
+    - eip7892-e05
+    - eip7892-e06
+    - eip7892-e07
+    - eip7892-e08
+    - eip7892-e09
+    - eip7892-e10
+    - eip7892-e11
+    - eip7892-e12
+  events:
+  - id: eip7892-e01
+    event_kind: creation
+    authored_at: '2025-03-24T11:26:03-05:00'
+    committed_at: '2025-03-24T16:26:03+00:00'
+    commit: 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f
+    path: EIPS/eip-7892.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7892 (119 lines): defines Blob Parameter Only (BPO) hardforks as
+      a class of fork that modifies only blob_target, blob_limit and baseFeeUpdateFraction. Extends the
+      EIP-7840 `blobSchedule` object to allow an arbitrary number of block timestamps as keys, sketches
+      a consensus-layer `BPO_FORK` configuration (an epoch/max_blobs table), and states four Requirements:
+      EL and CL clients MUST share consistent BPO fork schedules; BPO forks MUST NOT conflict with other
+      fork schedules; the blobSchedule timestamp MUST align with the start of the CL epoch; the blobSchedule
+      max field MUST equal the CL max_blobs value. Includes Motivation, Rationale, Backwards Compatibility
+      (''no concerns'') and Security Considerations (''no security risks identified''). Frontmatter: status
+      Draft, type Informational, created 2025-02-28, requires 7840.'
+    rationale: Adding commit; recorded as event_kind creation and excluded from revision counts.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-216ebd2f32
+    - blob-eip7892-creation
+  - id: eip7892-e02
+    event_kind: revision
+    authored_at: '2025-04-10T09:39:51-05:00'
+    committed_at: '2025-04-10T14:39:51+00:00'
+    commit: 3b6d8bf25e475aa77531328c69f79b72a8cdcc7f
+    path: EIPS/eip-7892.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Rewrites the consensus-layer configuration snippet from a repeated-key comment table (''#  epoch  max_blobs''
+      / ''BPO_FORK: 348618 24'') into a valid YAML sequence (''BPO_FORK:'' with ''- epoch: ... / max_blobs:
+      ...'' entries). Illustrative epoch and max_blobs values are unchanged.'
+    rationale: Redefines the shape of the consensus-layer configuration entry that clients must parse;
+      classified substantive with medium confidence because the surrounding text calls the values (though
+      not the structure) purely illustrative.
+    change_group: 7892-cl-config-format-2025
+    confidence: medium
+    source_ids:
+    - commit-3b6d8bf25e
+  - id: eip7892-e03
+    event_kind: revision
+    authored_at: '2025-05-07T12:56:10-05:00'
+    committed_at: '2025-05-07T17:56:10+00:00'
+    commit: 954213305aa55eeda61a3fe3fe247011c038a9d4
+    path: EIPS/eip-7892.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Renames the consensus-layer configuration field and its keys: `BPO_FORK` -> `BLOB_SCHEDULE`,
+      `epoch` -> `EPOCH`, `max_blobs` -> `MAX_BLOBS_PER_BLOCK`, and updates the matching requirement to
+      read ''The `max` field in `blobSchedule` MUST equal the `MAX_BLOBS_PER_BLOCK` value in the consensus
+      layer configuration''.'
+    rationale: Renames the consensus-layer configuration field and keys that clients must implement, and
+      restates a MUST requirement in the new terms.
+    change_group: 7892-cl-config-format-2025
+    confidence: high
+    source_ids:
+    - commit-954213305a
+  - id: eip7892-e04
+    event_kind: revision
+    authored_at: '2025-06-03T13:23:57+01:00'
+    committed_at: '2025-06-03T20:23:57+08:00'
+    commit: f37240a9aec671a46dd0e40b542eed02ddbe7d6a
+    path: EIPS/eip-7892.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Largest single expansion of the EIP. Adds author Raul Kripalani (@raulk). Restructures the
+      Specification into Definition / Blob schedule configuration / Execution layer configuration / Consensus
+      layer configuration subsections. Execution layer: each blobSchedule fork is now linked to activation
+      via a top-level `<fork_name>Time` Unix-timestamp field, BPO forks SHOULD be named `bpo<index>` starting
+      at 1, activation timestamps are required only for post-Prague forks, and the illustrative JSON switches
+      from raw-timestamp keys to named osaka/bpo1/bpo2 entries plus cancunTime/pragueTime/osakaTime/bpo1Time/bpo2Time.
+      Adds the rule that a regular hardfork changing these parameters MUST do so by adding a blob schedule
+      entry. Consensus layer: `BLOB_SCHEDULE` is defined as the sequence of blob-parameter changes after
+      ELECTRA_FORK_EPOCH, one entry per changing fork. Adds a modified `compute_fork_digest` taking `current_epoch`
+      and `blob_schedule` and XOR-bitmasking `max_blobs_per_block` into the 4-byte digest (returning the
+      base digest when no schedule entry applies). Adds a P2P Networking section: a new ENR entry `nfd`
+      (SSZ Bytes4 ForkDigest, ''next fork digest'') that nodes MUST evaluate alongside ENRForkID::next_*
+      fields, a note that `Status` req/resp is unchanged but must carry the updated fork_digest, and a
+      note that gossip topics rotate automatically at a BPO fork. Drops the earlier requirement ''BPO
+      forks MUST NOT conflict with other fork schedules'' and changes ''The timestamp in blobSchedule''
+      to ''The slot number in the EL''s blobSchedule''.'
+    rationale: Introduces new normative networking behaviour (fork-digest computation, ENR field, peer
+      evaluation), a new activation-timestamp configuration mechanism, and removes one previously stated
+      MUST NOT requirement.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-f37240a9ae
+  - id: eip7892-e05
+    event_kind: revision
+    authored_at: '2025-06-11T20:08:03+03:00'
+    committed_at: '2025-06-12T01:08:03+08:00'
+    commit: 79adba6a17513f273085dabeba988f495821653d
+    path: EIPS/eip-7892.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Adds a fourth managed parameter `maxBlobsPerTx` (maximum blobs per transaction) to the abstract,
+      the managed-parameter list and the illustrative blobSchedule JSON (osaka 6, bpo1 12, bpo2 12), with
+      the requirement that the field is optional, defaults to `max` when omitted, and is not used by the
+      consensus layer. Adds a 'Transaction Pool considerations' subsection stating that transactions exceeding
+      a post-BPO-fork blob count MUST NOT be propagated and should be considered for eviction. Also changes
+      the illustrative osaka entry from target 9 / max 12 to target 6 / max 9.
+    rationale: Adds a new configurable protocol parameter and a new MUST NOT propagation rule for the
+      transaction pool.
+    change_group: 7594-7892-blob-per-tx-limit-relocation-2025-07
+    confidence: high
+    source_ids:
+    - commit-79adba6a17
+  - id: eip7892-e06
+    event_kind: revision
+    authored_at: '2025-07-14T17:14:09+03:00'
+    committed_at: '2025-07-14T22:14:09+08:00'
+    commit: cf1a3edbdd400eb85e0819dd36c20206b0bde5be
+    path: EIPS/eip-7892.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: 'Reverses the previous commit''s addition: removes `maxBlobsPerTx` from the abstract, the
+      managed-parameter list, the illustrative blobSchedule JSON and the requirements list, and deletes
+      the ''Transaction Pool considerations'' subsection. The same commit adds the equivalent requirement
+      (a limit of 6 blobs per transaction that clients MUST enforce) to EIPS/eip-7594.md, so the requirement
+      moves from EIP-7892 to EIP-7594.'
+    rationale: Removes a configurable parameter and a MUST NOT propagation rule from this EIP; the requirement
+      is relocated to EIP-7594 by the same commit. Recorded in both EIP records under the shared change_group.
+    change_group: 7594-7892-blob-per-tx-limit-relocation-2025-07
+    confidence: high
+    source_ids:
+    - commit-cf1a3edbdd
+  - id: eip7892-e07
+    event_kind: revision
+    authored_at: '2025-09-19T09:23:52-07:00'
+    committed_at: '2025-09-20T00:23:52+08:00'
+    commit: 3e409e045791483c98c0e884802df7c64c3035a9
+    path: EIPS/eip-7892.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Frontmatter status Draft -> Review; no other change.
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-3e409e0457
+  - id: eip7892-e08
+    event_kind: revision
+    authored_at: '2025-10-01T01:57:59+02:00'
+    committed_at: '2025-10-01T07:57:59+08:00'
+    commit: 826b968f0659da4b30fd0953e768160ab6b13a6f
+    path: EIPS/eip-7892.md
+    change_type: parameter
+    semantic_effect: non_substantive
+    summary: 'Updates the illustrative values only: EL blobSchedule bpo1 target 12 -> 10, max 16 -> 15,
+      baseFeeUpdateFraction 5007716 -> 8346193; bpo2 target 16 -> 14, max 24 -> 21, baseFeeUpdateFraction
+      5007716 -> 11684671. The CL BLOB_SCHEDULE example is trimmed from four entries (FULU, two anonymous
+      BPOs, GLOAS) to the two BPO entries with MAX_BLOBS_PER_BLOCK 15 and 21 so it matches the EL example.'
+    rationale: Only example values change. The document states immediately below the snippets that 'the
+      parameters and schedules above are purely illustrative. Actual values and schedules are beyond the
+      scope of this specification', so no normative parameter is set by this EIP. Medium confidence because
+      the new values coincide with the real Fusaka BPO schedule and could be read as guidance.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-826b968f06
+  - id: eip7892-e09
+    event_kind: revision
+    authored_at: '2025-10-03T08:19:17-07:00'
+    committed_at: '2025-10-03T15:19:17+00:00'
+    commit: aeb97f35332768092e2ae9d4176319f317503ba1
+    path: EIPS/eip-7892.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Frontmatter status Review -> Last Call and adds last-call-deadline: 2025-10-28.'
+    rationale: Process-status frontmatter change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-aeb97f3533
+  - id: eip7892-e10
+    event_kind: revision
+    authored_at: '2025-10-06T15:45:52+02:00'
+    committed_at: '2025-10-06T21:45:52+08:00'
+    commit: c419cacfe6f0d386174ea41485d689eb92439443
+    path: EIPS/eip-7892.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds a new '### Blob base fee computations' subsection that modifies the EIP-4844 functions
+      `get_base_fee_per_blob_gas` and `calc_excess_blob_gas` to take a `BlobSchedule` argument (target,
+      max, base_fee_update_fraction) and to use the *current* block's blob schedule, following the precedent
+      set by EIP-7691 for BLOB_BASE_FEE_UPDATE_FRACTION. `TARGET_BLOB_GAS_PER_BLOCK` is removed and replaced
+      by `GAS_PER_BLOB * blob_schedule.target`. Python pseudocode for both functions is included.
+    rationale: Changes the state-transition functions that compute blob gas pricing, replacing a protocol
+      constant with a schedule lookup; directly affects execution-client implementation. Also introduces
+      this EIP's first explicit references to EIP-4844 and EIP-7691 (recorded as dependency events).
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-c419cacfe6
+  - id: eip7892-e11
+    event_kind: revision
+    authored_at: '2025-10-08T13:34:19+00:00'
+    committed_at: '2025-10-08T21:34:19+08:00'
+    commit: c8bea4f2e4af8f04bad3042c740b8c160c18fb21
+    path: EIPS/eip-7892.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Makes the execution-layer configuration snippet valid JSON: wraps blobSchedule and the *Time
+      fields in a single top-level object, removes trailing commas and the inline ''// no backporting''
+      comments, and moves that explanation into a following sentence (''Since there is no backporting,
+      the values for cancunTime and pragueTime are set to 0 ...''), restating that the other values are
+      purely illustrative. No field, value or requirement changes.'
+    rationale: Syntax and presentation of an illustrative snippet only; the inline comment is preserved
+      as prose.
+    change_group: null
+    confidence: high
+    source_ids:
+    - commit-c8bea4f2e4
+  - id: eip7892-e12
+    event_kind: revision
+    authored_at: '2026-01-22T10:28:44-05:00'
+    committed_at: '2026-01-22T15:28:44+00:00'
+    commit: 58ba611fc37a0e592efb9b615b00928329e40256
+    path: EIPS/eip-7892.md
+    change_type: dependency
+    semantic_effect: non_substantive
+    summary: Frontmatter status Last Call -> Final (last-call-deadline removed), and the Motivation sentence
+      'Major scaling upgrades (e.g. [EIP-7594](./eip-7594.md)), introduce uncertainty in optimal blob
+      limits' loses its EIP-7594 example, becoming 'Major scaling upgrades introduce uncertainty in optimal
+      blob limits'.
+    rationale: Process-status change plus removal of the document's only reference to EIP-7594. The reference
+      was an illustrative example inside Motivation and carried no requirement, so the semantic effect
+      is non_substantive; the removal is recorded as dependency event eip7892-dep-e3. Medium confidence
+      on the change_type because the commit mixes a status change with a dependency-reference removal.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - commit-58ba611fc3
+dependency_history:
+  events:
+  - id: eip7892-dep-e1
+    target_eip: 7840
+    event_type: present_at_creation
+    relationship: extends
+    occurred_at: '2025-03-24T16:26:03+00:00'
+    commit: 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f
+    rationale: 'The creation commit''s frontmatter carries `requires: 7840` and the Specification states
+      that ''the `blobSchedule` object specified in [EIP-7840](./eip-7840.md) is extended to allow for
+      an arbitrary number of block timestamps at which these parameters MAY change''. The relationship
+      is `extends` because EIP-7892 adds fields and activation semantics to a configuration object defined
+      by EIP-7840. `requires: 7840` is present and unchanged in all twelve historical versions of the
+      file at the pin.'
+    confidence: high
+    source_ids:
+    - commit-216ebd2f32
+    - blob-eip7892-creation
+    - blob-eip7892-pin
+  - id: eip7892-dep-e2
+    target_eip: 7594
+    event_type: present_at_creation
+    relationship: other
+    occurred_at: '2025-03-24T16:26:03+00:00'
+    commit: 216ebd2f32f876b09c24d3be9cb9c4ff6abbb46f
+    rationale: 'Explanation of ''other'': the creation text''s Motivation cites EIP-7594 only as an example
+      of a major scaling upgrade that introduces uncertainty in optimal blob limits (''Major scaling upgrades
+      (e.g. [EIP-7594](./eip-7594.md)), introduce uncertainty in optimal blob limits''). It is an explicit
+      textual EIP reference but imposes no requirement and is not listed in `requires`.'
+    confidence: high
+    source_ids:
+    - commit-216ebd2f32
+    - blob-eip7892-creation
+  - id: eip7892-dep-e3
+    target_eip: 7594
+    event_type: removed
+    relationship: other
+    occurred_at: '2026-01-22T15:28:44+00:00'
+    commit: 58ba611fc37a0e592efb9b615b00928329e40256
+    rationale: 'The ''Move to Final'' commit drops the ''(e.g. [EIP-7594](./eip-7594.md))'' aside from
+      the Motivation, removing the document''s only reference to EIP-7594 (verified by grepping every
+      historical version for EIP-number patterns: eip-7594 is present in versions 1-11 and absent from
+      the pinned version).'
+    confidence: high
+    source_ids:
+    - commit-58ba611fc3
+    - blob-eip7892-pin
+  - id: eip7892-dep-e4
+    target_eip: 4844
+    event_type: introduced
+    relationship: extends
+    occurred_at: '2025-10-06T21:45:52+08:00'
+    commit: c419cacfe6f0d386174ea41485d689eb92439443
+    rationale: The new 'Blob base fee computations' subsection states 'We modify the functions `get_base_fee_per_blob_gas`
+      and `calc_excess_blob_gas` defined in [EIP-4844](./eip-4844.md) to explicitly use the blob schedule'
+      and removes TARGET_BLOB_GAS_PER_BLOCK in favour of GAS_PER_BLOB * blob_schedule.target. The relationship
+      is `extends` because EIP-7892 redefines functions specified by EIP-4844. The reference persists
+      unchanged through the pinned state. Note that the `requires` frontmatter was not updated to include
+      4844 (see unknowns).
+    confidence: high
+    source_ids:
+    - commit-c419cacfe6
+    - blob-eip7892-pin
+  - id: eip7892-dep-e5
+    target_eip: 7691
+    event_type: introduced
+    relationship: other
+    occurred_at: '2025-10-06T21:45:52+08:00'
+    commit: c419cacfe6f0d386174ea41485d689eb92439443
+    rationale: 'Explanation of ''other'': the same subsection cites EIP-7691 as precedent, not as a requirement
+      - ''In line with how updating `BLOB_BASE_FEE_UPDATE_FRACTION` was handled in [EIP-7691](./eip-7691.md),
+      the functions use the *current* block''s blob schedule.'' The reference persists unchanged through
+      the pinned state and is not listed in `requires`.'
+    confidence: high
+    source_ids:
+    - commit-c419cacfe6
+    - blob-eip7892-pin
+source_registry: outputs/sources/eips/eip-7892.yaml
+unknowns:
+- EIP-7892's `requires` frontmatter field is `7840` at creation and at every one of the twelve file versions,
+  even after commit c419cacfe6 made the EIP redefine EIP-4844 functions and cite EIP-7691. Whether the
+  omission of 4844/7691 from `requires` is deliberate is not determinable from repository evidence; the
+  textual references are recorded as dependency events regardless.
+- 'Negative search: grepping every historical version of EIPS/eip-7892.md for `eip-[0-9]{3,4}` yields
+  only eip-7840, eip-7594 (versions 1-11), eip-4844 and eip-7691 (versions 10-12), plus the EIP''s own
+  number in its discussions-to URL. No other explicit cross-EIP reference exists.'
+- 'Commit cf1a3edbdd is one commit touching two EIP files: it removes the maxBlobsPerTx parameter and
+  the Transaction Pool considerations section from EIPS/eip-7892.md while adding the equivalent 6-blobs-per-transaction
+  requirement to EIPS/eip-7594.md. It is recorded as a revision event in both EIP records under the shared
+  change_group ''7594-7892-blob-per-tx-limit-relocation-2025-07''; the EIP-7594 side is recorded in outputs/eips/eip-7594.yaml.
+  Note the commit subject names EIP-7594, not EIP-7892.'
+- Commit 826b968f06 changes only values inside snippets that the document explicitly labels 'purely illustrative'.
+  It is classified parameter / non_substantive with medium confidence; a reviewer who treats the illustrative
+  Fusaka BPO values as de facto guidance would classify it substantive.
+- 'Commit 3b6d8bf25e (''use valid yaml for consensus config'') is classified interface_or_data_structure
+  / substantive with medium confidence: it changes the shape of the consensus-layer configuration entry
+  clients parse, but its stated intent is to make an illustrative snippet syntactically valid.'
+- Summary first/last revision dates use the committer timestamps (committed_at) of the referenced events;
+  authored timestamps are recorded per event as well.
+- No PR numbers appear in any of the twelve commit subjects for this file, and GitHub PR metadata was
+  not consulted or archived, so no mutable sources were relied upon and the raw/ directory for this work
+  unit is empty.

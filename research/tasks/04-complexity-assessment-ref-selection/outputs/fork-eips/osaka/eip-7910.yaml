@@ -1,0 +1,227 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: osaka
+eip:
+  number: 7910
+  title: eth_config JSON-RPC Method
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/osaka/eip-7910.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7910.yaml
+research_run:
+  started_at: '2026-08-21T06:59:30Z'
+  completed_at: '2026-08-21T07:02:10Z'
+  researcher: claude subagent osaka/eip-7910 (coordinated)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: osaka-eip7910-e1
+  alternative_event_ids: []
+  kind: normalized_proposal_equivalent
+  raw_label: EIPs Scheduled for Inclusion / Other EIPs
+  effective_at: '2025-07-10T14:25:07Z'
+  recorded_at: '2025-07-10T14:25:07Z'
+  date_basis: >-
+    effective_at and recorded_at are both the UTC committer date of ethereum/EIPs commit
+    ec9133c32b174cfc315d2992f208a1d65cd45c92 ("Update EIP-7607: add EIP-7910 to fusaka scope as other
+    EIP", merged by EIP-Bot), the commit that made the inclusion-state change to EIPS/eip-7607.md
+    (Hardfork Meta - Fusaka). This matches Task 01's stated dating convention for this fork
+    (outputs/forks/osaka.yaml, unresolved_questions: "occurred_at on every inclusion-state event is the
+    UTC committer date of the ethereum/EIPs commit that changed EIPS/eip-7607.md"), and the contract's
+    EIP-7723 rule that the inclusion state is set when the Meta EIP change is merged rather than when its
+    pull request was opened. Verified directly from the pinned local clone: committer time
+    2025-07-10T22:25:07+08:00 == 2025-07-10T14:25:07Z; author time 2025-07-10T16:25:07+02:00 (Barnabas
+    Busa). The underlying AllCoreDevs decision Task 01 identifies is All Core Devs - Testing (ACDT) #43,
+    held 2025-07-07 (14:00 UTC per the pm-issue-1603 source note), at which - per the body of ethereum/EIPs
+    PR #9990 quoted by Task 01 - "During ACDT on 7th of Jul 2025 we have agreed to have eth_config be part
+    of the scope of fusaka". That decision therefore predates the repository record by about three days,
+    but ethereum/pm at the run-wide pin contains no committed ACDT minutes, so no verifiable decision
+    timestamp exists and the merge time is used. Task 01 records no local-offset value for this event
+    (occurred_at was already UTC), so no offset preservation was needed here.
+  verification_status: verified
+  verification_rationale: >-
+    Verified from primary evidence in the read-only clone at the Task 01 run-wide pin
+    a08f51fec5b2b5da457adb05b8cffb487fb4f7de. `git log -1 --format='%H %cI %aI %s'
+    ec9133c32b174cfc315d2992f208a1d65cd45c92` returns committer 2025-07-10T22:25:07+08:00
+    (= 2025-07-10T14:25:07Z), author 2025-07-10T16:25:07+02:00, subject "Update EIP-7607: add EIP-7910 to
+    fusaka scope as other EIP". `git show ec9133c32b17 -- EIPS/eip-7607.md` shows a single two-line
+    addition inside the section introduced by the "Definitions for `Scheduled for Inclusion`, ..." line,
+    immediately after the EIP-7642 entry: "* [EIP-7910](./eip-7910.md): eth_config JSON-RPC Method" plus
+    the sub-bullet "Client teams MUST support this JSON RPC method by the activation of Fusaka network
+    upgrade." No other file or section was touched. This confirms both Task 01's timestamp and its
+    membership/raw-label reading. The anchor KIND, not the anchor time, is the contestable part: Task 01's
+    negative search over all 53 commits of EIPS/eip-7607.md found no PFI and no CFI entry for EIP-7910 -
+    the EIP entered the Meta EIP directly at "EIPs Scheduled for Inclusion / Other EIPs" and never appeared
+    in the Proposed or Considered sections. This event is therefore treated as the normalized proposal
+    equivalent (the contemporaneous, decision-backed event by which this EIP was first proposed into, and
+    simultaneously accepted for, the Fusaka scope, using non-PFI terminology), not as explicit PFI. A
+    reviewer could instead classify it `fallback_cfi` on the grounds that the raw label is a state later
+    than CFI in the EIP-7723 ladder; that alternative would not change effective_at, the bracketing, or
+    the selected ref. Only one inclusion cycle exists for this fork-EIP pair (no removal and re-proposal),
+    so alternative_event_ids is empty; the record's only other inclusion-state event, osaka-eip7910-e2
+    (included, 2026-02-04T22:29:12Z), is downstream of the anchor and is not a competing proposal event.
+  confidence: medium
+  source_ids:
+  - eips-commit-ec9133c32b17
+  - eips-pr-9990
+  - pm-issue-1603
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7910-e02
+    event_kind: revision
+    commit: 59c5b1739bc30ae056517d5c1bc1cfd6ebf0a30f
+    committed_at: '2025-07-09T17:40:29Z'
+    offset_from_anchor_seconds: -74678
+    semantic_effect: substantive
+    summary: >-
+      "Update EIP-7910: Add Fork Id to response, spec BPOs, add "last"". Latest EIP-file event at or
+      before the anchor, committed about 20h 45m before it. Task 01 records this event's committed_at in
+      its raw Git form 2025-07-10T01:40:29+08:00, which normalizes to 2025-07-09T17:40:29Z; the UTC form
+      is used in this record and was re-verified with git rather than taken from the YAML. Per Task 01 it
+      extends the response object from four to nine members (adds `last`, `lastHash`, `currentForkId`,
+      `nextForkId`, `lastForkId` carrying the EIP-6122 FORK_HASH), adds the "Blob Parameter Only Forks"
+      section interpreting EIP-7892 BPO forks as forks inheriting their parent and updating only
+      `blobsSchedule`, updates the abstract and the `activationTime` description, extends the sample
+      response, and fixes the EIP-2124 rationale link. All twelve later revision events (eip7910-e03 ..
+      eip7910-e13) are after the anchor; the creation event eip7910-e01 (2025-03-25T14:28:58Z) is the only
+      other at-or-before-anchor event and is superseded by this one.
+    immutable_url: https://github.com/ethereum/EIPs/blob/59c5b1739bc30ae056517d5c1bc1cfd6ebf0a30f/EIPS/eip-7910.md
+    source_ids:
+    - commit-59c5b1739b
+  following:
+    exists: true
+    revision_event_id: eip7910-e03
+    event_kind: revision
+    commit: 0ed437619eee7fd318709cfdae21965784ca939f
+    committed_at: '2025-07-21T14:32:46Z'
+    offset_from_anchor_seconds: 950859
+    semantic_effect: substantive
+    summary: >-
+      "Update EIP-7910: Change BN256 to BN254". Earliest EIP-file event after the anchor, committed 11
+      days 0h 7m 39s (950859 s) after it. Task 01 records committed_at as 2025-07-21T22:32:46+08:00, which
+      normalizes to 2025-07-21T14:32:46Z (re-verified with git). Per Task 01 it renames the precompile
+      names BN256_ADD/BN256_MUL/BN256_PAIRING to BN254_* in the Cancun name list and in all four sample
+      configurations and trims two stray spaces; `git diff --stat` against the preceding candidate shows
+      18 insertions and 18 deletions in EIPS/eip-7910.md only. Recorded for completeness: it is well
+      outside the seven-calendar-day post-anchor exception ceiling, so no exception is available.
+    immutable_url: https://github.com/ethereum/EIPs/blob/0ed437619eee7fd318709cfdae21965784ca939f/EIPS/eip-7910.md
+    source_ids:
+    - commit-0ed437619e
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7910-e02
+    event_kind: revision
+    repository: ethereum/EIPs
+    commit: 59c5b1739bc30ae056517d5c1bc1cfd6ebf0a30f
+    path: EIPS/eip-7910.md
+    committed_at: '2025-07-09T17:40:29Z'
+    offset_from_anchor_seconds: -74678
+    git_blob_sha: 83d8bfb99c50b8ae0355e5f06dabfebe1d749909
+    content_sha256: 8b88d88cd3742f7cf28454c3e4dabb6ea540c8f46fdfa577cbfa72c149463612
+    immutable_url: https://github.com/ethereum/EIPs/blob/59c5b1739bc30ae056517d5c1bc1cfd6ebf0a30f/EIPS/eip-7910.md
+    source_ids:
+    - commit-59c5b1739b
+  information_cutoff_at: '2025-07-10T14:25:07Z'
+  rationale: >-
+    Default preceding rule. The complete Task 01 revision_history.events list (13 events: one creation
+    plus twelve revisions) was normalized to UTC and bracketed mechanically against the verified anchor
+    2025-07-10T14:25:07Z; every candidate's committer time was re-read with `git log -1 --format=%cI` in
+    the pinned clone rather than trusted from the YAML. Exactly two events are at or before the anchor
+    (eip7910-e01 creation, 2025-03-25T14:28:58Z; eip7910-e02, 2025-07-09T17:40:29Z), so eip7910-e02 is the
+    preceding candidate, and it is selected. The following candidate is 11 days after the anchor, far
+    beyond the seven-day exception ceiling, so no post-anchor exception is even eligible. The selected
+    blob was resolved at the selected commit: `git rev-parse 59c5b1739b:EIPS/eip-7910.md` ->
+    83d8bfb99c50b8ae0355e5f06dabfebe1d749909; `git cat-file blob 59c5b1739b:EIPS/eip-7910.md | sha256sum`
+    -> 8b88d88cd3742f7cf28454c3e4dabb6ea540c8f46fdfa577cbfa72c149463612; `git ls-tree 59c5b1739b --
+    EIPS/eip-7910.md` confirms the path existed at that commit as "100644 blob
+    83d8bfb99c50b8ae0355e5f06dabfebe1d749909  EIPS/eip-7910.md" (356 lines, frontmatter status Draft,
+    type Standards Track, category Interface, created 2025-03-18). information_cutoff_at is the verified
+    anchor time because the preceding candidate was selected.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: >-
+      Not used and not eligible. The following candidate eip7910-e03 (0ed437619e) is 950859 s (11 days
+      0h 7m 39s) after the anchor, exceeding the seven-calendar-day eligibility ceiling, so condition 1
+      of the exception test fails and no exception was considered further. The preceding candidate is also
+      much closer in absolute time (20h 45m before the anchor), so no tension arises between the default
+      rule and proximity.
+review:
+  status: approved
+  reviewer: project_owner
+  reviewed_at: '2026-08-21'
+  notes:
+  - Approved as-is after human review of the selected ref on the Osaka timeline.
+  - >-
+    Anchor kind is materially contestable and requires human confirmation: no explicit PFI event exists
+    for EIP-7910 in Fusaka. Task 01's negative search over all 53 commits of EIPS/eip-7607.md found no PFI
+    and no CFI entry; the EIP was added directly to "EIPs Scheduled for Inclusion / Other EIPs". This
+    record classifies that direct-entry event as `normalized_proposal_equivalent` (a contemporaneous,
+    ACDT-backed proposal-into-scope event that does not use literal PFI terminology). A reviewer may
+    prefer `fallback_cfi`, since the raw label is a state later than CFI; that relabelling would not
+    change effective_at, the bracketing, the selected ref, or information_cutoff_at.
+  - >-
+    ESCALATION - the choice between the Meta EIP merge time and the AllCoreDevs decision date is
+    outcome-changing here, unlike in most records. As written, the anchor is the merge of commit
+    ec9133c32b17 at 2025-07-10T14:25:07Z (per the contract's EIP-7723 rule and Task 01's fork-wide dating
+    convention), which makes eip7910-e02 (2025-07-09T17:40:29Z) the preceding candidate. If a reviewer
+    instead anchored on the ACDT#43 call of 2025-07-07 (14:00 UTC per the pm-issue-1603 source note), then
+    eip7910-e02 would fall about 2 days 3h 40m (186029 s) AFTER the anchor, the preceding candidate would
+    become the creation revision eip7910-e01 (3df094834bd54b0f157027cdade63faad9050419,
+    2025-03-25T14:28:58Z, offset -8983900 s), and eip7910-e02 would become a seven-day-eligible
+    post-anchor-exception candidate. Please confirm the merge-time anchor explicitly.
+  - >-
+    Confirm that the selected ref legitimately contains Fusaka-scoping content: the selected revision
+    eip7910-e02 was committed only about 20h 45m before the Meta EIP entry and adds the "Blob Parameter
+    Only Forks" section handling EIP-7892 BPO forks (another Fusaka EIP) together with EIP-6122 fork-id
+    members. It is pre-anchor and therefore in scope under the default rule, but a reviewer should be
+    aware that the assessed content already reflects Fusaka-specific scoping work rather than the
+    March 2025 original proposal.
+  - >-
+    Confirm the source-ID namespaces: anchor.source_ids are Task 01 fork-registry IDs
+    (outputs/sources/forks/osaka.yaml) and all revision/selection source_ids are Task 01 EIP-registry IDs
+    (outputs/sources/eips/eip-7910.yaml). Both were reused verbatim; no new IDs were invented.
+unknowns:
+- >-
+  No PFI or CFI event exists for EIP-7910 in Fusaka (carried forward from Task 01's negative search over
+  all 53 commits of EIPS/eip-7607.md for "7910"/"eth_config"). The anchor is therefore a normalized
+  equivalent derived from the EIP's first and only pre-inclusion Meta EIP entry, and the true
+  proposal-stage state of the document (if any distinct such stage existed) is unrecoverable from the
+  Meta EIP.
+- >-
+  Negative finding on decision minutes: ethereum/pm at the Task 01 run-wide pin
+  ecf2eecc74adc479cea38b3d3b9a670c320421b1 contains no committed ACDT minutes, so the ACDT#43 decision of
+  2025-07-07 is evidenced only by the agenda issue #1603 (archived by Task 01 as a mutable reference-only
+  keyword extract) and by the quoted body of PR #9990. The exact decision time is unverifiable; only the
+  repository merge time is verifiable, and that is what effective_at records.
+- >-
+  Task 01 flags that eth_config had earlier been an ACDE discussion item (e.g. the ACDE#208 agenda,
+  2025-03-27) with no Meta EIP entry. That discussion was not treated as an inclusion-state event by
+  Task 01 and is not used as an anchor here; it is recorded as context only, and no earlier proposal cycle
+  was reconstructed.
+- >-
+  No Task 01 git_blob source exists for the selected revision's blob: the EIP source registry registers
+  blobs only at the creation commit (blob-eip7910-creation) and at the pinned master state
+  (blob-eip7910-pin). The selected blob is therefore identified by the git_blob_sha and content_sha256
+  computed here from the pinned read-only clone and cited via the commit source commit-59c5b1739b; no new
+  source ID was minted, per instruction.
+- >-
+  Timestamp-form caveat carried forward from Task 01: Task 01 records committer times in their raw Git
+  offsets (many +08:00 for this file, reflecting the EIP-Bot/GitHub merge environment). All times in this
+  record are the UTC normalizations, each re-verified against git in the pinned clone; the raw forms are
+  quoted in the neighbouring summary fields (2025-07-10T01:40:29+08:00 for the selected revision,
+  2025-07-21T22:32:46+08:00 for the following candidate, 2025-07-10T22:25:07+08:00 for the anchor commit).
+- >-
+  Task 01 notes an out-of-order pair later in this file's history (d6714338db authored before 7f95fac930
+  but committed after it). Both are well after the anchor and do not affect this bracketing; noted only so
+  that a reviewer re-deriving the ordering sees the same caveat.
+- >-
+  No material Task 01 error was found. The 13 events in revision_history.events matched `git log --follow
+  -- EIPS/eip-7910.md` exactly in count, order, commit SHA and committer timestamp, and the anchor commit,
+  timestamp and hunk matched the fork-EIP record.
