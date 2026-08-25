@@ -1,0 +1,710 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: prague
+eip:
+  number: 7002
+  title: Execution layer triggerable withdrawals
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: >-
+    At the selected revision, EIP-7002 proposed a new stateful, value-accepting
+    precompile through which an execution-layer withdrawal credential could queue
+    a validator exit. The execution layer would maintain a persistent FIFO queue
+    and an EIP-1559-style dynamic exit fee, append up to 16 queued exits and an
+    exits-root commitment to each block, and update the queue and fee state after
+    block execution. The consensus-layer portion was only a sketch: exits would be
+    carried in the ExecutionPayload and processed with voluntary-exit-like rules
+    whose validation failures would not invalidate the block.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-7002/manifest.yaml
+    manifest_sha256: 0de43aa9a0354070c09fc468025f48c1e5d43b340469a4614972a95c624df093
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 28cbb0162f998530fd423c0062d9954de6d4a5c4
+    path: EIPS/eip-7002.md
+    committed_at: '2023-06-29T14:13:35Z'
+    git_blob_sha: d3249f63881b96461ed0276d2b7bf027fe686764
+    content_sha256: acf1880b41862acbba6868d443cc56ac39d42d8c3295a45220f86743e304d2b8
+    immutable_url: https://github.com/ethereum/EIPs/blob/28cbb0162f998530fd423c0062d9954de6d4a5c4/EIPS/eip-7002.md
+    information_cutoff_at: '2024-01-18'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/prague/eip-7002.md
+    content_sha256: c55eeb7431303de63422a516d5e14cf7fc5fcc7e0324982feba975ccaa2482c9
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25'
+    session_id: assessment-run-e14e194e-9aa9-484a-91f7-6533e829d9c6
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-1559.md
+  - supporting/eip-4788.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile / Gas cost, lines 150-154
+    summary: >-
+      The proposal introduces metering for a new native precompile, but leaves its
+      gas cost TBD pending an estimate of the native computation cost.
+  - source: eip.md
+    locator: Rationale / Utilizing CALL to return excess payment, lines 326-334
+    summary: >-
+      The selected refund path uses a 2300-gas nested CALL specifically so that the
+      precompile can have fixed rather than dynamic gas accounting.
+  rationale: >-
+    This is a new gas-charged EVM execution mechanism, but it is confined to calls
+    to a previously unused precompile address and therefore does not, as written,
+    alter existing gas-accounting mechanisms or their tests. That matches score 2;
+    the actual amount and final fixed-versus-dynamic rule are not yet specified.
+  confidence: medium
+  uncertainty_note: >-
+    The precompile gas cost is explicitly TBD, so a finalized dynamic schedule or
+    interaction with existing CALL charging could move this score.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile / trigger_exit pseudocode, lines 79-125
+    summary: >-
+      A CALL to the new precompile performs fee validation, several state reads and
+      writes, queue insertion, and then a nested value-returning CALL in a specified
+      high-level sequence.
+  rationale: >-
+    The proposal adds a new state-accessing operation behind CALL, and the positions
+    of its state accesses, failure points, gas charging, and nested CALL must be
+    settled and tested. It does not rewrite ordering for an existing class of
+    opcodes, so score 2 is the applicable anchor rather than score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The gas charge point and revert behavior around the state writes and excess
+    payment are not fully specified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Exit fee update rule, lines 350-359
+    summary: >-
+      The described exponential rule computes an exit fee from excess exits; it does
+      not modify blob-gas usage, targets, reservoirs, or charging.
+  rationale: >-
+    No blob gas accounting mechanism is introduced or changed. The isolated use of
+    the phrase "blob gas price" in the parameter discussion does not change the
+    formulas, variables, or surrounding specification from exit-fee accounting.
+  confidence: high
+  uncertainty_note: >-
+    Line 359 says "blob gas price," but in context this appears to be an unresolved
+    drafting error rather than a specified blob-gas change.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile / queue helpers, lines 108-147
+    summary: >-
+      The new precompile uses ordinary SLOAD/SSTORE-style state operations and a
+      precompile gas cost, without defining a separate state-gas budget, reservoir,
+      rate, or spill path.
+  rationale: >-
+    Persistent writes are introduced, but the rubric scores a distinct state-gas
+    accounting regime rather than the mere fact of writing state. None is specified.
+  confidence: high
+  uncertainty_note: >-
+    The ordinary EVM/precompile gas cost is TBD, but no text suggests a separate
+    state-gas mechanism.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile / return_excess_payment, lines 121-125
+    summary: >-
+      Excess ETH paid above the exit fee is sent back through a value-bearing CALL;
+      no unused-gas refund or refund counter is created.
+  rationale: >-
+    Returning excess fee payment in ETH is a value transfer, not a new EVM gas-refund
+    mechanism, so the gas-refund anchor is not triggered.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Block structure and Block validity, lines 156-226
+    summary: >-
+      Every post-fork block gains an RLP body list and header commitment, and validity
+      additionally depends on the post-transaction contents of persistent precompile
+      state and strict FIFO ordering.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 367-369
+    summary: >-
+      The proposal explicitly characterizes its block-structure and block-validation
+      changes as backwards incompatible.
+  rationale: >-
+    Existing post-fork block, state-transition, malformed-block, and syncing tests
+    must be reworked across diverse categories to construct or validate the new body,
+    header, queue-derived operations, and end-of-block transition. This is the major,
+    diverse impact described by score 3.
+  confidence: high
+  uncertainty_note: >-
+    Exact test-suite breadth is not enumerated in the proposal, but the mandatory
+    per-block schema and validity changes make the broad impact direct.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block validity, lines 181-226
+    summary: >-
+      Valid post-fork blocks must commit to the body exits and must contain exactly
+      the queue-head exits, in order, after transaction execution and before the
+      per-block precompile update.
+  rationale: >-
+    A broad category of otherwise unrelated post-fork tests gains mechanical
+    exits-root and queue-equivalence assertions. The text does not require pre-fork
+    vectors to be re-derived, so score 2 fits better than the score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block structure and Block processing, lines 156-179 and 228-280
+    summary: >-
+      A transition must consume or produce the new exits body list and exits root and
+      perform a new post-transaction, end-of-block queue and fee-state update.
+  rationale: >-
+    Representing queue-derived block outputs plus a new end-of-block processing phase
+    requires a new transition-tool mechanism and associated fields, matching score 2.
+    The historical text does not define the concrete tool interface.
+  confidence: medium
+  uncertainty_note: >-
+    No transition-tool API is specified, so the exact number and direction of fields
+    depend on how the block-building and block-validation modes expose exits.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block validity and Per-block precompile storage calculations, lines 181-280
+    summary: >-
+      Tests must express queue-derived block-body expectations and observe a mandatory
+      transition phase that occurs after transactions and validity checks.
+  rationale: >-
+    The new queue/body equivalence expectation and end-of-block modifier are reusable
+    primitives needed throughout this EIP's suite, beyond merely writing isolated
+    precompile calls. The package does not establish reuse by other EIPs, so score 2
+    rather than score 3 is appropriate.
+  confidence: medium
+  uncertainty_note: >-
+    Existing framework capabilities are not described; sufficiently generic block
+    and storage expectations could reduce the needed extension to score 1.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Exit operation and Block structure, lines 61-73 and 171-179
+    summary: >-
+      Exit data is RLP encoded and committed with the existing indexed-data trie-root
+      construction; the validator public key is carried as opaque bytes.
+  - source: eip.md
+    locator: Consensus layer sketch, lines 283-292
+    summary: >-
+      The sketch adds exit processing but specifies no new signature, proof system,
+      hash function, or other cryptographic primitive.
+  rationale: >-
+    The proposal uses existing encoding and trie commitment machinery and introduces
+    no cryptographic mechanism to implement or test.
+  confidence: high
+  uncertainty_note: >-
+    The consensus-layer validation rules are incomplete, but the selected text does
+    not specify any cryptographic verification.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile, lines 77-147
+    summary: >-
+      Call behavior has boundaries for 48-byte input, insufficient/exact/excess fee,
+      excess-return success, queue indices, integer arithmetic, and termination of the
+      fake-exponential loop.
+  - source: eip.md
+    locator: Block validity and queue update, lines 195-224 and 254-279
+    summary: >-
+      Dequeue behavior depends on empty, below-limit, exactly-limit, and above-limit
+      queue sizes, preserves FIFO order, conditionally resets pointers, and updates
+      excess around the target threshold.
+  rationale: >-
+    Multiple independent mechanisms have boundary-rich state spaces, and the
+    combination of value transfer/revert behavior, persistent FIFO transitions,
+    capped per-block output, exponential integer math, and fork ordering requires an
+    elevated case count. This meets score 3.
+  confidence: high
+  uncertainty_note: >-
+    Several boundary outcomes are themselves under-specified, increasing test-design
+    uncertainty without changing the primary score.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Block structure, lines 156-179
+    summary: >-
+      The post-fork RLP block body is extended by an exits list and the header by an
+      exits_root committing to that list.
+  - source: eip.md
+    locator: Block validity, lines 181-226
+    summary: >-
+      Sync validation must verify both the commitment and a state-dependent ordered
+      equivalence between the body exits and the persistent queue after transactions.
+  rationale: >-
+    The proposal adds multiple block-RLP/schema validations, including the complex
+    state- and ordering-dependent queue equivalence rule, so the score-3 syncing
+    anchor applies.
+  confidence: high
+  uncertainty_note: >-
+    The illustrative queue-extraction pseudocode is internally inconsistent, but the
+    normative requirement for the complex validation is clear.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Consensus layer sketch, lines 283-292
+    summary: >-
+      ExecutionLayerExit values are specified to appear in ExecutionPayload as a
+      bounded SSZ list.
+  - source: eip.md
+    locator: Rationale / Exits inside of the block, lines 361-365
+    summary: >-
+      The exits must be embedded in the shared execution-payload data structure so
+      consensus processing does not require a synchronous execution-layer call.
+  rationale: >-
+    The historical design implies one new payload field carrying the exits list
+    across the execution/consensus interface. With no endpoint or additional API
+    fields specified, the conservative score-1 anchor is best supported.
+  confidence: low
+  uncertainty_note: >-
+    The Engine API is not named and endpoint coverage is absent; carrying the payload
+    field through multiple directives could raise this to score 2.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract and Stateful precompile rationale, lines 13-17 and 296-306
+    summary: >-
+      The proposal adds one unprecedented stateful precompile whose address holds an
+      unbounded queue and fee state and whose output triggers consensus-layer exits.
+  rationale: >-
+    A single protocol-reserved contract-like address is both stateful and the source
+    of a new cross-layer system action. That is exactly the score-2 single-system-
+    contract anchor.
+  confidence: high
+  uncertainty_note: >-
+    The proposal calls the mechanism a precompile rather than a system contract, but
+    it explicitly assigns protocol-owned code semantics and persistent state to one
+    address.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Stateful precompile rationale, lines 13-17 and 296-304
+    summary: >-
+      The mechanism is introduced at a new configurable precompile address; the text
+      does not alter the code or state of any pre-existing system contract.
+  rationale: >-
+    All specified contract-like behavior belongs to the newly added precompile, so no
+    pre-existing system contract is directly or indirectly modified.
+  confidence: high
+  uncertainty_note: >-
+    The address is TBD, but the proposal consistently describes the precompile as new.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile and Stateful precompile rationale, lines 75-86 and 296-304
+    summary: >-
+      The selected design exposes behavior at a precompile address through CALL; an
+      opcode is mentioned only as an unselected alternative design.
+  rationale: >-
+    No opcode is added by the selected proposal.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile, lines 75-86
+    summary: >-
+      Existing CALL dispatches to a newly allocated precompile address, but no
+      existing opcode's general result semantics are redefined or deprecated.
+  rationale: >-
+    Adding a precompile reachable through CALL is scored under added precompiles; it
+    does not constitute a modification of the CALL opcode itself under this anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract and Validator Exit precompile, lines 13-17 and 75-86
+    summary: >-
+      Exactly one new precompile is added, with one fixed-length 48-byte input and a
+      call flow that queues an exit and returns excess payment.
+  - source: eip.md
+    locator: Gas cost and Utilizing CALL rationale, lines 150-154 and 326-334
+    summary: >-
+      The exact gas cost is TBD, while the selected 2300-gas stipend is intended to
+      permit a fixed rather than dynamic precompile cost.
+  rationale: >-
+    The defined shape is one precompile with constant input length and an intended
+    fixed gas charge, matching score 1. Its statefulness and system action are scored
+    separately under added system contracts.
+  confidence: medium
+  uncertainty_note: >-
+    Because the gas schedule is TBD and the exponential calculation has variable
+    work, a finalized dynamic gas cost would make this a score-2 complex precompile.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Stateful precompile rationale, lines 13-17 and 296-304
+    summary: >-
+      The EIP introduces a new precompile and compares alternative placements; it
+      does not alter any existing precompile's gas schedule or behavior.
+  rationale: >-
+    No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Exit operation and Block structure, lines 61-73 and 156-179
+    summary: >-
+      The proposal defines RLP for each exit and extends the RLP block body with an
+      exits list and the block header with its trie-root commitment.
+  - source: eip.md
+    locator: Consensus layer sketch, lines 283-292
+    summary: >-
+      The execution payload gains an SSZ List of ExecutionLayerExit operations.
+  rationale: >-
+    Explicit RLP changes at the block level and an SSZ interface/payload addition
+    trigger the rubric's binary score-3 encoding anchor.
+  confidence: high
+  uncertainty_note: >-
+    The consensus-layer SSZ container details are only sketched, but the block-level
+    RLP change independently fixes the score at 3.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile, lines 75-86
+    summary: >-
+      Users trigger exits by sending an ordinary CALL with value and a 48-byte input;
+      no transaction envelope or transaction type is introduced.
+  rationale: >-
+    The proposal adds a call target and a block operation, not a transaction type.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Validator Exit precompile / check_exit_fee, lines 79-106
+    summary: >-
+      Insufficient exit payment makes execution of the precompile call fail; the text
+      does not change transaction-envelope validity or intrinsic gas calculation.
+  rationale: >-
+    Exit-fee validation is execution behavior inside a call, not a transaction
+    validity rule, and no existing transaction type is otherwise modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Block structure, lines 156-179
+    summary: >-
+      Beginning at the fork block, the block body gains an exits list and the header
+      gains a new exits_root field committing to that list.
+  rationale: >-
+    The explicit new header field triggers the rubric's binary score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Definitions and Per-block precompile storage calculations, lines 53-57 and 228-280
+    summary: >-
+      The fork is activated by timestamp, after which the same queue and fee update is
+      run at the end of every block; no one-time migration or pre-existing state
+      mutation is specified for the activation block.
+  rationale: >-
+    Recognizing a new precompile and initializing its new zero-valued variables does
+    not meet this anchor's requirement for a special modification of state or an
+    internal variable at activation.
+  confidence: medium
+  uncertainty_note: >-
+    The precompile address is TBD and collision handling is absent, but no activation
+    migration is specified in the historical text.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Stateful precompile rationale, lines 296-306
+    summary: >-
+      The proposal acknowledges that the in-state message queue contains an unbounded
+      amount of state and may face client-specific engineering constraints.
+  - source: eip.md
+    locator: Exit message queue rationale, lines 316-324
+    summary: >-
+      Calls may arrive far faster than the maximum 16 exits dequeued per block, while
+      the cap is intended to bound block-size and consensus-processing load.
+  rationale: >-
+    Persistent backlog growth, stateful native execution, and mandatory per-block
+    queue processing require integrated performance validation, but the emitted list
+    and dequeue work are explicitly capped. This is a limited-impact, not fully
+    isolated mechanism matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    The gas cost and behavior under very large fee/queue state are unresolved, so the
+    actual computation and storage-growth impact could be greater.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Rate limiting using exit fee, lines 336-344
+    summary: >-
+      The mechanism is explicitly designed against cheap queue-filling griefing and
+      combines an economic fee response with cross-layer exit delivery.
+  - source: eip.md
+    locator: Security Considerations / Impact on existing custody relationships, lines 371-380
+    summary: >-
+      Enabling withdrawal credentials to exit changes a validator-ownership capability
+      on which existing custody relationships or products might rely.
+  - source: eip.md
+    locator: Validator Exit precompile, lines 79-125
+    summary: >-
+      A call mutates persistent queue state and performs a nested value-returning CALL,
+      making failure, re-entry, and atomicity behavior security-relevant.
+  rationale: >-
+    The feature crosses authorization of validator funds, consensus exit processing,
+    execution-layer value transfer, persistent queue state, block validity, and an
+    anti-griefing fee market. These multiple critical-component interactions require
+    extensive security review and fuzzing, meeting score 3.
+  confidence: high
+  uncertainty_note: >-
+    The incomplete consensus validation and CALL/revert semantics make the precise
+    vulnerability surface uncertain, but not the breadth of security impact.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Constants, Configuration, and Gas cost, lines 31-51 and 150-154
+    summary: >-
+      The fork timestamp, precompile address, and precompile gas cost are all TBD.
+  - source: eip.md
+    locator: trigger_exit and return_excess_payment pseudocode, lines 93-125
+    summary: >-
+      trigger_exit calls return_excess_payment with one argument although its
+      definition requires fee and source address, leaving the refund recipient and
+      precise failure/rollback semantics unresolved.
+  - source: eip.md
+    locator: Block validity queue extraction, lines 195-224
+    summary: >-
+      Queue insertion uses three slots per exit, while extraction advances by two and
+      repeatedly reads the same slot in malformed pseudocode, so constructible block
+      validity cases do not have a determinate algorithmic answer.
+  - source: eip.md
+    locator: Consensus layer sketch, lines 283-292
+    summary: >-
+      Consensus processing is only a sketch and says invalid exit requests can fail
+      validation without invalidating the block, without specifying the full checks
+      or outcomes.
+  rationale: >-
+    Previously nonexistent stateful-precompile, queue, refund, and cross-layer exit
+    behaviors become consensus-visible, yet several constructible cases and even the
+    block queue-decoding algorithm lack a single answer. Cross-client agreement and
+    repeated test re-baselining would be required, meeting score 3.
+  confidence: high
+  uncertainty_note: >-
+    The historical text is too incomplete to enumerate every unresolved call mode,
+    malformed input, rollback, queue, and consensus-validation outcome.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Stateful precompile and Rate limiting rationales, lines 302-306 and 336-357
+    summary: >-
+      The exit fee deliberately reuses an EIP-1559-style self-correcting fee pattern,
+      while keeping its own state inside the new precompile.
+  - source: supporting/eip-1559.md
+    locator: Abstract and Specification, lines 16-24 and 152-195
+    summary: >-
+      EIP-1559 defines the referenced block-to-block fee adjustment pattern based on
+      prior usage relative to a target.
+  - source: eip.md
+    locator: Rate limiting using exit fee, lines 340-344
+    summary: >-
+      The alternative proof-based design would require EIP-4788, but the selected
+      economic design explicitly avoids that dependency and its cross-layer proof
+      complexity.
+  rationale: >-
+    The selected design has a limited, non-critical interaction with EIP-1559 by
+    adapting its fee-adjustment pattern, and can test its exit-fee state independently.
+    EIP-4788 is an explicitly rejected alternative rather than a dependency. This
+    supports score 1.
+  confidence: medium
+  uncertainty_note: >-
+    The consensus sketch also names existing voluntary-exit and deposit processing
+    without identifying corresponding EIP numbers or defining the exact coupling.
+  exceptional_score_justification: null
+  interacting_eips: [1559]
+  unidentified_interactions:
+  - >-
+    Existing consensus-layer voluntary-exit and deposit processing is referenced by
+    name, but the package identifies no EIP number for either interaction.
+totals:
+  primary_score: 38
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    Material consensus behavior is unresolved: core constants and gas charging are
+    TBD; the refund-call signature and recipient are inconsistent; queue insertion
+    and validation use contradictory layouts; malformed input, call-mode, rollback,
+    and re-entry outcomes are not fully defined; concrete Engine API/tool interfaces
+    are absent; and the consensus-layer rules are only a sketch. These gaps directly
+    drive the unspecified-behavior score and lower confidence in several interface,
+    gas, framework, precompile, and performance scores without being counted as
+    separate primary complexity in every affected row.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - engine_api_changes
+  - added_precompiles
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 33
+    maximum: 44
+  plausible_tiers: [high]
+  unresolved_questions:
+  - What is the precompile address, gas schedule, and exact behavior for malformed input and non-CALL call modes?
+  - Which address receives excess payment, and do nested-call failure or re-entry revert every preceding queue and counter write atomically?
+  - What is the canonical three-slot queue decoding algorithm, including integer bounds, cleared entries, and pointer behavior under long-lived backlog?
+  - What exact consensus-layer eligibility, withdrawal-credential authorization, duplicate/already-exited handling, and state-transition rules apply?
+  - Which ExecutionPayload and Engine API fields and versions carry exits, and which transition-tool inputs or outputs represent them?
+  - Does the final precompile gas rule remain fixed despite state-dependent fake-exponential work, or become dynamic?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision, the pinned assessor-view
+    rubric, the two allowlisted supporting EIPs, and the operational files permitted
+    by the task contract. I did not use internet access, later implementation or fork
+    outcome knowledge, other EIP assessments, project-management records, or any
+    dedicated assessment skill.
+notable_ambiguities:
+- >-
+  The sealed historical EIP header calls the feature "Execution layer triggerable
+  exits," while the package/template provenance title says "Execution layer
+  triggerable withdrawals"; the assessment preserves the populated package title
+  and evaluates the sealed exit mechanism.
+- >-
+  The exit-fee rationale calls one parameter the maximum downward rate of the "blob
+  gas price," although every surrounding formula and variable concerns exits.
+- >-
+  The historical EIP simultaneously specifies three storage slots per queued exit
+  during insertion and two-slot stepping with repeated slot reads during validation.
+- >-
+  EIP-4788 is linked and discussed, but only as a dependency of an explicitly
+  unselected alternative; it is therefore not listed as an interacting EIP.
+overall_confidence: medium

@@ -1,0 +1,418 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: prague
+eip:
+  number: 7840
+  title: Add blob schedule to EL config files
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, this informational proposal extended execution-client
+    configuration files with a blobSchedule object mapping forks to target and maximum
+    blob counts. It defined inheritance from the most recently specified fork and a
+    zero-value default when no prior entry exists, motivated by execution-layer consumers
+    such as eth_feeHistory while avoiding a per-block Engine API handshake. It did not
+    specify changes to block or transaction encoding, EVM operations, or contracts.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-7840/manifest.yaml
+    manifest_sha256: 468e453101dbf3f82caf229e2ad071a38ca6a69161035dfce4f587aa246387e2
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: da129d42627c959498c3c17836e2814add9b647d
+    path: EIPS/eip-7840.md
+    committed_at: '2025-01-15T16:24:59Z'
+    git_blob_sha: 473e81a92a5bc1156718da1934580f974f69c22a
+    content_sha256: 97223c1382fcf2bce0e280b5da30a477211499bde0c413946428bfc73d506486
+    immutable_url: https://github.com/ethereum/EIPs/blob/da129d42627c959498c3c17836e2814add9b647d/EIPS/eip-7840.md
+    information_cutoff_at: '2025-01-15T16:25:43Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/prague/eip-7840.md
+    content_sha256: 852267ea823b9843c48712c8ef82713add2e264fa7ab4679144b728de183407f
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:44:17+02:00'
+    session_id: assessment-run-62fb2db6-8c67-4216-ac60-1b0e7b0698d7
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-43
+    summary: The proposal's specified change is a per-fork target/max blob-count object in client configuration files with fallback lookup behavior.
+  rationale: The configuration schema does not change EVM execution-gas accounting, so the zero anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The specification only defines a configuration object and fork-value fallback; it specifies no opcode execution path or state access.
+  rationale: No opcode state-access or gas-charge ordering is changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract and Motivation, lines 13-22
+    summary: The proposal makes target and maximum blob counts per block dynamically adjustable by fork through execution-client configuration.
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The schedule supplies different Cancun and Prague target/max values and defines how the effective values are inherited or defaulted.
+  rationale: Moving existing blob target/max parameters to a per-fork schedule updates the existing blob-accounting configuration mechanism but does not introduce a new accounting mechanism.
+  confidence: medium
+  uncertainty_note: The text does not precisely identify which blob-accounting calculations consume each value or whether the displayed numbers are normative.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-43
+    summary: The only configured quantities are per-block target and maximum blob counts.
+  rationale: No state-write gas cost, state-gas charging site, budget, reservoir, or spill behavior is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The specification is limited to blobSchedule configuration fields and their fallback values.
+  rationale: The proposal introduces no EVM gas-refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 24-43 and 55-57
+    summary: The new behavior is a configuration lookup rule, and the proposal reports no backward-compatibility issue or new protocol validation rule.
+  rationale: The text does not establish that pre-existing execution tests must be reworked; the schedule and fallback can be covered by focused new configuration cases.
+  confidence: medium
+  uncertainty_note: The EIP does not say whether existing test configurations embed these client configuration files.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-43
+    summary: The proposal defines a client-configuration field and resolution rule, without requiring unrelated tests to assert a new output.
+  rationale: No new assertion is imposed on tests that are not about this configuration feature.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-43
+    summary: The named interface is the execution-client configuration file; no transition-tool request or response field is specified.
+  rationale: A client configuration object is not, on the available text, a modification to the transition-tool interface.
+  confidence: medium
+  uncertainty_note: The proposal does not discuss whether transition tools consume the same configuration schema.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The behavior consists of parsing a JSON-shaped schedule and selecting an explicit, inherited, or zero value.
+  rationale: These cases can be expressed with ordinary inputs and expected values; no new expectation, modifier, or reusable framework primitive is required by the text.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The schedule contains only fork keys and integer target/max blob counts.
+  rationale: No cryptographic mechanism or cryptographic functionality is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 42-43
+    summary: A missing current-fork entry inherits the last specified fork value, while absence of any prior value yields zero for both fields.
+  rationale: The proposal introduces one boundary-prone schedule-resolution mechanism with explicit-entry, prior-entry, and no-prior-entry cases.
+  confidence: high
+  uncertainty_note: Ordering and malformed or partial-entry behavior are not specified and are tracked as under-specification rather than additional primary mechanisms.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The change affects client configuration and does not define block RLP fields or block RLP validation.
+  rationale: No RLP validation mechanism requiring client syncing is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation and Rationale, lines 20-22 and 47-53
+    summary: The configuration approach is expressly chosen to avoid passing the values through an Engine API handshake every block.
+  rationale: The proposal adds neither an Engine API field nor a new Engine API communication mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-43
+    summary: The entire specified addition is an execution-client configuration object.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-43
+    summary: The proposal only changes how blob target/max values are represented and resolved in client configuration.
+  rationale: No existing system-contract code, state, or behavior is directly or indirectly modified by the specified mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The specification contains a configuration schema and no EVM instruction definition.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The specification contains no change to the result or behavior of an existing opcode.
+  rationale: No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The configuration-only specification defines no callable precompile.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: No precompile logic or gas schedule appears in the specified change.
+  rationale: No existing precompile behavior or gas accounting is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-40
+    summary: The proposal adds a JSON-shaped client configuration object, not an encoding change to transactions, blocks, or protocol interfaces.
+  rationale: Adding configuration fields does not switch or modify transaction, block, or Engine API encoding under this anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-43
+    summary: The proposal is solely about a blob parameter schedule in client configuration files.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The text defines no transaction validity rule or intrinsic-gas calculation.
+  rationale: Per-block blob target/max configuration does not, as specified, add or modify transaction validity.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The only new fields are target and max nested in a client configuration object.
+  rationale: The proposal adds no block or block-header field.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-43
+    summary: The example gives different Cancun and Prague target/max values, and effective values are selected for the current fork with inheritance from the last configured fork.
+  rationale: The effective target and maximum are fork-indexed internal configuration values that can change when the current fork changes, matching the binary anchor for internal-variable modification at activation.
+  confidence: medium
+  uncertainty_note: The text describes lookup by current fork rather than an explicit activation-block mutation, so an implementation could derive values on demand.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Rationale, lines 24-53
+    summary: The new operation is configuration lookup, proposed in place of transmitting values over the Engine API every block.
+  rationale: The schedule lookup itself introduces no mechanism that requires performance validation under the anchor.
+  confidence: medium
+  uncertainty_note: The proposal does not specify whether the illustrated higher blob limits are normative, so their broader performance effect is not attributed to this configuration EIP.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale and Security Considerations, lines 47-53 and 59-61
+    summary: The only concrete consumer described is blobGasUsedRatio reporting in eth_feeHistory, and the proposal identifies no security considerations.
+  rationale: The specified configuration and fallback mechanism does not establish a new security-sensitive invariant or chain-security mechanism.
+  confidence: medium
+  uncertainty_note: Other execution-client activities needing these values are mentioned but not enumerated, limiting certainty about the impact of inconsistent configuration.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-43
+    summary: The schema gives example entries and two fallback outcomes but no types, ranges, malformed-entry handling, fork ordering rule, or statement that the displayed values are normative.
+  rationale: Clients need localized agreement on configuration parsing and schedule-resolution cases before common tests can be baselined, matching score 2 rather than a pervasive previously unobservable consensus behavior.
+  confidence: medium
+  uncertainty_note: It is unclear which schema conventions are inherited from an existing client-configuration standard because none is identified in the package.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Motivation and Rationale, lines 20-22 and 47-53
+    summary: The schedule supports changing existing blob target/max values and supplies them to execution-layer activities including eth_feeHistory, while avoiding an Engine API handshake.
+  rationale: The proposal has limited interactions with existing blob-parameter behavior and an RPC consumer but remains independently testable as configuration resolution; the package supplies no interacting EIP number.
+  confidence: medium
+  uncertainty_note: The interacting mechanisms are described by function rather than by EIP number, and consumers beyond the single example are unspecified.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions:
+  - Existing blob target/maximum behavior and its execution-layer consumers, including eth_feeHistory; the package identifies no EIP number.
+totals:
+  primary_score: 8
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: >-
+    The EIP defines the high-level schedule shape and two fallback outcomes but omits
+    normative field types and ranges, malformed or partial-entry behavior, the ordering
+    used to identify the last fork, whether its displayed values are normative, and the
+    full set of consumers. These gaps are localized to configuration interpretation and
+    do not justify projecting unspecified protocol mechanisms into other anchors.
+  affected_criteria:
+  - blob_gas_accounting_changes
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - new_fork_activation_mechanism
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 3
+    maximum: 10
+  plausible_tiers:
+  - low
+  unresolved_questions:
+  - Are the Cancun and Prague target/max values normative or merely an example of the object shape?
+  - What ordering determines the last specified fork, especially for unknown, duplicate, or out-of-order fork keys?
+  - What field types and ranges are valid, and how are missing, partial, malformed, or negative entries handled?
+  - Which execution-client activities beyond eth_feeHistory consume target and max, and which consequences must agree across clients?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: I assessed only the sealed package at its recorded information cutoff, without external sources, prohibited materials, or later implementation knowledge.
+notable_ambiguities:
+- The specification presents a concrete schedule inside a shape example but does not say whether those numeric values are required.
+- The phrase "last specified fork value" does not define fork ordering or behavior for unrecognized keys.
+- The EIP says execution clients need the values for various activities but identifies only one concrete RPC consumer.
+overall_confidence: medium

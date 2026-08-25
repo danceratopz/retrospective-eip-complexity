@@ -1,0 +1,531 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: prague
+eip:
+  number: 7642
+  title: eth/69 - history expiry and simpler receipts
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the recorded cutoff, EIP-7642 introduced eth/69 by changing the eth
+    wire-protocol Status message to advertise a node's available block range,
+    replacing receipt transfer with a flat encoding that omits the bloom, and
+    adding a BlockRangeUpdate notification. It also removed total difficulty
+    from the handshake and moved the latest block hash, while retaining eth/68
+    as the backward-compatible alternative. The proposal explicitly did not
+    change EVM consensus rules or require a hard fork.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-7642/manifest.yaml
+    manifest_sha256: b440eb798145bb90fd4c88e8ea4d45015f61f70eb57000c5a47e549a27e1ec38
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 0ddb8e9192410753ad4896b9b96510ebb2f4f6d8
+    path: EIPS/eip-7642.md
+    committed_at: '2025-04-17T21:24:29Z'
+    git_blob_sha: 47bcbab8ac70589110feb04d8a8ed5d7778213eb
+    content_sha256: b7d3002fa0a4a89d0702c6f5c18509aee6b3f3add78f67958cd533ff65e9db28
+    immutable_url: https://github.com/ethereum/EIPs/blob/0ddb8e9192410753ad4896b9b96510ebb2f4f6d8/EIPS/eip-7642.md
+    information_cutoff_at: '2025-04-17T21:24:29Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/prague/eip-7642.md
+    content_sha256: adf815c5b8726607fa7abca060dd1f9564322a84412a5a26831dd7811561fec1
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:36:19+02:00'
+    session_id: assessment-run-d4933cb2-b806-4623-b6e0-7c6c07721c22
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-5793.md
+  - supporting/eip-7542.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The proposal says it changes the eth wire protocol and does not change EVM consensus rules.
+  rationale: >-
+    No EVM gas accounting rule is introduced or updated, matching the zero
+    anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-87
+    summary: All normative changes concern eth protocol message layouts and notification timing, not opcode execution.
+  rationale: >-
+    The proposal neither changes an opcode nor reorders gas charging and state
+    access within opcode execution, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The EIP is scoped to an eth protocol version and explicitly leaves EVM consensus rules unchanged.
+  rationale: >-
+    No blob-gas accounting mechanism is mentioned or modified, matching the
+    zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The EIP changes only the eth wire protocol and requires no hard fork.
+  rationale: >-
+    There is no state-writing gas cost, state-gas budget, reservoir, or spill
+    path change, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-87
+    summary: The specification only changes three eth wire-protocol message surfaces.
+  rationale: >-
+    No EVM gas-refund mechanism is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 50-87
+    summary: eth/69 changes the existing Status and Receipts layouts and adds BlockRangeUpdate.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-128
+    summary: The new wire-protocol version can coexist with eth/68, so older-version behavior remains available.
+  rationale: >-
+    Existing tests for the affected handshake and receipt-message paths need a
+    limited version-specific update, but the separate eth/69 version leaves the
+    broader and older-version test corpus intact. This fits the minor-subset
+    anchor.
+  confidence: medium
+  uncertainty_note: The package does not describe the organization or sharing of pre-existing eth protocol tests.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-87
+    summary: The proposal defines changed and new eth/69 messages but does not prescribe a new assertion for tests unrelated to those messages.
+  rationale: >-
+    Nothing in the text requires pre-existing tests outside this EIP's protocol
+    surfaces to assert a new produced value, matching the zero anchor.
+  confidence: medium
+  uncertainty_note: No historical test-suite inventory is included, but the proposal itself mandates no cross-cutting assertion.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The change is a versioned eth wire-protocol update and explicitly requires no hard fork.
+  rationale: >-
+    The proposal adds no transition-tool field or mechanism, matching the zero
+    anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-87
+    summary: The specification can be expressed as message encoding, decoding, and notification behavior without defining a novel testing abstraction.
+  rationale: >-
+    The text establishes no need for a new framework-level expectation,
+    modifier, or helper; ordinary protocol-message tests suffice, matching the
+    zero anchor.
+  confidence: medium
+  uncertainty_note: The package contains no description of the historical network test framework.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 15-20
+    summary: The proposal is limited to advertised history ranges, handshake simplification, and receipt-field removal.
+  rationale: >-
+    No cryptographic primitive or cryptographic functionality is introduced or
+    modified, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Status message changes, lines 50-58
+    summary: The versioned Status layout adds earliest and latest block endpoints and a latest-block hash while removing and moving prior fields.
+  - source: eip.md
+    locator: Specification / Receipts message changes, lines 60-77
+    summary: Receipt transfer must cover typed and legacy receipt forms, status or post-state values, and variable log lists in a new flat layout.
+  - source: eip.md
+    locator: Specification / BlockRangeUpdate message, lines 79-87
+    summary: Range updates carry two endpoints and a hash and are rate-limited to at most once per 32 blocks.
+  rationale: >-
+    Multiple mechanisms are boundary-prone: range endpoints and their hash,
+    protocol-version-specific layouts, receipt variants, and update cadence.
+    The text does not establish that any one mechanism needs the elevated case
+    count required for score 3, so the multiple-mechanism score-2 anchor fits.
+  confidence: medium
+  uncertainty_note: Range validity, empty or discontinuous availability, endpoint inclusion, and exact notification triggers are not specified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 50-87
+    summary: The EIP changes Status and Receipts wire encodings and adds a range notification, but does not change block RLP validation.
+  rationale: >-
+    Although the messages are intended to improve syncing, the rubric anchor is
+    specifically for block-RLP validation mechanisms requiring client syncing;
+    no such validation change is introduced. The zero anchor therefore applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 15-20
+    summary: The affected interface is the eth peer-to-peer protocol rather than the Engine API.
+  rationale: >-
+    No Engine API endpoint, field, or communication mechanism changes, matching
+    the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The EIP changes a wire-protocol version and explicitly does not change EVM consensus rules.
+  rationale: >-
+    No system contract is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-87
+    summary: The specification is confined to peer message layouts and sending behavior.
+  rationale: >-
+    No existing system contract's code, state, or behavior is directly or
+    indirectly modified, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The proposal states that it does not change EVM consensus rules.
+  rationale: >-
+    No opcode is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The proposal states that it does not change EVM consensus rules.
+  rationale: >-
+    No pre-existing opcode behavior is modified or deprecated, matching the
+    zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-87
+    summary: Every specified addition is an eth wire-protocol message or field.
+  rationale: >-
+    No precompile is introduced, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: The proposal is a non-consensus wire-protocol version change.
+  rationale: >-
+    No precompile logic or gas schedule is modified, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Status message changes, lines 50-58
+    summary: eth/69 changes the ordered encoding of the Status interface, adding and removing fields and moving the block hash.
+  - source: eip.md
+    locator: Specification / Receipts message changes, lines 60-77
+    summary: eth/69 replaces legacy and typed receipt transfer encodings with one flat receipt list that omits bloom.
+  - source: eip.md
+    locator: Specification / BlockRangeUpdate message, lines 79-83
+    summary: A new encoded eth protocol message with range endpoints and a block hash is introduced.
+  rationale: >-
+    The proposal directly changes encodings at the peer interface level, which
+    triggers the rubric's binary score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Receipts message changes, lines 60-77
+    summary: Existing receipt forms are represented with a tx-type element, but no new transaction type is defined.
+  rationale: >-
+    Carrying the type of an existing transaction in a receipt message does not
+    introduce a transaction type, so the zero anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 48-87
+    summary: The normative changes concern peer message encoding and range notification, not transaction acceptance or intrinsic gas.
+  rationale: >-
+    No transaction validity rule or intrinsic-gas calculation is added or
+    modified, matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Status message changes, lines 50-58
+    summary: earliestBlock, latestBlock, and latestBlockHash are fields of the eth Status message, not fields of a block or block header.
+  rationale: >-
+    The new interface fields do not alter the block or header schema, matching
+    the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 123-130
+    summary: eth/69 is rolled out as a coexisting wire-protocol version and the EIP requires no hard fork.
+  rationale: >-
+    There is no activation-block state or internal-variable modification,
+    matching the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation / Removing Bloom in Receipts, lines 32-40
+    summary: Existing receipt serving is described as regenerating and transferring roughly 530 GB of bloom data per sync.
+  - source: eip.md
+    locator: Rationale / Receipts changes, lines 108-121
+    summary: The new encoding shifts bloom recomputation to the receiver while substantially reducing serving CPU and sync bandwidth.
+  - source: eip.md
+    locator: Motivation and Specification / BlockRangeUpdate, lines 42-46 and 79-87
+    summary: Peers can alter fetching based on advertised history, while update traffic is limited to once per 32 blocks.
+  rationale: >-
+    Validation spans serving-node regeneration, wire transfer, receiving-node
+    reconstruction and verification, and range-aware peer fetching, so it
+    cannot be fully benchmarked in isolation. The proposal itself describes a
+    very large effect on existing sync bandwidth and CPU behavior, satisfying
+    the score-3 anchor.
+  confidence: medium
+  uncertainty_note: The EIP does not mandate a particular range-aware fetching policy or provide benchmark results for the new end-to-end path.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Rationale / Receipts changes, lines 108-121
+    summary: Receiving nodes must reconstruct omitted bloom data to fully verify the receipt hash under the new wire representation.
+  - source: eip.md
+    locator: Motivation and Specification / BlockRangeUpdate, lines 42-46 and 79-87
+    summary: Untrusted peer range announcements can influence sync-status detection and fetching behavior.
+  - source: eip.md
+    locator: Security Considerations, lines 132-134
+    summary: The EIP records no explicit security considerations.
+  rationale: >-
+    Incorrect parsing, bloom reconstruction, hash verification, or handling of
+    inconsistent range announcements could affect sync correctness or resource
+    use. These risks touch a limited set of existing networking and receipt
+    verification components and call for targeted negative testing or fuzzing,
+    fitting score 2 rather than an extensive multi-component review.
+  confidence: medium
+  uncertainty_note: The text says there are no security considerations and does not specify validation or peer-penalty behavior for malformed or inconsistent announcements.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Status message changes, lines 50-58
+    summary: Range endpoints and a corresponding hash are added without normative validity, inclusion, or consistency rules.
+  - source: eip.md
+    locator: Specification / Receipts message changes, lines 60-77
+    summary: A new flat receipt form is given, but detailed field validity and receiver behavior are not stated.
+  - source: eip.md
+    locator: Specification / BlockRangeUpdate message, lines 79-87
+    summary: Clients should send on range updates, need not send for every block, and must remain below a once-per-epoch rate, leaving exact trigger and timing behavior open.
+  rationale: >-
+    Tests for malformed or inconsistent ranges, endpoint/hash relationships,
+    receipt-field handling, and notification timing require localized agreement
+    on outcomes that the text does not determine. The gaps are material but do
+    not make a previously unobservable consensus behavior critical, so score 2
+    fits.
+  confidence: high
+  uncertainty_note: It is unclear which open details are deliberately implementation-defined rather than intended to be interoperable protocol requirements.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Front matter and Motivation, lines 1-12 and 24-30
+    summary: EIP-7642 explicitly requires EIP-5793 and identifies withdrawn EIP-7542 as an earlier proposal for the history-range idea.
+  - source: supporting/eip-5793.md
+    locator: Backwards Compatibility, lines 46-50
+    summary: EIP-5793 defines eth/68 as a coexisting wire-protocol version, the baseline immediately preceding eth/69.
+  - source: supporting/eip-7542.md
+    locator: Front matter and Backwards Compatibility, lines 1-11 and 48-52
+    summary: The withdrawn eth/70 proposal declares EIP-7642 as a requirement and describes version coexistence with eth/69 and earlier versions.
+  rationale: >-
+    The EIP has limited protocol-version interactions with EIP-5793's eth/68
+    baseline and the withdrawn, dependent EIP-7542 proposal. Version negotiation
+    and coexistence deserve coordinated consideration, but eth/69 remains
+    independently testable for the most part, fitting score 1.
+  confidence: high
+  uncertainty_note: EIP-7542 was withdrawn, so its interaction is documentary and version-lineage related rather than an active simultaneous deployment dependency.
+  exceptional_score_justification: null
+  interacting_eips: [5793, 7542]
+  unidentified_interactions: []
+totals:
+  primary_score: 14
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The proposal does not fully define the semantics and validity of advertised
+    range endpoints and their hash, handling of malformed or discontinuous
+    ranges, precise BlockRangeUpdate triggers, detailed receipt-field validity,
+    or receiver and peer-management behavior. These gaps are localized to wire
+    interoperability and integrated sync behavior rather than EVM consensus.
+  affected_criteria:
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 11
+    maximum: 15
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - Are earliestBlock and latestBlock inclusive, and must available history be contiguous?
+  - What relationship must latestBlockHash have to latestBlock, and how should a peer handle inconsistent announcements?
+  - How are an empty available range, invalid endpoint ordering, and values beyond the peer's known chain represented and handled?
+  - Which range changes require BlockRangeUpdate, and what exact timing satisfies both the update recommendation and once-per-epoch limit?
+  - What validation, disconnect, or penalty behavior applies to malformed receipts and range messages?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP, pinned assessor rubric, and two
+    allowlisted supporting EIPs at the recorded information cutoff. I did not
+    use internet access, present-day implementation knowledge, later revisions,
+    other assessments, project-management records, or a dedicated assessment
+    skill.
+notable_ambiguities:
+- The specification does not state whether advertised block ranges are inclusive, contiguous, or permitted to be empty.
+- The exact correspondence and validation between latestBlock and latestBlockHash is unstated.
+- The requirement to notify whenever a range changes is qualified by discretionary per-block updates and a once-per-epoch ceiling without a deterministic trigger rule.
+- The receipt layout is concise but does not specify all malformed-field and version-mismatch outcomes needed for a common negative-test baseline.
+overall_confidence: medium

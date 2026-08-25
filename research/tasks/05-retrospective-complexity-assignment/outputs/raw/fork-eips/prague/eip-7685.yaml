@@ -1,0 +1,685 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: prague
+eip:
+  number: 7685
+  title: General purpose execution layer requests
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, this draft defined a generic container for
+    execution-layer requests intended for consensus-layer processing. It appended
+    an ordered list of typed opaque requests to the RLP block body and added a
+    32-byte header commitment computed as an indexed Merkle-Patricia trie root.
+    Concrete request provenance and validity, intra-type ordering, and
+    consensus-layer type extensions were left to request-specific proposals.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-7685/manifest.yaml
+    manifest_sha256: 7c3376d21a1fd209bb3f436792bec7778ff4ebabf175cedb612f534fc75e1128
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: e2a66831fcc5984f478513ce298607e178c364e8
+    path: EIPS/eip-7685.md
+    committed_at: '2024-04-18T22:38:06Z'
+    git_blob_sha: 428e1902581ffcae80420d2527045228a2a818da
+    content_sha256: 83e2e6c4341af7260fbab8a716ec8c74d450679c377e6c9650a11f95d351ef29
+    immutable_url: https://github.com/ethereum/EIPs/blob/e2a66831fcc5984f478513ce298607e178c364e8/EIPS/eip-7685.md
+    information_cutoff_at: '2024-04-25'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef42ab0fd5a6d7fb5046/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/prague/eip-7685.md
+    content_sha256: aecf9f392ed38823afb714f9db455a2f7f1bedc544c54d12bfdedb2b6fddfde6
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T11:41:48Z'
+    session_id: assessment-run-83a8722f-bd45-4862-b7b0-bbebd88120c2
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      The normative changes define request data, block-body RLP, a header trie
+      root, and consensus-layer extensibility, without defining gas accounting.
+  rationale: >-
+    No EVM gas rule or accounting mechanism is introduced, matching the score-0
+    anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 96-115
+    summary: >-
+      System-contract calls, storage retrieval, and event parsing are expressly
+      recommendations rather than normative changes to opcode execution.
+  rationale: >-
+    The proposal changes neither an opcode's state-access position nor gas-charge
+    ordering relative to state access, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      The specification contains request and block-structure rules but no blob
+      gas rules or changes.
+  rationale: >-
+    No blob gas accounting mechanism is introduced or modified, matching the
+    score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 98-115
+    summary: >-
+      The text discusses possible contract storage and events as non-normative
+      request sources and specifies no state-writing charge or budget.
+  rationale: >-
+    No state gas cost, charging site, budget, reservoir, or spill mechanism is
+    changed, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      The normative request framework contains no gas-refund rule.
+  rationale: >-
+    No new EVM gas-refund mechanism is introduced, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and Block Header, lines 50-80
+    summary: >-
+      Every block under the proposal gains a variable request list in its RLP body
+      and a new header commitment derived from that list.
+  - source: eip.md
+    locator: Specification / Request, lines 41-48
+    summary: >-
+      The full request list must additionally satisfy ascending cross-type
+      ordering.
+  rationale: >-
+    Mandatory body and header changes plus ordering and commitment validation
+    require a major, diverse subset of existing post-activation block-construction,
+    serialization, import, and invalid-block tests to be reworked, meeting the
+    score-3 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The sealed package contains no test inventory; the breadth is inferred from
+    both additions being mandatory for every block governed by the proposal.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Header, lines 65-80
+    summary: >-
+      A block's new requests_root must equal the indexed trie root of the request
+      list in its body.
+  - source: eip.md
+    locator: Rationale / Ordering, lines 117-126
+    summary: >-
+      Ascending type order is selected so all requests committed by the root can
+      be found in the block.
+  rationale: >-
+    A broad category of existing block tests must mechanically assert request-list
+    ordering and body-to-header commitment consistency, meeting score 2. The text
+    does not establish the score-3 requirement that pre-fork vectors be re-derived.
+  confidence: medium
+  uncertainty_note: >-
+    Activation and treatment of existing multi-fork vectors are not specified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-18
+    summary: >-
+      The framework adds one request-information field to the execution block
+      header and one to the body.
+  - source: eip.md
+    locator: Specification / Request and Block Header, lines 34-80
+    summary: >-
+      Producing the fields requires typed request collection, ordering, and
+      indexed-trie-root computation.
+  rationale: >-
+    A transition tool must represent multiple new block values and support the new
+    request-production and commitment mechanism, which is the score-3 combination
+    of multiple fields and a new mechanism.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP does not define a transition-tool schema or say whether the body list
+    and derived root are separate tool outputs.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and Block Header, lines 50-80
+    summary: >-
+      Tests need to represent a request list and its new header commitment.
+  - source: eip.md
+    locator: Test Cases, lines 140-142
+    summary: >-
+      The historical draft supplies no test cases or proposed framework helpers.
+  rationale: >-
+    Existing block expectation structures need minor extension for the two new
+    values, meeting score 1; the draft does not establish a reusable new
+    expectation or modifier primitive needed for score 2.
+  confidence: low
+  uncertainty_note: >-
+    Concrete request generation and validation are deferred, so the eventual need
+    for request-specific framework primitives cannot be determined from this EIP.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Header, lines 67-80
+    summary: >-
+      The request commitment reuses a Merkle-Patricia trie construction described
+      as equivalent to the existing transaction trie root.
+  rationale: >-
+    Reusing the existing transaction-trie commitment pattern does not introduce a
+    new cryptographic mechanism, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Request, lines 34-48
+    summary: >-
+      Requests combine a type with opaque bytes and lists may contain repeated and
+      differing types subject to cross-type ordering.
+  - source: eip.md
+    locator: Specification / Block Header, lines 67-80
+    summary: >-
+      Variable request lists are indexed into a trie whose root must match the
+      header.
+  - source: eip.md
+    locator: Rationale / Intra-type, lines 128-134
+    summary: >-
+      Ordering within equal types is explicitly delegated to each request type.
+  rationale: >-
+    Empty and non-empty lists, opaque-data lengths, repeated and multiple types,
+    ordering permutations, and correct or incorrect roots create multiple boundary
+    mechanisms with an elevated combination count, meeting score 3.
+  confidence: medium
+  uncertainty_note: >-
+    Type width, malformed and unknown-type handling, size limits, and empty-list
+    semantics are not fully stated, so exact boundary vectors cannot be baselined.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure, lines 50-63
+    summary: >-
+      Block-body RLP is extended with a nested variable list of opaque requests.
+  - source: eip.md
+    locator: Specification / Block Header, lines 65-80
+    summary: >-
+      The header gains a fixed-width requests_root whose validity depends on the
+      body list's indexed trie root.
+  rationale: >-
+    Sync/import validation gains multiple RLP changes, including the complex
+    variable body-list and header-commitment relationship, satisfying score 3.
+  confidence: high
+  uncertainty_note: >-
+    Exact malformed-input rules are not supplied, but the mandatory body and
+    header validation surfaces are explicit.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 15-18
+    summary: >-
+      New execution header and body request fields are intended to expose request
+      information to the consensus layer.
+  - source: eip.md
+    locator: Specification / Consensus Layer, lines 83-86
+    summary: >-
+      Consensus-layer proposals must extend beacon-chain types to include the new
+      execution-layer request.
+  rationale: >-
+    Communicating the new body list and header commitment across the EL/CL
+    boundary entails multiple request-related interface fields, aligning with
+    score 2.
+  confidence: low
+  uncertainty_note: >-
+    The EIP never names Engine API endpoints, versions, field placement, or whether
+    both values are transported independently.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 98-110
+    summary: >-
+      Designated system contracts are presented only as an author recommendation,
+      while the EIP makes no strict requirement for request origin.
+  rationale: >-
+    The proposal itself introduces no system contract, matching the score-0
+    anchor; possible contracts belong to future request-source designs.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 98-110
+    summary: >-
+      The only system-contract discussion is a non-normative possible source for
+      future requests, with no pre-existing contract identified or changed.
+  rationale: >-
+    No existing system-contract code, state, or behavior is modified directly or
+    indirectly by the specified framework, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      The complete specification defines block-level request data and no opcode.
+  rationale: >-
+    No new opcode is introduced, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      The specification changes block request representation and does not alter
+      any pre-existing opcode's behavior.
+  rationale: >-
+    No existing opcode is modified or deprecated, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      No precompile is included among the request, block-body, header, or
+      consensus-layer changes.
+  rationale: >-
+    No new precompile is introduced, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      The normative changes contain no precompile logic or gas schedule.
+  rationale: >-
+    No pre-existing precompile is modified, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure, lines 50-63
+    summary: >-
+      The RLP-encoded block body is extended by appending a list of requests.
+  - source: eip.md
+    locator: Specification / Block Header, lines 65-80
+    summary: >-
+      The encoded block header is extended with a new 32-byte requests_root.
+  rationale: >-
+    The proposal explicitly changes encoding at the block body and header levels,
+    triggering the rubric's binary score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Request, lines 32-48
+    summary: >-
+      The new typed objects are requests, represented independently from
+      transactions.
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 98-105
+    summary: >-
+      Transactions are only a recommended possible source of requests, not a new
+      transaction envelope or type.
+  rationale: >-
+    No new transaction type is introduced, matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 98-115
+    summary: >-
+      The EIP imposes no strict request-source rule; transaction calls are only a
+      recommendation, and the discussed validity is request validity split across
+      layers.
+  rationale: >-
+    Existing transaction validity and intrinsic-gas rules are not changed,
+    matching the score-0 anchor.
+  confidence: high
+  uncertainty_note: >-
+    Request validity is materially underspecified, but it is distinct from the
+    rubric's transaction-validity criterion.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and Block Header, lines 50-80
+    summary: >-
+      The block body gains a request-list field and the header gains the 32-byte
+      requests_root field.
+  rationale: >-
+    At least one new block or header field is explicitly introduced, triggering
+    the rubric's binary score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-86
+    summary: >-
+      The specification defines ongoing block-format and request rules but no
+      activation-block state mutation or special internal-variable modification.
+  rationale: >-
+    No special fork-activation state or internal-variable modification is
+    specified, matching score 0.
+  confidence: medium
+  uncertainty_note: >-
+    Activation semantics are omitted, but omission does not establish the special
+    activation-block mutation required by the score-3 anchor.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Request and Block Header, lines 34-80
+    summary: >-
+      Blocks carry a variable list of opaque request bytes that must be ordered,
+      RLP-encoded, indexed into a trie, and committed in the header.
+  - source: eip.md
+    locator: Abstract, lines 15-18
+    summary: >-
+      The request information crosses execution block production and
+      consensus-layer processing.
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 98-110
+    summary: >-
+      Source and rate-limiting approaches are left to future designers rather than
+      bounded by this EIP.
+  rationale: >-
+    The variable data path spans execution-derived collection, block construction,
+    trie computation, validation, propagation, and CL consumption. Its integrated
+    impact and interactions with existing block processing cannot be fully
+    benchmarked in isolation, meeting score 3.
+  confidence: medium
+  uncertainty_note: >-
+    No size, count, or rate limit is defined, and concrete request types are
+    absent, so workload magnitude is unresolved.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract and Motivation, lines 13-26
+    summary: >-
+      Contract-triggered execution-layer requests are exposed for
+      consensus-layer processing of validator-related administrative behavior.
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 96-115
+    summary: >-
+      Request origin and validation are non-normative, with possible validation
+      split between system contracts on the EL and further checks on the CL.
+  - source: eip.md
+    locator: Security Considerations, lines 144-146
+    summary: >-
+      The historical security section is unresolved and states that discussion is
+      needed.
+  rationale: >-
+    The mechanism connects contract execution, block commitments, EL validation,
+    and consensus-layer actions, all security-critical components, while altering
+    their trust and validation boundaries. This supports score 3 and extensive
+    security review and fuzzing.
+  confidence: medium
+  uncertainty_note: >-
+    Concrete actions and their validation are deferred, preventing a complete
+    threat model at this revision.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Consensus Layer, lines 83-86
+    summary: >-
+      Each future proposal may independently choose how beacon-chain types include
+      its execution-layer request.
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 96-115
+    summary: >-
+      The EIP deliberately imposes no strict rule for where requests originate or
+      when and how they are validated.
+  - source: eip.md
+    locator: Rationale / Intra-type; Test Cases; Security Considerations, lines 128-146
+    summary: >-
+      Intra-type ordering is delegated, while test cases and security analysis are
+      still TODO or unresolved.
+  rationale: >-
+    Request production and validation behavior that was not previously part of a
+    block commitment becomes consensus-visible through requests_root, yet the
+    draft leaves multiple constructible cases unresolved. Clients and
+    request-specific proposals must agree before vectors can be baselined, meeting
+    score 3.
+  confidence: high
+  uncertainty_note: >-
+    It is unclear which gaps are intentionally outside the generic framework and
+    which were expected to become normative within this EIP, but either reading
+    requires cross-client coordination before end-to-end testing.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Request, lines 41-48
+    summary: >-
+      Each request type must define its own intra-type ordering.
+  - source: eip.md
+    locator: Specification / Consensus Layer, lines 83-86
+    summary: >-
+      Each proposal may define its own beacon-chain type extension for its
+      execution-layer request.
+  - source: eip.md
+    locator: Rationale / Request source and validity, lines 98-115
+    summary: >-
+      Future protocol designers must supply request source and cross-layer
+      validity rules that integrate with the generic bus.
+  rationale: >-
+    The framework depends on request-specific proposals for production, ordering,
+    validation, and CL representation, so coordinated testing is required, but the
+    generic interaction surface is limited enough for score 2. The package names
+    no interacting EIP, so no number is inferred.
+  confidence: medium
+  uncertainty_note: >-
+    The number and identity of request-type proposals present at the cutoff are not
+    stated, preventing assessment of stronger multi-EIP interdependency or the
+    uncapped surcharge.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions:
+  - >-
+    Request-type-specific proposals that define intra-type ordering, request
+    source and validity, and beacon-chain type extensions; no EIP numbers are
+    identified in the package.
+totals:
+  primary_score: 34
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The draft deliberately defers normative request provenance and validity,
+    intra-type ordering, and consensus-layer type extensions to request-specific
+    proposals. It also leaves Engine API transport, malformed or unknown request
+    handling, size and rate limits, activation semantics, tests, and security
+    analysis unstated, preventing a complete generic cross-client baseline.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - new_fork_activation_mechanism
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 22
+    maximum: 37
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - >-
+    What exact request sources are consensus-valid, and how is completeness of the
+    body request list validated against execution?
+  - >-
+    What is the width and valid range of request_type, and how are empty, malformed,
+    duplicate-type, or unknown-type request items handled?
+  - >-
+    What intra-type ordering is required for each request type, and which proposal
+    owns that rule?
+  - >-
+    Which Engine API fields or endpoints transport requests and their commitment,
+    and which consensus-layer types carry them?
+  - >-
+    What request count, byte-size, or rate limits apply, and how do those limits
+    interact with block validity and performance?
+  - >-
+    What activation, empty-list, and pre-fork compatibility rules govern the new
+    body and header fields?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP and pinned assessor rubric at the
+    stated information cutoff, using the operational files solely for task and
+    provenance instructions. I did not access the internet, later EIP revisions,
+    implementations, tests, outcomes, other assessments, or any prohibited
+    external source.
+notable_ambiguities:
+- >-
+  The request_type representation is not given an explicit width or registry, even
+  though examples use single-byte values and cross-type ordering is normative.
+- >-
+  The text says requests_root commits to the body list but does not separately
+  spell out malformed-list, unknown-type, mismatch, or empty-list validation.
+- >-
+  The EL-to-CL exposure is an objective of the proposal, while its Engine API and
+  beacon-chain representation are not specified.
+- >-
+  The proposal is Draft, its test cases are TODO, and its security considerations
+  state that discussion is needed at the cutoff.
+overall_confidence: medium

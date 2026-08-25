@@ -1,0 +1,668 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: prague
+eip:
+  number: 6110
+  title: Supply validator deposits on chain
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-6110 appended an ordered list of validator
+    deposit operations to each post-fork execution block and added a header trie
+    root committing to that list; the list was required to equal deposits parsed
+    from deposit-contract logs produced by the block. It also extended the
+    consensus ExecutionPayload and BeaconState, processed the new receipts while
+    winding down the former Eth1Data deposit path, and made validator indices
+    branch-dependent. The packaged fork document specified an irregular
+    consensus-state upgrade, while several activation and interface details
+    remained work in progress.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-6110/manifest.yaml
+    manifest_sha256: 011f0360577a2657e0bc326f369742d98b9b5a347c040fe1625035502ae072ce
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 46d979f9020c57db15373cb075b5cf456a0c2f12
+    path: EIPS/eip-6110.md
+    committed_at: '2023-10-12T10:07:31Z'
+    git_blob_sha: d4226f1ea4c81b300229335a6220c59b9dadbb31
+    content_sha256: 0e5d1899fdef881e0fe6b4ea010a94241f233eb062acc7a151b67198afa2db50
+    immutable_url: https://github.com/ethereum/EIPs/blob/46d979f9020c57db15373cb075b5cf456a0c2f12/EIPS/eip-6110.md
+    information_cutoff_at: '2024-01-18'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/prague/eip-6110.md
+    content_sha256: 1187c170f574ef75fca2a2f6c0297a8bee4c8b1ced6e5c4268cd48b0af88a246
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:26:32+02:00'
+    session_id: assessment-run-07fa2b42-f711-4a37-91a7-8d0954818839
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4881.md
+  - supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+  - supporting/ethereum-consensus-specs--specs-_features-eip6110-validator.md
+  - supporting/ethereum-consensus-specs--specs-_features-eip6110-fork.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations -- DoS vectors, lines 211-217
+    summary: >-
+      The proposal uses the deposit contract's existing gas costs only to bound
+      deposit volume and explicitly describes them as current gas-pricing rules.
+  rationale: >-
+    No EVM gas-accounting rule is introduced or updated, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block validity, lines 100-158
+    summary: >-
+      The new validity work occurs after block execution by examining receipts
+      and logs; the passage changes no opcode-internal state-access or gas-charge
+      order.
+  rationale: >-
+    No opcode execution ordering changes, so the anchor-0 definition applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+    locator: Extended Containers -- ExecutionPayload, lines 73-97
+    summary: >-
+      Existing data-gas members carry over and the only marked EIP-6110 payload
+      addition is deposit_receipts.
+  rationale: >-
+    The proposal adds no blob-gas rule or mechanism, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Execution Layer, lines 31-158
+    summary: >-
+      The execution-layer changes concern deposit encoding, block fields, trie
+      commitment, and validity; they define no charge for writing state.
+  rationale: >-
+    No state-gas cost, charging site, budget, reservoir, or spill rule changes,
+    so anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Execution Layer, lines 31-158
+    summary: >-
+      The complete execution-layer mechanism contains no gas-refund behavior.
+  rationale: >-
+    No new refund mechanism is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block structure and Block validity, lines 75-158
+    summary: >-
+      Every post-fork block gains a body list and header commitment, plus rules
+      checking the commitment and exact ordered equivalence with execution logs.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 197-199
+    summary: >-
+      The EIP explicitly calls both the block-structure and block-validation
+      changes backwards incompatible.
+  rationale: >-
+    Existing post-fork block tests across transaction, execution, static,
+    invalid-block, and sync categories must be reworked for the extended block
+    and derived validity rules. That is the diverse, major impact described by
+    anchor 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block structure and Block validity, lines 75-158
+    summary: >-
+      Post-fork blocks must carry a deposits root matching the body list, and
+      that list must match deposit-contract logs even when a test targets an
+      unrelated behavior.
+  rationale: >-
+    A broad category of post-fork tests gains mechanically applicable root and
+    list assertions, which fits anchor 2. The EIP does not require pre-fork
+    vectors to acquire the post-fork fields, so anchor 3 is not supported.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block structure, lines 75-98
+    summary: >-
+      The transition result now includes both an ordered deposits body list and
+      its deposits_root header commitment.
+  - source: eip.md
+    locator: Specification -- Block validity, lines 143-155
+    summary: >-
+      The list is derived from execution receipts and therefore must be exposed
+      or derived by block-transition testing.
+  rationale: >-
+    Representing the new list and root, together with their derived-output
+    relationship, requires multiple interface values or a new result mechanism,
+    fitting anchor 2.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not define a transition-tool API, so the exact number and
+    direction of interface fields are not fixed.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block structure and Block validity, lines 90-155
+    summary: >-
+      Tests need reusable operations for computing the indexed trie root,
+      parsing deposit-event data, and comparing the derived ordered list.
+  rationale: >-
+    Existing block-test primitives need minor helper or expectation extensions
+    for deposits and their commitment, fitting anchor 1; the text does not
+    establish a permanent cross-EIP framework primitive.
+  confidence: medium
+  uncertainty_note: >-
+    No test-framework design is packaged, so whether these are helpers or new
+    reusable expectation primitives is unresolved.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+    locator: New process_deposit_receipt, lines 218-233
+    summary: >-
+      Receipt processing forwards the existing public key and signature fields
+      into apply_deposit rather than defining a new cryptographic operation.
+  - source: eip.md
+    locator: Security Considerations -- Consensus layer, lines 219-223
+    summary: >-
+      Signature verification is analyzed as the existing costly part of deposit
+      processing, not as a newly introduced cryptographic mechanism.
+  rationale: >-
+    The path invokes existing deposit signature validation and introduces no new
+    cryptographic mechanism, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+    locator: Modified process_operations and process_deposit_receipt, lines 189-233
+    summary: >-
+      Processing branches around an unset start-index sentinel, the former
+      deposit index and count, exact per-block limits, zero-deposit behavior, and
+      first-receipt initialization.
+  - source: eip.md
+    locator: Validator index invariant, lines 175-177
+    summary: >-
+      Reorganizations can assign different indices to the same validator public
+      key on different branches.
+  - source: eip.md
+    locator: Security Considerations -- DoS vectors, lines 211-223
+    summary: >-
+      The EIP analyzes high-volume blocks and optimistic-sync limits reaching
+      thousands of receipts and signature verifications.
+  rationale: >-
+    Fork boundaries, empty and first-receipt cases, transition-index crossings,
+    log ordering, reorganizations, and high-volume limits form multiple boundary
+    mechanisms, with the transition and volume dimensions requiring an elevated
+    case matrix. This matches anchor 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification -- Deposit, Block structure, and Block validity, lines 53-158
+    summary: >-
+      The EIP adds RLP encodings for deposits and the extended block body, a new
+      header field, root validation, and execution-log equivalence validation.
+  rationale: >-
+    Syncing clients face multiple new RLP/block validation mechanisms, including
+    the complex requirement to execute the block and reproduce an ordered list
+    from receipts. That satisfies anchor 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification -- Consensus layer, lines 160-168
+    summary: >-
+      ExecutionPayload is extended with one deposit_receipts field carrying the
+      deposit-operation list between the execution and consensus layers.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+    locator: Modified process_execution_payload, lines 235-280
+    summary: >-
+      The consensus transition sends the extended payload through a
+      NewPayloadRequest and caches a root of its deposit_receipts.
+  rationale: >-
+    The package clearly adds one ExecutionPayload communication field, supporting
+    the single-field anchor 1.
+  confidence: medium
+  uncertainty_note: >-
+    Engine method versions, JSON encoding, and whether the field appears in more
+    than one endpoint are not specified in the package.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Configuration, lines 41-47
+    summary: >-
+      The proposal configures the already existing deposit contract address and
+      does not deploy a new contract.
+  rationale: >-
+    No system contract is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification -- Configuration and Block validity, lines 41-47 and 114-155
+    summary: >-
+      The existing deposit contract's logs become the mandatory source of a new
+      consensus-critical block-body list, without changing the contract code.
+  - source: eip.md
+    locator: Rationale -- Filtering events only by DEPOSIT_CONTRACT_ADDRESS, lines 193-195
+    summary: >-
+      Validity relies on the existing contract emitting no events other than its
+      deposit event.
+  rationale: >-
+    Although contract code and state are untouched, the EIP gives the existing
+    deposit contract a major indirect effect on execution-block validity and
+    cross-layer processing. This fits anchor 2's major-indirect-effect case.
+  confidence: medium
+  uncertainty_note: >-
+    The rubric does not define whether the pre-existing deposit contract is
+    classified as a system contract for this row.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Execution Layer, lines 31-158
+    summary: >-
+      The execution-layer specification adds block data and validation rules but
+      defines no opcode.
+  rationale: >-
+    No opcode is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Execution Layer, lines 31-158
+    summary: >-
+      No existing opcode behavior is mentioned or changed by the block-level
+      deposit mechanism.
+  rationale: >-
+    No pre-existing opcode behavior is modified, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Execution Layer, lines 31-158
+    summary: >-
+      The execution-layer additions contain no new precompile.
+  rationale: >-
+    No precompile is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Execution Layer, lines 31-158
+    summary: >-
+      The proposal changes no precompile behavior or gas schedule.
+  rationale: >-
+    No existing precompile is modified, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification -- Deposit and Block structure, lines 53-98
+    summary: >-
+      The EIP normatively defines deposit RLP and appends an RLP list to the block
+      body plus deposits_root to the header.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+    locator: Containers, lines 56-172
+    summary: >-
+      Consensus containers gain DepositReceipt, an ExecutionPayload list, an
+      ExecutionPayloadHeader root, and a BeaconState field.
+  rationale: >-
+    A block-level RLP encoding change is explicit, so the binary anchor mandates
+    score 3; the corresponding SSZ container extensions reinforce the interface
+    impact.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Block validity, lines 13-17 and 114-155
+    summary: >-
+      Existing deposit transactions emit logs from which block-level operations
+      are derived; no new transaction envelope or type is defined.
+  rationale: >-
+    The proposal introduces no transaction type, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block validity, lines 100-158
+    summary: >-
+      The new rules invalidate blocks when their root or deposit list is wrong;
+      they do not invalidate or change intrinsic gas for individual transactions.
+  rationale: >-
+    This is a block-validity change, not a transaction-validity or intrinsic-gas
+    change, so anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block structure, lines 75-98
+    summary: >-
+      Post-fork block bodies gain a deposits list and block headers gain the new
+      deposits_root field.
+  rationale: >-
+    The presence of a new block-body and header field triggers the binary
+    anchor-3 definition.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-fork.md
+    locator: Fork to EIP-6110 -- Upgrading the state, lines 67-145
+    summary: >-
+      At the fork epoch an irregular state change rebuilds the payload header,
+      updates the Fork object, and initializes deposit_receipts_start_index.
+  - source: eip.md
+    locator: Specification -- Definitions and Block structure, lines 49-51 and 75-90
+    summary: >-
+      The execution block format switches at the first block whose timestamp
+      reaches the fork timestamp.
+  rationale: >-
+    The consensus fork explicitly modifies state and internal variables at
+    activation, which is the anchor-3 condition.
+  confidence: high
+  uncertainty_note: >-
+    The concrete fork timestamp and epoch were TBD, but the specified activation
+    state transition is unambiguous.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations -- DoS vectors, lines 211-223
+    summary: >-
+      Worst-case analysis spans block gas, thousands of deposits, BLS signature
+      verification time, and an optimistic-sync case of 8,192 deposits and about
+      eight seconds of processing.
+  - source: eip.md
+    locator: Rationale -- Not limiting the size of deposit operations list, lines 189-191
+    summary: >-
+      The execution-layer deposit list has no explicit protocol count limit and
+      instead relies on the economics and gas cost of deposit creation.
+  rationale: >-
+    Performance cannot be assessed solely in isolation because receipt extraction
+    affects execution validation while signature processing affects consensus and
+    optimistic sync, with behavior coupled to gas limits and payload size. These
+    substantial cross-component interactions satisfy anchor 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Validator index invariant and Eth1Data poll deprecation, lines 175-181
+    summary: >-
+      The mechanism breaks reorg resilience of validator-index caches and
+      transitions away from the former deposit polling path.
+  - source: eip.md
+    locator: Security Considerations -- Optimistic sync and Weak subjectivity period, lines 225-235
+    summary: >-
+      Optimistic nodes may apply finalized fake receipts under the honest-majority
+      model, and the larger deposit throughput changes an input to weak
+      subjectivity calculations.
+  - source: eip.md
+    locator: Specification -- Block validity, lines 100-158
+    summary: >-
+      Execution clients become responsible for consensus-critical equivalence
+      between block data and deposit-contract receipt logs.
+  rationale: >-
+    The change couples critical execution validation, consensus validator-registry
+    updates, reorganization handling, optimistic sync, and weak-subjectivity
+    assumptions. That multi-component security impact requires extensive review
+    and fuzzing and matches anchor 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification -- Block validity, lines 114-155
+    summary: >-
+      The consensus-critical event decoder is only a function signature followed
+      by pass, and the illustrative trie construction leaves exact indexed-key
+      handling implicit.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-fork.md
+    locator: Configuration and Fork trigger, lines 25-32 and 58-65
+    summary: >-
+      The configuration is declared non-definitive and the fork trigger remains
+      TBD, with a testing-only epoch assumption.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+    locator: Introduction, lines 31-36
+    summary: >-
+      The detailed consensus specification identifies itself as under active
+      development.
+  rationale: >-
+    Exact malformed-event decoding, trie construction at unusual cases, and
+    cross-layer interface behavior require agreement before complete invalid-case
+    vectors can be baselined, but the gaps are localized around the new deposit
+    path. This fits anchor 2 rather than the broad re-baselining case in anchor 3.
+  confidence: medium
+  uncertainty_note: >-
+    Existing deposit-contract behavior may make some malformed-event cases
+    unreachable on the intended network, but the package does not specify that
+    reachability as a validity precondition.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 21-29
+    summary: >-
+      The new path removes Eth1Data voting and eliminates the requirement for
+      deposit-contract snapshots defined by EIP-4881.
+  - source: supporting/eip-4881.md
+    locator: Abstract and Specification, lines 13-38
+    summary: >-
+      EIP-4881 standardizes the compressed deposit-tree snapshot and Beacon Node
+      API endpoint that EIP-6110 makes unnecessary after its transition.
+  - source: supporting/ethereum-consensus-specs--specs-_features-eip6110-beacon-chain.md
+    locator: Introduction and Modified process_operations, lines 31-36 and 189-216
+    summary: >-
+      The feature extends the Deneb specification and coordinates the former
+      deposit mechanism with receipt processing until a start-index boundary.
+  rationale: >-
+    EIP-6110 changes the role of EIP-4881 and requires coordinated transition
+    tests with the prior deposit path and inherited fork payload, but the
+    interactions remain concentrated in deposit processing. This fits anchor 2.
+  confidence: medium
+  uncertainty_note: >-
+    Only EIP-4881 is numbered in the package; the EIP numbers, if any, associated
+    with the named Deneb baseline and former deposit mechanism are not supplied.
+  exceptional_score_justification: null
+  interacting_eips: [4881]
+  unidentified_interactions:
+  - >-
+    The packaged consensus specification extends Deneb and modifies its
+    ExecutionPayload, ExecutionPayloadHeader, and block processing, but supplies
+    no EIP number for that baseline.
+  - >-
+    The proposal coordinates with and eventually disables the former Eth1Data
+    deposit mechanism, whose EIP number is not identified in the package.
+totals:
+  primary_score: 36
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    Material gaps remain in the exact decoding and failure behavior for deposit
+    event data, indexed-trie construction details in the illustrative helper,
+    transition-tool and Engine API surface shape, and final fork configuration.
+    The supporting consensus and fork documents also identify themselves as
+    active-development or work-in-progress material.
+  affected_criteria:
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 32
+    maximum: 40
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - >-
+    What exact byte-layout checks and failure result apply when parsing a log from
+    DEPOSIT_CONTRACT_ADDRESS into the five deposit fields?
+  - >-
+    What exact key/object encoding does compute_trie_root_from_indexed_data use at
+    all list sizes and boundary indices?
+  - >-
+    Which transition-tool and Engine API endpoints expose deposit_receipts and
+    deposits_root, and in what encoded form?
+  - >-
+    What final timestamp/epoch coordination activates the execution and consensus
+    changes together?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP, pinned rubric, and allowlisted
+    supporting documents at the recorded information cutoff. I did not access or
+    attempt to access the internet, later implementations, later EIP revisions,
+    other EIP assessments, project-management records, or any other prohibited
+    source, and I did not use a dedicated assessment skill.
+notable_ambiguities:
+- >-
+  The EIP calls the execution-block items deposits while the consensus documents
+  call them deposit receipts and commit to them with an SSZ payload-header root;
+  the cross-layer mapping is clear in intent but not specified as an Engine API
+  schema.
+- >-
+  The rubric classification of the pre-existing deposit contract as a system
+  contract materially affects the modified-system-contracts row.
+- >-
+  One added ExecutionPayload member may traverse multiple Engine endpoints, but
+  the package documents the field rather than endpoint-specific changes.
+overall_confidence: medium
