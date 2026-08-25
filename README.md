@@ -27,21 +27,24 @@ Task 01: fork membership and EIP histories
               |
               +--> Task 04: assessment-ref selection and human review
                          |
+                         +--> Task 04b: fork evaluation cutoffs and aggregation cohorts
+                         |
                          +--> Task 05: isolated historical complexity assignment
                                     |
                                     +--> Task 06: independent verification (planned)
 ```
 
-Task 02 is independent supporting research and is not required to choose the Task 04 historical assessment ref. Tasks 03 and 04 provide the timeline-based human review used to freeze that ref. Task 05 consumes only approved Task 04 records and then seals each EIP into a hindsight-controlled, one-EIP assessment package.
+Task 02 is independent supporting research and is not required to choose the Task 04 historical assessment ref. Tasks 03 and 04 provide the timeline-based human review used to freeze that ref. Task 04b separately defines which final EIPs were forecastable at the initial fork-scoping horizon; it never changes an EIP's assessment ref or score. Task 05 consumes only approved Task 04 records and then seals each EIP into a hindsight-controlled, one-EIP assessment package.
 
 ## Current state
 
-| Task | State at initial standalone snapshot |
+| Task | State |
 | --- | --- |
 | Task 01 | Complete for Shanghai, Cancun, Prague, Osaka, and Amsterdam |
 | Task 02 | Contract and client cohort prepared; implementation research not yet run |
-| Task 03 | Amsterdam and Osaka rendered; Shanghai, Cancun, and Prague pending |
-| Task 04 | Osaka refs selected and human-approved; other forks pending |
+| Task 03 | All five fork timelines rendered and validated |
+| Task 04 | All 49 execution-affecting fork–EIP refs selected, human-approved, and mechanically validated |
+| Task 04b | Cutoffs and initial/late aggregation cohorts proposed for all five forks; human review pending |
 | Task 05 | Twelve Osaka assessments completed and mechanically validated |
 | Task 06 | Not yet defined |
 
@@ -54,4 +57,3 @@ Historical interpretation and human review cannot be guaranteed to produce ident
 ## Repository status
 
 This repository was created as a local research checkpoint. No remote is configured and nothing has been published. A license and a publication review of raw evidence and operational metadata are still required before public distribution.
-

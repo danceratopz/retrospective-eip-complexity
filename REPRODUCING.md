@@ -60,9 +60,7 @@ uv run --project research/tasks/03-fork-development-timelines --locked python re
 uv run --project research/tasks/03-fork-development-timelines --locked python research/tasks/03-fork-development-timelines/scripts/render.py
 ```
 
-Only Amsterdam and Osaka are currently configured. Add Shanghai, Cancun, and Prague by creating one `inputs/forks/<fork>.yaml` and one `inputs/sources/<fork>.yaml` under the Task 03 contract, then validate the individual fork before rendering.
-
-Each configured fork emits a fork overview, EL histories, and CL histories as offline HTML, SVG, PDF, and Vega-Lite JSON, plus normalized `plot-data.json` and `plot-manifest.yaml`.
+All five forks are configured. Each emits a fork overview, EL histories, and CL histories as offline HTML, SVG, PDF, and Vega-Lite JSON, plus normalized `plot-data.json` and `plot-manifest.yaml`.
 
 ## Task 04: historical assessment refs
 
@@ -85,9 +83,29 @@ uv run --project research/tasks/03-fork-development-timelines --locked python re
 
 Replace `osaka` with another configured fork after its Task 03 inputs and Task 04 records exist. The resulting interactive artifact is under `research/tasks/04-complexity-assessment-ref-selection/outputs/review/<fork>/`.
 
-The current review renderer checks inventory, selected-commit presence and timestamp, and anchor-event presence and timestamp. Until a complete Task 04 validator is implemented, the coordinator must additionally recompute revision brackets, signed offsets, Git blob hashes, content hashes, immutable URLs, source IDs, information cutoffs, exception eligibility, and review-state consistency.
+The Task 04 validator checks inventories, anchor-policy precedence, UTC brackets, signed offsets, selected commits, Git blob and content hashes, immutable URLs, exception gates, information cutoffs, review state, and cross-fork reuse:
 
-All records remain proposals until a human reviews the timeline and underlying evidence. Only records with `review.status: approved` may be consumed by Task 05. Preserve the original proposal in a fork run log if human review changes the selected ref.
+```bash
+uv run --project research/tasks/03-fork-development-timelines --locked python research/tasks/04-complexity-assessment-ref-selection/scripts/validate_outputs.py
+```
+
+All 49 configured records are human-approved. Only records with `review.status: approved` may be consumed by Task 05. Preserve the original proposal in a fork run log if human review changes the selected ref.
+
+## Task 04b: fork evaluation cutoffs
+
+Read `research/tasks/04b-fork-evaluation-cutoffs/TASK.md` completely. Task 04b defines a fork-level initial evaluation horizon separately from each EIP's Task 04 information cutoff. It partitions final execution-affecting EIPs into `forecastable_at_cutoff` and `late_scope`, while still requiring every EIP to receive an individual assessment.
+
+Validate the structured records and render their cutoffs over the approved Task 04 EL timelines:
+
+```bash
+uv run --project research/tasks/03-fork-development-timelines --locked python research/tasks/04b-fork-evaluation-cutoffs/scripts/validate_outputs.py
+uv run --project research/tasks/03-fork-development-timelines --locked python research/tasks/04b-fork-evaluation-cutoffs/scripts/render_review.py --validate-only
+uv run --project research/tasks/03-fork-development-timelines --locked python research/tasks/04b-fork-evaluation-cutoffs/scripts/render_review.py
+```
+
+Later fork reports must preserve three views from unchanged original EIP scores: the primary initial-forecast total, the complete final-scope total, and the late-scope increment. A late companion may be analytically attributed to an earlier EIP, but its score is never silently transferred to that EIP.
+
+The five current cutoff records are proposals. Inspect the interactive review plots and underlying cited scope evidence before changing `review.status` to `approved`.
 
 ## Task 05: isolated complexity assignment
 
@@ -125,7 +143,7 @@ find research/tasks/03-fork-development-timelines/outputs/osaka -type f -print0 
 diff -u /tmp/osaka-before.sha256 /tmp/osaka-after.sha256
 ```
 
-Repeat the same procedure for `research/tasks/04-complexity-assessment-ref-selection/outputs/review/<fork>` after running `render_review.py`.
+Repeat the same procedure for `research/tasks/04-complexity-assessment-ref-selection/outputs/review/<fork>` and `research/tasks/04b-fork-evaluation-cutoffs/outputs/review/<fork>` after running their respective `render_review.py` scripts.
 
 ## Viewing offline plots
 
@@ -139,12 +157,10 @@ Use `hostname -I` to identify the machine's LAN address and stop the server with
 
 ## Known reproducibility gaps
 
-- Task 03 source reconstruction remains to be completed for Shanghai, Cancun, and Prague.
-- Task 04 ref selection is agent-coordinated and lacks a complete executable validator and run manifest.
-- The Task 04 vocabulary and policy for direct-SFI fallbacks, decision time versus later Meta EIP recording time, and pre-merge proposal refs are not yet frozen in schema.
-- Human review decisions do not yet have a dedicated structured decision file.
+- Task 04b cutoff proposals still require human review; causal attribution for some late additions remains explicitly hypothetical.
+- Human Task 04 approval is recorded in each EIP record, but fork-level proposal logs are not yet standardized for every fork.
+- The historical execution-specs and execution-spec-tests feasibility study is not yet complete, so Task 05 supporting-evidence policy remains EIP-only.
 - Task 05 launcher paths for Codex and the Danos checklist are machine-specific.
 - Task 06 independent verification is not yet defined.
 
 These gaps should be resolved before claiming that a clean checkout can reproduce the complete study without local operator knowledge.
-

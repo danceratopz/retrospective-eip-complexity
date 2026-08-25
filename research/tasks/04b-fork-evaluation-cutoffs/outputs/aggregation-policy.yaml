@@ -1,0 +1,27 @@
+schema_version: 1
+task_id: 04b-fork-evaluation-cutoffs
+policy_id: fork-aggregation-cohorts-v1
+unit: fork
+score_source: unchanged original per-EIP Task 05 primary totals
+views:
+  initial_forecast_total:
+    cohort: forecastable_at_cutoff
+    role: primary
+    interpretation: Complexity attributable to final EIPs that the initial scope-setting process could have considered.
+  final_scope_total:
+    cohort: all_final_execution_affecting_eips
+    role: secondary
+    interpretation: Complexity of every final execution-affecting EIP, including additions after the cutoff.
+  late_scope_increment:
+    cohort: late_scope
+    role: diagnostic
+    interpretation: Complexity added after the initial evaluation horizon; a forecast-gap measure, not a score correction.
+rules:
+  assess_every_final_eip: true
+  preserve_original_eip_scores: true
+  redistribute_late_scores_to_parent_eips: false
+  retain_attribution_as_separate_analysis: true
+  primary_cross_fork_comparison: initial_forecast_total
+notes:
+- A late EIP may expose hidden or emergent complexity in an earlier feature, but its score remains separately visible.
+- Final-scope and late-increment views must accompany the primary total so exclusions are transparent.

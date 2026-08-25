@@ -9,6 +9,7 @@ YAML is the canonical research format. Canonical records include:
 - per-observation source registries;
 - fork milestones and per-EIP devnet participation;
 - proposed and approved assessment refs;
+- proposed and approved fork evaluation cutoffs and aggregation cohorts;
 - sealed historical assessment packages; and
 - original retrospective complexity assignments.
 
@@ -28,14 +29,15 @@ The following are derived from canonical records and may be regenerated:
 - Vega-Lite specifications;
 - offline HTML figures;
 - SVG and PDF figures;
-- plot manifests; and
+- plot manifests;
+- fork-cutoff review timelines; and
 - generated Task 05 prompts and sealed packages.
 
 Generated artifacts are retained in this initial snapshot because they make review convenient and their manifests permit direct hash comparison. They must never be edited by hand.
 
 ## Agent-produced evidence
 
-Task 04 ref proposals and Task 05 complexity assignments are agent-produced research records. Their provenance includes the task contract, inputs, selected historical content, rationale, confidence, unknowns, and review state.
+Task 04 ref proposals, Task 04b cutoff/cohort proposals, and Task 05 complexity assignments are agent-produced research records. Their provenance includes the task contract, inputs, selected historical content or scope event, rationale, confidence, unknowns, and review state.
 
 Validated raw and canonical assessment YAML is versioned. Verbose Task 05 console transcripts are excluded from Git because they contain machine-specific paths and local Codex session identifiers. They are operational diagnostics rather than scoring evidence.
 
@@ -48,4 +50,3 @@ Before adding a remote or publishing a release:
 3. decide whether local assessment session identifiers should be replaced with publication-safe run identifiers;
 4. add an explicit license for repository-authored code and data; and
 5. document any upstream material governed by a different license.
-

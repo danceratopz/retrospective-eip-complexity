@@ -69,6 +69,7 @@ MILESTONE_COLORS = {
 ASSESSMENT_MARKER_COLORS = {
     "Selected assessment ref": "#DB2777",
     "Proposal anchor": "#D97706",
+    "Fork evaluation cutoff": "#0F766E",
 }
 
 
@@ -122,9 +123,8 @@ def file_sha256(path: Path) -> str:
 
 def write_text(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if not content.endswith("\n"):
-        content += "\n"
-    path.write_text(content, encoding="utf-8")
+    normalized = "\n".join(line.rstrip() for line in content.splitlines()).rstrip()
+    path.write_text(f"{normalized}\n", encoding="utf-8")
 
 
 def write_bytes(path: Path, content: bytes) -> None:
@@ -790,6 +790,12 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
     panel_height = int(dataset["plot"]["eip_panel_height"])
     if dataset.get("assessment_ref_markers"):
         panel_height += 48
+    has_evaluation_cutoff = any(
+        marker.get("marker_kind") == "Fork evaluation cutoff"
+        for marker in dataset.get("assessment_ref_markers", [])
+    )
+    if has_evaluation_cutoff:
+        panel_height += 26
     layer_eips = [eip for eip in dataset["eips"] if layer in eip["layers"]]
     layer_numbers = {eip["number"] for eip in layer_eips}
 
@@ -1130,6 +1136,27 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
         )
     )
 
+    evaluation_cutoff_rules = (
+        base.transform_filter(
+            (alt.datum.record_type == "assessment_marker")
+            & (alt.datum.marker_kind == "Fork evaluation cutoff")
+        )
+        .mark_rule(
+            color=ASSESSMENT_MARKER_COLORS["Fork evaluation cutoff"],
+            strokeWidth=2.5,
+            strokeDash=[2, 2],
+            opacity=0.88,
+        )
+        .encode(
+            x=x_no_axis,
+            href=alt.Href("source_url:N"),
+            tooltip=[
+                *assessment_tooltip,
+                alt.Tooltip("cohort:N", title="Aggregation cohort"),
+            ],
+        )
+    )
+
     selected_ref_flags = (
         base.transform_filter(
             (alt.datum.record_type == "assessment_marker")
@@ -1168,6 +1195,53 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
             y=alt.value(14),
             href=alt.Href("source_url:N"),
             tooltip=assessment_tooltip,
+        )
+    )
+
+    evaluation_cutoff_flags = (
+        base.transform_filter(
+            (alt.datum.record_type == "assessment_marker")
+            & (alt.datum.marker_kind == "Fork evaluation cutoff")
+        )
+        .mark_point(
+            shape="square",
+            filled=True,
+            size=650,
+            color=ASSESSMENT_MARKER_COLORS["Fork evaluation cutoff"],
+            stroke="#134E4A",
+            strokeWidth=1.8,
+        )
+        .encode(
+            x=x_no_axis,
+            y=alt.value(118),
+            href=alt.Href("source_url:N"),
+            tooltip=[
+                *assessment_tooltip,
+                alt.Tooltip("cohort:N", title="Aggregation cohort"),
+            ],
+        )
+    )
+
+    evaluation_cutoff_labels = (
+        base.transform_filter(
+            (alt.datum.record_type == "assessment_marker")
+            & (alt.datum.marker_kind == "Fork evaluation cutoff")
+        )
+        .mark_text(
+            text="CUTOFF",
+            color="white",
+            fontSize=8,
+            fontWeight="bold",
+            baseline="middle",
+        )
+        .encode(
+            x=x_no_axis,
+            y=alt.value(118),
+            href=alt.Href("source_url:N"),
+            tooltip=[
+                *assessment_tooltip,
+                alt.Tooltip("cohort:N", title="Aggregation cohort"),
+            ],
         )
     )
 
@@ -1292,31 +1366,41 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
         )
     )
 
-    panels = (
-        alt.layer(
-            network_rules,
-            curves,
-            inclusion_rules,
-            anchor_rules,
-            selected_ref_rules,
-            commit_points,
-            creation_points,
-            inclusion_points,
-            inclusion_record_points,
-            devnet_points,
-            pfi_flag,
-            pfi_label,
-            pfi_same_state,
-            cfi_flag,
-            cfi_label,
-            cfi_same_state,
-            cfi_rip_suffix,
-            sfi_flag,
-            sfi_label,
-            sfi_same_state,
-            selected_ref_flags,
-            selected_ref_labels,
+    panel_layers = [
+        network_rules,
+        curves,
+        inclusion_rules,
+        anchor_rules,
+        selected_ref_rules,
+        commit_points,
+        creation_points,
+        inclusion_points,
+        inclusion_record_points,
+        devnet_points,
+        pfi_flag,
+        pfi_label,
+        pfi_same_state,
+        cfi_flag,
+        cfi_label,
+        cfi_same_state,
+        cfi_rip_suffix,
+        sfi_flag,
+        sfi_label,
+        sfi_same_state,
+        selected_ref_flags,
+        selected_ref_labels,
+    ]
+    if has_evaluation_cutoff:
+        panel_layers.insert(4, evaluation_cutoff_rules)
+        panel_layers.extend(
+            [
+                evaluation_cutoff_flags,
+                evaluation_cutoff_labels,
+            ]
         )
+
+    panels = (
+        alt.layer(*panel_layers)
         .properties(width=width, height=panel_height)
         .facet(
             row=alt.Row(
@@ -1349,6 +1433,14 @@ def layer_chart(dataset: dict[str, Any], layer: str) -> alt.VConcatChart:
                             "then devnet/testnet markers.",
                             "Each event type has a fixed lane; the proposal anchor is the "
                             "amber dashed rule.",
+                            *(
+                                [
+                                    "CUTOFF is the fork-level initial-evaluation horizon; its tooltip "
+                                    "identifies whether the EIP is forecastable or late scope."
+                                ]
+                                if has_evaluation_cutoff
+                                else []
+                            ),
                         ]
                         if dataset.get("assessment_ref_markers")
                         else []
