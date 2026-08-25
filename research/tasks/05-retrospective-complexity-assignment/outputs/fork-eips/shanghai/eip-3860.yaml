@@ -1,0 +1,656 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: shanghai
+eip:
+  number: 3860
+  title: Limit and meter initcode
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-3860 extended EIP-170 with a 49,152-byte
+    maximum for initcode supplied by creation transactions, CREATE, and CREATE2.
+    It also charged 2 gas per 32-byte initcode word through transaction intrinsic
+    gas and through an extra opcode charge taken before address calculation and
+    initcode execution. Oversized creation transactions became invalid, while an
+    oversized CREATE or CREATE2 returned zero; the stated purpose was to meter
+    linear jump-destination analysis and bound its resource exposure.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/shanghai/eip-3860/manifest.yaml
+    manifest_sha256: 745660e7789e581a5897f4ac3e77939e7af53390241a7a596e0bbf738c34859e
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: d38a4add0cfd890f5b44a9491a29399cd1e4a52d
+    path: EIPS/eip-3860.md
+    committed_at: '2022-02-03T17:32:59Z'
+    git_blob_sha: 7acc1955a89afd39d24ae4a90b519fce22bb67e2
+    content_sha256: 4dd3935265d7d837c3bb86bb69df6e3e0853f491c3b2a9d58d57d65314bc9d6f
+    immutable_url: https://github.com/ethereum/EIPs/blob/d38a4add0cfd890f5b44a9491a29399cd1e4a52d/EIPS/eip-3860.md
+    information_cutoff_at: '2022-02-04'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/shanghai/eip-3860.md
+    content_sha256: 114dc468287e50e11ee0fb3fc994f0cacbf5a75f232119ec017b74d507978291
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:02:35+02:00'
+    session_id: assessment-run-509e9cc1-9123-46d0-9749-eb27f673998b
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-170.md
+  - supporting/eip-1014.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — Parameters and Rules, lines 42-58
+    summary: >-
+      The proposal defines a new per-word initcode cost, adds it to creation-
+      transaction intrinsic gas, and charges it to CREATE and CREATE2 before
+      address calculation and initcode execution.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 11-15
+    summary: >-
+      CREATE2 already has a per-word hashcost deducted with its existing creation
+      charges, so the proposed initcode charge changes an established dynamic-gas
+      path.
+  rationale: >-
+    This is a new gas-accounting mechanism applied through existing transaction
+    intrinsic-gas and opcode-gas mechanisms, including the pre-existing CREATE2
+    hashcost path. It therefore affects existing mechanisms and their tests,
+    matching score 3.
+  confidence: high
+  uncertainty_note: >-
+    The exact charge ordering for an over-limit CREATE or CREATE2 is not fully
+    explicit, but that does not change the anchor level.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      Both CREATE and CREATE2 receive a new charge that must be deducted before
+      calculation of the resulting contract address and before execution of the
+      initcode.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 13-15
+    summary: >-
+      CREATE2's existing hashcost is deducted before evaluation of its resulting
+      address and initcode, identifying the existing execution point with which
+      the new charge is combined.
+  rationale: >-
+    The new up-front charge changes the gas-boundary path before address-derived
+    state work for two state-affecting opcodes. This is a multiple-opcode ordering
+    consequence, but it does not redefine recordable access or a broad opcode
+    class, matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal fixes the new charge relative to address calculation and
+    initcode execution, but does not completely order the oversize check, memory
+    expansion, base creation charge, and CREATE2 hashcost against one another.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 14-20; Specification, lines 40-58
+    summary: >-
+      The only gas introduced is an initcode word charge for contract-creation
+      transactions and CREATE-family opcodes; no blob resource or blob-gas rule
+      appears in the proposal.
+  rationale: No blob gas accounting is introduced or modified, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      The proposal changes execution and intrinsic gas for initcode length; it
+      defines no separate cost for bytes written to state, state-gas budget, or
+      spill mechanism.
+  rationale: The new charge is EVM execution gas, not state gas, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — Parameters and Rules, lines 42-58
+    summary: >-
+      The rules only add an initcode charge and size limit and contain no refund
+      or mechanism for returning gas.
+  rationale: No EVM gas-refund mechanism is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      Existing creation transactions gain both a validity limit and higher
+      intrinsic gas, while existing CREATE and CREATE2 executions gain a size
+      failure and an additional dynamic charge.
+  - source: eip.md
+    locator: Test Cases, lines 111-118
+    summary: >-
+      The requested cases span creation transactions and both creation opcodes at
+      gas and maximum-size boundaries.
+  rationale: >-
+    Existing tests across the focused contract-creation category must be
+    reworked for changed gas and failure outcomes. The affected category is
+    considerable but bounded rather than a diverse major share of all tests,
+    matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not enumerate the pre-existing test corpus, so the precise
+    proportion of tests requiring updates is uncertain.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 111-118
+    summary: >-
+      The proposal calls for targeted tests of gas sufficiency and initcode-size
+      boundaries, not an additional output or property for unrelated tests to
+      assert.
+  rationale: >-
+    Existing creation tests may need changed expectations, which is scored in the
+    preceding criterion, but unrelated pre-existing tests gain no new invariant;
+    score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-58
+    summary: >-
+      All parameters and rules are derived from transaction data, opcode inputs,
+      and fixed constants; the proposal specifies no transition-tool field or
+      external input.
+  rationale: No transition-tool interface change is required, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 111-118
+    summary: >-
+      The proposed cases use ordinary creation transactions, CREATE and CREATE2,
+      selectable gas limits, and byte-length boundaries.
+  rationale: >-
+    These cases can be expressed using ordinary transaction, opcode, gas, and
+    byte-array test capabilities; no new framework abstraction is indicated, so
+    score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — Gas cost per word, lines 73-77
+    summary: >-
+      The new cost is made compatible with CREATE2's existing hashcost by adding
+      2 to that established per-word charge; no hash function or cryptographic
+      result is changed.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 11-21
+    summary: >-
+      EIP-1014 supplies the existing CREATE2 address-hashing mechanism and its
+      hashcost, which EIP-3860 leaves intact.
+  rationale: >-
+    Reusing an existing hashing-cost shape does not introduce or modify a
+    cryptographic mechanism, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — Parameters and Rules, lines 42-58
+    summary: >-
+      The charge rounds initcode length up by 32-byte words, the size cap is a
+      strict greater-than check, intrinsic gas can make a transaction invalid,
+      and opcode oversize failure has a different zero-result outcome.
+  - source: eip.md
+    locator: Test Cases, lines 111-118
+    summary: >-
+      The proposed matrix explicitly crosses sufficient and insufficient gas with
+      exact-limit and limit-plus-one lengths over a creation transaction, CREATE,
+      and CREATE2.
+  rationale: >-
+    Multiple independent boundaries—word rounding, maximum size, gas
+    sufficiency, and transaction-versus-opcode failure—combine across three
+    creation paths. The resulting cross-product requires an elevated case count,
+    matching score 3.
+  confidence: high
+  uncertainty_note: >-
+    Gas consumption for the over-limit opcode path is not completely ordered,
+    so some expected outcomes cannot be fixed from the text alone.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      A creation transaction can become invalid because of initcode length or
+      intrinsic gas, but the proposal introduces no block or transaction RLP
+      validation format.
+  rationale: >-
+    Consensus transaction validity changes do not by themselves constitute the
+    new block-RLP validation mechanism required by this anchor, so score 0
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-58
+    summary: >-
+      The complete rule set concerns EVM contract creation and transaction
+      intrinsic gas and specifies no engine endpoint, field, or communication
+      mechanism.
+  rationale: No Engine API field or endpoint is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 14-20; Specification, lines 40-58
+    summary: >-
+      The proposal consists of an initcode cap and gas rules and deploys no
+      protocol-owned contract or contract code.
+  rationale: No system contract is added, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      The rules directly modify generic contract-creation transactions and EVM
+      opcodes, without identifying or altering any pre-existing system contract.
+  rationale: No system contract code, state, or behavior is modified, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      The proposal applies new rules to the already named CREATE and CREATE2
+      instructions and assigns no new opcode value.
+  rationale: No opcode is added, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      CREATE and CREATE2 newly push zero when their initcode length exceeds the
+      maximum, in addition to receiving a gas change.
+  - source: eip.md
+    locator: Rationale — How to report initcode limit violation?, lines 93-95
+    summary: >-
+      The zero-result behavior was deliberately chosen as a creation-instruction
+      error outcome instead of exceptional abort.
+  rationale: >-
+    At least two pre-existing opcodes gain a non-gas behavioral failure condition.
+    The rubric's binary modified-opcode anchor therefore requires score 3.
+  confidence: high
+  uncertainty_note: >-
+    The gas consumed before the new zero result is not fully ordered, but the
+    behavioral modification itself is explicit.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-58
+    summary: >-
+      The proposal defines fixed constants and rules for transactions, CREATE,
+      and CREATE2 and introduces no callable precompile address or function.
+  rationale: No precompile is added, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-58
+    summary: >-
+      All specified changes concern initcode processing by transactions and
+      creation opcodes; no precompile logic or gas schedule is mentioned.
+  rationale: No existing precompile is modified, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      Existing transaction data is reinterpreted for size and intrinsic gas, but
+      its encoding and all block and interface encodings remain unchanged.
+  rationale: No RLP, SSZ, transaction, block, or interface encoding changes, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      The proposal changes rules for an existing create transaction and does not
+      define a new typed transaction envelope or transaction category.
+  rationale: No new transaction type is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-56
+    summary: >-
+      A creation transaction is newly invalid above the initcode-size cap, and
+      its intrinsic gas formula newly includes the rounded initcode charge so
+      insufficient gas also makes it invalid.
+  - source: eip.md
+    locator: Test Cases, lines 111-118
+    summary: >-
+      The requested transaction cases exercise both intrinsic-gas sufficiency and
+      exact size-limit validity boundaries.
+  rationale: >-
+    Two existing creation-transaction validity calculations change and existing
+    cases need updated boundary expectations, but the changes are localized and
+    require no test-infrastructure redesign. This matches score 2.
+  confidence: high
+  uncertainty_note: >-
+    The backwards-compatibility wording about some over-limit transactions being
+    includable is not explicit about whether it means call transactions that
+    invoke a creation opcode rather than creation transactions themselves.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 40-58
+    summary: >-
+      The proposal's constants and rules use existing transaction and opcode data
+      and define no new block-body or header field.
+  rationale: No block or block-header field is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 97-101
+    summary: >-
+      The proposal requires a network upgrade because consensus rules change, but
+      it specifies no activation-block state mutation, migration, or modification
+      of an internal variable.
+  rationale: >-
+    Ordinary activation of new rules is not the activation-block mutation
+    required by this anchor, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 22-38
+    summary: >-
+      Jump-destination analysis scales linearly with initcode length, was
+      unmetered and unbounded, and could be amplified through programmatically
+      generated initcode in CREATE and CREATE2.
+  - source: eip.md
+    locator: Rationale — Gas cost constant and size limit, lines 62-83
+    summary: >-
+      The gas constant is selected from differing implementation worst-case
+      benchmarks, while the size bound is intended to make worst-case estimation
+      tractable.
+  - source: eip.md
+    locator: Security Considerations, lines 103-109
+    summary: >-
+      The proposal estimates a block-level workload of roughly 1.3 GB of analyzed
+      initcode under the then-current gas limit and a substantial added gas cost
+      after the change.
+  rationale: >-
+    Performance validation must cover implementation-specific analysis costs and
+    end-to-end repeated creation workloads, so it is not fully captured by a
+    single isolated arithmetic benchmark. The impact remains confined to contract
+    creation rather than broad execution, matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    The package reports benchmark results but does not define a normative
+    performance-validation matrix across implementations and workload shapes.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 22-38
+    summary: >-
+      The proposal responds to an unmetered, unbounded linear analysis cost and
+      notes that cheap generated initcode had enabled malicious constructions.
+  - source: eip.md
+    locator: Security Considerations, lines 103-109
+    summary: >-
+      The change is expected to harden clients against analysis attacks, but it
+      creates previously absent failure modes for layer-2 factory patterns and
+      multi-level deployment hierarchies.
+  rationale: >-
+    Correctness affects a limited set of critical creation paths and changes both
+    resource-exhaustion assumptions and failure behavior for dependent factory
+    designs. This calls for targeted security review and fuzzing, matching score
+    2 rather than a broad multi-component score 3.
+  confidence: high
+  uncertainty_note: >-
+    The historical text states that the authors did not know whether affected
+    multi-level factory contracts existed, so the practical exposure was
+    uncertain at the cutoff.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — Rules, lines 53-58
+    summary: >-
+      The rules separately state that oversized CREATE or CREATE2 returns zero and
+      that the new charge is deducted before address calculation and execution,
+      without ordering those two rules against all pre-existing charges.
+  - source: eip.md
+    locator: Rationale — How to report initcode limit violation?, lines 93-95
+    summary: >-
+      The rationale fixes zero as the failure result and distinguishes it from
+      exceptional-abort conditions, but does not specify the gas already consumed
+      on that path.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 13-15
+    summary: >-
+      The prior CREATE2 rule orders hashcost with memory expansion and base
+      creation gas, exposing an unresolved interaction with the new oversize
+      check and initcode charge.
+  rationale: >-
+    A test can observe whether an oversized opcode call first pays the new
+    per-word cost and the pre-existing memory, base, and CREATE2 hash costs, or
+    instead returns zero after an earlier size check. Agreement is needed, but the
+    gap is localized to creation-opcode failure ordering, matching score 2.
+  confidence: medium
+  uncertainty_note: >-
+    The numbered order and normal gas-check conventions may suggest an intended
+    reading, but the historical text does not make that reading normative.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Abstract, lines 1-20; Specification, lines 42-51
+    summary: >-
+      EIP-3860 formally requires and extends EIP-170, deriving its maximum
+      initcode size from EIP-170's maximum deployed-code size.
+  - source: supporting/eip-170.md
+    locator: Parameters and Specification, lines 14-25
+    summary: >-
+      EIP-170 defines MAX_CODE_SIZE and the existing over-limit deployed-code
+      failure that supplies the proposal's base constant and related creation
+      boundary.
+  - source: eip.md
+    locator: Rationale — Gas cost per word, lines 73-77
+    summary: >-
+      The new cost is explicitly combined with EIP-1014's CREATE2 hashcost,
+      changing CREATE2's post-activation per-word total from 6 to 8.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 11-15
+    summary: >-
+      EIP-1014 defines CREATE2 and the existing per-word hashcost and deduction
+      point with which the new mechanism must coordinate.
+  rationale: >-
+    The proposal depends directly on EIP-170's limit and modifies the gas path
+    established by EIP-1014 for CREATE2. Coordinated boundary and gas-order tests
+    are required for these two limited interactions, matching score 2.
+  confidence: high
+  uncertainty_note: >-
+    EIP-3670 is mentioned only as a possible future beneficiary of an extendable
+    cost system, not as a dependency or modified mechanism, so it is not counted.
+  exceptional_score_justification: null
+  interacting_eips: [170, 1014]
+  unidentified_interactions: []
+totals:
+  primary_score: 23
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The proposal does not fully order an oversized CREATE or CREATE2 size check
+    against the new initcode charge and the pre-existing memory-expansion, base
+    creation, and CREATE2 hash charges. It also leaves the backwards-compatibility
+    reference to includable over-limit transactions insufficiently explicit about
+    whether those are call transactions that reach an opcode rather than creation
+    transactions prohibited by the new validity rule.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - edge_boundary_conditions
+  - new_or_modified_transaction_validity_mechanisms
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 21
+    maximum: 23
+  plausible_tiers: [medium, high]
+  unresolved_questions:
+  - >-
+    On an over-limit CREATE or CREATE2, which of the new initcode charge,
+    memory-expansion gas, base creation gas, and CREATE2 hashcost is deducted
+    before zero is pushed?
+  - >-
+    Does the backwards-compatibility statement about includable over-limit
+    transactions refer only to non-creation transactions whose execution invokes
+    CREATE or CREATE2?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision, the pinned assessor-view
+    rubric, and the two allowlisted supporting EIPs. I did not access the internet,
+    later implementation knowledge, another EIP package, project-management
+    records, or any prohibited source, and I did not use a skill or delegate work.
+notable_ambiguities:
+- >-
+  The opcode oversize-result rule and the opcode gas-charge rule do not specify a
+  complete failure-path ordering.
+- >-
+  The backwards-compatibility phrase about over-limit transactions remaining
+  includable is ambiguous unless read as referring to call transactions that
+  execute CREATE or CREATE2.
+overall_confidence: medium

@@ -1,0 +1,397 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: shanghai
+eip:
+  number: 3855
+  title: PUSH0 instruction
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the recorded cutoff, EIP-3855 proposed activating a single new EVM opcode,
+    PUSH0 (0x5f), at the fork boundary. The opcode has no immediate data, pops no
+    stack items, pushes the value zero, and costs 2 gas under the existing verylow
+    cost class. The proposal aimed to reduce bytecode size and reliance on
+    context-sensitive zero-producing instructions, while noting that deployed code
+    containing the formerly unavailable opcode could change behavior.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/shanghai/eip-3855/manifest.yaml
+    manifest_sha256: 8f0acdadc1ae957dde965e229a5e91a177ca360229adfad44b3159a3ff0a6379
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 6caab461df3025fde8437603dec64a7dffd36809
+    path: EIPS/eip-3855.md
+    committed_at: '2021-09-22T22:15:14Z'
+    git_blob_sha: e86efc6e1316f530735b04a86e30cec96b3de73f
+    content_sha256: f89cc30713d2dbd961e673d20632d48b051b3444f495bbc01ef4f84e1ca4137c
+    immutable_url: https://github.com/ethereum/EIPs/blob/6caab461df3025fde8437603dec64a7dffd36809/EIPS/eip-3855.md
+    information_cutoff_at: '2022-02-04'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/shanghai/eip-3855.md
+    content_sha256: 6a8ab143f4677a930da8b2b9757db7c8f3876b5802a6adbb6478314d68550204
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:00:19+02:00'
+    session_id: assessment-run-f8554559-d970-4f59-a745-ecc87720b0cf
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification and Rationale/Gas cost, lines 34-42
+    summary: PUSH0 is assigned a constant cost of 2 gas, explicitly identified with the existing verylow cost class.
+  rationale: The gas schedule gains one opcode entry, but it reuses the existing constant-cost verylow mechanism; this is an update to existing gas accounting rather than a new mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The new instruction only performs a stack push and specifies no state access.
+  rationale: PUSH0 neither accesses state nor changes gas charging relative to a state access, so no opcode state-access ordering changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The proposal specifies only an EVM opcode's execution-gas cost and contains no blob-gas mechanism.
+  rationale: No blob gas accounting is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: PUSH0 changes only the EVM stack and has no state write or state-gas charge.
+  rationale: The proposal has no state-gas cost, charging site, budget, reservoir, or spill-path change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The instruction has a fixed 2-gas charge and the specification defines no refund behavior.
+  rationale: No new gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility and Test Cases, lines 48-56
+    summary: Byte 0x5f becomes an executable opcode, changing behavior for existing code containing it; the proposal supplies success and stack-overflow cases for the new behavior.
+  rationale: A minor, localized subset of pre-existing invalid-opcode or bytecode-execution cases involving 0x5f must be updated across the activation boundary.
+  confidence: medium
+  uncertainty_note: The package does not enumerate the pre-existing test corpus, so the affected subset is inferred from the specified change in 0x5f behavior.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Test Cases, lines 34-36 and 52-56
+    summary: The specified outputs and stack-limit checks apply to tests of PUSH0 itself, not as an additional assertion on unrelated tests.
+  rationale: Pre-existing tests unrelated to PUSH0 gain no new invariant to assert.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: Activation and behavior are expressed entirely as an opcode rule, with no new transition-tool input or output field.
+  rationale: The change requires no transition-tool interface modification or new field.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 52-56
+    summary: The proposed cases are ordinary raw-bytecode execution and stack-result or abort checks.
+  rationale: Existing execution, stack, and exceptional-halt test primitives suffice; no new framework abstraction is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: PUSH0 places a fixed zero value on the stack and performs no cryptographic operation.
+  rationale: No cryptographic mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 52-56
+    summary: The test cases explicitly distinguish 1024 successful pushes from a 1025th push that aborts for stack overflow.
+  rationale: The new opcode exposes one clear boundary-prone mechanism at the EVM stack-depth limit.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The proposal changes EVM instruction execution only and specifies no block RLP field or validation rule.
+  rationale: No block RLP validation mechanism requiring syncing tests is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The complete specified change is an EVM opcode and includes no Engine API field, endpoint, or communication mechanism.
+  rationale: No Engine API change is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 34-36
+    summary: The proposal introduces an instruction, not a contract or reserved-address mechanism.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: PUSH0's specified behavior is confined to a stack operation and does not identify or alter any system contract.
+  rationale: No pre-existing system contract is directly or indirectly modified by the specified mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: One opcode at 0x5f is added; it has no immediate data, pops nothing, pushes one constant value, and has constant gas cost.
+  rationale: This exactly matches one new simple opcode with no data portion, simple stack mechanics, and constant gas.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 48-50
+    summary: The document characterizes 0x5f as a new opcode that did not previously exist, rather than a modification of an existing opcode.
+  rationale: No pre-existing opcode's behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 34-36
+    summary: The proposal adds an EVM instruction at an opcode byte and does not define a precompile.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The specified opcode has no connection to precompile logic or precompile gas accounting.
+  rationale: No existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The proposal assigns an EVM bytecode opcode but makes no transaction, block, RLP, SSZ, or interface encoding change.
+  rationale: Opcode-byte assignment is outside this anchor's transaction, block, and interface encoding scope.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Metadata and Specification, lines 7-10 and 34-36
+    summary: This Core proposal defines an EVM opcode and contains no transaction envelope or transaction type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: The only validity-like condition is opcode availability after the fork; no transaction validity or intrinsic-gas rule is specified.
+  rationale: Existing transaction validity mechanisms and intrinsic gas calculation are unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: Fork activation gates an opcode behavior and introduces no block-body or header field.
+  rationale: No new block or block-header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 34-36
+    summary: PUSH0 becomes available at the ordinary HF boundary, with no state transition or existing internal-variable modification specified at activation.
+  rationale: Standard fork gating of a new opcode is not a new activation mechanism and requires no activation-block state or internal-variable modification.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Rationale, lines 34-46
+    summary: PUSH0 is a constant stack operation with no immediate data and may share the contiguous PUSH implementation.
+  rationale: The proposal introduces no mechanism whose performance needs validation beyond the isolated constant-time opcode behavior.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility and Security Considerations, lines 48-60
+    summary: Existing code containing 0x5f can change behavior, but the opcode is self-contained and its lack of immediate bytes leaves jump-destination analysis unaffected.
+  rationale: The consensus behavior change has a limited implementation and compatibility risk, but it is self-contained, isolatable, and does not introduce complex security interactions.
+  confidence: medium
+  uncertainty_note: The document reports no known security impact; the nonzero score reflects the explicit deployed-code behavior change if the opcode is implemented or activated incorrectly.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, Test Cases, and Security Considerations, lines 34-36, 52-60
+    summary: The opcode byte, activation condition, immediate-data length, stack inputs and output, gas cost, overflow outcome, and jump-destination treatment are specified.
+  rationale: The historical text determines the constructible PUSH0 behaviors using ordinary EVM execution rules; no localized detail requires new cross-client agreement.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 25-32
+    summary: PUSH0 is intended to reduce reliance on context-sensitive zero-producing opcodes, and the proposal identifies EIP-2733's possible RETURNDATASIZE behavior change as an example.
+  rationale: The relationship to EIP-2733 is explicit but limited and non-critical; PUSH0 can be specified and tested independently.
+  confidence: medium
+  uncertainty_note: EIP-2733 is cited as motivation rather than as a dependency, so the interaction does not warrant coordinated-mechanism complexity above score 1.
+  exceptional_score_justification: null
+  interacting_eips: [2733]
+  unidentified_interactions: []
+totals:
+  primary_score: 6
+  complexity_tier: low
+under_specification:
+  present: false
+  summary: No material under-specification is present in the historical proposal for the simple opcode behavior.
+  affected_criteria: []
+  plausible_total_range:
+    minimum: 6
+    maximum: 6
+  plausible_tiers: [low]
+  unresolved_questions: []
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: I assessed only the sealed historical package at its recorded information cutoff and did not use internet access, prohibited sources, or present-day implementation knowledge.
+notable_ambiguities:
+- The proposal cites EIP-2733 as motivation rather than as a dependency; this assessment records the explicit relationship as a limited, non-critical cross-EIP interaction.
+overall_confidence: high
