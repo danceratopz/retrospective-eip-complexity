@@ -1,0 +1,458 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: cancun
+eip:
+  number: 4788
+  title: Beacon block root in the EVM
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: >-
+    At the assessment cutoff, EIP-4788 proposed appending the 32-byte parent
+    beacon-block hash-tree root to every post-fork execution header. Before
+    transactions, execution processing would write that root into a slot-keyed,
+    modulo-8192 state ring buffer, and a new fixed-cost BEACON_ROOT opcode would
+    expose reads from that storage. The document was still Draft and left its
+    tests, reference implementation, security analysis, and several
+    consensus-critical details unresolved.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/cancun/eip-4788/manifest.yaml
+    manifest_sha256: 1393703c6e239f96caa9e662bf32da9bad889f8caac79a1754228cdd322ea53c
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 5b909b76ac2bed7fbf710b8896217e60f1c0f822
+    path: EIPS/eip-4788.md
+    committed_at: '2023-04-13T13:59:33Z'
+    git_blob_sha: a2553d4b785e7b1231d42a99afce0ef697675d05
+    content_sha256: 4df9dad7b1f5db2d27dd277bc04edfe12e16c2e7cf966f4db305101c6ebe81eb
+    immutable_url: https://github.com/ethereum/EIPs/blob/5b909b76ac2bed7fbf710b8896217e60f1c0f822/EIPS/eip-4788.md
+    information_cutoff_at: '2023-04-27'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/cancun/eip-4788.md
+    content_sha256: 3494958e807476f76d8611622b7e70916d8630fc478bff3d7c1c25f48b129826
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T11:12:02Z'
+    session_id: assessment-run-492f1daf-d8da-48b5-94a5-e3359916e716
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2935.md
+  - supporting/ethereum-consensus-specs--ssz-simple-serialize.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification constants and New opcode, lines 25-31 and 72-83
+    summary: The proposal assigns the new BEACON_ROOT operation a gas constant and specifies a fixed-cost storage-reading opcode.
+  rationale: A gas charge is introduced for a new operation without changing an existing opcode's accounting or refund behavior, matching the anchor for a new, isolated accounting mechanism.
+  confidence: medium
+  uncertainty_note: The constants table names G_beacon_root, while the opcode text names the undefined G_beacon_state_root.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / EVM changes / New opcode, lines 72-85
+    summary: BEACON_ROOT pops a slot from the stack and then performs an SLOAD-like read from the history address.
+  rationale: The EIP introduces a new state-accessing operation whose stack, gas-charge, and storage-access ordering must be made consensus-exact, which is the score-2 anchor.
+  confidence: medium
+  uncertainty_note: The pseudocode orders the pop and read but does not say where gas is charged or how exceptional execution is ordered relative to the read.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 23-31 and 41-85
+    summary: The specified changes concern a header root, a pre-transaction state write, and an EVM opcode; no blob-gas rule is introduced or changed.
+  rationale: Nothing in the proposal meters, allocates, or otherwise changes blob gas.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / EVM changes / Block processing, lines 51-70
+    summary: The proposal mandates protocol-level SSTORE-like writes before transactions but specifies no state-gas price, budget, reservoir, or spill rule.
+  rationale: A state mutation is introduced, but no separate state-gas accounting mechanism covered by this anchor is added or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / EVM changes / New opcode, lines 72-85
+    summary: The new operation has a stated gas cost and read result, with no refund-producing condition or refund-counter change.
+  rationale: The proposal introduces no EVM gas-refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity and Block processing, lines 41-68
+    summary: Every post-fork block gains a mandatory header field and a pre-transaction state mutation, including fork-aware behavior based on timestamp.
+  rationale: Existing post-fork block, state-transition, syncing, and fork-transition tests would need broad reworking to supply the new header value and account for the state write, reaching the diverse-test score-3 anchor.
+  confidence: medium
+  uncertainty_note: The Test Cases section is TODO, so the exact historical fixture categories and amount of rework are not documented.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity, lines 41-47
+    summary: All blocks at or after the fork timestamp must carry the parent beacon-block root in an appended 32-byte header field.
+  rationale: A broad class of otherwise unrelated post-fork block tests gains a mechanical assertion about the new field, while the text does not require all pre-fork vectors to be re-derived; this matches score 2 rather than 3.
+  confidence: medium
+  uncertainty_note: The proposal supplies no test cases showing whether state-root effects would also become a universal asserted invariant.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity and Block processing, lines 43-53
+    summary: State transition after the fork requires one new 32-byte parent beacon-root value from the block header.
+  rationale: A transition tool must receive the single new header value to perform the mandatory pre-transaction write, matching the one-field score-1 anchor.
+  confidence: medium
+  uncertainty_note: No transition-tool interface is specified, so whether auxiliary slot or fork-context inputs are also needed depends on resolving other gaps.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity, lines 41-47; Test Cases, lines 111-113
+    summary: The block-header schema gains a fork-conditional field, while the proposal provides no test design beyond a TODO.
+  rationale: Existing fixture primitives require at least a minor extension to represent the appended field, but the package does not establish a new reusable expectation or modifier abstraction.
+  confidence: low
+  uncertainty_note: The TODO test section leaves open whether special primitives for pre-block system writes or beacon-root expectations would be necessary.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification / Block structure and validity, lines 13-17 and 41-47
+    summary: The new header commitment is the 32-byte hash-tree root of the parent beacon block.
+  - source: supporting/ethereum-consensus-specs--ssz-simple-serialize.md
+    locator: Merkleization, lines 210-248
+    summary: The packaged reference defines the established SSZ chunking, Merkleization, and hash_tree_root construction used by the commitment.
+  rationale: The proposal integrates one well-specified, established Merkle-root mechanism rather than introducing novel cryptography, matching score 1.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / EVM changes, lines 53-85
+    summary: Processing spans a start/end-slot range, converts keys to 32-byte big endian, wraps them modulo 8192, and returns zero when no root is stored.
+  - source: eip.md
+    locator: Specification / Background, lines 33-39
+    summary: Missed slots and bounded ring-buffer storage are explicit design dimensions.
+  rationale: Fork boundaries, zero or many elapsed slots, modulo wraparound, absent entries, key widths, and stale-slot queries create multiple interacting boundaries; slot-gap and wraparound coverage require an elevated case set.
+  confidence: high
+  uncertainty_note: Several boundary outcomes are not fully determined because convert_to_slot and overwrite freshness semantics are unspecified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity, lines 41-47
+    summary: Post-fork execution headers append one mandatory 32-byte parent beacon-root field, changing header size and validity.
+  rationale: Syncing clients gain a single, structurally simple fork-conditional header-field validation rule, matching score 1.
+  confidence: medium
+  uncertainty_note: The proposal does not spell out the block RLP form or validation error conditions.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity, lines 43-47
+    summary: Execution clients must place the consensus-derived parent beacon-block root into the execution header after the fork.
+  rationale: The cross-layer value must be communicated with the execution payload, implying one new payload/header field and therefore the score-1 Engine API consequence.
+  confidence: low
+  uncertainty_note: The EIP never names an Engine API endpoint, field, version, encoding, or validation responsibility.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification / Background, lines 13-18 and 33-39
+    summary: Roots are stored in a contract at a canonical execution-state address using an SSTORE-like update and a bounded ring buffer.
+  - source: eip.md
+    locator: Specification / Block processing, lines 51-70
+    summary: Protocol block processing writes the parent root into the history contract's storage before transactions.
+  rationale: One new stateful system contract is introduced and receives a new protocol-level action every post-fork block, which matches score 2.
+  confidence: high
+  uncertainty_note: The account's code, initialization, and collision handling at the fixed address are not specified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification constants, lines 13-18 and 25-31
+    summary: The proposal introduces a contract at a newly designated history address rather than identifying or altering an existing system contract.
+  rationale: No pre-existing system contract code, state, or behavior is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / EVM changes / New opcode, lines 72-85
+    summary: One BEACON_ROOT opcode is added; it pops one word, performs one modulo-indexed storage read, pushes one word, and has a fixed stated gas cost.
+  rationale: This is a single opcode with no data portion, straightforward stack mechanics, and constant gas, meeting the score-1 simple-opcode anchor.
+  confidence: medium
+  uncertainty_note: The gas constant name is inconsistent, and exceptional stack/gas ordering is not detailed.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Why not repurpose BLOCKHASH?, lines 93-96
+    summary: The proposal explicitly leaves BLOCKHASH unchanged and adds a separate opcode to avoid breaking existing contracts.
+  rationale: No pre-existing opcode behavior is changed or deprecated.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification / New opcode, lines 13-18 and 72-85
+    summary: EVM access is provided through a new opcode reading state at a history address; no precompile is defined.
+  rationale: The proposal adds no precompile.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / EVM changes, lines 49-85
+    summary: The EVM changes consist of protocol storage writes and a new opcode, with no reference to existing precompile logic or gas schedules.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity, lines 41-47
+    summary: A 32-byte field is appended after withdrawals_root and the block-header size grows at the fork timestamp.
+  rationale: Appending a consensus field changes block-header encoding at the block level, which directly triggers the binary score-3 anchor.
+  confidence: high
+  uncertainty_note: The exact RLP construction is implicit rather than written out.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-18 and 23-85
+    summary: The change is to headers, block processing, state, and an opcode; it defines no transaction envelope or type identifier.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity and Block processing, lines 41-70
+    summary: The validity and processing rules are attached to blocks and occur before transactions; no transaction validity or intrinsic-gas rule is stated.
+  rationale: Existing transaction types retain their validity and intrinsic gas rules.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity, lines 41-47
+    summary: A mandatory 32-byte parent beacon-block root is appended to the execution block header after withdrawals_root.
+  rationale: The proposal directly introduces a new block-header field, which is the score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block structure and validity and Block processing, lines 41-53
+    summary: At the timestamp boundary the header grows, and processing the activation block performs a new history-contract storage write before transactions.
+  rationale: The fork-activation block modifies execution state under the new rule, directly meeting the score-3 anchor even though the action continues on later blocks.
+  confidence: high
+  uncertainty_note: FORK_TIMESTAMP is still TBD, but the activation condition itself is explicit.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Block processing, lines 53-68
+    summary: Every post-fork block performs protocol state writes in a loop over the elapsed slot range before transaction execution.
+  - source: eip.md
+    locator: Rationale / Beacon block root instead of state root, lines 98-105
+    summary: The design explicitly considers work under skipped-slot conditions and chooses the block root to limit added work relative to a state-root design.
+  rationale: The write loop, state-trie interaction, and dependence on slot gaps require validation in full block processing and can affect existing block benchmarks, but the specified impact is bounded to this pre-block mechanism rather than clearly substantial across the system.
+  confidence: medium
+  uncertainty_note: Undefined slot conversion and no stated timestamp-gap bound prevent a firm worst-case iteration and database-write assessment.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 19-21
+    summary: Contracts such as staking pools and bridges are intended to rely on the exposed root for trust-minimized access to consensus state.
+  - source: eip.md
+    locator: Specification / Block structure and validity and EVM changes, lines 41-85
+    summary: A consensus-derived value crosses into execution-header validity, protocol-managed state, and an EVM-visible opcode.
+  - source: eip.md
+    locator: Security Considerations, lines 119-121
+    summary: The historical proposal leaves its security analysis as TODO.
+  rationale: Incorrect cross-layer roots, slot association, ring-buffer state, or opcode reads could undermine critical contract assumptions across several components, warranting extensive cross-layer review and fuzzing under the score-3 anchor.
+  confidence: medium
+  uncertainty_note: The absence of security considerations and precise cross-layer validation responsibilities makes the exact threat surface uncertain.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification constants and Block processing, lines 25-31 and 53-70
+    summary: The fork time is TBD and the consensus-critical convert_to_slot operation is used without any definition.
+  - source: eip.md
+    locator: Specification / New opcode, lines 72-85
+    summary: The opcode refers to an undefined gas-constant name and describes absent-slot behavior despite modulo-only storage that can contain an overwritten value.
+  - source: eip.md
+    locator: Test Cases, Reference Implementation, and Security Considerations, lines 111-121
+    summary: Tests, an implementation, and the security analysis are all left TODO at this revision.
+  rationale: Previously EVM-unobservable consensus-root and slot-association details become consensus-critical through a header field, state writes, and an opcode, while several constructible outcomes are unresolved; this matches score 3.
+  confidence: high
+  uncertainty_note: Material gaps include timestamp-to-slot conversion, gas naming and charge ordering, ring-buffer freshness, system-account initialization, and cross-layer validation/delivery.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Background, lines 33-39
+    summary: The root-exposure method is explicitly described as inspired by EIP-2935.
+  - source: supporting/eip-2935.md
+    locator: Simple Summary and Specification, lines 12-15 and 25-34
+    summary: EIP-2935 uses protocol-written history-contract state and an opcode read path for historical execution block hashes.
+  rationale: The proposal has a limited design-level interaction with EIP-2935's history-in-state pattern but uses its own address and opcode and remains independently testable, matching score 1.
+  confidence: high
+  uncertainty_note: The text calls EIP-2935 inspiration rather than a normative dependency.
+  exceptional_score_justification: null
+  interacting_eips: [2935]
+  unidentified_interactions: []
+totals:
+  primary_score: 38
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The draft makes a new consensus-layer value observable to execution while
+    leaving timestamp-to-slot conversion, the exact gas constant and charge
+    ordering, the cross-layer payload/interface path, history-account
+    initialization, and ring-buffer freshness behavior unresolved. Its tests,
+    reference implementation, and security considerations are also TODO.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - added_system_contracts
+  - added_opcodes
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 29
+    maximum: 44
+  plausible_tiers: [high]
+  unresolved_questions:
+  - How are execution timestamps converted to consensus slot numbers, including at the fork boundary?
+  - Is the opcode cost G_beacon_root or the undefined G_beacon_state_root, and when is it charged relative to stack and storage access?
+  - How is the parent beacon root delivered to and validated by the execution client and transition tooling?
+  - How is the fixed-address history account initialized or protected if state already exists there?
+  - Must a query for an overwritten modulo-8192 slot return the newer root, or zero as the absent-root prose suggests?
+  - What timestamp or slot-gap bounds limit the pre-block write loop?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only the sealed package sources and operational files
+    listed in provenance, made no internet-access attempt, and did not use later
+    implementation knowledge or any prohibited source.
+notable_ambiguities:
+- The opcode gas identifier in prose does not match the constants table.
+- The modulo ring buffer stores no slot tag, so the stated absent-root behavior is ambiguous after overwrite.
+- The draft does not define convert_to_slot or the execution/consensus interface carrying the root.
+overall_confidence: medium

@@ -1,0 +1,506 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: cancun
+eip:
+  number: 1153
+  title: Transient storage opcodes
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the 2022-12-08 information cutoff, EIP-1153 added two constant-cost EVM
+    opcodes, TLOAD and TSTORE, backed by contract-private transient storage that
+    is shared across the owning contract's frames and discarded after each
+    transaction. The proposal specified storage-like addressing, call-type
+    ownership, nested-revert rollback, and static-context behavior without
+    changing existing opcode semantics or using the refund counter. It also
+    supplied a map-and-journal reference design and analyzed worst-case memory
+    allocation and revert work.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/cancun/eip-1153/manifest.yaml
+    manifest_sha256: 1a88ef89af07c85d816367ee9f2e91cba2090f4edb8f7b1b17f93639b1b8f11b
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: c282a9bd3ed750d315abbf5483ab31db2a3e5757
+    path: EIPS/eip-1153.md
+    committed_at: '2022-12-07T18:16:53Z'
+    git_blob_sha: 3ea30688b16741be2480987d545224fdc6ac4749
+    content_sha256: 33bdd1ff47f8dbe93912da6a9a1564a90c761947a2840b556a9fa82b0446bfb0
+    immutable_url: https://github.com/ethereum/EIPs/blob/c282a9bd3ed750d315abbf5483ab31db2a3e5757/EIPS/eip-1153.md
+    information_cutoff_at: '2022-12-08'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/cancun/eip-1153.md
+    content_sha256: d37f955af8abca1bbb9a7ec20d675e950d24699dbe5ce49518919d4ae692db8a
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:12:28+02:00'
+    session_id: assessment-run-83bf295a-960b-4a51-9ead-8d5cee50dafc
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-20.md
+  - supporting/eip-2200.md
+  - supporting/eip-3529.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 53-55
+    summary: TLOAD and TSTORE receive newly specified constant execution-gas costs, each defined by reference to an existing warm or hot storage-operation cost.
+  - source: eip.md
+    locator: Rationale, lines 85-90
+    summary: The proposal states that existing operation semantics remain unchanged and characterizes the new opcodes' accounting as simpler.
+  rationale: >-
+    The two opcodes add new execution-gas charging sites, so this is a new EVM
+    gas rule. Their fixed 100-gas schedule neither changes an existing opcode's
+    accounting nor introduces refunds, matching score 2 rather than score 3.
+  confidence: high
+  uncertainty_note: >-
+    The wording does not make fully explicit whether the costs are permanently
+    100 or track the named warm/hot referent costs, but that does not change the
+    anchor score at the cutoff.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 17-17 and 55-57
+    summary: Transient values are never loaded from or written to persistent storage, have fixed warm/hot-equivalent costs, and are discarded at transaction end.
+  rationale: >-
+    The text introduces no cold/warm recording, block-level access-list effect,
+    or change to gas-versus-access ordering for an existing opcode. Transient
+    map access is the new opcodes' result mechanism, but the proposal provides
+    no recordable persistent-state access whose internal ordering changes under
+    this anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal calls transient storage "state"; this assessment treats its
+    non-persistent, fixed-cost map access as outside the rubric's recordable
+    state-access-ordering concern.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 15-22 and 43-65
+    summary: The complete feature is two transient-storage EVM opcodes and contains no blob mechanism or blob-gas rule.
+  rationale: No blob gas accounting is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Rationale, lines 17-17 and 85-91
+    summary: Transient values are never serialized to persistent storage, clients need not load an original value, and future persistent-storage designs need not account for them.
+  rationale: >-
+    The EIP adds ordinary EVM execution-gas charges but no persistent-state
+    byte charge, state-gas budget, reservoir, charging site, or spill rule.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Rationale, lines 41-41 and 69-71
+    summary: The EIP expressly says no refunds are required and prefers a mechanism that does not interact with the refund counter.
+  rationale: No new refund mechanism is introduced; avoiding refunds is a central design choice.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 45-45 and 93-97
+    summary: Bytes 0xb3 and 0xb4 become valid opcodes, while the EIP expressly leaves all existing opcode behavior unchanged.
+  rationale: >-
+    Existing invalid- or undefined-opcode coverage for the two assigned bytes
+    needs localized rework, but existing contract and opcode-behavior tests are
+    otherwise unaffected. That is a minor subset under score 1.
+  confidence: medium
+  uncertainty_note: >-
+    The historical EIP does not inventory the pre-existing test corpus; the
+    affected invalid-opcode subset is inferred directly from assigning the two
+    opcode bytes.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 57-57 and 93-97
+    summary: Transaction-end clearing applies only to newly created transient values, and existing opcode and contract behavior is unchanged.
+  rationale: >-
+    Tests that do not execute TLOAD or TSTORE produce no transient values and
+    gain no new externally asserted result or invariant.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-65
+    summary: All specified inputs and effects are internal EVM opcode, call-frame, and transaction-lifetime behavior; no transition interface field is introduced.
+  rationale: The feature requires no new transition-tool field or interface mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 47-65
+    summary: The observable cases are ordinary stack operations, calls, reverts, static execution, and transaction boundaries.
+  rationale: >-
+    These cases can be constructed as EVM programs and multi-transaction tests
+    using existing execution-test concepts; the EIP requires no new expectation
+    type, modifier, or permanent framework abstraction.
+  confidence: medium
+  uncertainty_note: The package contains no description of the historical test framework, so this is judged from the required observable cases.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-65
+    summary: The mechanism consists of word-addressed transient loads and stores and contains no cryptographic operation.
+  rationale: No cryptographic mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 57-65
+    summary: Tests must cover transaction-end clearing, frame sharing, ownership under four call forms, nested revert rollback, and the TSTORE/TLOAD distinction in static context.
+  - source: eip.md
+    locator: Reference Implementation, lines 101-108
+    summary: Correct rollback requires checkpoints across frame entry, successful return, and reverse journal application on revert.
+  rationale: >-
+    Several independent boundary-prone mechanisms combine: transaction lifetime,
+    same- versus cross-owner frames, CALL/STATICCALL versus
+    DELEGATECALL/CALLCODE, success versus nested revert, and static write
+    failure. The ownership-by-call-type and nested-revert matrix requires an
+    elevated number of cases, meeting score 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 43-65 and 93-97
+    summary: The EIP changes EVM execution only and specifies no block RLP field or block-validation rule.
+  rationale: No block RLP validation mechanism requiring sync testing is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-65
+    summary: The proposal specifies only EVM-local opcodes and transient-store lifecycle, with no Engine API field or endpoint.
+  rationale: No Engine API communication change is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 57-65
+    summary: Transient storage is private runtime data belonging to ordinary contract frames, not a newly deployed protocol contract.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 43-65 and 93-97
+    summary: The EIP adds general EVM functionality and states that existing smart-contract behavior is unchanged; it identifies no system contract effect.
+  rationale: No pre-existing system contract code, state, or behavior is modified directly or indirectly.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: added_opcodes
+  label: Added opcodes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-55
+    summary: The EIP adds TLOAD at 0xb3 and TSTORE at 0xb4, with one- and two-word stack interfaces, word addressing, and constant gas costs.
+  rationale: >-
+    Two new opcodes are introduced. Each has fixed-size stack operands, no data
+    portion, and a constant cost, so they are multiple simple opcodes and match
+    score 2.
+  confidence: high
+  uncertainty_note: The TLOAD result sentence has a normative stack-action typo, recorded under under-specification, but it does not make the opcode structurally complex.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale and Backwards Compatibility, lines 85-90 and 93-97
+    summary: The EIP expressly says it does not change the semantics or behavior of existing operations and opcodes.
+  rationale: No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 15-22 and 43-65
+    summary: The proposal adds two opcodes and no address-based precompile.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 43-65 and 93-97
+    summary: The specified change is confined to new opcodes and leaves existing behavior unchanged, with no precompile gas or logic change.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 15-22 and 43-65
+    summary: The EIP adds internal EVM word operations and no transaction, block, or interface serialization.
+  rationale: No RLP, SSZ, or other transaction/block/interface encoding changes are introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-65
+    summary: Transient storage is available through opcodes inside ordinary transaction execution; no transaction envelope or type is defined.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 43-65 and 93-97
+    summary: The hard-fork change affects opcode execution only and defines no transaction validity or intrinsic-gas rule.
+  rationale: Existing transaction validity and intrinsic gas calculations are unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-65
+    summary: The full specification adds EVM runtime behavior and no block or header field.
+  rationale: No new block body or header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 57-57 and 93-95
+    summary: Although a hard fork activates the opcodes, transient values are transaction-local and discarded; no activation-block state or existing internal variable is modified.
+  rationale: Opcode availability changes at the fork, but there is no special activation-block state transition or variable modification.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Reference Implementation, lines 101-108 and 201-201
+    summary: The recommended journal is constant-time on normal paths but reverse-linear on revert; a worst-case reverting transaction performs twice the writes, although the EIP compares this with existing state journaling.
+  - source: eip.md
+    locator: Security Considerations, lines 225-245
+    summary: TSTORE permits linear node-memory allocation up to about 9.15 MB at the stated block gas limit, and the EIP compares this with call-reset memory allocation up to about 20 MB.
+  rationale: >-
+    Loads and normal stores can be benchmarked directly, but total cost cannot
+    be validated wholly in isolation because checkpoints, nested reverts, and
+    transaction-wide allocation interact with call execution and journaling.
+    The EIP's comparison to existing worst cases supports limited rather than
+    substantial benchmark impact, matching score 2.
+  confidence: high
+  uncertainty_note: The package supplies complexity bounds and gas-limit examples but no measured client benchmarks.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 59-65
+    summary: Security-sensitive semantics vary across call ownership, nested reverts, and static contexts.
+  - source: eip.md
+    locator: Security Considerations, lines 225-249
+    summary: The EIP identifies linear node-memory allocation, transaction-lifetime misuse, reentrancy-lock hazards, and unexpected persistence across frame returns as risks.
+  rationale: >-
+    The mechanism touches a limited but meaningful set of existing components:
+    call-context ownership, reversion, static execution, reentrancy patterns,
+    and node memory. These slightly alter assumptions for contracts using the
+    feature and warrant targeted review and fuzzing, but the EIP does not alter
+    existing opcode invariants broadly enough for score 3.
+  confidence: medium
+  uncertainty_note: The document analyzes hazards qualitatively but includes no packaged implementation or security-test results.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 47-51
+    summary: TLOAD is said to use the SLOAD stack interface and fetch a word, but its final normative clause says it "pops" the value rather than stating that it pushes the fetched word.
+  - source: eip.md
+    locator: Reference Implementation, lines 127-150
+    summary: The non-normative implementation makes absent keys read as a zero word, clarifying a behavior not stated as directly in the opcode specification.
+  rationale: >-
+    A few localized details are imperfectly specified, most notably the
+    self-contradictory TLOAD result action. The SLOAD analogy, the word
+    "fetches," and the reference implementation make the intended behavior
+    obvious enough for score 1, but clients still need a shared correction or
+    interpretation before baselining literal opcode tests.
+  confidence: medium
+  uncertainty_note: >-
+    Same-transaction address destruction/recreation and whether the 100-gas
+    values are fixed or referential are also not expressly resolved.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Motivation, lines 12-12 and 28-36
+    summary: EIP-1153 formally requires EIP-2200 and EIP-3529 and identifies an EIP-20 temporary-approval use case.
+  - source: eip.md
+    locator: Specification and Rationale, lines 55-55 and 69-73
+    summary: Opcode pricing is defined using storage-operation costs, while the design deliberately separates transient behavior from the refund mechanism changed by the required EIPs.
+  - source: supporting/eip-2200.md
+    locator: Specification, lines 57-105
+    summary: EIP-2200 defines the dirty-slot SSTORE gas and refund machinery to which EIP-1153 compares TSTORE.
+  - source: supporting/eip-3529.md
+    locator: Specification and Backwards Compatibility, lines 25-41 and 62-71
+    summary: EIP-3529 caps transaction refunds and discusses reentrancy locks and approve-and-send patterns that motivate the separate transient mechanism.
+  rationale: >-
+    Coordinated consideration with EIP-2200 and EIP-3529 is required for the
+    referenced gas schedule and deliberate refund separation; EIP-20 supplies
+    a limited contract-level use-case interaction. The dependencies are real
+    but narrow and do not modify those EIPs' mechanisms, matching score 2 rather
+    than extensive score-3 interdependence.
+  confidence: high
+  uncertainty_note: Unnumbered draft-opcode allocation and future-storage-design references are preserved separately and not inferred.
+  exceptional_score_justification: Not applicable; score 4 is not used.
+  interacting_eips: [20, 2200, 3529]
+  unidentified_interactions:
+  - Other draft EIPs competing for opcode bytes are mentioned in eip.md line 45 without EIP numbers.
+  - Future storage designs such as Verkle trees are mentioned in eip.md line 91 without an EIP number.
+totals:
+  primary_score: 15
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The normative TLOAD sentence says that after fetching a word the opcode
+    "pops" the value on top of the stack, conflicting with its SLOAD-like load
+    role and failing to state the expected pushed result. The intended reading
+    is strongly signaled, but literal cross-client vectors require agreement;
+    address lifecycle and whether gas values are fixed or referential are also
+    not fully explicit.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - edge_boundary_conditions
+  - added_opcodes
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 15
+    maximum: 16
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - Does TLOAD push the fetched word, despite the normative sentence saying it pops a value?
+  - Is transient storage identity strictly address-keyed if an address is destroyed and recreated within one transaction?
+  - Are both opcode costs fixed at 100 gas, or do they track the named warm/dirty SSTORE and hot SLOAD referent costs?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision, the pinned assessor
+    rubric, and the three allowlisted supporting EIPs at the recorded cutoff. I
+    did not use internet access, later implementations, later specifications,
+    fork outcomes, other EIP assessments, project-management records, or any
+    dedicated assessment skill.
+notable_ambiguities:
+- The TLOAD specification says it fetches a word and then "pops" the value instead of specifying a pushed result.
+- The warm/hot cost analogies and parenthetical 100-gas values do not clearly state whether the schedule is referential or fixed.
+- The state-access-ordering anchor is rubric-sensitive because the EIP calls the map state while expressly excluding persistent storage and any cold/warm access-recording rule.
+overall_confidence: medium
