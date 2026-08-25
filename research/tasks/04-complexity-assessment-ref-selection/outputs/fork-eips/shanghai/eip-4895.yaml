@@ -1,0 +1,121 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: shanghai
+eip:
+  number: 4895
+  title: Beacon chain push withdrawals as operations
+  layers:
+  - execution
+  - consensus
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/shanghai/eip-4895.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-4895.yaml
+research_run:
+  started_at: '2026-08-24T15:44:37Z'
+  completed_at: '2026-08-24T15:44:37Z'
+  researcher: Codex coordinator (Task 04 proposal generation)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: shanghai-eip4895-proposed-2022-02-04
+  alternative_event_ids: []
+  kind: normalized_proposal_equivalent
+  raw_label: '"probably the other biggest one is withdrawal the beacon chain which does not have an eip
+    yet" (ACD 131 Shanghai prioritization discussion)'
+  effective_at: '2022-02-04'
+  recorded_at: null
+  date_basis: Task 01 event shanghai-eip4895-proposed-2022-02-04 records 2022-02-04 with day precision.
+    Task 01 does not identify a distinct repository-recording commit. No time is derived from an EIP frontmatter
+    date, author time, pull-request opening time, client history, or observed outcome.
+  verification_status: verified_with_limitation
+  verification_rationale: "The selected event resolves in the Task 01 fork\u2013EIP record and cites primary\
+    \ source IDs pm-acd-131-minutes, eips-eip4895-blob-a08f51fe. The frozen policy classifies it as normalized_proposal_equivalent.\
+    \ Task 01 records a contemporaneous Shanghai proposal for beacon-chain withdrawals before an EIP number\
+    \ or file existed. It is the frozen historical equivalent, but the missing pre-anchor file forces\
+    \ the Task 04 creation exception."
+  confidence: low
+  source_ids:
+  - pm-acd-131-minutes
+  - eips-eip4895-blob-a08f51fe
+bracketing_revisions:
+  preceding:
+    exists: false
+    revision_event_id: null
+    event_kind: null
+    commit: null
+    committed_at: null
+    offset_from_anchor_seconds: null
+    semantic_effect: null
+    summary: null
+    immutable_url: null
+    source_ids: []
+  following:
+    exists: true
+    revision_event_id: eip4895-e01
+    event_kind: creation
+    commit: 1ce607ac37433c566f9ee5ecad817693da1fcd3f
+    committed_at: '2022-03-11T12:28:57Z'
+    offset_from_anchor_seconds: 3068937
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-4895 (merged from PR #4895): a new system-level ''withdrawal'' operation
+      pushed from the beacon chain into the EVM, with a Withdrawal object of (index, address, amount)
+      serialised as RLP([index, address, amount]), a new block-level `withdrawals` list, a `withdrawals_root`
+      header commitment built as an index-keyed Merkle-Patricia trie, an additional block validity check,
+      and an unconditional post-transaction balance increase with no gas cost. Frontmatter: status Draft,
+      created 2022-03-10, no `requires` field. Includes an open TODO about withdrawal logs/receipts.'
+    immutable_url: https://github.com/ethereum/EIPs/blob/1ce607ac37433c566f9ee5ecad817693da1fcd3f/EIPS/eip-4895.md
+    source_ids: &id001
+    - commit-1ce607ac37
+    - blob-eip4895-creation
+selection:
+  mode: post_anchor_exception
+  selected_revision:
+    revision_event_id: eip4895-e01
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: 1ce607ac37433c566f9ee5ecad817693da1fcd3f
+    path: EIPS/eip-4895.md
+    committed_at: '2022-03-11T12:28:57Z'
+    offset_from_anchor_seconds: 3068937
+    git_blob_sha: 20168103d6823834989fd5d37c090ff7c559d64d
+    content_sha256: 34436435c8cd7099db27223f7219fd85190f1648805caebebc4e00ad60c287c1
+    immutable_url: https://github.com/ethereum/EIPs/blob/1ce607ac37433c566f9ee5ecad817693da1fcd3f/EIPS/eip-4895.md
+    source_ids: *id001
+  information_cutoff_at: '2022-03-11T12:28:57Z'
+  rationale: The complete Task 01 EIP history was normalized to UTC and bracketed against shanghai-eip4895-proposed-2022-02-04.
+    No definite preceding revision exists, so the creation exception is proposed for human review. The
+    anchor's day precision and any same-day ordering limitation remain explicit.
+  confidence: low
+  post_anchor_exception:
+    used: true
+    within_seven_days: false
+    diff_semantic_effect: substantive
+    diff_summary: 'Direct review of creation commit 1ce607ac: it adds the initial 129-line Draft for beacon-chain
+      withdrawals as system-level operations; no earlier EIP file exists to diff.'
+    hindsight_risk: The selected file did not exist at proposal time and contains roughly five weeks of
+      potential design development. It may materially exceed the information available when withdrawals
+      were first proposed for Shanghai.
+    justification: Task 04 requires selecting the creation revision when no preceding EIP-file candidate
+      exists. Creation precedes CFI and no later CFI/SFI, client, devnet, testing, or observed-outcome
+      evidence is used, but it is outside the ordinary seven-day ceiling. This exceptional chronology
+      cannot be authoritative without explicit human approval.
+review:
+  status: needs_human_review
+  reviewer: null
+  reviewed_at: null
+  notes:
+  - This generated record is a proposal only. It becomes authoritative only after separate human approval.
+  - 'Frozen anchor policy: task04-anchor-fallback-v1; ambiguity codes: pre_pfi_vocabulary, pre_eip_proposal,
+    day_precision, creation_after_anchor_outside_seven_days.'
+  - 'Independent spot-check of ACD #131 confirms withdrawals were prioritized while explicitly lacking
+    an EIP. Direct Git review confirms creation commit 1ce607ac adds the 129-line EIP on 2022-03-11, before
+    the later CFI event but about 35 days after the proposal date.'
+unknowns:
+- The creation ref is outside the seven-day exception ceiling. It is proposed only because the contract's
+  no-preceding-candidate rule requires creation; the human reviewer may instead reject the historical-equivalent
+  anchor for this EIP.
+- The Task 01 anchor has calendar-day precision only. Offsets use 00:00:00 UTC as a display boundary,
+  not as an inferred decision time. Revisions on the anchor day are excluded from both definite brackets.
+- No definitely preceding EIP-file revision exists at the verified anchor precision.
+- The consensus-layer (Capella) side of withdrawals followed the consensus-specs release process rather
+  than EIP inclusion states; no CFI/included state sequence exists for it and none is invented here. Its
+  pinned specification is referenced as layer-classification evidence only.

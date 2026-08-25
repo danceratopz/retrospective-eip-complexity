@@ -1,0 +1,110 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: amsterdam
+eip:
+  number: 7981
+  title: Increase Access List Cost
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/amsterdam/eip-7981.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7981.yaml
+research_run:
+  started_at: '2026-08-24T15:36:16Z'
+  completed_at: '2026-08-24T15:36:16Z'
+  researcher: Codex coordinator (Task 04 proposal generation)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: amsterdam-eip7981-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: added to 'Proposed for Inclusion' (PFI)
+  effective_at: '2025-08-26T21:52:26Z'
+  recorded_at: '2025-08-26T21:52:26Z'
+  date_basis: Task 01 event amsterdam-eip7981-e1 records 2025-08-26T21:52:26Z with instant precision.
+    Repository recording time is the verified committer time of b2bce97a0a6898faf5a37c5948b7bc58a1cd1bc5
+    (eips-commit-b2bce97a0a68). No time is derived from an EIP frontmatter date, author time, pull-request
+    opening time, client history, or observed outcome.
+  verification_status: verified
+  verification_rationale: "The selected event resolves in the Task 01 fork\u2013EIP record and cites primary\
+    \ source IDs eips-commit-b2bce97a0a68, pr-eips-10230. The frozen policy classifies it as explicit_pfi.\
+    \ The exact Meta EIP merge adds EIP-7981 to Proposed for Inclusion. The cited Git recording commit\
+    \ was independently resolved in the pinned ethereum/EIPs clone."
+  confidence: high
+  source_ids:
+  - eips-commit-b2bce97a0a68
+  - pr-eips-10230
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7981-e02
+    event_kind: revision
+    commit: acc2533ec925d0659d2001d64edc3e6466e62400
+    committed_at: '2025-08-24T10:46:57Z'
+    offset_from_anchor_seconds: -212729
+    semantic_effect: substantive
+    summary: 'Pins down what is counted - ''the addresses (20 bytes each) and storage keys (32 bytes each)
+      contained within the access list'' replaces ''the serialized access list data'' - and adds a Reference
+      Implementation section giving EELS Python: a count_access_list_bytes helper and the calculate_intrinsic_cost
+      integration that adds access_list_data_cost to the intrinsic gas for AccessList, FeeMarket, Blob
+      and SetCode transactions. Also removes a stray blank line.'
+    immutable_url: https://github.com/ethereum/EIPs/blob/acc2533ec925d0659d2001d64edc3e6466e62400/EIPS/eip-7981.md
+    source_ids: &id001
+    - eips-commit-acc2533ec925
+    - gh-pr-map-eip-7981
+  following:
+    exists: true
+    revision_event_id: eip7981-e03
+    event_kind: revision
+    commit: 5aea12c20ee27b3d85f7c2ec9e6a09e451fd81f0
+    committed_at: '2025-09-04T12:47:19Z'
+    offset_from_anchor_seconds: 744893
+    semantic_effect: substantive
+    summary: Re-parameterises the surcharge in terms of the EIP-7623 token abstraction. The two EIP-owned
+      constants ACCESS_LIST_NONZERO_BYTE_COST and ACCESS_LIST_ZERO_BYTE_COST are replaced in the parameter
+      table by TOTAL_COST_FLOOR_PER_TOKEN = 10, sourced from EIP-7623, and the formula becomes access_list_tokens
+      = nonzero * 4 + zero followed by access_list_data_cost = access_list_tokens * TOTAL_COST_FLOOR_PER_TOKEN.
+      Description, Abstract and Motivation are rewritten (adding the '~21% worst-case block size reduction'
+      claim and the 'contributing to EVM gas while still leaving a non-negligible data footprint' framing);
+      'Maximum Block Size Impact' is renamed 'Access List Size Impact' and recomputed at a 60M gas limit
+      (1012 KB -> 604 KB); a new 'Maximum Block Size Impact' section states the Snappy-compressed maximum
+      falls from 2.71 MiB to 2.13 MiB. The description acquires the typo 'footpring'.
+    immutable_url: https://github.com/ethereum/EIPs/blob/5aea12c20ee27b3d85f7c2ec9e6a09e451fd81f0/EIPS/eip-7981.md
+    source_ids:
+    - eips-commit-5aea12c20ee2
+    - gh-pr-map-eip-7981
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7981-e02
+    event_kind: revision
+    repository: ethereum/EIPs
+    commit: acc2533ec925d0659d2001d64edc3e6466e62400
+    path: EIPS/eip-7981.md
+    committed_at: '2025-08-24T10:46:57Z'
+    offset_from_anchor_seconds: -212729
+    git_blob_sha: 7947d1cc630194a6fbcae98344cc8650c4110255
+    content_sha256: 061e4fa54001523af4772d9bb979b330fbf42698c83075b1462818d451f1e9e6
+    immutable_url: https://github.com/ethereum/EIPs/blob/acc2533ec925d0659d2001d64edc3e6466e62400/EIPS/eip-7981.md
+    source_ids: *id001
+  information_cutoff_at: '2025-08-26T21:52:26Z'
+  rationale: The complete Task 01 EIP history was normalized to UTC and bracketed against amsterdam-eip7981-e1.
+    The default preceding rule selects eip7981-e02 at 2025-08-24T10:46:57Z. No post-anchor exception is
+    proposed.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: null
+review:
+  status: proposed
+  reviewer: null
+  reviewed_at: null
+  notes:
+  - This generated record is a proposal only. It becomes authoritative only after separate human approval.
+  - 'Frozen anchor policy: task04-anchor-fallback-v1; ambiguity codes: none.'
+  - Independent spot-check confirmed EIP-7981 is under the PFI heading in blob b2bce97a0a68.
+unknowns: []

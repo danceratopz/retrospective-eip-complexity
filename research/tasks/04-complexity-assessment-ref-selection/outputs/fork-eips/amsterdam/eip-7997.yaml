@@ -1,0 +1,113 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: amsterdam
+eip:
+  number: 7997
+  title: Deterministic Factory Contract
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/amsterdam/eip-7997.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7997.yaml
+research_run:
+  started_at: '2026-08-24T15:36:16Z'
+  completed_at: '2026-08-24T15:36:16Z'
+  researcher: Codex coordinator (Task 04 proposal generation)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: amsterdam-eip7997-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: added to 'Proposed for Inclusion' (PFI)
+  effective_at: '2025-08-21T13:34:18Z'
+  recorded_at: '2025-08-21T13:34:18Z'
+  date_basis: Task 01 event amsterdam-eip7997-e1 records 2025-08-21T13:34:18Z with instant precision.
+    Repository recording time is the verified committer time of cecf1273e2c2bd493e670fae3d94fb2aec72ec01
+    (eips-commit-cecf1273e2c2). No time is derived from an EIP frontmatter date, author time, pull-request
+    opening time, client history, or observed outcome.
+  verification_status: verified
+  verification_rationale: "The selected event resolves in the Task 01 fork\u2013EIP record and cites primary\
+    \ source IDs eips-commit-cecf1273e2c2, pr-eips-10126. The frozen policy classifies it as explicit_pfi.\
+    \ The exact Meta EIP merge adds EIP-7997 to Proposed for Inclusion. The cited Git recording commit\
+    \ was independently resolved in the pinned ethereum/EIPs clone."
+  confidence: high
+  source_ids:
+  - eips-commit-cecf1273e2c2
+  - pr-eips-10126
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7997-e00
+    event_kind: creation
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    committed_at: '2025-08-19T16:32:51Z'
+    offset_from_anchor_seconds: -162087
+    semantic_effect: substantive
+    summary: Initial addition of EIP-7997 'Deterministic Factory Predeploy' (status Draft, author Francisco
+      Giordano, requires 211 and 1014). Specifies FACTORY_ADDRESS = 0x0B and, upon activation, setting
+      that account's code to the 52-byte minimal CREATE2 factory 60203610602f57...60006000fd, given in
+      full as a Constantinople-targeted assembly listing (input = 32-byte salt followed by init code;
+      revert if input is shorter than 32 bytes; forward callvalue to CREATE2; propagate the creation frame's
+      return data on failure; return the 32-byte-padded created address on success). Motivation enumerates
+      four existing workarounds for bootstrapping a multi-chain factory and their problems; Rationale
+      covers the precompile-range placement, input validation, the deliberate absence of frontrunning
+      protection, why not a new transaction type, and the Constantinople/no-PUSH0 target. Test Cases are
+      'TBD'.
+    immutable_url: https://github.com/ethereum/EIPs/blob/f8be9ce27bdb513ba72abddde06cb5e806447230/EIPS/eip-7997.md
+    source_ids: &id001
+    - eips-commit-f8be9ce27bdb
+    - eips-blob-eip7997-creation
+    - gh-pr-map-eip-7997
+  following:
+    exists: true
+    revision_event_id: eip7997-e01
+    event_kind: revision
+    commit: 85d76ebe7795c478efecc119054744ac492709e9
+    committed_at: '2025-08-30T23:11:58Z'
+    offset_from_anchor_seconds: 812260
+    semantic_effect: substantive
+    summary: 'Rewrites the Abstract and two Motivation paragraphs, and - the substantive part - adds a
+      prose normative specification of the factory''s behaviour ahead of the bytecode: when called, the
+      account invokes CREATE2 (linking EIP-1014) with salt = first 32 bytes of input, init code = the
+      remaining input and value = the call''s value; the call reverts with empty return data if input
+      is shorter than 32 bytes; if CREATE2 outputs 0 the call reverts with the creation frame''s return
+      data. The bytecode is retained and is now described as implementing that specification.'
+    immutable_url: https://github.com/ethereum/EIPs/blob/85d76ebe7795c478efecc119054744ac492709e9/EIPS/eip-7997.md
+    source_ids:
+    - eips-commit-85d76ebe7795
+    - gh-pr-map-eip-7997
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7997-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    path: EIPS/eip-7997.md
+    committed_at: '2025-08-19T16:32:51Z'
+    offset_from_anchor_seconds: -162087
+    git_blob_sha: 9bd8766f329acc3b21d2fa6dc53d5655488891ab
+    content_sha256: 8fec7a727f75a9762f34427ed5046b49d59b63a9c16d38f319c8e1060ebd93bd
+    immutable_url: https://github.com/ethereum/EIPs/blob/f8be9ce27bdb513ba72abddde06cb5e806447230/EIPS/eip-7997.md
+    source_ids: *id001
+  information_cutoff_at: '2025-08-21T13:34:18Z'
+  rationale: The complete Task 01 EIP history was normalized to UTC and bracketed against amsterdam-eip7997-e1.
+    The default preceding rule selects eip7997-e00 at 2025-08-19T16:32:51Z. No post-anchor exception is
+    proposed.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: null
+review:
+  status: proposed
+  reviewer: null
+  reviewed_at: null
+  notes:
+  - This generated record is a proposal only. It becomes authoritative only after separate human approval.
+  - 'Frozen anchor policy: task04-anchor-fallback-v1; ambiguity codes: none.'
+  - Independent spot-check confirmed EIP-7997 is under the PFI heading in blob cecf1273e2c2.
+unknowns: []

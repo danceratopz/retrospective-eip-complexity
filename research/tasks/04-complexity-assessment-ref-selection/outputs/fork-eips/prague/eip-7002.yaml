@@ -1,0 +1,114 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: prague
+eip:
+  number: 7002
+  title: Execution layer triggerable withdrawals
+  layers:
+  - execution
+  - consensus
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/prague/eip-7002.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-7002.yaml
+research_run:
+  started_at: '2026-08-24T15:31:08Z'
+  completed_at: '2026-08-24T15:31:08Z'
+  researcher: Codex coordinator (Task 04 proposal generation)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: prague-7002-e1
+  alternative_event_ids: []
+  kind: fallback_cfi
+  raw_label: prioritized in the next fork / placed in the draft Meta EIP's 'CFI' bucket
+  effective_at: '2024-01-18'
+  recorded_at: null
+  date_basis: Task 01 event prague-7002-e1 records 2024-01-18 with day precision. Task 01 does not identify
+    a distinct repository-recording commit. No time is derived from an EIP frontmatter date, author time,
+    pull-request opening time, client history, or observed outcome.
+  verification_status: verified_with_limitation
+  verification_rationale: "The selected event resolves in the Task 01 fork\u2013EIP record and cites primary\
+    \ source IDs pm-acde-179. The frozen policy classifies it as fallback_cfi. Task 01 has no proposal\
+    \ event. ACDE #179 is the earliest CFI-equivalent event in the successful cycle; the exact later CL\
+    \ approval time that led to direct inclusion was not found by Task 01."
+  confidence: medium
+  source_ids:
+  - pm-acde-179
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip7002-e00
+    event_kind: creation
+    commit: 28cbb0162f998530fd423c0062d9954de6d4a5c4
+    committed_at: '2023-06-29T14:13:35Z'
+    offset_from_anchor_seconds: -17487985
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-7002 ''Execution layer triggerable exits'' (PR #7002): stateful
+      precompile allowing validators to trigger beacon-chain exits from 0x01 withdrawal credentials, with
+      an EIP-1559-style dynamic exit fee and an in-state exit message queue.'
+    immutable_url: https://github.com/ethereum/EIPs/blob/28cbb0162f998530fd423c0062d9954de6d4a5c4/EIPS/eip-7002.md
+    source_ids: &id001
+    - eips-commit-28cbb0162f99
+  following:
+    exists: true
+    revision_event_id: eip7002-e01
+    event_kind: revision
+    commit: 7eb97f37eb35408e91f2965c0c5292617d60ed4d
+    committed_at: '2024-01-19T19:23:16Z'
+    offset_from_anchor_seconds: 156196
+    semantic_effect: substantive
+    summary: 'Commit subject says ''Fix typos'' but the change corrects the queue storage-slot arithmetic
+      in normative pseudocode: slot stride changed from 2 to 3 per exit message and the four duplicated
+      ''queue_storage_slot + 1'' sload operands corrected to the intended ''+1[0:32]'' and ''+2[0:16]''
+      slots.'
+    immutable_url: https://github.com/ethereum/EIPs/blob/7eb97f37eb35408e91f2965c0c5292617d60ed4d/EIPS/eip-7002.md
+    source_ids:
+    - eips-commit-7eb97f37eb35
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip7002-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: 28cbb0162f998530fd423c0062d9954de6d4a5c4
+    path: EIPS/eip-7002.md
+    committed_at: '2023-06-29T14:13:35Z'
+    offset_from_anchor_seconds: -17487985
+    git_blob_sha: d3249f63881b96461ed0276d2b7bf027fe686764
+    content_sha256: acf1880b41862acbba6868d443cc56ac39d42d8c3295a45220f86743e304d2b8
+    immutable_url: https://github.com/ethereum/EIPs/blob/28cbb0162f998530fd423c0062d9954de6d4a5c4/EIPS/eip-7002.md
+    source_ids: *id001
+  information_cutoff_at: '2024-01-18'
+  rationale: The complete Task 01 EIP history was normalized to UTC and bracketed against prague-7002-e1.
+    The default preceding rule selects eip7002-e00 at 2023-06-29T14:13:35Z. No post-anchor exception is
+    proposed. The anchor's day precision and any same-day ordering limitation remain explicit.
+  confidence: medium
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: null
+review:
+  status: needs_human_review
+  reviewer: null
+  reviewed_at: null
+  notes:
+  - This generated record is a proposal only. It becomes authoritative only after separate human approval.
+  - 'Frozen anchor policy: task04-anchor-fallback-v1; ambiguity codes: no_pfi_event, day_precision, later_direct_sfi,
+    near_post_anchor_substantive_revision.'
+  - 'Independent spot-check: the archived ACDE #179 minutes explicitly place EIP-7002 in CFI pending a
+    formal CL signal, matching the recorded Task 01 limitation.'
+  - 'Independent direct-diff spot-check: revision 7eb97f37 lands 1.81 days after the day-precision CFI
+    anchor and corrects normative queue-slot arithmetic. The preceding ref remains selected because Task
+    01 does not establish the complete post-anchor exception test.'
+unknowns:
+- The following substantive correction is inside the seven-day ceiling and may complete the CFI submission,
+  but the anchor has only day precision and the relationship to the proposal is not uniquely established.
+  Human review must decide whether a post-anchor exception is warranted.
+- The Task 01 anchor has calendar-day precision only. Offsets use 00:00:00 UTC as a display boundary,
+  not as an inferred decision time. Revisions on the anchor day are excluded from both definite brackets.
+- The exact contemporaneous moment of the CL '+1' that moved this EIP from the draft PR's 'CFI' bucket
+  to 'Included EIPs' before the 2024-02-12 merge was not located; searched ACDC#126 and ACDC#127 minutes
+  at the pinned ethereum/pm commit. ACDE#181's retrospective statement and the merged document are the
+  closest primary evidence.

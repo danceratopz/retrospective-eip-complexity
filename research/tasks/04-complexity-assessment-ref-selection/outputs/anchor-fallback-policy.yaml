@@ -1,0 +1,118 @@
+schema_version: 1
+policy_id: task04-anchor-fallback-v1
+frozen_on: "2026-08-24"
+status: frozen_for_proposal_generation
+
+scope:
+  purpose: >-
+    Select proposal anchors for Task 04 EIP-ref proposals without using evidence
+    from later implementation or observed outcomes.
+  allowed_inputs:
+    - research/tasks/01-fork-eip-history
+    - research/tasks/03-fork-development-timelines
+    - research/tasks/04-complexity-assessment-ref-selection/TASK.md
+  prohibited_inputs:
+    - Task 02 client histories
+    - Task 05 inputs
+    - Task 05 outputs
+    - Task 05 assessments
+    - client implementation histories
+    - devnet or testnet observed outcomes
+    - later complexity scores or observed-complexity judgments
+
+authority:
+  task01: >-
+    Task 01 is authoritative for membership, affected layers, inclusion events,
+    EIP creation, and EIP-file revisions. Material discrepancies are recorded as
+    unknowns for separate correction rather than silently repaired here.
+  task03: >-
+    Task 03 is used only to cross-check the Task 01 chronology and to render the
+    human-review timeline; it does not create a new inclusion event.
+  task04_contract: >-
+    TASK.md controls bracketing, ref selection, post-anchor exceptions, output
+    fields, and approval requirements.
+
+successful_cycle: >-
+  When multiple inclusion cycles exist, use the cycle that ultimately produced
+  the fork's included EIP. Preserve all earlier or competing proposal event IDs
+  as alternatives.
+
+anchor_precedence:
+  - rank: 1
+    kind: explicit_pfi
+    definition: >-
+      A Task 01 inclusion event whose primary evidence shows that the
+      authoritative fork document explicitly placed the EIP in Proposed for
+      Inclusion. Under the EIP-7723 process, the effective time is the committer
+      time of the merge commit that added the EIP to the Meta EIP's PFI section;
+      a pull-request opening time is never the effective time.
+  - rank: 2
+    kind: normalized_proposal_equivalent
+    definition: >-
+      A contemporaneous Task 01 inclusion event in the successful cycle whose
+      normalized_state is proposed_for_inclusion, whose raw historical label is
+      not literal PFI, and whose cited primary evidence records an affirmative
+      proposal or nomination of that EIP for the named fork. It must precede any
+      CFI-, SFI-, or included-state decision used later in the cycle.
+    exclusions:
+      - A direct SFI or historical scheduled/included label by itself.
+      - A CFI or historical consideration label by itself.
+      - A later summary that only implies an earlier proposal.
+      - A pre-merge pull request or branch state without a verified effective event.
+  - rank: 3
+    kind: fallback_cfi
+    definition: >-
+      Only when no credible explicit PFI or normalized proposal-equivalent event
+      exists, use the earliest Task 01 CFI-equivalent event in the successful
+      inclusion cycle and state that the proposal-stage anchor is unavailable.
+  - rank: 4
+    kind: other
+    definition: >-
+      Only when none of the preceding categories can be established. Name the
+      exact Task 01 event used, explain why it is defensible, preserve the
+      unresolved ambiguity, and require human review. This rank does not create
+      a reusable new policy.
+
+timestamp_policy:
+  effective_at: >-
+    Use the time the selected inclusion state took effect. Prefer the exact UTC
+    committer timestamp for a direct repository change. For a meeting decision,
+    use the decision time only when primary evidence establishes it.
+  recorded_at: >-
+    Use the exact UTC committer timestamp when the repository recorded the
+    state. Keep it distinct from effective_at when a decision was recorded later.
+  precision: >-
+    Preserve Task 01's stated precision when primary evidence does not establish
+    a more exact time. Do not substitute author time, frontmatter dates, pull-
+    request opening times, or an inferred time of day.
+
+ambiguity_policy:
+  pfi_timing: >-
+    Record every plausible Task 01 event or source locator and leave the proposal
+    needs_human_review when the effective PFI time cannot be verified uniquely.
+  direct_sfi_inclusion: >-
+    Do not infer a missing PFI from direct SFI. Apply the precedence above; if no
+    earlier PFI, proposal-equivalent, or CFI event exists, use other and describe
+    the missing proposal-stage evidence.
+  decision_vs_recording: >-
+    Preserve both times when known. If only one is verifiable, leave the other at
+    Task 01 precision and record the uncertainty instead of equating them.
+  pre_merge_refs: >-
+    Do not treat an unmerged ref as an authoritative PFI event or invent a
+    generic mapping. Preserve the candidate evidence and require human review.
+  no_new_policy_from_case: >-
+    A case-specific resolution may not change this frozen precedence. Ambiguous
+    cases are recorded for the human reviewer rather than generalized.
+
+selection_and_approval:
+  default_selection: preceding
+  post_anchor_exception: >-
+    Apply only the complete exception test in Task 04 TASK.md; every exception
+    remains needs_human_review.
+  authoritative_only_when: >-
+    A human reviewer changes review.status to approved in a separate review step.
+    Generated records must remain proposed or needs_human_review and are not
+    authoritative inputs to later assessment work.
+  spot_check: >-
+    Independently re-open the cited Task 01 event, primary source entry, and
+    adjacent EIP revisions for every ambiguous case before rendering its plot.

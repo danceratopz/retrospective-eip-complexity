@@ -7,6 +7,7 @@ import argparse
 import importlib.metadata
 import importlib.util
 import sys
+from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +22,7 @@ TASK03_RENDERER = TASK03_ROOT / "scripts" / "render.py"
 TASK03_INPUTS = TASK03_ROOT / "inputs" / "forks"
 REF_ROOT = TASK_ROOT / "outputs" / "fork-eips"
 OUTPUT_ROOT = TASK_ROOT / "outputs" / "review"
+POLICY_PATH = TASK_ROOT / "outputs" / "anchor-fallback-policy.yaml"
 
 
 def load_renderer() -> Any:
@@ -155,6 +157,21 @@ def render(fork_id: str, *, validate_only: bool) -> None:
     dataset, task03_files = renderer.load_fork(config_path)
     markers, task04_files = build_markers(fork_id, dataset)
     dataset["assessment_ref_markers"] = markers
+    marker_times = [renderer.parse_datetime(marker["occurred_at"]) for marker in markers]
+    original_start = renderer.parse_datetime(dataset["plot"]["start_date"])
+    original_end = renderer.parse_datetime(dataset["plot"]["end_date"])
+    earliest = min(marker_times)
+    latest = max(marker_times)
+    if earliest < original_start:
+        dataset["plot"]["start_date"] = (earliest - timedelta(days=14)).date().isoformat()
+        dataset["plot"]["notes"].append(
+            "Task 04 extends the Task 03 window backward so every selected assessment ref is visible."
+        )
+    if latest > original_end:
+        dataset["plot"]["end_date"] = (latest + timedelta(days=14)).date().isoformat()
+        dataset["plot"]["notes"].append(
+            "Task 04 extends the Task 03 window forward so every proposal anchor is visible."
+        )
     if validate_only:
         print(
             f"validated {fork_id}: "
@@ -181,6 +198,7 @@ def render(fork_id: str, *, validate_only: bool) -> None:
         TASK03_ROOT / "uv.lock",
         TASK03_RENDERER,
         Path(__file__).resolve(),
+        POLICY_PATH,
         *task03_files,
         *task04_files,
     }

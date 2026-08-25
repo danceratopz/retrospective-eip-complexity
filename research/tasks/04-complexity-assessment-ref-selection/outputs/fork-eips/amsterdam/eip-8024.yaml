@@ -1,0 +1,122 @@
+schema_version: 1
+task_id: 04-complexity-assessment-ref-selection
+fork_id: amsterdam
+eip:
+  number: 8024
+  title: Backward compatible SWAPN, DUPN, EXCHANGE
+  layers:
+  - execution
+inputs:
+  fork_eip_record: research/tasks/01-fork-eip-history/outputs/fork-eips/amsterdam/eip-8024.yaml
+  eip_history_record: research/tasks/01-fork-eip-history/outputs/eips/eip-8024.yaml
+research_run:
+  started_at: '2026-08-24T15:36:16Z'
+  completed_at: '2026-08-24T15:36:16Z'
+  researcher: Codex coordinator (Task 04 proposal generation)
+anchor:
+  target_state: proposed_for_inclusion
+  selected_event_id: amsterdam-eip8024-e1
+  alternative_event_ids: []
+  kind: explicit_pfi
+  raw_label: added to 'Proposed for Inclusion' (PFI)
+  effective_at: '2025-10-29T02:00:31Z'
+  recorded_at: '2025-10-29T02:00:31Z'
+  date_basis: Task 01 event amsterdam-eip8024-e1 records 2025-10-29T02:00:31Z with instant precision.
+    Repository recording time is the verified committer time of e3edd851a80c68b41f2fe84db635594a6911cc49
+    (eips-commit-e3edd851a80c). No time is derived from an EIP frontmatter date, author time, pull-request
+    opening time, client history, or observed outcome.
+  verification_status: verified
+  verification_rationale: "The selected event resolves in the Task 01 fork\u2013EIP record and cites primary\
+    \ source IDs eips-commit-e3edd851a80c, pr-eips-10644. The frozen policy classifies it as explicit_pfi.\
+    \ The exact Meta EIP merge adds EIP-8024 to Proposed for Inclusion. The cited Git recording commit\
+    \ was independently resolved in the pinned ethereum/EIPs clone."
+  confidence: high
+  source_ids:
+  - eips-commit-e3edd851a80c
+  - pr-eips-10644
+bracketing_revisions:
+  preceding:
+    exists: true
+    revision_event_id: eip8024-e00
+    event_kind: creation
+    commit: 28578c7ba0e3c7831a91a9784e85ce9b400c29a8
+    committed_at: '2025-09-17T17:24:56Z'
+    offset_from_anchor_seconds: -3573335
+    semantic_effect: substantive
+    summary: 'Initial addition of EIP-8024 ''Backward compatible SWAPN, DUPN, EXCHANGE'' (183 lines, merged
+      directly in status Review, type Standards Track, category Core, three authors: Francisco Giordano,
+      Charles Cooper, Alex Beregszaszi). It introduces DUPN (0xe6), SWAPN (0xe7) and EXCHANGE (0xe8),
+      each taking a one-byte immediate, each charging 3 gas and advancing pc by 2. Immediate values in
+      the ranges 90 < x < 128 (DUPN, SWAPN) and 79 < x < 128 (EXCHANGE) revert consuming all gas, which
+      is what keeps JUMPDEST analysis unchanged and preserves existing jump targets. decode_single / decode_pair
+      and the matching encode_single / encode_pair are given as branching Python; EXCHANGE n m at this
+      version swaps stack items n + 1 and m + 1 with decode_pair returning (q + 2, r + 2) or (r + 2, 30
+      - q). Rationale (immediate operand, disallowed immediate range, EXCHANGE immediate and its addressing
+      trade-off, immediate size, gas cost, EXCHANGE vs SWAPN), Backwards Compatibility, ten assembly/disassembly
+      and five execution test cases, and Security Considerations are included.'
+    immutable_url: https://github.com/ethereum/EIPs/blob/28578c7ba0e3c7831a91a9784e85ce9b400c29a8/EIPS/eip-8024.md
+    source_ids: &id001
+    - eips-commit-28578c7ba0e3
+    - gh-pr-map-eip-8024
+    - eips-blob-eip8024-creation
+  following:
+    exists: true
+    revision_event_id: eip8024-e01
+    event_kind: revision
+    commit: db5c483ea122c6735cd92ff135de985f0e9253e2
+    committed_at: '2025-11-04T03:54:51Z'
+    offset_from_anchor_seconds: 525260
+    semantic_effect: substantive
+    summary: Shifts the EXCHANGE operand encoding down by one so the assembly operands match the intended
+      SWAP-like indexing. decode_pair returns (q + 1, r + 1) / (r + 1, 29 - q) instead of (q + 2, r +
+      2) / (r + 2, 30 - q), and encode_pair's assertion and arithmetic change from '2 <= n <= 14 and n
+      < m <= 30 and n + m <= 32' with the m <= 17 branch to '1 <= n <= 13 and n < m <= 29 and n + m <=
+      30' with the m <= 16 branch. A Rationale paragraph is added explaining that the operands look off
+      by one because EXCHANGE n m operates on stack depths n + 1 and m + 1, chosen so that EXCHANGE n
+      m is equivalent to SWAP{n} SWAP{m} SWAP{n}. Two disassembly test cases are renumbered accordingly
+      (e812 becomes EXCHANGE 2 3, e8d0 becomes EXCHANGE 1 19).
+    immutable_url: https://github.com/ethereum/EIPs/blob/db5c483ea122c6735cd92ff135de985f0e9253e2/EIPS/eip-8024.md
+    source_ids:
+    - eips-commit-db5c483ea122
+    - gh-pr-map-eip-8024
+selection:
+  mode: preceding
+  selected_revision:
+    revision_event_id: eip8024-e00
+    event_kind: creation
+    repository: ethereum/EIPs
+    commit: 28578c7ba0e3c7831a91a9784e85ce9b400c29a8
+    path: EIPS/eip-8024.md
+    committed_at: '2025-09-17T17:24:56Z'
+    offset_from_anchor_seconds: -3573335
+    git_blob_sha: b519c1ce6054ddfdbcb580af246786b466667522
+    content_sha256: c4de111b08cfda07cfd60702295e534ca31ae972d649a07bbb490d34d9802ba1
+    immutable_url: https://github.com/ethereum/EIPs/blob/28578c7ba0e3c7831a91a9784e85ce9b400c29a8/EIPS/eip-8024.md
+    source_ids: *id001
+  information_cutoff_at: '2025-10-29T02:00:31Z'
+  rationale: The complete Task 01 EIP history was normalized to UTC and bracketed against amsterdam-eip8024-e1.
+    The default preceding rule selects eip8024-e00 at 2025-09-17T17:24:56Z. No post-anchor exception is
+    proposed.
+  confidence: high
+  post_anchor_exception:
+    used: false
+    within_seven_days: false
+    diff_semantic_effect: null
+    diff_summary: null
+    hindsight_risk: null
+    justification: null
+review:
+  status: needs_human_review
+  reviewer: null
+  reviewed_at: null
+  notes:
+  - This generated record is a proposal only. It becomes authoritative only after separate human approval.
+  - 'Frozen anchor policy: task04-anchor-fallback-v1; ambiguity codes: near_post_anchor_substantive_revision.'
+  - Independent spot-check confirmed EIP-8024 is under the PFI heading in blob e3edd851a80c.
+  - 'Independent direct-diff spot-check: revision db5c483e lands 6.08 days after PFI and changes the EXCHANGE
+    operand encoding and examples. The preceding PFI-time ref remains selected because the evidence does
+    not establish all post-anchor exception criteria.'
+unknowns:
+- The following substantive correction is within seven days and may complete the proposal, but its relationship
+  to the PFI submission is not uniquely established by Task 01. Human review must decide whether a post-anchor
+  exception is warranted.

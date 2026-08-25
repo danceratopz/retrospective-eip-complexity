@@ -1,0 +1,110 @@
+schema_version: 1
+fork_id: shanghai
+policy_id: task04-anchor-fallback-v1
+research_run_at: "2026-08-24T15:44:37Z"
+authority: proposal_only_pending_human_approval
+anchors:
+  - eip: 3651
+    selected_event_id: shanghai-eip3651-cfi-2022-03-04
+    kind: fallback_cfi
+    recorded_commit_source_id: execspecs-commit-ded8ebeb-3651-cfi
+    verification_status: verified_with_limitation
+    confidence: medium
+    review_status: needs_human_review
+    ambiguity_codes: [no_pfi_event, transcript_only_cfi_decision, day_precision]
+    rationale: >-
+      Task 01 records no proposal event. The ACD #133/upgrade-tracker CFI event is the earliest
+      consideration event in the successful cycle and is therefore the frozen fallback.
+    spot_check_notes:
+      - >-
+        Independent heading-scoped spot-check confirmed commit ded8ebeb lists EIP-3651 under CFI;
+        Task 01 notes that the corresponding call decision appears only in the transcript.
+  - eip: 3855
+    selected_event_id: shanghai-eip3855-proposed-2022-02-04
+    kind: normalized_proposal_equivalent
+    verification_status: verified_with_limitation
+    confidence: medium
+    review_status: needs_human_review
+    ambiguity_codes: [pre_pfi_vocabulary, day_precision, garbled_eip_numbers, same_day_cfi_without_explicit_call_decision]
+    rationale: >-
+      Task 01 records contemporaneous ACD advocacy for PUSH0 as a Shanghai proposal before its same-day
+      CFI tracker entry. This satisfies the frozen historical-equivalent definition but is not literal PFI.
+    spot_check_notes:
+      - >-
+        Independent spot-check of the archived ACD #131 passage confirms the feature-level advocacy.
+        Task 01 explicitly records that the transcript swapped the 3855/3860 number labels, so this output
+        preserves that limitation instead of reinterpreting the source.
+    unknowns:
+      - >-
+        Task 01 does not establish an exact time of day for the proposal or an explicit call sentence
+        moving EIP-3855 to CFI; the same-day ordering is therefore not refined here.
+  - eip: 3860
+    selected_event_id: shanghai-eip3860-cfi-2022-02-04
+    kind: fallback_cfi
+    recorded_commit_source_id: execspecs-commit-9c14b95c-add-cfi-eips
+    verification_status: verified_with_limitation
+    confidence: medium
+    review_status: needs_human_review
+    ambiguity_codes: [no_task01_proposal_event, unarchived_pre_cfi_discussion, day_precision]
+    rationale: >-
+      Task 01 records no proposal inclusion event and cannot archive the earlier Discord discussion.
+      The ACD #131/tracker CFI event is therefore the earliest evidenced state and the frozen fallback.
+    spot_check_notes:
+      - Independent heading-scoped spot-check confirmed commit 9c14b95c lists EIP-3860 under CFI.
+    unknowns:
+      - >-
+        Task 01 notes earlier unarchived discussion but does not create a proposal event; assigning it a
+        date here would invent evidence outside the allowed records.
+  - eip: 4895
+    selected_event_id: shanghai-eip4895-proposed-2022-02-04
+    kind: normalized_proposal_equivalent
+    verification_status: verified_with_limitation
+    confidence: low
+    review_status: needs_human_review
+    ambiguity_codes: [pre_pfi_vocabulary, pre_eip_proposal, day_precision, creation_after_anchor_outside_seven_days]
+    rationale: >-
+      Task 01 records a contemporaneous Shanghai proposal for beacon-chain withdrawals before an EIP
+      number or file existed. It is the frozen historical equivalent, but the missing pre-anchor file
+      forces the Task 04 creation exception.
+    spot_check_notes:
+      - >-
+        Independent spot-check of ACD #131 confirms withdrawals were prioritized while explicitly lacking
+        an EIP. Direct Git review confirms creation commit 1ce607ac adds the 129-line EIP on 2022-03-11,
+        before the later CFI event but about 35 days after the proposal date.
+    post_anchor_exception_review:
+      diff_summary: >-
+        Direct review of creation commit 1ce607ac: it adds the initial 129-line Draft for beacon-chain
+        withdrawals as system-level operations; no earlier EIP file exists to diff.
+      hindsight_risk: >-
+        The selected file did not exist at proposal time and contains roughly five weeks of potential
+        design development. It may materially exceed the information available when withdrawals were
+        first proposed for Shanghai.
+      justification: >-
+        Task 04 requires selecting the creation revision when no preceding EIP-file candidate exists.
+        Creation precedes CFI and no later CFI/SFI, client, devnet, testing, or observed-outcome evidence
+        is used, but it is outside the ordinary seven-day ceiling. This exceptional chronology cannot be
+        authoritative without explicit human approval.
+    unknowns:
+      - >-
+        The creation ref is outside the seven-day exception ceiling. It is proposed only because the
+        contract's no-preceding-candidate rule requires creation; the human reviewer may instead reject
+        the historical-equivalent anchor for this EIP.
+  - eip: 6049
+    selected_event_id: shanghai-eip6049-included-2023-01-19
+    kind: other
+    recorded_commit_source_id: execspecs-commit-075a2c09-add-6049
+    verification_status: ambiguous_proposal_stage
+    confidence: low
+    review_status: needs_human_review
+    ambiguity_codes: [direct_included_without_proposal_or_cfi, decision_vs_recording, day_precision]
+    rationale: >-
+      Task 01 begins with a direct Included event for a deprecation announcement and finds no earlier ACD
+      discussion. It is retained as other and is not normalized retroactively to PFI or CFI.
+    spot_check_notes:
+      - >-
+        Independent heading-scoped spot-check confirmed the tracker commit adds EIP-6049 directly under
+        Included EIPs; Task 01 separately records the ACDE #153 decision date.
+    unknowns:
+      - >-
+        The EIP existed before ACDE #153, but Task 01 did not reconstruct a fork-specific proposal trail.
+        No earlier anchor is invented from frontmatter or external discussion.
