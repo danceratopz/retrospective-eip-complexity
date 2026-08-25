@@ -18,6 +18,8 @@ research/
         └── outputs/      # One implementation record per EIP
     ├── 03-fork-development-timelines/
         ├── TASK.md
+        ├── prompts/      # Reusable fresh-agent wrapper parameterized by fork
+        ├── templates/    # Neutral fork-input and source-registry schemas
         ├── inputs/       # Fork milestones, devnets, and source registries
         ├── scripts/      # Reusable Altair/Vega-Lite renderer
         └── outputs/      # EL, CL, and fork-level figures

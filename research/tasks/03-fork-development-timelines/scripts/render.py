@@ -250,9 +250,10 @@ def load_fork(config_path: Path) -> tuple[dict[str, Any], set[Path]]:
             used_files.add(path)
         history = load_yaml(eip_path)
         eip_sources = source_map(eip_sources_path)
-        title = relationship["eip"]["title"]
-        if history["eip"]["title"] != title:
-            raise InputError(f"Title mismatch for EIP-{number}")
+        # The numbered EIP record is authoritative for the display title. Task 01
+        # fork relationships can retain an older title after an EIP is renamed;
+        # identity is already fixed by the numbered relationship and file path.
+        title = history["eip"]["title"]
 
         creation_commit = history["creation"]["first_repository_commit"]
         creation_at = parse_datetime(creation_commit["committed_at"])
@@ -1517,7 +1518,7 @@ def overview_chart(dataset: dict[str, Any]) -> alt.VConcatChart:
             x2=alt.X2("week_end:T"),
             y=alt.Y(
                 "eip_label:N",
-                sort=overview_order,
+                scale=alt.Scale(domain=overview_order),
                 title=None,
                 axis=alt.Axis(
                     domain=False,
