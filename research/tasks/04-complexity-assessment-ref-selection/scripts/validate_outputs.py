@@ -176,14 +176,29 @@ def validate_record(
             raise ValidationError(f"default preceding rule mismatch for {fork}/EIP-{number}")
     elif mode != "post_anchor_exception" or selected_event["event_kind"] != "creation":
         raise ValidationError(f"creation exception mismatch for {fork}/EIP-{number}")
-    if mode == "post_anchor_exception" and record["review"]["status"] != "needs_human_review":
+    review = record["review"]
+    status = review["status"]
+    if status not in {"proposed", "needs_human_review", "approved"}:
+        raise ValidationError(f"unknown review status for {fork}/EIP-{number}: {status}")
+    if status == "approved":
+        if not isinstance(review.get("reviewer"), str) or not review["reviewer"].strip():
+            raise ValidationError(f"approved record lacks reviewer for {fork}/EIP-{number}")
+        try:
+            date.fromisoformat(review["reviewed_at"])
+        except (TypeError, ValueError) as error:
+            raise ValidationError(
+                f"approved record lacks review date for {fork}/EIP-{number}"
+            ) from error
+    elif review.get("reviewer") is not None or review.get("reviewed_at") is not None:
+        raise ValidationError(f"unapproved record has review metadata for {fork}/EIP-{number}")
+    if mode == "post_anchor_exception" and status not in {
+        "needs_human_review",
+        "approved",
+    }:
         raise ValidationError(f"unreviewed exception status for {fork}/EIP-{number}")
 
-    status = record["review"]["status"]
     if fork == "osaka" and status != "approved":
         raise ValidationError(f"approved Osaka status changed for EIP-{number}")
-    if fork != "osaka" and status == "approved":
-        raise ValidationError(f"new proposal self-approved for {fork}/EIP-{number}")
 
     following_record = record["bracketing_revisions"]["following"]
     near_substantive = bool(
