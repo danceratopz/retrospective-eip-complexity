@@ -1,0 +1,446 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 2780
+  title: Resource-based intrinsic transaction gas
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: "At the recorded cutoff, EIP-2780 lowered the intrinsic transaction base cost from 21,000 to 6,000 gas for existing transaction formats. It also added a state-dependent 25,000-gas intrinsic surcharge for a non-creation, value-transferring transaction whose non-precompile destination is non-existent under the proposal's EIP-161-based rule at the start of execution. Calldata and access-list metering were otherwise unchanged, while transaction validation, gas estimation, regression vectors, and high-transaction-count performance behavior were in scope."
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-2780/manifest.yaml
+    manifest_sha256: b256b3655f6a3458854c0dc12fa37f0c9d784b86b9ccfe92bf5b4880c7a9c996
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 2fd1e5e98e9150750217ddd5d5f22291d5c1e2a6
+    path: EIPS/eip-2780.md
+    committed_at: '2025-09-08T06:11:31Z'
+    git_blob_sha: 61527a7b300578d3d08a6439efd16093130eedcb
+    content_sha256: 93fb43bd87187541673e77373b944bdf54f8d519fe00264698a633b3de1884ee
+    immutable_url: https://github.com/ethereum/EIPs/blob/2fd1e5e98e9150750217ddd5d5f22291d5c1e2a6/EIPS/eip-2780.md
+    information_cutoff_at: '2025-09-12T13:12:54Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-2780.md
+    content_sha256: ed4d23d283a8f96e878f7e30fe2d5277d54991098b4fbef41e22c543cb654571
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:54:48+02:00'
+    session_id: assessment-run-6e7b6ec4-d760-454e-ac5e-b82ce6ed9819
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-161.md
+  - supporting/eip-1559.md
+  - supporting/eip-2718.md
+  - supporting/eip-2929.md
+  - supporting/eip-2930.md
+  - supporting/eip-7623.md
+  - supporting/eip-7782.md
+  - supporting/eip-7934.md
+  - supporting/eip-7976.md
+  - supporting/eip-7999.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification — Parameters and New-account surcharge, lines 57-77"
+    summary: "The proposal replaces the universal transaction base with 6,000 gas and introduces a conditional 25,000-gas surcharge based on transaction kind, value, precompile status, and destination existence."
+  - source: eip.md
+    locator: "Specification — Intrinsic gas computation, lines 84-120"
+    summary: "Normative pseudocode changes intrinsic gas for existing transaction formats and makes it depend on state at the start of the transaction."
+  rationale: "A new state-dependent intrinsic-gas mechanism is introduced on top of a broad update to the existing base-cost mechanism, changing existing transaction gas and validity vectors. This matches anchor 3."
+  confidence: high
+  uncertainty_note: "The intended CREATE-transaction treatment has conflicting wording, recorded under under-specification, but does not change that the proposal triggers anchor 3."
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Abstract and Specification — Intrinsic gas computation, lines 14-22 and 84-109"
+    summary: "The change is confined to initial transaction intrinsic-gas processing; the pseudocode does not alter state access or gas charging within any opcode."
+  rationale: "The state lookup used to calculate top-level intrinsic gas is not a change to ordering inside opcode execution, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Abstract, lines 16-22"
+    summary: "The proposal changes transaction intrinsic gas while expressly leaving calldata and access-list metering unchanged; it specifies no blob-gas rule."
+  rationale: "No blob-gas accounting mechanism or parameter is changed, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Parameters and Intrinsic gas computation, lines 61-109"
+    summary: "State growth is priced through an ordinary intrinsic-gas surcharge; no state-gas budget, state-gas charging site, reservoir, or spill rule is introduced."
+  rationale: "The proposal uses execution/intrinsic gas rather than the rubric's separate state-gas accounting system, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Intrinsic gas computation, lines 84-109"
+    summary: "The normative calculation only adds intrinsic charges and returns the resulting cost; it defines no refund path."
+  rationale: "No new EVM gas-refund mechanism is introduced, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification — Intrinsic gas computation and Edits and interactions with other EIPs, lines 84-127"
+    summary: "Every hardcoded 21,000 base is replaced for existing typed transactions, and existing EIP-2930-derived intrinsic formulas inherit the new base."
+  - source: eip.md
+    locator: "Backwards Compatibility and Test Cases, lines 177-181 and 226-239"
+    summary: "The EIP is a consensus repricing requiring existing assumptions to update and calls for recipient-state, precompile, creation, access-list, contract-execution, and performance vectors."
+  rationale: "The universal base-cost change alters a major and diverse body of pre-existing transaction gas, validity, fork, estimator, and benchmark cases; the state-dependent surcharge adds further rework. This matches anchor 3."
+  confidence: high
+  uncertainty_note: "Exact test counts are not supplied, but the affected rule is universal across transaction formats."
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Intrinsic gas computation, lines 84-109"
+    summary: "The proposal changes the intrinsic-gas result itself but does not add a new protocol output or assertion that unrelated tests must additionally check."
+  rationale: "Existing expectations must be reworked, but unrelated tests do not gain a distinct new invariant to assert; anchor 0 applies."
+  confidence: medium
+  uncertainty_note: "Some harnesses may mechanically assert the recalculated intrinsic result, but that is an updated expectation rather than a new invariant."
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification, lines 57-127"
+    summary: "The specification changes intrinsic transaction processing and parameters but introduces no transition-tool request or response field."
+  rationale: "State-aware execution logic changes do not by themselves add or modify the transition-tool interface, so anchor 0 applies."
+  confidence: medium
+  uncertainty_note: "The EIP does not discuss transition-tool integration; the score is based strictly on the absence of an interface change in the packaged text."
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Test Cases, lines 226-239"
+    summary: "The requested coverage consists of ordinary transaction vectors, block workloads, access-list variants, recipient-state cases, and performance runs; no new expectation or modifier abstraction is specified."
+  rationale: "Existing transaction, state, and block test primitives are sufficient for the described cases, so anchor 0 applies."
+  confidence: medium
+  uncertainty_note: "The package does not describe the historical test framework's exact helper inventory."
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Derivation, lines 128-147"
+    summary: "ECDSA recovery appears only as an unchanged cost component used to derive the 6,000-gas base; no cryptographic algorithm or functionality changes."
+  rationale: "Repricing unchanged signature recovery does not introduce or modify cryptography, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification — New-account surcharge, lines 68-82"
+    summary: "The surcharge branches on creation versus call, zero versus positive value, precompile status, and EIP-161 destination existence at transaction start."
+  - source: eip.md
+    locator: "Test Cases, lines 226-239"
+    summary: "Explicit vectors combine recipient state, precompiles, value boundaries, creation, typed access lists, and maximal-address contract execution."
+  rationale: "Several boundary-prone mechanisms interact, and the destination-state condition must be crossed with transaction kind, value, recipient class, transaction format, gas limit, and fork activation. This elevated matrix matches anchor 3."
+  confidence: high
+  uncertainty_note: "The CREATE wording and EIP-161 existence terminology leave two boundary expectations under-specified."
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification, lines 57-127"
+    summary: "The consensus change is to transaction intrinsic-gas calculation; no block RLP validation rule is introduced or modified."
+  rationale: "Higher possible transaction counts do not constitute an RLP validation mechanism, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification, lines 57-127"
+    summary: "The specification adds no Engine API endpoint, field, or communication mechanism."
+  rationale: "No Engine API change is specified, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification, lines 57-127"
+    summary: "The proposal consists of gas constants and transaction-processing rules and deploys no contract."
+  rationale: "No system contract is introduced, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Abstract and Specification, lines 14-22 and 57-127"
+    summary: "The focused change applies before transaction execution and identifies no existing system contract code, state, or special action affected by it."
+  rationale: "A general intrinsic-cost change without a specified system-contract effect is not a modification of a pre-existing system contract, so anchor 0 applies."
+  confidence: medium
+  uncertainty_note: "The package does not enumerate system contracts, so only explicit proposal effects are scored."
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification, lines 57-127"
+    summary: "The specification changes transaction intrinsic gas and defines no opcode number, stack behavior, or EVM instruction."
+  rationale: "No opcode is introduced, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Abstract and Specification — Intrinsic gas computation, lines 16-22 and 84-109"
+    summary: "The change occurs during initial transaction processing, and the normative pseudocode modifies no opcode result or non-gas behavior."
+  rationale: "No pre-existing opcode behavior is modified; gas-only context would be excluded by this anchor in any event. Anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — New-account surcharge, lines 68-77"
+    summary: "Existing precompiles are only recognized as destinations exempt from the new-account surcharge; none is introduced."
+  rationale: "No precompile is added, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — New-account surcharge and Test Cases, lines 68-77 and 232-238"
+    summary: "A top-level transfer to a precompile uses the new transaction base without the surcharge, but the precompile's own logic and gas schedule are untouched."
+  rationale: "An exemption in transaction intrinsic accounting is not a modification to a precompile's gas schedule or behavior, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Rationale — Why not charge full tx data as calldata?, lines 165-171"
+    summary: "The proposal deliberately keeps intrinsic pricing independent of envelope RLP size and preserves typed-envelope neutrality; it does not change transaction, block, or interface encoding."
+  rationale: "No RLP-to-SSZ or other encoding change is introduced, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Code change example and Edits and interactions with other EIPs, lines 111-127"
+    summary: "Existing typed transactions inherit the replacement base cost; the proposal assigns no new EIP-2718 type or payload."
+  rationale: "The EIP modifies existing transaction formats rather than introducing a new type, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification — Intrinsic gas computation, lines 84-109"
+    summary: "Intrinsic gas for all existing transaction formats changes, and the calculation gains a state-at-start input plus a conditional destination-state surcharge."
+  - source: eip.md
+    locator: "Backwards Compatibility, lines 177-181"
+    summary: "The EIP identifies the repricing as consensus-incompatible and requires wallets, RPCs, estimators, and all logic assuming a 21,000 base to update."
+  rationale: "This changes a validity threshold across existing transaction types and makes formerly transaction-local intrinsic-gas validation state-dependent. That demands extensive vector rework and state-aware validation/harness handling, matching anchor 3."
+  confidence: high
+  uncertainty_note: "The package does not detail test-infrastructure changes, and the exact CREATE path is textually inconsistent."
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification, lines 57-127"
+    summary: "The specification changes transaction-level gas parameters and rules without adding a block or header field."
+  rationale: "No new block or header field is introduced, so anchor 0 applies."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification, lines 57-66"
+    summary: "Activation at FORK_BLOCK sets two gas parameters and applies transaction rules; it specifies no one-time state or internal-variable migration at the activation block."
+  rationale: "Ordinary fork-gated rule activation without an activation-block state modification is anchor 0."
+  confidence: high
+  uncertainty_note: "None identified."
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Abstract — Capacity Impact, lines 24-28"
+    summary: "The proposal estimates 18.5% more average transactions and up to 250% more minimal transactions per block at an unchanged nominal gas limit."
+  - source: eip.md
+    locator: "Test Cases and Security Considerations, lines 226-247"
+    summary: "It calls for all-client Perfnet blocks of ETH transfers and contract-activation workloads and acknowledges risk from significantly increasing maximum transaction count."
+  rationale: "The repricing substantially changes block-level workload composition and existing throughput assumptions, and cannot be validated solely as a single isolated transaction operation. Cross-client block benchmarks are required, matching anchor 3."
+  confidence: high
+  uncertainty_note: "The EIP supplies claimed headroom but no packaged all-client result for the specified workloads."
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification — New-account surcharge, lines 68-77"
+    summary: "Consensus intrinsic cost now depends on state existence, value, transaction kind, and precompile classification, with the surcharge intended to preserve state-growth pricing."
+  - source: eip.md
+    locator: "Security Considerations, lines 241-247"
+    summary: "The EIP explicitly recognizes risk from a significant increase in maximum transactions per block and relies on equivalence between newly priced transaction components and existing internal work."
+  rationale: "The change touches critical transaction validity and state-growth pricing while materially expanding worst-case transaction counts, affecting execution, state, resource-exhaustion, and estimation assumptions. These multiple critical interactions warrant extensive security and adversarial workload review, matching anchor 3."
+  confidence: medium
+  uncertainty_note: "The security section is brief and does not quantify client-specific resource or state-growth limits."
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification — New-account surcharge, lines 68-82"
+    summary: "The condition says 'non-existent per EIP-161 emptiness,' while adjacent notes alternate among non-existent, empty, creation, and no-creation terminology."
+  - source: eip.md
+    locator: "Specification — Intrinsic gas computation and Test Cases, lines 84-109 and 232-238"
+    summary: "Normative pseudocode applies the 6,000 base to transaction calculation generally, but the prose and test list say CREATE transactions are unchanged from prior rules."
+  - source: supporting/eip-161.md
+    locator: "Specification, lines 20-36"
+    summary: "EIP-161 separately defines empty and dead accounts, with dead including either non-existent or empty, making the EIP-2780 terminology relevant to constructible state cases."
+  rationale: "Clients need localized agreement on whether CREATE retains only its existing creation component or its entire prior intrinsic cost, and on whether the surcharge uses strict non-existence or EIP-161 dead/empty semantics. The intended reading is inferable but not fully determined, matching anchor 2."
+  confidence: high
+  uncertainty_note: "The invariant against persistent empty accounts may make some empty-versus-non-existent cases rare, but the packaged text does not eliminate the semantic conflict."
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 5
+  evidence:
+  - source: eip.md
+    locator: "Front matter and Specification — New-account surcharge, lines 1-12 and 68-77"
+    summary: "The EIP declares dependencies on EIPs 1559, 2718, 2929, and 2930, and normatively relies on EIP-161 destination-account semantics."
+  - source: eip.md
+    locator: "Specification — Code change example and Edits and interactions with other EIPs, lines 111-127"
+    summary: "Existing EIP-1559/EIP-2930 typed transactions inherit the new base, EIP-7702 inherits it through EIP-2930, and EIP-7623 calldata rules must compose unchanged around it."
+  - source: eip.md
+    locator: "Rationale and Backwards Compatibility — Effects on transactions per block, lines 165-195"
+    summary: "The text connects envelope neutrality and calldata floors to EIPs 2718, 7623, and 7976, and identifies capacity interactions with EIPs 7934, 7782, and 7999."
+  - source: supporting/eip-7976.md
+    locator: "Specification, lines 29-59"
+    summary: "EIP-7976's calldata-floor and validity formulas embed a 21,000 base, so coactivation requires coordinated replacement or composition."
+  - source: supporting/eip-7999.md
+    locator: "Specification for aggregate and hybrid EVM gas, lines 429-459"
+    summary: "EIP-7999 treats TX_BASE_COST as a deterministic fee component, creating a direct formula interaction with this repricing."
+  rationale: "There are 11 identified interactions: 161, 1559, 2718, 2929, 2930, 7623, 7702, 7782, 7934, 7976, and 7999. Core validity and intrinsic formulas require coordinated vectors, while the latter capacity and fee-market proposals add coactivation/performance axes. Under the uncapped rule, anchor 3 plus two complete groups of three additional EIPs beyond the first three yields 5."
+  confidence: medium
+  uncertainty_note: "Some later-listed interactions are capacity or fee-composition axes rather than direct normative dependencies, so the breadth of coordinated testing is less certain than for EIPs 161, 1559, 2718, 2929, 2930, 7623, and 7702."
+  exceptional_score_justification: "Cross-EIP interactions is explicitly uncapped: 11 identified interacting EIPs produce score 3 + floor((11 - 3) / 3) = 5."
+  interacting_eips: [161, 1559, 2718, 2929, 2930, 7623, 7702, 7782, 7934, 7976, 7999]
+  unidentified_interactions:
+  - "The specification says any other active calldata-pricing EIPs continue to supply GasForCalldata unchanged, but it does not identify their EIP numbers."
+totals:
+  primary_score: 25
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: "Material but localized under-specification remains in the CREATE path and destination-account predicate. The general intrinsic-gas pseudocode lowers the base for every transaction, while separate prose says CREATE transactions are unchanged; the surcharge language also mixes EIP-161 non-existent, empty, and creation concepts."
+  affected_criteria:
+  - evm_gas_rule_changes
+  - edge_boundary_conditions
+  - new_or_modified_transaction_validity_mechanisms
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 24
+    maximum: 26
+  plausible_tiers: [high]
+  unresolved_questions:
+  - "Does 'CREATE transaction: unchanged' mean only that the existing creation component receives no new surcharge, or that CREATE retains the full prior 21,000 base?"
+  - "Does the surcharge apply only when the destination account is strictly absent, or whenever it is EIP-161 dead, including an existing empty account?"
+  - "At which precise pre-execution point is state_at_start sampled relative to upfront sender accounting and other transaction initialization?"
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: "I assessed only the sealed Amsterdam EIP-2780 package at its recorded information cutoff, did not use internet access, skills, present-day implementation knowledge, other EIP assessments, or prohibited project records, and did not infer unresolved behavior from later outcomes."
+notable_ambiguities:
+- "CREATE handling is internally inconsistent between the normative general calculation and prose/test wording that says CREATE is unchanged."
+- "The surcharge predicate mixes 'non-existent,' EIP-161 'emptiness,' and account creation without explicitly selecting strict non-existence versus EIP-161 dead-account semantics."
+overall_confidence: medium

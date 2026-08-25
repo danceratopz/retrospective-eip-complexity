@@ -1,0 +1,598 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 8038
+  title: State-access gas cost update
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-8038 was a Draft proposal to increase four
+    existing warm/cold state-access gas parameters affecting SSTORE, SLOAD,
+    call-family, BALANCE, SELFDESTRUCT, and EXT-family operations. It also
+    specified an extra warm-access charge for EXTCODESIZE and EXTCODECOPY, with
+    conditional treatment when EIP-2926 or EIP-8032 applies. The actual gas
+    values and supporting stateful benchmark results were not yet finalized.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-8038/manifest.yaml
+    manifest_sha256: d44de70df5d9ec4e8f9d2f25628243534f97f1b3c0729f4f236cdfaaecaea522
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 2023b9c1519e390ef0b97ac96df796a154d9223d
+    path: EIPS/eip-8038.md
+    committed_at: '2025-10-08T11:34:45Z'
+    git_blob_sha: 63255d55d9fcf870dbdcc032e34a2b7c59ee8e55
+    content_sha256: 8b5fa9f486beac8ab5bb214728d6f81f8b13ff610e4dab114e392c8dd4a3b1d0
+    immutable_url: https://github.com/ethereum/EIPs/blob/2023b9c1519e390ef0b97ac96df796a154d9223d/EIPS/eip-8038.md
+    information_cutoff_at: '2025-10-16T08:11:36Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-8038.md
+    content_sha256: e3b254f5a5928858760b10638a480447b71b57715f030e0a1846e2c3a1497654
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T14:18:40+02:00'
+    session_id: assessment-run-e490e170-aaf3-4652-a177-377dbbfb4036
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2926.md
+  - supporting/eip-7928.md
+  - supporting/eip-8032.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: >-
+      The proposal updates four existing gas-model parameters and revises the
+      EXTCODESIZE/EXTCODECOPY charge to add one existing warm-access cost.
+  rationale: >-
+    This updates the existing EVM warm/cold gas-accounting mechanism rather than
+    introducing a separate accounting mechanism, matching anchor 1.
+  confidence: high
+  uncertainty_note: >-
+    The numerical values are TBD, but that does not change the mechanism-level
+    classification.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 37-45
+    summary: >-
+      The pseudocode retains the warm/cold accessed-address branch and changes
+      the amount assigned to access_gas_cost for two opcodes.
+  rationale: >-
+    No state access is moved and no new rule changes where gas is charged
+    relative to a state access; only charge amounts are revised.
+  confidence: medium
+  uncertainty_note: >-
+    The pseudocode does not show the eventual gas-deduction point, but the text
+    states no ordering change.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 24-45
+    summary: >-
+      The complete described change concerns state-access EVM charges and does
+      not introduce or alter blob gas.
+  rationale: No blob gas accounting mechanism is changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-37
+    summary: >-
+      GAS_STORAGE_UPDATE is repriced as part of the ordinary EVM gas model for
+      SSTORE; no StateGasCosts schedule, state-byte rate, block state-gas budget,
+      reservoir, or spill path is specified.
+  rationale: >-
+    The proposal changes execution gas for state-accessing opcodes, not the
+    rubric's separate state-gas accounting system for writing state.
+  confidence: high
+  uncertainty_note: >-
+    The parameter name includes "STORAGE_UPDATE", but the proposal consistently
+    places it in the existing EVM gas model and defines no separate state gas.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: >-
+      The specified changes are upfront operation charges; no refund rule or
+      refund counter change is described.
+  rationale: No new EVM gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-45
+    summary: >-
+      Existing gas charges change across SSTORE, SLOAD, all call-family opcodes,
+      BALANCE, SELFDESTRUCT, and EXT-family opcodes, with a distinct formula for
+      EXTCODESIZE and EXTCODECOPY.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 74-83
+    summary: >-
+      The EIP calls the repricing backwards incompatible and requires gas
+      estimation behavior to account for it.
+  rationale: >-
+    A major and diverse set of existing state-access and exact-gas/OOG tests
+    must be re-baselined across several opcode families, matching anchor 3.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test inventory, and TBD constants prevent counting
+    precisely which existing gas-limit vectors change outcome.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: >-
+      The proposal changes expected gas charges but creates no additional output,
+      commitment, or state property that unrelated tests must newly assert.
+  rationale: >-
+    Existing gas tests need changed expectations, not an additional invariant on
+    tests that are unrelated to this EIP.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 74-83
+    summary: >-
+      The only interfaces called out are wallet and node RPC gas estimation; no
+      field or mechanism is added to the state transition-tool interface.
+  rationale: No transition-tool interface change is required by the text.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-45
+    summary: >-
+      The change consists of gas constants and an existing warm/cold conditional
+      charge, expressible with ordinary opcode execution and gas assertions.
+  rationale: Existing gas and opcode test primitives suffice.
+  confidence: medium
+  uncertainty_note: >-
+    The historical EIP supplies no test plan, but nothing specified requires a
+    new expectation or modifier abstraction.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 24-45
+    summary: >-
+      The proposal is limited to gas repricing and contains no cryptographic
+      primitive or cryptographic behavior change.
+  rationale: No cryptography mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-45
+    summary: >-
+      Four gas parameters span several opcode families, while EXTCODESIZE and
+      EXTCODECOPY have separate warm and cold branches with an added warm charge.
+  - source: eip.md
+    locator: Interaction with EIP-8032, lines 59-64
+    summary: >-
+      SSTORE/SLOAD parameter calibration has distinct before/after-EIP-8032 cases
+      around an activation threshold and depth-scaled cost regime.
+  rationale: >-
+    Exact-gas boundaries must be exercised across multiple opcode families and
+    warm/cold branches, and the EXTCODECOPY and conditional EIP-8032 cases create
+    an elevated test matrix, matching anchor 3.
+  confidence: medium
+  uncertainty_note: >-
+    Missing constants prevent enumerating the exact boundary values, and final
+    fork composition controls whether the EIP-8032 branch is active.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 24-45 and 74-83
+    summary: >-
+      The EIP changes execution gas and gas estimation but specifies no block RLP
+      field or block-validation rule used during syncing.
+  rationale: No block RLP validation mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 74-83
+    summary: >-
+      The proposal mentions eth_estimateGas RPC handling but no Engine API field,
+      endpoint, or execution/consensus communication mechanism.
+  rationale: No Engine API change is specified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 24-45
+    summary: >-
+      The complete feature is a gas-schedule update and does not introduce a
+      contract address, code deployment, or system action.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: >-
+      The affected entities are opcode gas parameters and two opcode formulas;
+      no pre-existing system contract code, state, or behavior is identified.
+  rationale: No direct or specified indirect system-contract modification occurs.
+  confidence: high
+  uncertainty_note: >-
+    Generic execution-gas changes can affect any contract invocation, but the EIP
+    identifies no system-contract-specific effect warranting this anchor.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-45
+    summary: >-
+      The table and formula refer only to pre-existing opcode families and add no
+      opcode number or new operation.
+  rationale: No opcode is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 24-45
+    summary: >-
+      SSTORE, SLOAD, call-family, BALANCE, SELFDESTRUCT, and EXT-family operations
+      retain their functional behavior while only their gas charges change.
+  rationale: >-
+    The rubric expressly excludes gas-only changes from the modified-opcodes
+    anchor, so the score is 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 24-45
+    summary: >-
+      No precompile address, input processing rule, or new precompile gas schedule
+      is introduced.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-45
+    summary: >-
+      The call-family account-access overhead changes generally, but no existing
+      precompile's own logic or gas schedule is modified.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: >-
+    Calls to precompile addresses may experience generic call overhead, but that
+    is an opcode access charge rather than a precompile gas-schedule change.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: >-
+      The specification changes numeric gas parameters and a charge formula, not
+      transaction, block, or interface serialization.
+  rationale: No RLP, SSZ, or other interface-level encoding change is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 24-45
+    summary: >-
+      The proposal applies during execution of existing opcodes and defines no
+      transaction envelope or transaction type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 74-83
+    summary: >-
+      The stated compatibility impact is execution gas estimation and possible
+      failed transactions from underestimation, not a validity or intrinsic-gas
+      rule for any transaction type.
+  rationale: >-
+    Execution-time opcode repricing does not modify transaction validity or
+    intrinsic gas calculation under this anchor.
+  confidence: high
+  uncertainty_note: >-
+    Higher execution charges can change whether execution runs out of gas, but
+    that is not a transaction validity mechanism.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 24-45
+    summary: >-
+      Activation updates gas-model parameters only; no block-body or header field
+      is defined.
+  rationale: No new block or header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 26-37 and 74-76
+    summary: >-
+      A scheduled upgrade selects revised gas parameters, with no activation-block
+      state mutation, migration, or pre-existing internal-variable modification.
+  rationale: Ordinary fork selection of a gas schedule is not a new activation mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Rationale - Benchmarking, lines 47-53
+    summary: >-
+      Final values depend on stateful benchmarks that were still in development,
+      so the proposal had neither finalized numbers nor completed calibration.
+  - source: eip.md
+    locator: Interactions with EIP-8032, EIP-2926, and EIP-7928, lines 59-72
+    summary: >-
+      Calibration and even one opcode formula vary with storage-depth pricing,
+      code layout, and BAL client optimizations; initial benchmarks explicitly
+      omit the BAL optimizations.
+  rationale: >-
+    Performance validation cannot be reduced to a context-free microbenchmark:
+    it is stateful, affects a broad existing benchmark surface, and has complex
+    interactions with three other mechanisms, matching anchor 3.
+  confidence: medium
+  uncertainty_note: >-
+    Benchmark methodology and results were not present, so the magnitude of the
+    performance-benchmark disruption cannot be quantified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 18-22
+    summary: >-
+      The repricing is motivated by state growth degrading state-access
+      performance and by different database-read costs across existing opcodes.
+  - source: eip.md
+    locator: Backwards Compatibility and Security Considerations, lines 74-87
+    summary: >-
+      Incorrect estimation can lead to failed transactions, and the proposal
+      flags unresolved usability effects across applications and user behavior.
+  rationale: >-
+    The change touches several existing execution and estimation components and
+    slightly alters resource-pricing assumptions, requiring targeted review and
+    boundary testing; it does not introduce the broad new security mechanism
+    required for anchor 3.
+  confidence: medium
+  uncertainty_note: >-
+    The security section calls for more analysis and gives no threat model or
+    quantitative application-impact results.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 26-35
+    summary: >-
+      Every new gas value and increase is TBD, followed by an explicit TODO, so
+      clients cannot derive consensus gas results or exact-gas test vectors.
+  - source: eip.md
+    locator: Rationale - Benchmarking, lines 47-53
+    summary: >-
+      The document states that final numbers await stateful benchmark data and
+      retains another TODO.
+  rationale: >-
+    Client agreement is required before gas outcomes can be baselined, but the
+    missing decisions are localized to parameters and conditional formulas rather
+    than making previously unobservable behavior consensus-critical.
+  confidence: high
+  uncertainty_note: >-
+    The intended direction of every change is clear, but no authoritative numeric
+    result exists for any affected exact-gas case.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Front matter and Motivation, lines 1-12 and 18-22
+    summary: >-
+      The EIP declares requirements on 2926, 7928, and 8032 and explicitly
+      reprices the state-access cost model previously raised by EIP-2929.
+  - source: eip.md
+    locator: Interactions with EIP-8032, EIP-2926, and EIP-7928, lines 59-72
+    summary: >-
+      EIP-8032 changes parameter calibration, EIP-2926 removes the extra
+      EXTCODESIZE read/charge, and EIP-7928 introduces optimizations omitted from
+      the initial benchmarks.
+  - source: supporting/eip-2926.md
+    locator: Code merkleization, lines 44-68
+    summary: >-
+      EIP-2926 adds codeSize to contract accounts and separately changes code
+      storage and creation costs, confirming why EXTCODESIZE treatment differs.
+  - source: supporting/eip-7928.md
+    locator: Abstract and Scope and Inclusion, lines 13-15 and 96-118
+    summary: >-
+      EIP-7928 makes executed account accesses, including EXTCODESIZE,
+      EXTCODECOPY, calls, SLOAD-related storage, and SELFDESTRUCT targets, part of
+      a consensus block access list.
+  - source: supporting/eip-8032.md
+    locator: Specification - Gas cost changes, lines 54-62
+    summary: >-
+      EIP-8032 makes SSTORE cost depend on an account depth field and an activation
+      threshold, the regime for which EIP-8038 conditionally calibrates costs.
+  rationale: >-
+    The proposal has strong, design-level dependencies across three contemporaneous
+    EIPs and modifies the earlier EIP-2929 cost model. Formula selection and
+    benchmark baselines therefore require coordinated cross-EIP testing, matching
+    anchor 3; four interacting EIPs do not trigger the uncapped +1 increment.
+  confidence: high
+  uncertainty_note: >-
+    Fork scheduling is unresolved in the text, and the exact combined parameter
+    values are TBD.
+  exceptional_score_justification: null
+  interacting_eips: [2926, 2929, 7928, 8032]
+  unidentified_interactions: []
+totals:
+  primary_score: 17
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    Material under-specification is present: all four replacement gas constants
+    and increases are TBD, the stateful benchmark basis is unfinished, and the
+    exact formula/parameter selection when EIP-2926 or EIP-8032 is active is not
+    fully resolved. These gaps prevent authoritative exact-gas vectors even though
+    the direction and broad opcode scope of the repricing are clear.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 13
+    maximum: 17
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - What exact values replace each of the four gas parameters, and what benchmark data selects them?
+  - Is GAS_WARM_ACCESS intentionally in scope even though the abstract highlights only three base costs?
+  - Which parameter set applies if EIP-8032 activates in the same fork, and how is ACTIVATION_THRESHOLD incorporated into calibration?
+  - Does EIP-2926 suppress only the extra EXTCODESIZE warm charge, and what combined treatment applies to EXTCODECOPY?
+  - How should EIP-7928's parallel-read optimizations be reflected in the final benchmark baseline?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision, the pinned assessor-view
+    rubric, and the three allowlisted supporting EIPs at the recorded information
+    cutoff. I did not use internet access, later revisions, implementations,
+    tests, fork outcomes, project-management records, other assessments, or
+    present-day implementation knowledge.
+notable_ambiguities:
+- >-
+  The abstract names three raised base costs, while the specification table also
+  changes GAS_WARM_ACCESS.
+- >-
+  The front matter requires EIP-8032, yet the rationale says EIP-8032 was not
+  scheduled and defines both before- and after-EIP-8032 calibration cases.
+- >-
+  The backwards-compatibility text refers to "calldata cost rules" and "floor
+  cost values" even though the specification is state-access opcode repricing.
+- >-
+  EIP-2926 is said to preserve the old EXTCODESIZE formula, but the combined
+  EXTCODECOPY behavior is not similarly settled.
+overall_confidence: medium

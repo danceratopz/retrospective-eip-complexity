@@ -1,0 +1,555 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 8246
+  title: Remove SELFDESTRUCT Burn
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-8246 proposed removing the remaining ETH-burn
+    cases for SELFDESTRUCT executed by a contract created in the same transaction.
+    It preserves the account balance while clearing nonce, code, and storage at
+    transaction finalization, lets EIP-161 delete a resulting empty account, and
+    leaves behavior outside the same-transaction creation case unchanged from
+    EIP-6780. The proposal also resets nonce to zero so a later CREATE2 remains
+    possible; it requires a hard fork and identifies a large combinatorial
+    multi-call/create test surface, but its concrete test cases were still TBD.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-8246/manifest.yaml
+    manifest_sha256: 851f0fede04cacc10d22886fb3ede8872a902799527978ecc405c02ece861d93
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 630c3420dacd31a90ce702b76092f4c9f085d4d4
+    path: EIPS/eip-8246.md
+    committed_at: '2026-05-06T12:59:06Z'
+    git_blob_sha: 1f0217997e40f92717c2c41f63a54a3789169f8d
+    content_sha256: 12452f4f467ef76923cb25c363ff4df9ead4f5bc953f500c980fde40173f3d75
+    immutable_url: https://github.com/ethereum/EIPs/blob/630c3420dacd31a90ce702b76092f4c9f085d4d4/EIPS/eip-8246.md
+    information_cutoff_at: '2026-05-06T12:59:06Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-8246.md
+    content_sha256: b34fe07446f8423874a62d98843d232096dfaf21ba36cc673c20bc4370d76c66
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T14:19:08+02:00'
+    session_id: assessment-run-12871f04-b9ab-4f37-aa04-f44b1f35a3bc
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-161.md
+  - supporting/eip-6780.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The normative changes address SELFDESTRUCT balance and finalization state,
+      while explicitly leaving all other SELFDESTRUCT behavior unchanged.
+  - source: eip.md
+    locator: Security Considerations, lines 79-80
+    summary: >-
+      The proposal says the applicable account-creation cost is already properly
+      included rather than defining a new or adjusted gas charge.
+  rationale: >-
+    No gas schedule, dynamic-cost rule, or charging mechanism is changed, so the
+    proposal meets the zero anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The EIP changes the resulting balance and finalization state but specifies no
+      relocation of state access or gas charging within SELFDESTRUCT execution.
+  rationale: >-
+    This is a result change, not a change to the order of state access and gas
+    charging within an opcode; therefore the ordering anchor is not triggered.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The complete normative change is confined to SELFDESTRUCT and account state
+      at transaction finalization; it introduces no blob-gas rule.
+  rationale: No blob gas accounting mechanism is added or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The EIP changes which account fields remain after finalization but defines no
+      state-gas cost, rate, budget, reservoir, charging site, or spill rule.
+  rationale: >-
+    State contents change, but the rubric's separate state-gas accounting
+    mechanisms do not; the zero anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The specification enumerates balance preservation and field clearing and
+      states that all other SELFDESTRUCT behavior is unchanged.
+  - source: supporting/eip-6780.md
+    locator: Specification, lines 37-46
+    summary: >-
+      The inherited same-transaction SELFDESTRUCT rules explicitly provide no gas
+      refund, and EIP-8246 does not alter that rule.
+  rationale: No new refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, line 79
+    summary: >-
+      The EIP identifies a combinatorial effect across many multi-call/create test
+      scenarios, significant testing effort, and adaptation of many EIP-6780 tests.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 63-69
+    summary: >-
+      Existing expectations for burn, deletion, retained balance-only accounts,
+      and follow-up CREATE2 change only in the same-transaction creation branch.
+  rationale: >-
+    A considerable set of existing SELFDESTRUCT/EIP-6780 vectors must be reworked,
+    but it remains a specialized opcode-and-creation category rather than a diverse
+    major subset of the whole test corpus, matching score 2.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, line 79
+    summary: >-
+      Existing EIP-6780 cases are described as needing adaptation to changed
+      behavior, not as unrelated tests gaining an additional universal assertion.
+  rationale: >-
+    The affected tests change expected results; tests not about this EIP do not
+    gain a new mechanically applied invariant.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The behavior is derived from ordinary transaction execution and finalization,
+      with no new input, output, or fork-activation-block datum specified.
+  rationale: No transition-tool interface field or mechanism is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, line 79
+    summary: >-
+      The proposal says many existing EIP-6780 test cases can be adapted, providing
+      no indication that new framework-level expectations or modifiers are needed.
+  rationale: >-
+    Existing transaction, call/create, opcode, and post-state test primitives
+    suffice; only new or adapted cases are called for.
+  confidence: medium
+  uncertainty_note: >-
+    Concrete test cases are TBD, but the specified behavior exposes no need for a
+    new framework abstraction.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The changes concern SELFDESTRUCT balances and account-field clearing and do
+      not introduce or modify a cryptographic operation.
+  rationale: No cryptography mechanism is introduced or changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 22-23
+    summary: >-
+      Remaining burn cases distinguish same-transaction creation, self-beneficiary,
+      and later funding via CALL or one or more SELFDESTRUCT operations.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 63-69
+    summary: >-
+      Outcomes branch on zero versus nonzero final balance, later CREATE2, and
+      whether creation occurred in the same transaction.
+  - source: eip.md
+    locator: Security Considerations, line 79
+    summary: >-
+      The proposal expressly characterizes multi-call/create interactions as
+      combinatorial across a vast number of scenarios.
+  rationale: >-
+    Multiple boundary-prone mechanisms combine multiplicatively, and the proposal
+    itself calls out an elevated test-case count, satisfying score 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The normative changes affect execution and transaction-finalization state and
+      add no block RLP validation rule.
+  rationale: No block serialization or syncing validation mechanism changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      SELFDESTRUCT semantics change without any Engine API field, endpoint, or
+      communication mechanism being introduced.
+  rationale: No Engine API change is specified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The EIP modifies an existing opcode and finalization behavior and introduces
+      no contract address, bytecode, or system action.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The specification identifies only SELFDESTRUCT account behavior and no
+      existing system contract code, state, or indirect system-contract effect.
+  rationale: No pre-existing system contract is modified directly or indirectly.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: The proposal changes the existing SELFDESTRUCT opcode only.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      SELFDESTRUCT with a same-transaction-created self-beneficiary now preserves
+      balance, and marked-account finalization preserves balance instead of deleting
+      the account while clearing nonce, code, and storage.
+  rationale: >-
+    At least one pre-existing opcode's non-gas behavior is modified, which maps
+    directly to the rubric's fixed score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The complete normative scope changes SELFDESTRUCT and mentions no precompile.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The complete normative scope changes SELFDESTRUCT and mentions no precompile
+      behavior or gas schedule.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The account-state semantic change introduces no transaction, block, or
+      interface encoding.
+  rationale: No RLP, SSZ, or other interface-level encoding changes are specified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The proposal applies during ordinary transaction execution and finalization
+      and defines no transaction envelope or new transaction type.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 61-69
+    summary: >-
+      The hard-fork change alters successful execution post-state and CREATE2 reuse,
+      not transaction validity or intrinsic gas calculation.
+  rationale: >-
+    No transaction acceptance rule or intrinsic-gas validity mechanism changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The specification changes opcode and finalization behavior without adding a
+      block or header field.
+  rationale: No block or header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 59-65
+    summary: >-
+      A hard fork switches the execution rule, but the proposal specifies no
+      one-time state mutation or internal-variable modification at the activation
+      block.
+  rationale: >-
+    Ordinary fork-gated semantics do not constitute the rubric's activation-block
+    state or internal-variable mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 20-25
+    summary: >-
+      The proposal removes a nearly unused special case to simplify EVM handling
+      and says the affected path is rarer than the already changed EIP-6780 path.
+  - source: eip.md
+    locator: Security Considerations, line 80
+    summary: >-
+      Balance-only dust accounts are possible, but the applicable creation cost is
+      already included and the text reports the triggering behavior as very rare.
+  rationale: >-
+    The package identifies no new mechanism requiring performance validation; the
+    change simplifies a rare existing finalization path, so score 0 is best
+    supported.
+  confidence: medium
+  uncertainty_note: >-
+    The text does not supply benchmarks, but it also does not identify a material
+    performance-sensitive mechanism.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 79-80
+    summary: >-
+      The change combines with multi-call/create flows and can leave dust-like
+      accounts holding locked nonzero balances when callers expected a burn.
+  - source: eip.md
+    locator: Rationale and Backwards Compatibility, lines 53-67
+    summary: >-
+      Finalization clears execution state, retains balance, resets nonce, and must
+      preserve later CREATE2 reuse across zero- and nonzero-balance outcomes.
+  rationale: >-
+    The change alters security-relevant balance and account-lifecycle assumptions
+    across a limited cluster of SELFDESTRUCT, call/create, finalization, and CREATE2
+    behavior, warranting targeted review and fuzzing under score 2; it does not
+    establish the broad critical-component impact required for score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal calls for significant testing but does not quantify a separate
+    security-review or fuzzing program.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-47
+    summary: >-
+      The proposal specifies the changed self-beneficiary balance, every retained
+      account field at finalization, empty-account deletion, and that all remaining
+      SELFDESTRUCT behavior is unchanged.
+  - source: supporting/eip-6780.md
+    locator: Specification, lines 26-50
+    summary: >-
+      The inherited baseline distinguishes same-transaction creation, defines its
+      balance/deletion semantics, and defines what counts as contract creation.
+  rationale: >-
+    Together the proposal and its required baseline determine constructible outcomes;
+    missing concrete tests do not create a normative cross-client choice.
+  confidence: medium
+  uncertainty_note: >-
+    Test cases are TBD, but no material behavioral gap requiring client agreement is
+    apparent in the sealed text.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Preamble and Specification, lines 1-11 and 46-47
+    summary: >-
+      EIP-8246 formally requires EIPs 161 and 6780, leaves the EIP-6780 baseline
+      otherwise unchanged, and delegates zero-balance deletion to EIP-161.
+  - source: supporting/eip-161.md
+    locator: Specification, lines 24-36
+    summary: >-
+      EIP-161 defines end-of-transaction deletion and the empty-account predicate
+      used by EIP-8246's resulting account state.
+  - source: supporting/eip-6780.md
+    locator: Specification, lines 26-48
+    summary: >-
+      EIP-6780 supplies the prior two-branch SELFDESTRUCT semantics that EIP-8246
+      selectively modifies.
+  rationale: >-
+    Coordinated testing against two required EIPs is necessary for the baseline
+    SELFDESTRUCT branch and final empty-account deletion, but the interactions are
+    localized, matching score 2.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips: [161, 6780]
+  unidentified_interactions: []
+totals:
+  primary_score: 12
+  complexity_tier: medium
+under_specification:
+  present: false
+  summary: >-
+    No material normative under-specification is apparent. Although concrete test
+    cases are TBD, the proposal defines the changed balance and finalization results
+    and incorporates the EIP-161 and EIP-6780 baseline rules needed to determine the
+    remaining cases.
+  affected_criteria: []
+  plausible_total_range:
+    minimum: 12
+    maximum: 12
+  plausible_tiers:
+  - medium
+  unresolved_questions: []
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP, pinned rubric, and allowlisted
+    supporting documents at the recorded information cutoff. I did not access the
+    internet, later implementations or specifications, project-management records,
+    another EIP package, an assessment skill, or any other prohibited source.
+notable_ambiguities: []
+overall_confidence: medium

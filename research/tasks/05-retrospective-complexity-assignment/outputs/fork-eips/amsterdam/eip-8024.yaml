@@ -1,0 +1,474 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 8024
+  title: Backward compatible SWAPN, DUPN, EXCHANGE
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, the proposal added three execution-layer opcodes at
+    0xe6 through 0xe8 for immediate-encoded deep duplication, deep swapping, and
+    pairwise exchange of stack items. Each opcode carries a one-byte immediate and
+    charges a fixed 3 gas, while selected immediate values are forbidden so that
+    existing JUMPDEST and PUSH interpretation remains unchanged. The stated scope
+    is opcode semantics, encoding and decoding, assembly/disassembly, and execution;
+    it does not introduce transaction, block, state, precompile, or external-interface
+    changes.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-8024/manifest.yaml
+    manifest_sha256: 9d55176c5f4579a0759539612ac62ab7122ab538ec4b5c90b09b9a1a556f594f
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 28578c7ba0e3c7831a91a9784e85ce9b400c29a8
+    path: EIPS/eip-8024.md
+    committed_at: '2025-09-17T17:24:56Z'
+    git_blob_sha: b519c1ce6054ddfdbcb580af246786b466667522
+    content_sha256: c4de111b08cfda07cfd60702295e534ca31ae972d649a07bbb490d34d9802ba1
+    immutable_url: https://github.com/ethereum/EIPs/blob/28578c7ba0e3c7831a91a9784e85ce9b400c29a8/EIPS/eip-8024.md
+    information_cutoff_at: '2025-10-29T02:00:31Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-8024.md
+    content_sha256: 494ad42abf9d739507a21ae6304f2e84882bf1bd16aeeda58f4a9a65b4c7126c
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T12:14:44Z'
+    session_id: assessment-run-7c0e30cc-0cc1-4d0d-a61b-afe06534e5fe
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-65
+    summary: Each of the three newly allocated opcodes charges a fixed 3 gas before decoding and executing its immediate operand.
+  - source: eip.md
+    locator: Rationale / Gas cost, lines 142-144
+    summary: The fixed cost is justified by comparison to existing DUP and SWAP operations and by the negligible cost of pointer swapping and immediate decoding.
+  rationale: >-
+    The proposal creates gas rules for new operations but leaves existing opcode gas
+    schedules and accounting mechanisms unchanged. This matches the score-2 anchor
+    for a new, isolated gas-accounting rule that does not alter existing mechanisms.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 37-67
+    summary: The new operations read, duplicate, or swap only stack entries and do not access persistent state.
+  rationale: >-
+    No opcode performs a state access, so neither state-access placement nor gas-charge
+    ordering relative to a state access changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-65
+    summary: The specification is limited to three stack instructions with ordinary fixed gas charges and contains no blob-gas rule.
+  rationale: No blob gas accounting is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 37-65
+    summary: All specified effects are on the program counter and in-memory EVM stack; no state write or state-gas site is present.
+  rationale: No state-writing charge, state-gas rate, budget, reservoir, or spill rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-65
+    summary: The opcode algorithms charge 3 gas and specify no refund action.
+  rationale: The proposal introduces no gas-refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale / Disallowed immediate range, lines 117-125
+    summary: Bytes 0xe6 through 0xe8 change from undefined opcodes to immediate-bearing operations, while forbidden immediate values are designed to preserve existing JUMPDEST and PUSH boundaries.
+  - source: eip.md
+    locator: Backwards Compatibility and Test Cases, lines 150-175
+    summary: Existing code is unaffected unless it attempts to execute an allocated opcode, and examples exercise the changed invalid-opcode and jump-target cases.
+  rationale: >-
+    Existing tests that deliberately execute the formerly undefined opcode bytes or
+    test nearby instruction boundaries need limited expectation updates. The explicit
+    compatibility design prevents this from extending beyond a minor, specialized
+    subset, matching score 1.
+  confidence: medium
+  uncertainty_note: The sealed package contains no pre-existing test inventory, so the affected subset size is inferred from the proposal's compatibility guarantee.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Disallowed immediate range, lines 119-125
+    summary: Preserving existing execution traces and JUMPDEST locations is a compatibility property of this EIP rather than a new output every unrelated test must assert.
+  - source: eip.md
+    locator: Test Cases, lines 154-175
+    summary: The listed assertions are feature-specific assembly and execution examples, not a new assertion applied to all pre-existing tests.
+  rationale: >-
+    Some old invalid-opcode expectations may be reworked, but unrelated tests do not
+    gain an additional EIP-produced value or invariant to assert.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-109
+    summary: The entire specified input is opcode bytecode and one-byte immediates; no transition-tool field or interface mechanism is defined.
+  rationale: Opcode execution can be exercised through existing transition inputs, with no new transition-tool interface field.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 154-175
+    summary: Tests are expressed as ordinary bytecode assembly/disassembly mappings and execution results or halts.
+  rationale: >-
+    Raw bytecode, stack-result, success, and exceptional-halt cases can be represented
+    with ordinary EVM test capabilities; the proposal does not require a new reusable
+    expectation or modifier primitive.
+  confidence: medium
+  uncertainty_note: The package does not describe the test framework, but none of the proposed assertions requires a novel result type.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 29-89
+    summary: The feature consists of stack indexing, swapping, and arithmetic decoding, with no cryptographic operation.
+  rationale: No cryptographic mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-89
+    summary: Each opcode has immediate-validity boundaries, decoded stack-index boundaries, stack access behavior, and a two-branch pair-decoding function.
+  - source: eip.md
+    locator: Rationale / Disallowed immediate range and EXCHANGE immediate, lines 117-131
+    summary: The encoding excludes JUMPDEST and PUSH bytes to prevent cascading instruction-boundary changes, while EXCHANGE deliberately maps a constrained set of stack-index pairs.
+  - source: eip.md
+    locator: Test Cases, lines 154-175
+    summary: Examples cover valid and invalid single and pair encodings, multiple PUSH widths, JUMPDEST preservation, and execution outcomes.
+  rationale: >-
+    Multiple independent boundary families require coverage: allowed versus forbidden
+    immediate ranges, both decode branches, pair constraints, program-counter and
+    instruction-boundary behavior, and stack underflow/overflow at decoded depths.
+    The combinatorial encoding and JUMPDEST/PUSH compatibility surface calls for an
+    elevated number of cases, matching score 3.
+  confidence: high
+  uncertainty_note: The terminal-byte immediate case is not explicitly specified and is recorded under under-specification.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-69
+    summary: The proposal changes EVM bytecode execution and explicitly discusses code-level JUMPDEST analysis, not block RLP validation.
+  rationale: No block RLP field or validation mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-109
+    summary: The specification defines only opcode numbers, immediates, execution semantics, and assembler encodings; it defines no Engine API field or endpoint.
+  rationale: No Engine API communication field or mechanism changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 29-35
+    summary: The feature allocates three opcodes and does not introduce any contract address, code deployment, or system action.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 150-152
+    summary: Contracts that never execute the newly allocated opcode bytes are unaffected, and existing jump targets are preserved.
+  rationale: No existing system-contract code or state is directly or indirectly modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-65
+    summary: Three new opcodes, DUPN, SWAPN, and EXCHANGE, are allocated; all consume an immediate byte and perform decoded stack manipulation.
+  rationale: >-
+    The EIP introduces multiple opcodes and each has a data portion plus nontrivial
+    decoded stack indexing; EXCHANGE also decodes two operands. At least one is complex
+    under the anchor, so multiple additions warrant score 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 31-35 and 150-152
+    summary: The proposal allocates previously undefined bytes as new instructions while preserving existing JUMPDEST behavior; it does not change a pre-existing opcode's result.
+  rationale: Adding behavior at formerly undefined opcode values is scored as added opcodes, not modification or deprecation of an existing opcode.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-65
+    summary: The change is fully specified as ordinary opcode execution and contains no precompile address or call interface.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-65
+    summary: Only new stack opcodes and their fixed gas charges are specified; no precompile behavior or gas schedule appears.
+  rationale: No existing precompile logic or gas accounting is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-41 and 91-109
+    summary: The only encoding introduced is an immediate byte inside EVM bytecode; no transaction, block, or interface encoding changes.
+  rationale: Bytecode instruction encoding is outside this anchor's transaction, block, and interface RLP/SSZ scope.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 29-35
+    summary: The proposal introduces stack instructions only and defines no transaction envelope or type identifier.
+  rationale: No transaction type is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-109
+    summary: All validation conditions concern opcode immediate bytes during VM execution, not transaction validity or intrinsic gas.
+  rationale: No transaction validity rule or intrinsic-gas calculation changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-109
+    summary: The specification contains opcode and bytecode fields only and defines no block-body or header field.
+  rationale: No block or block-header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 29-35 and 150-152
+    summary: Activation allocates three instruction bytes, with no stated one-time state transition or modification of an internal variable at the activation block.
+  rationale: The EIP requires no fork-block state or internal-variable modification.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale / Gas cost and EXCHANGE vs SWAPN, lines 142-148
+    summary: The implementation model is a pointer swap plus simple immediate decoding, asserted to have negligible decoding overhead and no extra runtime cost.
+  - source: eip.md
+    locator: Security Considerations, lines 177-179
+    summary: The stack remains fixed at 1024 items and is described as already held in memory by most implementations.
+  rationale: >-
+    The new deep-index decode and stack operations merit isolated validation of the
+    fixed gas-cost assumption, but are self-contained and are not expected to disturb
+    existing performance behavior. This matches score 1.
+  confidence: medium
+  uncertainty_note: No benchmark evidence is packaged; the validation scope is inferred from the proposal's gas-cost rationale.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Rationale / Use of an immediate operand, lines 111-115
+    summary: Static immediates are chosen specifically to preserve stack-content analysis used by security auditors.
+  - source: eip.md
+    locator: Rationale / Disallowed immediate range, lines 117-125
+    summary: Incorrect instruction-boundary handling could remove or create JUMPDESTs and cascade through later bytecode, while arbitrary sequences can exist in deployed or pending code.
+  - source: eip.md
+    locator: Security Considerations, lines 177-179
+    summary: The authors report no additional known risks but acknowledge that one instruction can newly access deeper stack items.
+  rationale: >-
+    The stack operations are localized, but their unusual immediate-validity rules
+    interact with instruction decoding, static analysis, and consensus-critical jump
+    destinations. Preserving the stated backwards-compatibility invariant warrants
+    targeted review and fuzzing across this limited set of components, matching score 2.
+  confidence: medium
+  uncertainty_note: The proposal asserts that no additional risks are known, so the score reflects review burden from the documented decoding interaction rather than a known vulnerability.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 43-69
+    summary: Each algorithm reads code[pc + 1] and indexes the stack, but the text does not explicitly state the result when the opcode is the final code byte; invalid present immediates and instruction-boundary handling are specified.
+  - source: eip.md
+    locator: Test Cases, lines 154-175
+    summary: The examples cover numerous valid and invalid two-byte forms but do not include a missing immediate at end-of-code.
+  rationale: >-
+    A few constructible boundary cases rely on an implicit base-EVM reading, most
+    notably an opcode at the final byte with no immediate available. The intended use
+    of established code-fetch and stack-fault conventions is apparent and localized,
+    so this fits score 1 rather than requiring broad design agreement.
+  confidence: medium
+  uncertainty_note: It is unclear from the sealed text alone whether end-of-code reads and all stack fault paths are intended to inherit existing EVM conventions without an explicit rule.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Rationale, lines 29-69 and 111-148
+    summary: The feature refers only to existing EVM opcodes and stack behavior and identifies no dependency on, modification of, or conflict with another numbered EIP.
+  rationale: The proposal is self-contained at the EIP level and identifies no coordinated cross-EIP testing requirement.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions: []
+totals:
+  primary_score: 13
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    Material but localized under-specification is present. The formal algorithms read
+    code[pc + 1] without explicitly defining a missing immediate at end-of-code, and
+    stack-fault behavior is left to implicit base-EVM conventions. This chiefly affects
+    boundary baselining rather than the proposal's overall design.
+  affected_criteria:
+  - edge_boundary_conditions
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 12
+    maximum: 14
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - What exact execution result and program-counter treatment applies when DUPN, SWAPN, or EXCHANGE is the final byte of code and code[pc + 1] is unavailable?
+  - Are stack underflow and overflow for every decoded depth intended to inherit existing EVM exceptional-halt behavior without additional wording?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision and assessor rubric listed in
+    sources_consulted, at the recorded information cutoff. I did not access the
+    internet, external sources, later implementations or tests, project-management
+    records, another EIP package or assessment, or any prohibited skill.
+notable_ambiguities:
+- The final-byte immediate case is not explicitly defined even though every formal opcode algorithm reads code[pc + 1].
+- The phrase "revert, consuming all gas" appears to specify an exceptional halt, but it does not use a precise named base-EVM exception.
+- The gas anchor can be read narrowly as only a new fixed opcode cost; this assessment treats the three isolated cost rules as a new accounting rule without effects on existing schedules.
+overall_confidence: medium

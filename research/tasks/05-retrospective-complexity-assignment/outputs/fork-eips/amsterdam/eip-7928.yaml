@@ -1,0 +1,530 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 7928
+  title: Block-Level Access Lists
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, this draft introduced a consensus-enforced Block-Level Access List in the block body and a new header commitment, with an ordered SSZ structure covering accessed accounts, storage reads, and per-transaction storage, balance, nonce, and code changes. Clients were required to gather accesses and changes during execution, system processing, and withdrawals, then reject a block whose committed BAL was incomplete, spurious, or inaccurate. The stated goals were parallel I/O and transaction validation, plus state reconstruction without transaction execution.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7928/manifest.yaml
+    manifest_sha256: 202a157535d24a27e00bc49f8624c50bd2b2705483427cdcc8f30c85b5e52fb5
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 59be93753454b530b063d6d1b8c9acbff4116fe5
+    path: EIPS/eip-7928.md
+    committed_at: '2025-07-31T13:42:40Z'
+    git_blob_sha: 23900781a2af96728f3f82bf0a91c2bdc1867320
+    content_sha256: c1973b06017a4f8c036524a3b4a6746be994ccc95f90fe24f1a0e1e0103176bb
+    immutable_url: https://github.com/ethereum/EIPs/blob/59be93753454b530b063d6d1b8c9acbff4116fe5/EIPS/eip-7928.md
+    information_cutoff_at: '2025-07-31T16:00:14Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-7928.md
+    content_sha256: 7bcffa3cc9567feed03ed5a69e3690ca66ec0dffa3dd0173dd79dc7791d40d7a
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T12:03:26Z'
+    session_id: assessment-run-64884d10-8a55-4b61-be66-691ef1ac1ac7
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2929.md
+  - supporting/eip-2930.md
+  - supporting/eip-7792.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 271-336
+    summary: >-
+      The transition pseudocode executes transactions and observes their accesses and state changes, but introduces no gas charge or gas-accounting rule.
+  rationale: >-
+    The BAL is an observation and block-validation mechanism. It neither adjusts an existing EVM gas rule nor introduces a new one, so the zero anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 417-421
+    summary: >-
+      Clients compare execution-gathered accesses, expressly referring to the pre-existing EIP-2929 access mechanism; no opcode's access or charge point is moved.
+  - source: supporting/eip-2929.md
+    locator: Specification / Storage read changes, lines 60-71
+    summary: >-
+      The supporting EIP already fixes when account and storage access charges and accessed-set updates occur inside affected opcodes.
+  rationale: >-
+    EIP-7928 makes the gathered accesses consensus-observable but does not itself change where an opcode accesses state or where gas is charged relative to that access. The rubric directs that observability alone is not scored here.
+  confidence: high
+  uncertainty_note: >-
+    The draft does not fully map every exceptional execution path to a BAL entry; that missing consensus definition is scored under unspecified behavior, not as an ordering change.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / SSZ Data Structures, lines 43-119
+    summary: >-
+      The new structures contain account and state-access data and specify no blob-gas fields, prices, or accounting behavior.
+  rationale: No blob gas accounting mechanism is changed or introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 121-159
+    summary: >-
+      The proposal records storage, balance, nonce, and code accesses or changes, but assigns no state-gas costs, budget, reservoir, or spill behavior to them.
+  rationale: Recording state diffs is not a state-gas charging rule, so none of the state-gas anchors is triggered.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Important Implementation Details, lines 163-172
+    summary: >-
+      Gas refunds are mentioned only to require recording the sender's final balance after each transaction.
+  rationale: No refund is created or modified; the proposal only observes a balance after ordinary refund processing.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Structure Modification, lines 29-45
+    summary: >-
+      Every post-fork block gains a header commitment and a body-level BlockAccessList.
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 417-419
+    summary: >-
+      Any missing or spurious BAL entry invalidates the block, and clients must compare the supplied list with execution-gathered accesses.
+  rationale: >-
+    Existing post-fork block and execution scenarios across diverse opcode, transaction, system-action, and sync categories must be reworked to carry a correctly derived BAL and commitment. This is a major, diverse subset rather than a narrow contrived class.
+  confidence: high
+  uncertainty_note: >-
+    The draft does not describe a test migration plan, but the fork-wide block-validity consequence is explicit.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 295-299 and 417-419
+    summary: >-
+      A computed BAL must match the new header commitment, and completeness and absence of spurious entries are mandatory block-validity conditions.
+  rationale: >-
+    Regardless of what an execution test principally exercises, every test instantiated at the fork must additionally satisfy and check the BAL commitment and exact-content invariant. Existing scenarios carried into the fork therefore require mechanically re-derived BAL data.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Structure Modification and State Transition Function, lines 29-45 and 271-299
+    summary: >-
+      The transition consumes a new body-level BAL and header commitment and must execute a new access-collection and commitment-comparison mechanism.
+  rationale: >-
+    Even though the draft does not name a transition-tool schema, the tool must represent the BAL validation mechanism and its new block data. That establishes at least the score-2 anchor for a new interface mechanism; the exact multiplicity of fields is not specified well enough to select 3.
+  confidence: medium
+  uncertainty_note: >-
+    The input/output ownership of bal_hash, the encoded BAL, and any computed BAL artifact is not defined; a fully specified interface could warrant score 3.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / SSZ Data Structures and State Transition Function, lines 43-119 and 295-299
+    summary: >-
+      Tests need to construct a nested ordered SSZ BAL, derive its commitment, and compare it with execution-collected accesses.
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 417-419
+    summary: >-
+      Missing and spurious entries are consensus-invalid, requiring reusable exact-BAL expectations and mutation support.
+  rationale: >-
+    Because every post-fork block needs this artifact, BAL derivation, encoding, commitment, and invalid-entry expectations must be framework-level primitives used by unrelated EIP tests, not helpers confined to EIP-7928's own cases.
+  confidence: medium
+  uncertainty_note: >-
+    The historical package contains no test-framework design, so the exact primitive split remains an implementation choice.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / BAL Design Choice, lines 425-437
+    summary: >-
+      The proposal selects SSZ for encoding and its existing Merkle-proof properties; it does not define a new cryptographic construction.
+  rationale: Existing SSZ commitment and hash use do not introduce or modify a cryptography mechanism under this anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The exact compute_bal_hash derivation is unspecified, but the text provides no evidence that it is novel cryptography.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 128-177
+    summary: >-
+      The BAL distinguishes changed, zeroed, unchanged, read-only, and read-write slots and enumerates SELFDESTRUCT, zero-value, exceptional-halt, withdrawal, and system-contract cases.
+  - source: eip.md
+    locator: Specification / SSZ Data Structures, lines 47-118
+    summary: >-
+      Nested lists have several independent maxima and ordering requirements, with transaction indices and multiple state-field change lists.
+  rationale: >-
+    Multiple boundary-prone mechanisms interact, and exact-list validity requires an elevated matrix over state value transitions, transaction ordering, reverts or halts, system actions, and maximum lengths. This satisfies score 3.
+  confidence: high
+  uncertainty_note: >-
+    Several boundary outcomes are unresolved in the draft, especially non-transaction indices and reverted or failed accesses.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Structure Modification, lines 29-45
+    summary: >-
+      The block header gains bal_hash and the block body gains a BlockAccessList.
+  - source: eip.md
+    locator: Rationale / BAL Design Choice and Backwards Compatibility, lines 431-437 and 459-461
+    summary: >-
+      The SSZ BAL is embedded as opaque bytes in the RLP block, supports executionless state reconstruction, and is a non-backward-compatible block-structure change.
+  rationale: >-
+    Sync validation must handle multiple related mechanisms: the changed header/body RLP shape, nested SSZ decoding and limits, commitment matching, and full semantic validation. At least one is complex, meeting score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The exact RLP body placement and hash derivation are absent, so some validation cases cannot yet be baselined.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Structure Modification, lines 29-45
+    summary: >-
+      The execution block acquires two distinct protocol data elements, bal_hash in the header and the BlockAccessList in the body.
+  rationale: >-
+    Payload construction and validation must convey the new commitment and BAL data across the execution-payload interface, implying multiple Engine API fields or equivalent versioned representations. The draft does not propose a new endpoint, so score 3 is not supported.
+  confidence: low
+  uncertainty_note: >-
+    No Engine API directive or field ownership is specified. Depending on whether one side derives bal_hash, the eventual interface could require only one new field and score 1.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Important Implementation Details, lines 173-177
+    summary: >-
+      The proposal records effects caused by already-referenced system contracts but does not introduce a contract, address, code deployment, or new system action of its own.
+  rationale: No system contract is added by EIP-7928.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Important Implementation Details, lines 173-177
+    summary: >-
+      Storage effects of EIP-7002, EIP-7251, EIP-2935, and EIP-4788 system processing must be represented in the BAL.
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 376-404
+    summary: >-
+      The pseudocode adds tracking around several existing system contracts and records their storage writes under a block-level index.
+  rationale: >-
+    The proposal does not alter those contracts' code or underlying state-transition rules, but it gives the outputs of multiple system-contract actions a major new indirect effect on block validity. That matches score 2 rather than the direct-modification anchor at 3.
+  confidence: medium
+  uncertainty_note: >-
+    The pseudocode is internally unclear about which contracts run before or after transactions and withdrawals and about their assigned index.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 121-170
+    summary: >-
+      Existing opcodes such as SLOAD, SSTORE, BALANCE, STATICCALL, CREATE, and SELFDESTRUCT are discussed only as sources of accesses or changes.
+  rationale: No opcode is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 121-170
+    summary: >-
+      The proposal records effects of existing opcodes without changing their stack behavior, returned values, state-transition results, or deprecating them.
+  rationale: BAL observability does not modify an opcode's result or non-gas behavior under this anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / SSZ Data Structures and Important Implementation Details, lines 43-177
+    summary: >-
+      The complete data-model and edge-case specification adds no precompile address, input format, or execution rule.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 271-336
+    summary: >-
+      Generic execution access tracking is added, but no precompile logic or gas schedule is changed.
+  rationale: No existing precompile behavior or gas accounting is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Structure Modification and SSZ Data Structures, lines 29-119
+    summary: >-
+      A new header field and an SSZ-encoded nested BlockAccessList are added at block level.
+  - source: eip.md
+    locator: Rationale / BAL Design Choice, lines 425-437
+    summary: >-
+      The design explicitly embeds the SSZ BAL as opaque bytes in the RLP block.
+  rationale: The rubric assigns score 3 whenever encoding changes are introduced at block level; this proposal does so directly.
+  confidence: high
+  uncertainty_note: >-
+    The exact SSZ commitment and RLP placement are missing, but the existence of a block-level encoding change is unambiguous.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Structure Modification, lines 29-45
+    summary: >-
+      The new data is attached to the block header and body, not to a new transaction envelope.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 273-299 and 417-421
+    summary: >-
+      Transactions execute under their existing rules; the new assertion compares a block-level BAL after gathering their effects.
+  rationale: The EIP changes block validity, not transaction-type validity or intrinsic gas calculation.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Structure Modification, lines 29-41
+    summary: >-
+      The Header class is explicitly extended with a new Hash32 bal_hash field, and the body carries the corresponding BAL.
+  rationale: The binary rubric anchor assigns score 3 for any new block or header field.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 459-461
+    summary: >-
+      The proposal requires a hard fork because of its block-structure change but specifies no activation-block state mutation or modification of an existing internal variable.
+  rationale: A schema change beginning at a fork is not the activation-block mutation scored by this anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract and Motivation, lines 13-25
+    summary: >-
+      The mechanism is intended to reshape disk reads, transaction validation, and EVM execution through parallelism.
+  - source: eip.md
+    locator: Rationale / Block Size Considerations and Asynchronous Validation, lines 439-457
+    summary: >-
+      The draft reports about 40 KiB average compressed overhead, a 0.93 MiB worst case at 36m gas, and concurrent BAL verification with I/O and EVM work.
+  - source: eip.md
+    locator: Security Considerations, lines 463-471
+    summary: >-
+      Validation overhead and increased propagation size are acknowledged explicitly.
+  rationale: >-
+    Full-block access instrumentation, sorting, SSZ construction, hashing, propagation, and parallel scheduling cannot be validated wholly in isolation and interact with existing execution, database, sync, and networking performance. The expected impact on established benchmarks is substantial, satisfying score 3.
+  confidence: high
+  uncertainty_note: >-
+    The cited size analysis is summarized but its linked asset is not in the sealed package.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 295-299 and 417-421
+    summary: >-
+      Consensus acceptance depends on exact equality between an untrusted block commitment and execution-gathered accesses, with missing or spurious entries invalidating the block.
+  - source: eip.md
+    locator: Abstract and Security Considerations, lines 13-15 and 463-471
+    summary: >-
+      The BAL is also intended to enable executionless state updates, while the draft acknowledges validation and propagation overhead.
+  rationale: >-
+    Incorrect implementation can affect consensus validity and state reconstruction, and the mechanism spans critical execution, state, serialization, sync, and networking components. Those altered assumptions require extensive security review and fuzzing, matching score 3.
+  confidence: high
+  uncertainty_note: >-
+    The draft's security section does not analyze malformed encodings, commitment ambiguity, or access-tracking disagreement in detail.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 121-177 and 417-419
+    summary: >-
+      The draft demands a complete and exact list of every access while describing categories and selected edge cases rather than a complete per-operation observation rule.
+  - source: eip.md
+    locator: Specification / State Transition Function, lines 271-299 and 376-414
+    summary: >-
+      Illustrative pseudocode leaves compute_bal_hash undefined, processes system contracts in apparently conflicting phases, and assigns non-transaction effects an index inconsistently with the prose.
+  - source: supporting/eip-2929.md
+    locator: Specification, lines 47-49 and 65-74
+    summary: >-
+      The referenced access sets have revert and precise in-opcode timing semantics, making the exact mapping from attempted execution to persistent BAL entries observable at gas, failure, and revert boundaries.
+  rationale: >-
+    EIP-7928 turns the previously non-committed exact set and timing of accesses into consensus-critical block data, yet constructible failure, revert, preload, system-action, indexing, and commitment cases do not have a unique answer. This is the score-3 case of previously unobservable behavior becoming consensus-critical and requiring repeated cross-client re-baselining as the draft is clarified.
+  confidence: high
+  uncertainty_note: >-
+    Material gaps include commitment derivation, RLP placement, failed or reverted accesses, EIP-2930 preloads, system-action ordering and indices, and the mismatched EIP-7702/EIP-7792 reference.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 4
+  evidence:
+  - source: eip.md
+    locator: Motivation and Specification, lines 17-20, 159-177, and 417-419
+    summary: >-
+      The proposal contrasts EIP-2930 lists, relies on EIP-2929 access gathering, records EIP-7702 authority nonces, and incorporates effects attributed to EIPs 7002, 7251, 2935, and 4788.
+  - source: supporting/eip-2930.md
+    locator: Abstract and Specification, lines 17-21 and 75-104
+    summary: >-
+      EIP-2930 populates the EIP-2929 accessed sets before execution, creating a coordinated question about whether declared-but-unused items belong in the BAL.
+  - source: supporting/eip-7792.md
+    locator: Front matter and Abstract, lines 1-16
+    summary: >-
+      The packaged target of the draft's EIP-7702 hyperlink is actually EIP-7792, Verifiable logs, exposing a historical cross-reference ambiguity rather than establishing a verifiable-logs interaction.
+  rationale: >-
+    The BAL has strong, test-relevant interdependencies with seven identified EIPs: 2929, 2930, 7702, 7002, 7251, 2935, and 4788. Access-set initialization and per-opcode tracking, authority nonce changes, and four system-transition paths each need coordinated expected BAL cases. A base score of 3 plus one increment for four additional EIPs beyond the first three yields 4.
+  confidence: medium
+  uncertainty_note: >-
+    The authority reference names EIP-7702 but links to the packaged EIP-7792; 7702 is retained because it is the number stated in the normative sentence, while 7792 is not counted as an interaction. Some system EIP timing is contradictory.
+  exceptional_score_justification: >-
+    Cross-EIP interactions is explicitly uncapped. Seven identified interacting EIPs leave four beyond the first three, which triggers one rubric-defined +1 increment and produces score 4.
+  interacting_eips: [2929, 2930, 7702, 7002, 7251, 2935, 4788]
+  unidentified_interactions: []
+totals:
+  primary_score: 40
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The draft establishes exact BAL validity without fully specifying how every execution path maps into the list, how the SSZ object is committed and embedded in the RLP body, or how system and withdrawal effects are ordered and indexed. It also omits transition-tool and Engine API representations and contains an EIP-7702 hyperlink that resolves to the packaged EIP-7792. These are material because distinct client choices can produce different bal_hash values for the same execution.
+  affected_criteria:
+  - state_access_ordering_within_opcode_execution
+  - transition_tool_interface_changes
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - modified_system_contracts
+  - encoding_changes_rlp_ssz
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 37
+    maximum: 41
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - What exact SSZ serialization or tree root does compute_bal_hash use, is compression consensus-visible, and where are the opaque BAL bytes placed in the RLP block body?
+  - Do failed, reverted, out-of-gas, or declared-but-unused EIP-2930 accesses remain in the BAL, and at what exact point does each state-accessing operation become recordable?
+  - Are EIP-7002 and EIP-7251 processed only after transactions, are EIP-2935 and EIP-4788 processed only before them, and why does the generic pseudocode process all four in both calls?
+  - Do system effects use transaction_count or transaction_count + 1, and how are they distinguished from withdrawals that also use transaction_count in the pseudocode?
+  - Which new fields are inputs or outputs of transition-tool and Engine API interfaces, and which component derives bal_hash?
+  - Does the authority nonce rule intend EIP-7702 as written, or EIP-7792 as linked, whose packaged text instead specifies verifiable logs?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision, the pinned assessor rubric, and the three allowlisted supporting EIPs at the manifest's information cutoff. I did not browse, follow links, inspect implementations or project records, use a skill, consult another assessment, or apply present-day implementation knowledge.
+notable_ambiguities:
+- The normative source defines bal_hash only as Hash32 and calls compute_bal_hash without specifying the commitment derivation.
+- The prose assigns system-contract effects transaction_count + 1, while the pseudocode uses transaction_count and also assigns that value to withdrawals.
+- The two process_system_contracts calls are described as covering different EIP sets, but the single function body tracks all four named system mechanisms on either call.
+- The text names EIP-7702 authorities but links to eip-7792.md; the packaged EIP-7792 concerns verifiable logs and supplies no authority definition.
+- Storage reads include the phrase "slots in pre-state but not written," which does not state whether access is required and conflicts with the surrounding access-based definition if read literally.
+overall_confidence: medium

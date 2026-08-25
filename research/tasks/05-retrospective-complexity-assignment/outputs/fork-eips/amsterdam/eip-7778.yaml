@@ -1,0 +1,597 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 7778
+  title: Block Gas Accounting without Refunds
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-7778 proposed retaining existing gas refunds for
+    user transaction costs while counting gas before refunds toward the block gas
+    limit. It required the sum of unrefunded transaction gas to remain within the
+    block limit, while retaining discounts described as reflecting reduced work,
+    and identified a hard fork plus block-producer transaction-selection changes.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7778/manifest.yaml
+    manifest_sha256: b3acb3209a8bfe152917a2656191c3ae019480c42784a8084a2d730534ae9e4b
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 9f795ed2983dc76b5c6138a507751d2a760030e3
+    path: EIPS/eip-7778.md
+    committed_at: '2025-09-03T08:03:05Z'
+    git_blob_sha: e4bdd606c2c6dacb9fb936ff4749847308b26c55
+    content_sha256: f52d1a5d0a1298a7cc89ab98b3c6a583af11b7ecc2e0fee832fd1df8b9097bc0
+    immutable_url: https://github.com/ethereum/EIPs/blob/9f795ed2983dc76b5c6138a507751d2a760030e3/EIPS/eip-7778.md
+    information_cutoff_at: '2025-09-03T20:52:20Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-7778.md
+    content_sha256: 3f56cb81330d84402b72de986e884214eec970d46221f0bbe44e94a3626cad24
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T13:59:46+02:00'
+    session_id: assessment-run-fe687966-81c0-4cfc-888b-be1526e88dcb
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: OpenAI Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification - Gas Accounting Changes, lines 33-45
+    summary: >-
+      Transaction gas remains net of refunds, while the existing block gas
+      accumulator and block-limit check use gas without subtracting refunds.
+  rationale: >-
+    This updates the existing EVM block gas accounting rule, matching anchor 1;
+    the proposal characterizes it as a modification rather than a separate new gas
+    accounting mechanism.
+  confidence: high
+  uncertainty_note: >-
+    The precise protocol representation of block.gas_used is not defined, but the
+    existence of an update to the existing accounting rule is clear.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - Gas Accounting Changes, lines 33-40
+    summary: >-
+      The change concerns whether refunds are subtracted at transaction and block
+      aggregation time; it does not move a state access or a gas charge within an
+      opcode's execution.
+  rationale: >-
+    No opcode-internal state-access or gas-charge ordering changes, so anchor 0
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-45
+    summary: >-
+      The proposal addresses ordinary block gas and EVM refunds; it specifies no
+      blob gas rule.
+  rationale: No blob gas accounting mechanism is changed, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - Gas Accounting Changes, lines 33-45
+    summary: >-
+      Storage clearing is used as an example of an EVM refund, but the specified
+      change is to ordinary block gas accounting and not to a separate state-gas
+      cost, budget, reservoir, or spill path.
+  rationale: >-
+    The rubric's distinct state-gas mechanism is not introduced or adjusted, so
+    anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - User Gas Costs, lines 33-35
+    summary: >-
+      Users continue to receive already-qualifying refunds and transaction gas
+      remains gas used minus gas refund.
+  rationale: >-
+    Existing refunds are preserved rather than a new refund mechanism being added,
+    matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 66-78
+    summary: >-
+      The EIP calls for refund-producing SSTORE cases, blocks with varying amounts
+      of refundable work, gas-limit enforcement cases, and comparisons of
+      transaction gas with block gas.
+  - source: eip.md
+    locator: Backwards Compatibility, lines 60-64
+    summary: >-
+      The accounting change is not backwards compatible and requires a hard fork.
+  rationale: >-
+    Existing block and refund vectors containing refundable operations need their
+    expected block accounting or validity reworked. This can be a considerable set,
+    but it is confined to the refund-bearing category, matching anchor 2.
+  confidence: medium
+  uncertainty_note: >-
+    The text does not identify the historical test corpus or state whether the
+    changed block accumulator is reflected in every existing block-gas expectation.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Test Cases, lines 37-45 and 66-78
+    summary: >-
+      The proposal changes the value used by an existing block-limit rule and asks
+      for direct feature tests, but specifies no additional output or assertion for
+      otherwise unrelated tests.
+  rationale: >-
+    Existing expectations may be reworked, but tests do not clearly gain a distinct
+    new invariant to assert; anchor 0 applies.
+  confidence: medium
+  uncertainty_note: >-
+    A fuller definition of whether block.gas_used denotes an existing header value
+    or a separate accumulator could change whether a new assertion is needed.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - Gas Accounting Changes, lines 33-45
+    summary: >-
+      The EIP changes the calculation of block gas used but introduces no new
+      transition input, output, or fork-activation flag.
+  rationale: >-
+    The changed result can be expressed through the existing block gas result; no
+    transition-tool interface modification is specified as required, so anchor 0
+    applies.
+  confidence: medium
+  uncertainty_note: >-
+    The text does not define whether both refunded transaction gas and unrefunded
+    block gas must be surfaced separately by a transition tool.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases, lines 66-78
+    summary: >-
+      The requested tests construct ordinary SSTORE transactions and blocks and
+      compare transaction and block gas values.
+  rationale: >-
+    These cases can use existing transaction, block, gas, and validity assertions;
+    no new framework abstraction is required, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-45
+    summary: >-
+      The proposal is solely a gas-refund and block-limit accounting change and
+      contains no cryptographic construction or operation.
+  rationale: No cryptographic mechanism is introduced or modified, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification and Test Cases, lines 33-45 and 68-78
+    summary: >-
+      Tests must cover the unrefunded cumulative gas at the block limit, varying
+      refund amounts, the divergence between transaction and block gas, and the
+      distinction between refunds and retained storage discounts.
+  rationale: >-
+    There are multiple boundary-prone aspects: cumulative equality versus excess,
+    variable refund amounts across transactions, and classification of discounts
+    that remain applied. None is described as requiring an exceptionally large
+    case matrix, matching anchor 2.
+  confidence: medium
+  uncertainty_note: >-
+    The exact refund and discount cases covered by the general wording are not
+    exhaustively enumerated.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - Block Gas Limit Enforcement, lines 42-45
+    summary: >-
+      Block validity uses the sum of unrefunded gas, but the EIP introduces no new
+      RLP field, decoding rule, or RLP validation mechanism.
+  rationale: >-
+    A consensus block-validity calculation changes without an RLP validation
+    mechanism being added, so the rubric's block-syncing anchor remains 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 29-45 and 60-64
+    summary: >-
+      The proposal specifies gas accounting and producer selection behavior but no
+      Engine API endpoint, field, or communication mechanism.
+  rationale: No Engine API field or endpoint is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-45
+    summary: >-
+      The complete mechanism is expressed as gas accounting and block-limit
+      enforcement, with no contract deployment or designated system address.
+  rationale: No system contract is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-45
+    summary: >-
+      The gas-accounting rule does not identify or alter the code, state, or
+      behavior of any pre-existing system contract.
+  rationale: >-
+    No direct or package-established indirect system-contract modification exists,
+    matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Test Cases, lines 13-15 and 66-78
+    summary: >-
+      SSTORE is an example used to produce an existing refund; the proposal defines
+      no new instruction.
+  rationale: No opcode is added, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - User Gas Costs, lines 33-40
+    summary: >-
+      Qualifying operations and user refund behavior remain unchanged; only the
+      downstream block accumulator stops subtracting refunds.
+  rationale: >-
+    No opcode result or non-gas behavior is modified, and gas-only changes are
+    excluded by this anchor; score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-45
+    summary: >-
+      The proposal adds only a block gas accounting rule and no callable
+      precompiled function or address.
+  rationale: No precompile is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-45
+    summary: >-
+      No precompile logic or precompile-specific gas schedule is mentioned or
+      changed by the refund treatment.
+  rationale: No existing precompile is modified, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 29-45 and 60-64
+    summary: >-
+      The hard-fork change concerns how a gas value is calculated and supplies no
+      transaction, block, or interface encoding change.
+  rationale: No RLP, SSZ, or other interface encoding is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - User Gas Costs, lines 33-40
+    summary: >-
+      Existing transactions retain their gas-cost behavior while their gas is
+      accumulated differently at block scope; no transaction envelope is added.
+  rationale: No new transaction type is introduced, matching anchor 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification and Backwards Compatibility, lines 33-45 and 60-64
+    summary: >-
+      Transaction gas costs are explicitly unchanged; the new limit is a block-level
+      sum and does not alter transaction validity or intrinsic gas calculation.
+  rationale: >-
+    The change is to block validity, not existing transaction-type validity, so
+    anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification - Block Gas Accounting, lines 37-45
+    summary: >-
+      The proposal changes block.gas_used accumulation and enforcement but does not
+      add a block or header field.
+  rationale: >-
+    Modification of the calculation associated with an existing value is not the
+    introduction of a new field; anchor 0 applies.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP does not explicitly identify how block.gas_used maps to the encoded
+    header and receipts, but it never specifies an additional field.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, lines 60-64
+    summary: >-
+      A hard fork is required, but the EIP specifies no one-time state mutation or
+      internal-variable modification at the activation block.
+  rationale: >-
+    Fork-gated use of a new rule alone is not an activation-block modification;
+    anchor 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 19-27
+    summary: >-
+      The EIP identifies blocks whose gross work exceeds their net gas and cites
+      oversized blocks, instability, denial of service, and excess computational
+      load as the problem.
+  - source: eip.md
+    locator: Rationale and Security Considerations, lines 49-53 and 80-84
+    summary: >-
+      The intended effect is to constrain actual block workload and make processing
+      time more predictable.
+  rationale: >-
+    Validating the new workload bound requires mixed transaction and refund-bearing
+    block benchmarks rather than only an isolated accumulator benchmark. Its effect
+    on existing performance workloads is limited to blocks using refunds, matching
+    anchor 2.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP gives one observed workload example but no benchmark methodology or
+    complete set of refund-heavy workloads.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 23-27
+    summary: >-
+      The stated failure mode includes oversized blocks, denial-of-service vectors,
+      and computational loads beyond the intended limit.
+  - source: eip.md
+    locator: Security Considerations, lines 80-84
+    summary: >-
+      The new enforcement is intended to prevent producers from including excessive
+      aggregate work and to improve block-processing predictability.
+  rationale: >-
+    The consensus-critical accumulator interacts with existing transaction refunds
+    and block validation. Incorrect implementation could create divergent block
+    acceptance or preserve the stated denial-of-service condition, warranting
+    targeted review and fuzzing of a limited component set under anchor 2.
+  confidence: medium
+  uncertainty_note: >-
+    The security section states intended benefits but does not analyze divergence,
+    overflow, or mixed-refund failure cases in detail.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification - Gas Accounting Changes, lines 33-45
+    summary: >-
+      The text gives formulas for transaction and block gas and says some storage
+      discounts remain, but it does not define the protocol fields carrying each
+      value or exhaustively distinguish retained discounts from excluded refunds.
+  - source: eip.md
+    locator: Test Cases, lines 66-78
+    summary: >-
+      The requested comparisons and varying-refund blocks require exact expected
+      values that the short specification does not fully enumerate.
+  rationale: >-
+    Clients must agree on localized, constructible cases such as the mapping of
+    gross gas to block and receipt values and the refund-versus-discount boundary
+    before vectors can be baselined. This matches anchor 2, not anchor 3, because the
+    EIP is not making a formerly unobservable behavior consensus-critical.
+  confidence: high
+  uncertainty_note: >-
+    The package contains no supporting specification that resolves these localized
+    accounting semantics.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 33-40
+    summary: >-
+      The proposal changes the block-level effect of established gas-refund rules,
+      particularly refunds arising from storage clearing, while retaining their
+      transaction-level effect.
+  - source: eip.md
+    locator: Specification - Block Gas Accounting, lines 37-40
+    summary: >-
+      Existing warm-access and revert-to-original-value discounts are stated to
+      remain applied, requiring their treatment to be coordinated with the new rule.
+  rationale: >-
+    The proposal centrally modifies how pre-existing refund rules feed block gas and
+    must be tested together with the retained storage-discount rules. That requires
+    coordinated but limited-scope testing, matching anchor 2. The historical EIP
+    supplies no EIP numbers for those interactions, so none are inferred.
+  confidence: medium
+  uncertainty_note: >-
+    The interacting mechanisms are named, but their EIP identifiers and complete
+    boundaries are absent from the package.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions:
+  - Existing gas-refund rules, particularly storage-clearing refunds from SSTORE.
+  - Existing storage discounts for warm access and reverting to original values.
+totals:
+  primary_score: 13
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The proposal defines the high-level split between refunded transaction gas and
+    unrefunded block gas, but does not fully specify how the two quantities map to
+    consensus block and receipt values or exhaustively define the boundary between
+    excluded refunds and retained storage discounts. These omissions affect exact
+    vector baselines without changing the proposal's core accounting direction.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - transition_tool_interface_changes
+  - edge_boundary_conditions
+  - performance_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 10
+    maximum: 15
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - >-
+    Does block.gas_used denote the encoded block-header gas-used value, only an
+    internal validity accumulator, or both?
+  - >-
+    What gas values should receipts and cumulative transaction-gas fields expose
+    when transaction accounting remains refunded but block accounting is gross?
+  - >-
+    Which adjustments are refunds excluded from block accounting, and which are
+    discounts that remain applied, especially for reverting storage to its original
+    value?
+  - >-
+    Must a transition-tool interface expose both net transaction gas and gross block
+    gas separately, or is changing an existing result sufficient?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed historical EIP revision and assessor rubric listed in
+    the preserved provenance, at the recorded information cutoff. I did not attempt
+    internet access, use a skill, consult prohibited sources, infer later design or
+    implementation outcomes, or inspect another EIP.
+notable_ambiguities:
+- >-
+  The notation block.gas_used is not tied explicitly to the block header, receipts,
+  or an internal-only accumulator.
+- >-
+  The examples distinguish refunds from storage discounts, but do not provide a
+  complete classification of adjustments for consensus testing.
+- >-
+  Backwards compatibility says only producers need to adjust transaction selection,
+  while the specification also imposes a consensus block-limit rule that validators
+  must evaluate.
+overall_confidence: medium

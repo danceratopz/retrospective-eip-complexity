@@ -1,0 +1,625 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 7843
+  title: SLOTNUM opcode
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-7843 was a Draft proposal for a new
+    fixed-cost SLOTNUM opcode at 0x4b that returns the current block's slot
+    number as an eight-byte unsigned value. The slot number was to be
+    calculated by the consensus layer, carried to the execution layer through
+    the Engine API, committed in a new uint64 block-header field, and supplied
+    in a new uint64 PayloadAttributes field. The proposal presented EIP-4788
+    proof-based access as an existing but more expensive alternative, and it
+    supplied no test cases or substantive security analysis.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7843/manifest.yaml
+    manifest_sha256: 0a0e74e4b49443d6a6c65e657f510acba32d3128b38910180e19d8ea8de2e45c
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 0aefdc9d5a4b637ca280832f5fe617a5f4dd4f3f
+    path: EIPS/eip-7843.md
+    committed_at: '2025-05-20T16:23:34Z'
+    git_blob_sha: 0f5d0ef12b1a050a1c8a67117740ca0ff04568bd
+    content_sha256: 9f15ade995d4baf3e9cdcff6b921ccf3163447deef81087f2c738285834b1852
+    immutable_url: https://github.com/ethereum/EIPs/blob/0aefdc9d5a4b637ca280832f5fe617a5f4dd4f3f/EIPS/eip-7843.md
+    information_cutoff_at: '2025-06-09T07:29:29Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-7843.md
+    content_sha256: a757a2a094c742fddb2bb4487196f744e98b0f28bd103c73b48353bd45f6f048
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T12:00:55Z'
+    session_id: assessment-run-2ef8d5c7-87e1-4846-9637-806a92f17a8a
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4788.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas Cost, lines 43-45
+    summary: >-
+      SLOTNUM is assigned a fixed gas fee of 2.
+  - source: eip.md
+    locator: Rationale — Gas Price, lines 61-63
+    summary: >-
+      The fee is chosen to match similar opcodes in the existing W_base set.
+  rationale: >-
+    Adding SLOTNUM to the existing constant-cost base-opcode schedule updates an
+    existing gas-accounting mechanism; it does not introduce dynamic metering or
+    affect an existing opcode's gas rule.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-45
+    summary: >-
+      The new opcode returns one context-derived stack value for a fixed fee
+      and specifies no account, storage, or other state access.
+  rationale: >-
+    SLOTNUM does not access state, so it neither changes an existing opcode's
+    state-access ordering nor introduces an ordering point for a new
+    state-accessing operation.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      The specified changes are a fixed-cost opcode, a header field, and a
+      PayloadAttributes field; no blob-gas rule is introduced or changed.
+  rationale: The proposal contains no blob gas accounting change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      The opcode reads block context and the RPC changes transport a slot
+      number; no state write, state-gas rate, budget, reservoir, or spill rule
+      is specified.
+  rationale: No state-gas-charging site or state gas mechanism is added or modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas Cost, lines 43-45
+    summary: >-
+      The only EVM gas behavior specified is a fixed charge of 2 for SLOTNUM;
+      no refund behavior is described.
+  rationale: The proposal introduces no gas-refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — RPC changes, lines 47-57
+    summary: >-
+      The proposal transports slot_number across the consensus/execution
+      boundary and extends both the block-header encoding and
+      PayloadAttributes.
+  - source: eip.md
+    locator: Test Cases, lines 77-79
+    summary: >-
+      The historical proposal supplies no test cases that narrow or
+      demonstrate the required regression updates.
+  rationale: >-
+    A mandatory post-fork header-schema change plus an Engine API input change
+    requires existing block, payload, syncing, and execution-test paths to
+    construct and carry the new field. That reaches diverse categories rather
+    than a narrow contrived subset, matching the major-subset anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal does not describe the historical test infrastructure, so the
+    exact amount of mechanical versus hand-authored rework is not determined.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Header extension and PayloadAttributes change, lines 51-57
+    summary: >-
+      Post-fork payload and block representations gain a slot_number that must
+      be propagated consistently even when a test is about unrelated execution
+      behavior.
+  rationale: >-
+    A broad category of post-fork block and payload tests gains a mechanical
+    consistency assertion for slot_number, but the text does not establish that
+    every test type or pre-fork vector must gain that assertion.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal does not specify which test formats assert header fields or
+    whether any harness derives the field automatically.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 31-45
+    summary: >-
+      Execution of SLOTNUM requires one new current-block input value and
+      produces the slot number on the EVM stack.
+  - source: eip.md
+    locator: RPC changes, lines 47-57
+    summary: >-
+      The slot number is a single uint64 value carried into execution and added
+      to PayloadAttributes.
+  rationale: >-
+    A transition tool must receive one slot_number context field so it can
+    execute the opcode and form the extended header, matching the
+    single-new-field anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The transition-tool interface is not named in the proposal, and the missing
+    validation flow could ultimately require more than one representation of
+    the value.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      The feature adds a block-context opcode and extends header and
+      PayloadAttributes data models with slot_number.
+  - source: eip.md
+    locator: Test Cases, lines 77-79
+    summary: No feature-specific testing abstractions or cases are supplied.
+  rationale: >-
+    Existing opcode-test and block-test primitives remain applicable, but their
+    environment and header builders need a minor slot_number extension. The
+    text provides no basis for a new reusable expectation or modifier
+    primitive.
+  confidence: medium
+  uncertainty_note: >-
+    Because no tests are described, it is unclear whether an existing generic
+    block-context field mechanism would make the framework change unnecessary.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 29-45
+    summary: >-
+      The proposal adds a context-reading opcode with integer output and fixed
+      gas; it introduces no cryptographic algorithm or modification.
+  rationale: No cryptographic mechanism is introduced or changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Output and RPC changes, lines 33-57
+    summary: >-
+      The same slot number crosses an eight-byte big-endian stack-output
+      description, a uint64 header field, and a uint64 PayloadAttributes field.
+  rationale: >-
+    The fixed-width slot-number path is one boundary-prone mechanism, requiring
+    at least zero and uint64-limit representation cases across the API, header,
+    and stack. It does not introduce multiple independently complex boundary
+    mechanisms.
+  confidence: medium
+  uncertainty_note: >-
+    The text does not state overflow handling or precisely define how the
+    eight-byte value occupies an EVM stack word.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Header extension, lines 51-53
+    summary: >-
+      The block-header encoding is extended with one uint64 slot_number field.
+  rationale: >-
+    One additional header field creates a single simple RLP/schema validation
+    change for imported blocks, matching the score-1 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The field's exact header position, canonical encoding details, and
+    validation rule are not specified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: RPC changes and PayloadAttributes change, lines 47-57
+    summary: >-
+      The slot number is passed from consensus to execution through the Engine
+      API, with one explicit new uint64 slot_number field in PayloadAttributes.
+  rationale: >-
+    The historical text explicitly adds a single field to an existing Engine
+    API object, matching the score-1 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal does not say whether ExecutionPayload, newPayload,
+    forkchoiceUpdated, or versioned endpoint schemas also require changes.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 29-57
+    summary: >-
+      The feature consists of an opcode and cross-layer/header fields; no
+      contract deployment or system action is proposed.
+  rationale: No new system contract is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 19-27
+    summary: >-
+      EIP-4788 is described only as an existing proof-based alternative to
+      obtaining the slot number.
+  - source: supporting/eip-4788.md
+    locator: Abstract, lines 14-18
+    summary: >-
+      EIP-4788 exposes beacon roots and stores them in a contract,
+      functionality that EIP-7843 does not amend.
+  rationale: >-
+    EIP-7843 neither changes the EIP-4788 system contract's code or state nor
+    specifies any indirect protocol behavior for that contract.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-45
+    summary: >-
+      One opcode, SLOTNUM at 0x4b, returns one stack element and has a fixed gas
+      fee of 2.
+  rationale: >-
+    This is one simple opcode: it has no data portion, no complex stack
+    mechanics, and a constant gas cost.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-45
+    summary: >-
+      The proposal allocates a new opcode at 0x4b and does not change or
+      deprecate the behavior of any existing opcode.
+  rationale: No pre-existing opcode behavior is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-15 and 29-45
+    summary: >-
+      The execution feature is expressly a new opcode; no precompile address or
+      precompile behavior is introduced.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      The specified opcode and metadata changes do not mention or alter any
+      existing precompile's logic or gas schedule.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Header extension, lines 51-53
+    summary: >-
+      The proposal explicitly requires the header encoding to be extended with
+      a uint64 slot_number field.
+  rationale: >-
+    A block-header encoding change directly triggers the rubric's binary
+    score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    The existence of the encoding change is explicit, although its exact field
+    placement and canonical encoding are not.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      The proposal adds an opcode, block-header field, and Engine API field,
+      with no transaction envelope or transaction type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      Nothing in the specified opcode, header, or Engine API changes alters
+      transaction validity or intrinsic gas calculation.
+  rationale: The proposal does not create or modify transaction validity rules.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Header extension, lines 51-53
+    summary: >-
+      The proposal mandates a new slot_number field of type uint64 in the
+      block-header encoding.
+  rationale: >-
+    The introduction of a new block-header field directly triggers the rubric's
+    binary score-3 anchor.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      The proposal defines ongoing opcode and per-block data behavior but no
+      one-time state mutation or existing internal-variable modification at the
+      activation block.
+  rationale: >-
+    No special fork-activation state transition or internal-variable
+    modification is specified.
+  confidence: medium
+  uncertainty_note: >-
+    The activation rules are not described, but the text provides no evidence
+    of a one-time mutation that would trigger this criterion.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale — ZK-VM proving, lines 69-71
+    summary: >-
+      The proposal characterizes SLOTNUM as similar to TIMESTAMP, says proving
+      complexity should not increase, and keeps the value in the self-contained
+      block header.
+  rationale: >-
+    The new context read and metadata transport can be benchmarked in isolation
+    and are not specified to alter existing performance behavior, matching the
+    score-1 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The proposal gives an expectation rather than benchmark evidence and does
+    not quantify header or Engine API overhead.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: RPC changes, lines 47-57
+    summary: >-
+      A consensus-layer-calculated value is transported through the Engine API,
+      committed in the execution header, and exposed to EVM execution.
+  - source: eip.md
+    locator: Security Considerations, lines 81-83
+    summary: >-
+      The historical proposal states that there are no security considerations
+      and provides no analysis of cross-layer consistency or validation.
+  rationale: >-
+    Incorrect propagation or validation could make a consensus-derived opcode
+    value disagree across block construction, validation, and execution. The
+    mechanism touches a limited set of critical components and warrants
+    targeted cross-layer review, but the proposal does not establish the broad,
+    substantial invariant changes required for score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The missing payload-validation rule makes the precise security surface and
+    ownership of consistency checks unclear.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 29-57
+    summary: >-
+      The text specifies the opcode, an eight-byte big-endian output, a header
+      field, and one PayloadAttributes field, but does not give exact header
+      placement or the full block-building and validation data flow.
+  - source: eip.md
+    locator: Test Cases and Security Considerations, lines 77-83
+    summary: No test cases or security discussion resolve the missing details.
+  rationale: >-
+    Clients need agreement on localized consensus details before baselining
+    tests: the header field's exact encoding position, how validating execution
+    clients receive or check slot_number, and how the eight-byte value maps to a
+    256-bit EVM stack item. These are localized to the new slot-number path
+    rather than a wholesale newly observable class of behavior.
+  confidence: high
+  uncertainty_note: >-
+    Some omissions have an apparent intended reading, but the proposal does not
+    select those readings normatively.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 19-27
+    summary: >-
+      The proposal identifies proving a supplied slot number against a beacon
+      block root using EIP-4788 as an existing onchain access path that SLOTNUM
+      is intended to improve upon.
+  - source: supporting/eip-4788.md
+    locator: Abstract and Motivation, lines 14-25
+    summary: >-
+      EIP-4788 exposes beacon-chain roots in the EVM for proofs of consensus
+      state, the proof mechanism referenced by EIP-7843.
+  rationale: >-
+    EIP-4788 is cited only to describe an existing alternative access path.
+    EIP-7843 does not depend on, modify, or conflict with EIP-4788 and requires
+    no coordinated EIP-4788 test cases, so it is self-contained under this
+    anchor.
+  confidence: high
+  uncertainty_note: >-
+    None identified; a motivational comparison is not treated as a protocol
+    interaction.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions: []
+totals:
+  primary_score: 23
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    Material details of the new consensus value's complete path are unresolved:
+    the header field's exact position and canonical encoding, its representation
+    in payload validation and Engine API messages beyond PayloadAttributes, the
+    rule by which execution clients validate the consensus-computed value, and
+    the mapping of the stated eight-byte value into an EVM stack word. These
+    omissions affect the size of the interface, syncing, regression-test, and
+    security work without changing the explicit existence of the opcode or
+    header field.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 20
+    maximum: 28
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - >-
+    Where in the header is slot_number placed, and what is its exact canonical
+    RLP encoding and validation rule?
+  - >-
+    Which Engine API payload or endpoint objects, in addition to
+    PayloadAttributes, carry slot_number during block production and
+    validation?
+  - >-
+    From which value does a validating execution client derive or obtain
+    slot_number, and what mismatch makes a payload invalid?
+  - >-
+    How is the eight-byte big-endian SlotNumber represented in the 256-bit EVM
+    stack word, and what happens at or beyond the uint64 limit?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed amsterdam EIP-7843 package at its recorded
+    information cutoff. I did not attempt internet access, follow links, use a
+    skill, inspect prohibited files or sources, consult later implementations
+    or fork outcomes, or use present-day implementation knowledge.
+notable_ambiguities:
+- >-
+  The historical text says to extend the header encoding but does not place the
+  new field within the header or define its canonical encoded form.
+- >-
+  PayloadAttributes gains slot_number, but the proposal does not specify the
+  corresponding payload-delivery and validation-side Engine API changes.
+- >-
+  The output is called an eight-byte big-endian value even though an EVM stack
+  element is wider, leaving the normative stack representation implicit.
+- >-
+  Test Cases is N/A and Security Considerations is None, leaving the intended
+  regression and cross-layer consistency rules undocumented.
+overall_confidence: medium

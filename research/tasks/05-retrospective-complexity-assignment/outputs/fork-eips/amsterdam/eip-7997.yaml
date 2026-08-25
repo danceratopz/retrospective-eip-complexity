@@ -1,0 +1,549 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 7997
+  title: Deterministic Factory Contract
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: At the information cutoff, EIP-7997 proposed an activation-time insertion
+    of fixed runtime bytecode at address 0x0B, creating a minimal factory available at the same address
+    on adopting EVM chains. The factory interprets calldata as a 32-byte salt followed by variable-length
+    initcode, forwards all call value to CREATE2, returns the created address on success, and propagates
+    failure returndata by reverting. It adds no transaction type, opcode, or custom gas schedule; its
+    protocol changes are the predeployed system account and the one-time state change that installs it.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7997/manifest.yaml
+    manifest_sha256: c1aaeb41c3b20dcde034be74d0ebc9694672179234b233177b6ea310adc83654
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    path: EIPS/eip-7997.md
+    committed_at: '2025-08-19T16:32:51Z'
+    git_blob_sha: 9bd8766f329acc3b21d2fa6dc53d5655488891ab
+    content_sha256: 8fec7a727f75a9762f34427ed5046b49d59b63a9c16d38f319c8e1060ebd93bd
+    immutable_url: https://github.com/ethereum/EIPs/blob/f8be9ce27bdb513ba72abddde06cb5e806447230/EIPS/eip-7997.md
+    information_cutoff_at: '2025-08-21T13:34:18Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-7997.md
+    content_sha256: 0f0179adaad5b1ee797f682549954702d0c879942daceb12429b2b2a2fe1ae69
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T12:11:30Z'
+    session_id: assessment-run-4d4a18df-c881-4e8e-a1a5-1394300c3d96
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-155.md
+  - supporting/eip-211.md
+  - supporting/eip-1014.md
+  - supporting/eip-5792.md
+  - supporting/eip-7702.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+  assessor_raw_output:
+    path: outputs/raw/fork-eips/amsterdam/eip-7997.yaml
+    content_sha256: 0b117c11b4f31f26707e3e371b787ea89c8d5dcaf20c762bc41ace8e45a8efd3
+  postprocessing:
+  - id: task05_first_run_schema_normalization_v1
+    applied_at: '2026-08-25T12:17:21.457379Z'
+    semantic_scores_changed: false
+    changes:
+    - quoted 148 unsafe plain YAML free-text scalars
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: The proposal installs fixed EVM bytecode composed of existing instructions, including CALLDATACOPY
+      and CREATE2, without specifying any new gas prices or charging rules.
+  rationale: The factory pays the existing gas schedules of the ordinary opcodes it executes, so the score-0
+    anchor for no gas-accounting change applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: All factory behavior is expressed as contract bytecode; the proposal does not change any
+      opcode's internal state-access or gas-charge sequence.
+  rationale: Executing existing CREATE2 from a new contract does not modify where state is accessed inside
+    CREATE2 or any other opcode, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 37-104
+    summary: The proposal is limited to installing and invoking a CREATE2 factory and contains no blob-related
+      mechanism.
+  rationale: No blob gas accounting is introduced or modified, so the score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 41-45
+    summary: Activation sets fixed code at the factory address but defines no state-gas rate, budget,
+      reservoir, spill rule, or new state-gas charging site.
+  rationale: The state insertion is a protocol state change, not a change to state-gas accounting as defined
+    by this anchor; score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: The bytecode copies calldata, invokes CREATE2, and returns or reverts; it defines no refund-counter
+      behavior.
+  rationale: No new EVM gas-refund mechanism is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Parameters and Factory Contract, lines 39-45
+    summary: At activation, formerly ordinary address 0x0B receives fixed executable code.
+  - source: eip.md
+    locator: Rationale > Precompile-range system contract, lines 108-112
+    summary: The address is selected immediately after existing precompiles and the insertion is explicitly
+      irregular.
+  rationale: Existing tests that assume 0x0B is empty, call it as an empty account, or cross the activation
+    transition need localized updates. This is a minor, narrow subset rather than a considerable or diverse
+    body of pre-existing tests, matching score 1.
+  confidence: medium
+  uncertainty_note: The sealed package does not enumerate the pre-existing test corpus, so the exact affected
+    count cannot be established; the narrow address-specific impact is clear from the specification.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 43-45
+    summary: The activation transition must leave the specified code at FACTORY_ADDRESS.
+  rationale: Tests not principally about the factory but which span this fork activation must additionally
+    observe the code insertion in resulting state. That is a narrow activation-focused category, not a
+    mechanically added assertion for every test in the fork, so score 1 applies.
+  confidence: medium
+  uncertainty_note: The package specifies no test vectors, so whether a particular framework expresses
+    this as an explicit assertion or through a state root is not established.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 43-45
+    summary: Code is inserted upon activation, making the insertion specific to the activation transition
+      rather than an ordinary rule run on every post-fork block.
+  - source: eip.md
+    locator: Rationale > Precompile-range system contract, lines 108-110
+    summary: The EIP characterizes installing the account as an irregular insertion at a special address.
+  rationale: A transition tool must have a new activation-aware mechanism that distinguishes the one block
+    where code is inserted from later blocks. This is more than one ordinary data field but does not imply
+    multiple new fields plus another mechanism, fitting score 2.
+  confidence: medium
+  uncertainty_note: The EIP does not prescribe a transition-tool API; an environment with sufficient existing
+    fork-activation context might implement the behavior without a new external field.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: Expected behavior consists of ordinary account code, calldata, value forwarding, contract
+      creation, return data, and revert outcomes.
+  rationale: Existing state, call, creation, return-data, and revert expectations are sufficient to test
+    the fixed bytecode; no new framework-level expectation or modifier is required, so score 0 applies.
+  confidence: medium
+  uncertainty_note: The test section is TBD, but the specified behaviors do not reveal a need for a novel
+    primitive.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 50-98
+    summary: The contract supplies a salt and initcode to the already-defined CREATE2 opcode and introduces
+      no cryptographic construction of its own.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 11-21
+    summary: CREATE2 already defines its deterministic address formula and fixed hash preimage as part
+      of the existing opcode.
+  rationale: Reusing CREATE2's existing Keccak-based address derivation is not a new or modified cryptography
+    mechanism, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 50-103
+    summary: The code has a 32-byte input-length boundary, variable-length initcode copying, CREATE2 success
+      and zero-result branches, failure-returndata propagation, and full call-value forwarding.
+  - source: supporting/eip-1014.md
+    locator: Clarifications, lines 41-57
+    summary: Existing CREATE2 behavior includes collision failure and same-transaction recreation boundaries
+      that factory tests inherit.
+  rationale: 'Several edge-prone mechanisms must be covered: 31 versus 32-byte input, empty and variable
+    initcode, creation success versus collision or initcode failure, return-data lengths, and value forwarding.
+    They are multiple but remain bounded combinations around a small fixed contract, fitting score 2 rather
+    than the elevated-case score 3.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 37-104
+    summary: The proposal defines a state insertion and contract execution behavior, with no block RLP
+      or block-validation encoding rule.
+  rationale: No block RLP validation mechanism is introduced, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 14-16 and 37-104
+    summary: The entire change is within execution-layer state and EVM contract behavior; no Engine API
+      endpoint or field is specified.
+  rationale: No Engine API field or communication mechanism is added, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 14-16
+    summary: A new minimal CREATE2 factory is inserted as a system contract at a fixed address.
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-98
+    summary: The contract accepts value and variable initcode, invokes CREATE2, and thereby can create
+      a new state account before returning its address.
+  rationale: The proposal adds one system contract whose operation can create contracts and transfer the
+    forwarded value, making it stateful in effect. The single stateful-system-contract anchor is score
+    2.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Rationale > Precompile-range system contract, lines 14-16 and 108-112
+    summary: The EIP adds a factory at the next address after existing precompiles; it does not alter
+      the code, state, or behavior of a pre-existing system contract.
+  rationale: Addition of a distinct system contract is scored in the preceding criterion and causes no
+    direct or identified indirect modification to an existing system contract, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: The factory is bytecode assembled entirely from existing EVM instructions, including CREATE2,
+      RETURNDATASIZE, and RETURNDATACOPY.
+  - source: supporting/eip-211.md
+    locator: Specification, lines 27-42
+    summary: RETURNDATASIZE and RETURNDATACOPY are pre-existing opcodes with specified behavior and gas
+      costs.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 11-21
+    summary: CREATE2 is likewise an already-defined opcode.
+  rationale: The EIP deploys code that uses existing opcodes and allocates no opcode number, so score
+    0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: The exact factory program invokes existing instructions but supplies no amended opcode semantics.
+  rationale: Calling CREATE2 and return-data opcodes from a newly installed contract does not modify their
+    behavior, so the binary score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification > Factory Contract, lines 14-16 and 43-45
+    summary: The proposal explicitly calls the factory a system contract and installs ordinary bytecode,
+      although its address lies in the precompile range.
+  - source: eip.md
+    locator: Rationale > Precompile-range system contract, lines 108-112
+    summary: The range is used to obtain a special reserved address; no native precompile function or
+      gas schedule is defined.
+  rationale: Placement in the precompile address range does not make fixed EVM bytecode a precompile.
+    No native precompile is introduced, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Precompile-range system contract, lines 108-112
+    summary: Address 0x0B is selected as the next address after existing precompiles, leaving the existing
+      precompile addresses and behavior untouched.
+  rationale: The proposal neither changes an existing precompile's logic nor its gas schedule, so score
+    0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: The factory has a raw calldata convention of salt followed by initcode and does not change
+      transaction, block, or interface encoding.
+  rationale: An application-level calldata layout for one contract is outside the RLP/SSZ transaction,
+    block, and interface encoding anchor; no such encoding changes are introduced, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Not a new transaction type, lines 126-128
+    summary: A new creation transaction type was considered and rejected in favor of the system-contract
+      approach.
+  rationale: The proposal explicitly introduces no transaction type, so the binary score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Not a new transaction type, lines 126-128
+    summary: The design deliberately uses calls to a system contract instead of adding a transaction form.
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 45-104
+    summary: Input rejection and CREATE2 failure are EVM call execution outcomes, not transaction validity
+      or intrinsic-gas rules.
+  rationale: No existing transaction validity rule or intrinsic gas calculation is changed, so score 0
+    applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 37-104
+    summary: The complete specification consists of a fixed address and contract code; it defines no block
+      or block-header field.
+  rationale: No block or header field is introduced, so the binary score-0 anchor applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 41-45
+    summary: Upon activation, clients must set the code of address 0x0B to a specified byte sequence.
+  - source: eip.md
+    locator: Rationale > Precompile-range system contract, lines 108-110
+    summary: The EIP states that normal deployment cannot provide the desired guarantee and therefore
+      requires irregular code insertion at a special address.
+  rationale: The fork activation block directly modifies state by installing account code. The rubric
+    assigns score 3 whenever activation modifies state or internal variables.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 50-98
+    summary: Variable input copying and contract creation are performed by ordinary EVM bytecode using
+      existing calldata, memory, and CREATE2 operations.
+  - source: supporting/eip-1014.md
+    locator: Specification and Rationale > Gas cost, lines 13-21 and 37-39
+    summary: CREATE2 already meters initcode hashing by length to cover the associated computation and
+      denial-of-service concern.
+  rationale: The new fixed account exposes no new client execution algorithm or unmetered workload beyond
+    already metered EVM execution; therefore it does not introduce a mechanism requiring separate protocol
+    performance validation and scores 0.
+  confidence: medium
+  uncertainty_note: Adoption could increase use of CREATE2 factories, but workload popularity is not a
+    new protocol performance mechanism specified by this EIP.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale > No frontrunning protection, lines 118-124
+    summary: The minimal factory deliberately omits caller-bound salt protection and leaves more feature-rich
+      protected factories to applications.
+  - source: eip.md
+    locator: Security Considerations > Frontrunnable deployments, lines 139-143
+    summary: Environment-dependent initcode can be frontrun and deployed with attacker-selected parameters,
+      so use is recommended only for fully deterministic contracts.
+  rationale: The security exposure is explicit but localized to the small factory's deployment semantics
+    and can be reviewed and tested in isolation. It does not substantially alter multiple critical component
+    assumptions, fitting score 1.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 41-104
+    summary: The activation address and exact bytecode are fixed, and the bytecode explicitly defines
+      the input-length rejection, CREATE2 invocation, success return, and failure revert paths.
+  - source: supporting/eip-211.md
+    locator: Specification, lines 27-42
+    summary: The return-data behavior used by the factory, including CREATE2 failure data, is specified
+      by the required EIP.
+  - source: supporting/eip-1014.md
+    locator: Specification and Clarifications, lines 11-21 and 41-57
+    summary: The required CREATE2 proposal fixes address derivation, gas timing, collision failure, and
+      same-transaction collision behavior.
+  rationale: The fixed bytecode plus the two required opcode specifications determines outcomes for constructible
+    execution cases; the missing test vectors do not themselves leave consensus behavior unspecified.
+    The score-0 anchor applies.
+  confidence: medium
+  uncertainty_note: The Test Cases section is TBD, but this is a coverage gap rather than an identified
+    behavioral question requiring client agreement.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter, lines 1-12
+    summary: The proposal declares direct requirements on EIPs 211 and 1014.
+  - source: eip.md
+    locator: Specification > Factory Contract, lines 73-90
+    summary: Its core success and failure flow invokes CREATE2 and uses the return-data buffer opcodes
+      to propagate failure data.
+  - source: supporting/eip-211.md
+    locator: Specification, lines 27-42
+    summary: EIP-211 defines the return-data buffer and its specific CREATE2 success and failure behavior
+      used by the factory.
+  - source: supporting/eip-1014.md
+    locator: Specification, lines 11-21
+    summary: EIP-1014 defines the CREATE2 address, dynamic hash cost, and gas-charge timing inherited
+      by factory calls.
+  rationale: Correct testing must coordinate the new factory with two directly required EIPs, especially
+    CREATE2 success or collision failure and EIP-211 failure-returndata propagation. The dependencies
+    are important but limited to this small call path, matching score 2 rather than extensive multi-EIP
+    interdependence.
+  confidence: high
+  uncertainty_note: References to EIPs 155, 5792, and 7702 describe motivation or rejected workarounds,
+    not protocol dependencies or behavior modified by EIP-7997, so they are not counted as interacting
+    EIPs.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 211
+  - 1014
+  unidentified_interactions: []
+totals:
+  primary_score: 14
+  complexity_tier: medium
+under_specification:
+  present: false
+  summary: The Test Cases section is unfinished, but the exact installed bytecode and its required opcode
+    semantics determine the consensus behavior; no material unresolved behavior was identified.
+  affected_criteria: []
+  plausible_total_range:
+    minimum: 14
+    maximum: 14
+  plausible_tiers:
+  - medium
+  unresolved_questions: []
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: I assessed only the sealed package at its recorded information cutoff, did not attempt
+    internet access, and did not use present-day implementations, external sources, prohibited files,
+    or later knowledge.
+notable_ambiguities:
+- The manifest and output template title the item Deterministic Factory Contract, while the sealed historical
+  EIP front matter says Deterministic Factory Predeploy; the EIP number, revision identity, and hashes
+  match.
+- The proposal requires an activation-only state insertion but does not prescribe a transition-tool API;
+  the interface-change score therefore reflects the required activation-aware mechanism rather than a
+  named field.
+overall_confidence: medium

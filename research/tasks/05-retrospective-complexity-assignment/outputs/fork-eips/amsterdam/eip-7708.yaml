@@ -1,0 +1,606 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 7708
+  title: ETH transfers emit a log
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, EIP-7708 proposed automatically emitting an
+    existing-style log for every nonzero-value transaction, CALL, and
+    value-transferring SELFDESTRUCT. Each generated log would carry a MAGIC
+    topic, sender and recipient topics, and a 32-byte transfer value, with the
+    transaction log ordered before EVM-created logs and the other logs emitted
+    when their transfers execute. The MAGIC value, treatment of withdrawals
+    and fees, and test cases remained unresolved.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7708/manifest.yaml
+    manifest_sha256: ff7318f57ab9e9bbe7a43dff1763f51208cbd1ca7d22d2405211cc159e19164f
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 7466599174141c30561e1366d5aead63080c277a
+    path: EIPS/eip-7708.md
+    committed_at: '2025-04-13T00:47:51Z'
+    git_blob_sha: a0758eccabd947fe350a768c050b5254b3862084
+    content_sha256: 87520fb55cfbd55e385972510efa0ea5650710d9c686179dde450cf9fd3a508e
+    immutable_url: https://github.com/ethereum/EIPs/blob/7466599174141c30561e1366d5aead63080c277a/EIPS/eip-7708.md
+    information_cutoff_at: '2025-10-22T20:52:23Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-7708.md
+    content_sha256: 7b1cf60a80ed7d36020046ed9eaadd9c78c5c6c5dcf2f0e079ce810b01976f69
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T11:53:23Z'
+    session_id: assessment-run-7143f76a-b08c-4103-9a41-0e414d61af75
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-20.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: >-
+      The specification adds generated logs and their ordering but states no
+      gas charge, schedule, or accounting rule.
+  - source: eip.md
+    locator: Security Considerations, lines 50-52
+    summary: >-
+      The text compares the pre-existing minimum transfer cost with LOG3 cost
+      only to reason about maximum log throughput.
+  rationale: >-
+    No gas-accounting change is specified, so the score follows the zero
+    anchor rather than inferring a charge for the generated log.
+  confidence: medium
+  uncertainty_note: >-
+    The phrase "identical to a LOG3" and the gas-cost comparison do not say
+    whether any LOG3 gas is charged; a future clarification could change this
+    score.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      The proposal places generated logs at transfer execution time but does
+      not move a state access or a gas charge relative to an access.
+  rationale: >-
+    Log placement alone is not a change to state-access or gas-charge ordering
+    inside an opcode, satisfying the zero anchor.
+  confidence: medium
+  uncertainty_note: >-
+    Exact failure and rollback timing is not specified, but the text still
+    proposes no change to when state is accessed.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-31
+    summary: >-
+      The proposal is confined to logs for ETH transfers and contains no blob
+      mechanism or blob-gas rule.
+  rationale: No blob gas accounting changes are introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: >-
+      The specified effect is receipt-log generation; it does not define a
+      state-writing gas cost, state-byte rate, budget, reservoir, or spill path.
+  rationale: No state gas accounting mechanism or charging site is changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: The log-generation rule contains no refund behavior.
+  rationale: No new EVM gas-refund mechanism is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract and Motivation, lines 13-19
+    summary: >-
+      The new rule covers ordinary transactions as well as internal CALL and
+      SELFDESTRUCT value transfers so that all such ETH transfers are logged.
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: >-
+      Existing execution paths gain new log contents and ordering, changing
+      receipts for three common and technically distinct transfer categories.
+  rationale: >-
+    Existing tests spanning transactions, CALL, and SELFDESTRUCT with nonzero
+    value must have expected logs, ordering, blooms, or receipt commitments
+    reworked. This is a major and diverse rather than contrived subset, meeting
+    the score-3 anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP supplies no test cases, so the exact fraction of the pre-existing
+    corpus affected cannot be established from the package.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      Every covered nonzero transfer must now produce a log with fixed topics,
+      data encoding, and a specified relative placement.
+  rationale: >-
+    Tests not principally about this EIP but containing a covered value
+    transfer gain a mechanically checkable log invariant. The category is
+    broad, but zero-value tests and tests without these transfers do not gain
+    it, so score 2 applies rather than score 3.
+  confidence: medium
+  uncertainty_note: >-
+    Unresolved fee and withdrawal scope prevents an exact boundary for the set
+    of pre-existing tests that would gain the assertion.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: >-
+      The change produces ordinary-style logs and does not specify a new input,
+      output field, or activation indicator for a transition tool.
+  rationale: No transition-tool interface modification is required by the text.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      Expected behavior is expressed as a LOG3-compatible log with topics,
+      byte data, and ordering, all conventional log properties.
+  - source: eip.md
+    locator: Test Cases, lines 46-48
+    summary: The historical proposal contains only a TODO for test cases.
+  rationale: >-
+    The described outputs can be checked with existing log expectations; the
+    text does not require a new framework-level expectation or modifier.
+  confidence: medium
+  uncertainty_note: >-
+    With no test cases, the package cannot demonstrate whether convenience
+    helpers would later be desirable, though no new primitive is required by
+    the specification.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      The mechanism only constructs log topics and a big-endian value encoding;
+      it introduces no cryptographic primitive or modification.
+  rationale: No cryptography mechanism is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: >-
+      The rule has a zero/nonzero boundary, three distinct trigger paths, and
+      path-dependent log placement and ordering.
+  - source: eip.md
+    locator: Rationale / Open questions, lines 37-40
+    summary: >-
+      Withdrawals and fee payments, including the withdrawal sender identity,
+      remain explicit boundary questions.
+  rationale: >-
+    Transactions, CALL, and SELFDESTRUCT each introduce success, rollback,
+    sender/recipient, value-boundary, and ordering cases. Their combined matrix
+    requires an elevated number of cases, meeting the score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    The unresolved scope and absent tests obscure the exact case matrix, but
+    they do not remove the multiple discernible boundary-prone mechanisms.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: >-
+      The proposal changes generated logs and contains no block RLP field or
+      validation rule.
+  rationale: No RLP validation mechanism requiring client syncing is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: The specification introduces no Engine API field or endpoint.
+  rationale: No Engine API communication change is specified, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-31
+    summary: >-
+      The feature is implemented as automatic protocol logs for existing
+      transfer paths; no contract address, code, deployment, or state is added.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-31
+    summary: >-
+      The proposal names transaction, CALL, and SELFDESTRUCT transfer behavior
+      but identifies no pre-existing system contract or contract transition.
+  rationale: >-
+    No direct or package-established indirect system-contract modification is
+    introduced, so score 0 applies.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 27-31
+    summary: >-
+      The proposal refers to existing CALL, SELFDESTRUCT, and LOG3 behavior and
+      assigns no new opcode.
+  rationale: No opcode is added, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract, lines 13-15
+    summary: The abstract explicitly includes CALL and SELFDESTRUCT.
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      A nonzero-value CALL or value-transferring SELFDESTRUCT now emits a log at
+      the time its transfer executes.
+  rationale: >-
+    At least two pre-existing opcodes acquire a non-gas behavioral side effect.
+    The rubric assigns score 3 whenever any pre-existing opcode behavior is
+    modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-31
+    summary: The described logging feature adds no precompile.
+  rationale: No precompile is introduced, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract and Specification, lines 13-31
+    summary: No precompile behavior or gas schedule is mentioned or changed.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      Generated entries use an existing LOG3-style structure and a specified
+      32-byte big-endian data value; no transaction, block, or interface
+      encoding format is replaced or extended.
+  rationale: >-
+    New log contents within the existing log representation are not an RLP/SSZ
+    encoding change at the rubric's transaction, block, or interface levels.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      The rule applies to nonzero-value-transferring transactions without
+      defining a new transaction envelope or type.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Functionality, lines 29-31
+    summary: >-
+      A qualifying transaction gains an output log, but the proposal states no
+      new acceptance rule or intrinsic-gas calculation.
+  rationale: >-
+    Receipt behavior changes without any specified transaction-validity or
+    intrinsic-gas change, so the score is 0.
+  confidence: medium
+  uncertainty_note: >-
+    Gas treatment for the generated transaction log is unstated, but the text
+    does not establish a change to intrinsic gas or validity.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale, lines 33-35
+    summary: >-
+      The proposal relies on logs already reachable through node RPCs or the
+      existing block-root commitment and adds no block or header field.
+  rationale: No block or block-header field is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 21-31
+    summary: >-
+      The specification defines ongoing transfer behavior and no activation-
+      block state transition, migration, or internal-variable modification.
+  rationale: No new fork-activation mechanism is specified, matching score 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 50-52
+    summary: >-
+      The authors reason that worst-case log count does not increase because a
+      transfer already costs more than LOG3, but acknowledge an increase in the
+      average number of logs.
+  - source: eip.md
+    locator: Motivation and Specification, lines 17-31
+    summary: >-
+      Automatic logs are added across external transactions and two EVM
+      transfer paths, tying overhead to real block workloads.
+  rationale: >-
+    Average receipt/log construction, commitment, storage, and indexing impact
+    depends on workload and cannot be fully benchmarked as an isolated opcode,
+    but the text bounds worst-case log throughput and characterizes the average
+    increase as limited. This matches score 2.
+  confidence: medium
+  uncertainty_note: >-
+    Whether fees and withdrawals are included could materially change log
+    volume, and no benchmark results are packaged.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 17-19
+    summary: >-
+      The generated records are intended to let exchanges and other consumers
+      track ETH transfers that were not automatically logged before.
+  - source: eip.md
+    locator: Security Considerations, lines 50-52
+    summary: >-
+      The proposal analyzes log-volume safety, concluding no worse maximum but
+      acknowledging a higher average log count.
+  rationale: >-
+    Correctness matters across the transaction, CALL, and SELFDESTRUCT paths
+    because users may treat these consensus-committed records as transfer
+    evidence. This touches a limited set of existing components and warrants
+    targeted review and fuzzing, fitting score 2 rather than an extensive
+    multi-component score 3.
+  confidence: medium
+  uncertainty_note: >-
+    The Security Considerations discuss capacity but not spoofing, rollback,
+    emitter identity, or inconsistent-log risks, leaving the precise review
+    surface uncertain.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameters, lines 21-25
+    summary: The consensus-visible MAGIC topic remains TBD.
+  - source: eip.md
+    locator: Rationale / Open questions, lines 37-40
+    summary: >-
+      Whether withdrawals and fee payments generate logs, and the withdrawal
+      sender address if they do, are explicitly unresolved.
+  - source: eip.md
+    locator: Specification and Test Cases, lines 27-31 and 46-48
+    summary: >-
+      The proposal defines broad timing language but no cases for failure,
+      rollback, contract creation, or the generated log's emitting address, and
+      its entire test section is TODO.
+  rationale: >-
+    Previously absent automatic transfer records become consensus-committed
+    outputs while their selector, scope, identity, and edge semantics remain
+    unsettled. Constructible cases cannot be baselined until clients agree, and
+    amendments can change expected receipts, meeting the score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    Some missing execution details may have an obvious intended reading from
+    ordinary log semantics, but MAGIC and transfer scope are expressly open.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Motivation and Rationale, lines 17-19 and 33-35
+    summary: >-
+      EIP-7708 explicitly compares ETH tracking with ERC-20 logs and designs
+      its log type for ERC-20 compatibility while avoiding ERC-20-specific ABI
+      features.
+  - source: supporting/eip-20.md
+    locator: Front matter and notice, lines 1-7
+    summary: >-
+      The packaged linked document identifies the referenced proposal as EIP-20
+      and records that its content had moved.
+  rationale: >-
+    Compatibility with EIP-20 is an identified but limited interaction: the new
+    ETH log can be tested mostly independently and does not modify or depend on
+    EIP-20 behavior. This meets score 1.
+  confidence: high
+  uncertainty_note: >-
+    The packaged EIP-20 file contains only a move notice, but EIP-7708 itself
+    clearly identifies the intended compatibility relationship.
+  exceptional_score_justification: null
+  interacting_eips: [20]
+  unidentified_interactions: []
+totals:
+  primary_score: 19
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    Material consensus-visible behavior is unresolved: MAGIC is TBD; fee and
+    withdrawal coverage is open; the withdrawal sender is unspecified; and the
+    generated log's emitter, gas treatment, and detailed success, failure,
+    rollback, and creation semantics are not determined. Depending on those
+    choices, the breadth of affected tests, invariants, edge cases, transaction
+    validity, performance, and security review could shift, and charging
+    LOG3-equivalent gas could introduce an EVM gas-rule score.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - edge_boundary_conditions
+  - new_or_modified_transaction_validity_mechanisms
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 13
+    maximum: 25
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - What concrete value is assigned to MAGIC?
+  - Do withdrawals emit logs, and what address is their sender topic?
+  - Do fee payments emit logs?
+  - Which account is the emitter/address of each generated log?
+  - >-
+    Are generated logs and any associated charge reverted on failed or reverted
+    execution exactly like opcode-created logs?
+  - >-
+    Does "identical to a LOG3" imply a gas charge, and if so how is it charged
+    for each of the three trigger paths?
+  - >-
+    How are creation transactions and other cases without an ordinary recipient
+    address represented?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only EIP-7708 using the sealed package sources and operational
+    files listed in provenance. I did not attempt internet access, follow links,
+    use a skill, inspect another EIP or assessment, or use present-day
+    implementation knowledge, and no prohibited information was exposed.
+notable_ambiguities:
+- >-
+  "Identical to a LOG3" fixes topics and data in the next clause but does not
+  identify the generated log's emitting address or say whether LOG3 gas is
+  charged.
+- >-
+  "At the time that the value transfer executes" does not fully define
+  success, failure, and rollback behavior or exact ordering against surrounding
+  opcode effects.
+- >-
+  The stated goal of all ETH transfers conflicts with expressly unresolved fee
+  and withdrawal coverage and leaves creation-recipient handling unstated.
+overall_confidence: medium

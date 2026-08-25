@@ -1,0 +1,711 @@
+schema_version: 1
+task_id: 05-retrospective-complexity-assignment
+fork_id: amsterdam
+eip:
+  number: 8037
+  title: State Creation Gas Cost Increase
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: >-
+    At the information cutoff, this Draft proposed repricing seven existing
+    state-creation-related gas parameters spanning contract creation, new
+    accounts, storage, self-destruction, and EIP-7702 delegation. It also made
+    contract-deployment charging depend on whether the exact runtime bytecode
+    already existed in live state, adding warm/cold lookup and hashing costs
+    while waiving the code-deposit charge for duplicates. To avoid the
+    per-transaction cap constraining contract size, it required an independent
+    two-dimensional gas/code-deposit-gas meter derived from EIP-8011 and relied
+    on EIP-2780 to close the fresh-account funding bypass.
+provenance:
+  input_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-8037/manifest.yaml
+    manifest_sha256: 17e3191f479adc3e0060eccb21751e29fe77d281da7d107490305943a4e7ee24
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+    path: EIPS/eip-8037.md
+    committed_at: '2025-10-07T21:20:16Z'
+    git_blob_sha: 5d0192d26387e5d8f962a2ffa03df5a71a4e6b8c
+    content_sha256: 03b57db0f7031fa1e29d2ae88a46a94cbd33c2c7ec8f52f0e95a531a72f2442f
+    immutable_url: https://github.com/ethereum/EIPs/blob/c47ae3be2144ac32c0eb9238b01b005b188139e2/EIPS/eip-8037.md
+    information_cutoff_at: '2025-10-16T08:11:36Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/05-retrospective-complexity-assignment/TASK.md
+    content_sha256: 521d51a413e48bb91c906b24e01e7489a7a6d46e2b975bf2f5918a823e054006
+  session_prompt:
+    path: research/tasks/05-retrospective-complexity-assignment/prompts/amsterdam/eip-8037.md
+    content_sha256: cc9db7fb611daa0aeba7a0a5ccd76d9a7a7e73babb45419eb162a245d7598345
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-25T14:18:01+02:00'
+    session_id: assessment-run-7f233d78-33a9-4fa9-b5a6-2849d782f2a7
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: OpenAI Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-170.md
+  - supporting/eip-2780.md
+  - supporting/eip-7702.md
+  - supporting/eip-7825.md
+  - supporting/eip-8011.md
+  operational_files_read:
+  - PROMPT.md
+  - TASK.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 30-46
+    summary: >-
+      Seven existing gas parameters are increased and an independent
+      code-deposit-gas meter is introduced alongside ordinary gas.
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 48-59
+    summary: >-
+      Deployment charging becomes conditional on live-state code existence and
+      adds warm/cold lookup and runtime hashing charges for CREATE, CREATE2, and
+      creation transactions.
+  rationale: >-
+    This is anchor 3: it introduces a new multidimensional gas-accounting
+    mechanism and makes it interact with existing creation accounting, while
+    also repricing several existing mechanisms and therefore their gas tests.
+  confidence: high
+  uncertainty_note: >-
+    The existence of the new mechanism is explicit, although its complete
+    limit and exhaustion semantics are not.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 48-59
+    summary: >-
+      Contract creation first checks CodeExists against live state, then applies
+      conditional deposit charging plus a warm/cold access charge and a runtime
+      hash charge; the text expressly covers both CREATE and CREATE2.
+  rationale: >-
+    This is anchor 2 because a new state access and gas-charge sequence applies
+    to multiple creation operations. The ordering must be exercised at gas
+    boundaries for both CREATE and CREATE2, rather than for only one opcode.
+  confidence: medium
+  uncertainty_note: >-
+    The draft does not identify which address or code object is warmed, whether
+    the lookup is recorded as an access, or the exact ordering at failure and
+    out-of-gas boundaries.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Multidimensional metering for code deposit gas, lines 44-46
+    summary: >-
+      The only dimensions introduced by this proposal are ordinary gas and
+      code-deposit gas; no blob resource or blob-gas rule is introduced.
+  rationale: >-
+    This is anchor 0 because the proposal changes execution and state-creation
+    charging, not blob gas accounting.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 30-55
+    summary: >-
+      The proposal reprices storage-producing operations and introduces an
+      independent code-deposit meter whose charge depends on whether runtime
+      code must newly be stored.
+  - source: eip.md
+    locator: Rationale / Harmonization across state creation, lines 75-89
+    summary: >-
+      State-writing rates are derived from a unit cost of 1,900 gas per new
+      state byte for code, account, storage-slot, and authorization growth.
+  rationale: >-
+    This is anchor 3: code deposit is state writing, and the proposal introduces
+    a new independent charging mechanism for it while changing existing state
+    creation costs and their tests.
+  confidence: medium
+  uncertainty_note: >-
+    The draft does not formally define the second meter's budget, exhaustion,
+    fee, or spill relationship with ordinary execution gas.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 34-42
+    summary: >-
+      PER_EMPTY_ACCOUNT_COST and PER_AUTH_BASE_COST are repriced, but no refund
+      rule is added by EIP-8037.
+  - source: supporting/eip-7702.md
+    locator: Specification / Behavior, lines 104-124
+    summary: >-
+      EIP-7702 already defines the refund as the difference between those two
+      parameters when an authority is non-empty.
+  rationale: >-
+    This is anchor 0. EIP-8037 changes the numerical inputs to an existing
+    EIP-7702 refund, but it does not introduce a new gas-refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 32-42
+    summary: >-
+      Repricing reaches CREATE, CREATE2, contract-creation transactions, fresh
+      account funding, SELFDESTRUCT, SSTORE, and EIP-7702 delegation.
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 48-59
+    summary: >-
+      All deployment paths gain conditional duplicate-code charging, state
+      lookup, and hashing behavior.
+  rationale: >-
+    This is anchor 3 because a major and diverse body of pre-existing gas and
+    state-transition tests across opcode, transaction, storage, account, and
+    delegation paths must be reworked rather than only a contrived subset.
+  confidence: high
+  uncertainty_note: >-
+    The sealed sources do not inventory existing tests, so the exact number of
+    affected vectors is not available; the breadth follows from the listed
+    consensus paths.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Multidimensional metering for code deposit gas, lines 44-53
+    summary: >-
+      Contract creation now produces a separate code-deposit-gas result, which
+      is zero for code already present and proportional to length for new code.
+  rationale: >-
+    This is anchor 2 because the broad category of pre-existing contract-
+    creation tests gains a mechanically checkable second-meter invariant in
+    addition to its original state and ordinary-gas results.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP does not say how code_deposit_gas is surfaced to tests, so the exact
+    assertion plumbing and whether every creation vector exposes it are open.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Multidimensional metering for code deposit gas, lines 44-46
+    summary: >-
+      The state transition must independently meter ordinary gas and
+      code-deposit gas.
+  - source: supporting/eip-8011.md
+    locator: Specification / Gas accounting, lines 61-80
+    summary: >-
+      The referenced multidimensional design tracks a gas-used vector and
+      returns it in addition to scalar gas used from transaction execution.
+  rationale: >-
+    This is anchor 2: testing an additional consensus gas dimension requires a
+    new transition-tool mechanism, not merely one unrelated scalar input field.
+  confidence: low
+  uncertainty_note: >-
+    EIP-8037 never specifies the transition-tool fields or whether the complete
+    EIP-8011 return-vector interface is imported.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 44-55
+    summary: >-
+      Tests must express a second gas dimension and distinguish new from
+      pre-existing runtime code, including warm/cold lookup and hash charges.
+  - source: eip.md
+    locator: Rationale / Duplicated bytecode discount, lines 99-104
+    summary: >-
+      The required cases include same-block ordering, exact-code identity, and
+      special handling of empty code.
+  rationale: >-
+    This is anchor 2 because reusable expectations or modifiers are needed for
+    code-deposit-gas outcomes and live-state code-existence setup within this
+    EIP's suite; these go beyond writing only ordinary scalar-gas test functions.
+  confidence: medium
+  uncertainty_note: >-
+    The historical text does not describe the test framework, so it is unclear
+    how much of the state setup can already be represented by existing helpers.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 50-59
+    summary: >-
+      Duplicate detection is a consensus decision keyed by keccak256 of exact
+      runtime bytecode, and CREATE2 must perform this runtime hash separately
+      from its existing init-code hash.
+  rationale: >-
+    This is anchor 1: deployment functionality gains a new consensus use of the
+    well-known Keccak hash, but no novel cryptographic primitive is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 48-59
+    summary: >-
+      Charging branches on new versus duplicate code, warm versus cold access,
+      runtime length rounding, and CREATE versus CREATE2 hashing.
+  - source: eip.md
+    locator: Rationale / Duplicated bytecode discount, lines 99-104
+    summary: >-
+      Same-block first/subsequent deployments, exact byte identity, and empty
+      code are called out as distinct boundary cases.
+  - source: supporting/eip-170.md
+    locator: Specification, lines 14-21
+    summary: >-
+      Contract creation also has a maximum-code-size boundary at 24,576 bytes.
+  rationale: >-
+    This is anchor 3. Multiple boundary-prone mechanisms combine
+    multiplicatively, especially code existence, same-block order, warmness,
+    creation path, runtime length, success or failure, and meter exhaustion.
+  confidence: high
+  uncertainty_note: >-
+    Exact exhaustion semantics of the independent meter are unspecified, which
+    increases uncertainty about the final boundary matrix without reducing its
+    evident breadth.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-59
+    summary: >-
+      The specified changes concern gas parameters, an internal meter, and
+      contract-deployment charging; no block RLP validation rule is stated.
+  rationale: >-
+    This is anchor 0 on the primary reading because EIP-8037 introduces no
+    explicit block-RLP validation mechanism requiring sync tests.
+  confidence: medium
+  uncertainty_note: >-
+    A full two-dimensional import of EIP-8011 could imply a header extension,
+    but EIP-8037 does not state that import and says code-deposit cost is outside
+    the block gas limit.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-59
+    summary: >-
+      No Engine API endpoint, payload field, or communication mechanism appears
+      among the specified parameter, meter, and deployment changes.
+  rationale: >-
+    This is anchor 0 because the proposal does not specify any Engine API field
+    or new Engine API communication mechanism.
+  confidence: medium
+  uncertainty_note: >-
+    The omitted block-level semantics of the second meter leave open whether a
+    later specification would need to carry anything through execution payloads.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 30-46
+    summary: >-
+      The proposal modifies protocol gas parameters and metering and does not
+      introduce a privileged contract address or system-contract code.
+  rationale: >-
+    This is anchor 0 because no system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 30-42
+    summary: >-
+      The affected objects are generic creation, account, storage, destruction,
+      and delegation operations; no pre-existing system contract is identified.
+  rationale: >-
+    This is anchor 0 because the proposal specifies neither a direct system-
+    contract modification nor an identifiable indirect effect on one.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 34-42
+    summary: >-
+      The operation table only reprices existing CREATE, CREATE2, SELFDESTRUCT,
+      and SSTORE paths plus existing transaction and delegation paths.
+  rationale: >-
+    This is anchor 0 because no opcode is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 48-59
+    summary: >-
+      CREATE and CREATE2 gain conditional deposit, lookup, and hash charges, but
+      the described externally observable distinction is their gas charging.
+  rationale: >-
+    This is anchor 0 under this row's explicit exclusion of gas changes. At
+    sufficient gas, the deployed account still receives the exact runtime code;
+    the new-versus-duplicate distinction changes charging and code-object
+    storage linkage rather than an opcode result.
+  confidence: medium
+  uncertainty_note: >-
+    The draft describes linking an account to an existing code object, but does
+    not specify a non-gas state-transition result distinct from the normal
+    codeHash outcome.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-59
+    summary: >-
+      The complete specification adds gas and deployment rules and identifies
+      no new precompile address or callable precompile behavior.
+  rationale: >-
+    This is anchor 0 because no precompile is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 30-42
+    summary: >-
+      No precompile appears in the complete list of repriced operations or gas
+      parameters.
+  rationale: >-
+    This is anchor 0 because neither precompile logic nor a precompile gas
+    schedule is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, lines 28-59
+    summary: >-
+      The specification defines parameter and execution-accounting changes but
+      no transaction, block, or interface RLP/SSZ encoding change.
+  rationale: >-
+    This is anchor 0 on the primary reading because EIP-8037 does not introduce
+    a transaction-, block-, or interface-level encoding change.
+  confidence: medium
+  uncertainty_note: >-
+    The reference to a two-dimensional EIP-8011 variant does not say whether
+    EIP-8011's header extension is imported; importing it would change this row.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 34-42
+    summary: >-
+      The proposal reprices existing contract-creation transactions and EIP-7702
+      delegation rather than defining a new typed transaction envelope.
+  rationale: >-
+    This is anchor 0 because no new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations / Mispricing with respect to ETH transfers, lines 147-151
+    summary: >-
+      EIP-8037 requires the EIP-2780 rule that adds the repriced
+      GAS_NEW_ACCOUNT to intrinsic gas for value transfers to fresh accounts.
+  - source: supporting/eip-2780.md
+    locator: Specification / New-account surcharge and Intrinsic gas computation, lines 68-108
+    summary: >-
+      The required EIP defines state-dependent conditions under which existing
+      transaction types add GAS_NEW_ACCOUNT during intrinsic-gas calculation.
+  rationale: >-
+    This is anchor 2 because the modified intrinsic-gas calculation affects
+    existing transaction-validity vectors and requires targeted updates across
+    transaction types, but the localized predicate does not itself require a
+    redesign of the whole testing infrastructure.
+  confidence: medium
+  uncertainty_note: >-
+    The separate code-deposit meter's relationship to transaction gas limits
+    and out-of-gas validity is not formally defined and could expand this row.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations / Independent metering for code deposit costs, lines 153-155
+    summary: >-
+      The draft says code-deposit cost is outside traditional metering and does
+      not contribute to the block gas limit, and it specifies no header field.
+  - source: supporting/eip-8011.md
+    locator: Specification / Block header extension, lines 82-97
+    summary: >-
+      The referenced full EIP-8011 design does define max_gas_metered as a new
+      header field, exposing an unresolved difference from EIP-8037's text.
+  rationale: >-
+    This is anchor 0 on the best-supported EIP-8037 reading: no new header field
+    is specified, and its uncapped code-deposit meter does not directly require
+    the referenced EIP-8011 max field.
+  confidence: low
+  uncertainty_note: >-
+    It is unresolved whether “a two-dimensional version of EIP-8011” imports the
+    EIP-8011 header field despite EIP-8037's statement that code-deposit cost
+    does not contribute to the block gas limit.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Parameter changes, lines 30-42
+    summary: >-
+      Activation switches gas parameter values; no one-time state migration or
+      modification of an existing internal variable is specified.
+  rationale: >-
+    This is anchor 0 because ordinary fork-gated rule activation is used without
+    a special fork-block state or internal-variable modification.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations / Independent metering for code deposit costs, lines 153-155
+    summary: >-
+      Because deposit cost is outside block and transaction limits, the draft
+      warns that an attacker could create very large contracts that stress the
+      network and explicitly calls for more benchmarking and analysis.
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 48-59
+    summary: >-
+      Every deployment adds a live-state existence lookup and runtime hashing,
+      including a separate runtime hash for CREATE2.
+  rationale: >-
+    This is anchor 3: the uncapped meter and size-dependent hashing/state work
+    cannot be validated wholly in isolation and have complex interactions with
+    existing transaction limits, block limits, contract-size bounds, state
+    storage, and deployment performance.
+  confidence: high
+  uncertainty_note: >-
+    The proposal itself says benchmarking and possible mitigations remain to be
+    determined, so the magnitude is open even though the risk class is explicit.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, lines 143-155
+    summary: >-
+      The draft identifies application usability and pricing-bypass concerns and
+      warns that uncapped very large contract creation could be exploited to
+      stress the network, with mitigations still undetermined.
+  - source: eip.md
+    locator: Rationale / Multidimensional metering, lines 91-97
+    summary: >-
+      The independent meter deliberately changes the interaction between code
+      deposit, EIP-7825's transaction cap, and ordinary gas accounting.
+  rationale: >-
+    This is anchor 3 because the mechanism touches several critical components—
+    transaction and block resource bounds, contract deployment, persistent
+    state, gas estimation, and denial-of-service protection—and requires broad
+    security review, adversarial boundary tests, and performance fuzzing.
+  confidence: high
+  uncertainty_note: >-
+    The absence of defined meter limits or mitigations leaves the exact attack
+    envelope unresolved.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation, lines 18-20
+    summary: >-
+      The proposal observes that duplicate code may not be stored again by
+      clients even though this implementation detail previously had no charging
+      consequence.
+  - source: eip.md
+    locator: Specification / Contract deployment cost calculation, lines 48-55
+    summary: >-
+      CodeExists against live state now determines a consensus gas charge, but
+      the meaning, access target, and lifecycle of that predicate are not fully
+      defined.
+  - source: eip.md
+    locator: Rationale and Security Considerations, lines 91-104 and 153-155
+    summary: >-
+      The draft simultaneously refers to EIP-8011-style multidimensional
+      metering and says deposit cost contributes to neither the transaction nor
+      block gas limit, without specifying complete reconciliation semantics.
+  rationale: >-
+    This is anchor 3. Previously unobservable code-storage/deduplication details
+    become consensus-visible through gas charging, while constructible cases
+    involving reverts, same-transaction lifecycle, warmness, empty code, and
+    second-meter exhaustion require client agreement before stable vectors can
+    be baselined.
+  confidence: high
+  uncertainty_note: >-
+    The draft gives an intended same-block and exact-bytecode reading, but does
+    not settle all observable state-lifecycle and multidimensional-meter cases.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Front matter and Rationale, lines 1-11 and 63-97
+    summary: >-
+      EIP-2780 is required; the pricing table and meter design directly use the
+      EIP-170 size limit, EIP-7702 delegation costs, EIP-7825 transaction cap,
+      and EIP-8011 multidimensional model.
+  - source: eip.md
+    locator: Security Considerations / Mispricing with respect to ETH transfers, lines 147-155
+    summary: >-
+      EIP-2780 is needed to prevent bypassing the new-account charge, while the
+      independent meter changes the protection afforded by transaction and
+      block gas bounds.
+  rationale: >-
+    This is anchor 3 because five identified EIPs participate in size-boundary,
+    intrinsic-gas, delegation-refund, transaction-cap, and multidimensional-
+    metering behavior that needs coordinated tests. There are two EIPs beyond
+    the first three, so the uncapped row's +1-per-three rule adds no bonus.
+  confidence: high
+  uncertainty_note: >-
+    EIP-170 is a bounded size interaction rather than a dependency, but it still
+    supplies a coordinated contract-size boundary used by this proposal.
+  exceptional_score_justification: null
+  interacting_eips: [170, 2780, 7702, 7825, 8011]
+  unidentified_interactions: []
+totals:
+  primary_score: 35
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    Material behavior is missing or internally unresolved. The draft does not
+    define the code_deposit_gas meter's limit, exhaustion, fee, refund/revert,
+    block aggregation, or transition-tool exposure, and its EIP-8011 reference
+    conflicts with the statement that this gas contributes to neither the
+    transaction nor block gas limit. CodeExists is also not defined across
+    same-transaction creations, reverts, deletion or emptiness, and the text does
+    not identify what becomes warm or when the lookup is recorded relative to
+    charging and failure.
+  affected_criteria:
+  - state_access_ordering_within_opcode_execution
+  - state_gas_accounting_changes
+  - new_invariant_on_pre_existing_tests
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - block_syncing_changes
+  - engine_api_changes
+  - encoding_changes_rlp_ssz
+  - new_or_modified_transaction_validity_mechanisms
+  - new_block_header_fields
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 29
+    maximum: 45
+  plausible_tiers: [high]
+  unresolved_questions:
+  - >-
+    Is code_deposit_gas charged toward the transaction gas limit, a separate
+    limit, no limit, or a spill path, and how is it converted into the fee paid?
+  - >-
+    Does the required two-dimensional EIP-8011 variant import max_gas_metered,
+    the header extension, base-fee rule, and block-validity rule, or only an
+    internal execution counter?
+  - >-
+    What precise live-state condition makes CodeExists true after creation,
+    revert, deletion, empty-code return, or another creation earlier in the same
+    transaction?
+  - >-
+    What state object is warm or cold for storage_access_cost, is that access
+    recorded, and at what point relative to gas charging and possible failure?
+  - >-
+    How are code_deposit_gas and its failure or success outcome represented in
+    the transition-tool and test-framework interfaces?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed package at the recorded information cutoff. I did
+    not access the internet, follow visible links, inspect implementations or
+    later revisions, consult other EIP assessments, invoke a skill, or use
+    present-day implementation knowledge.
+notable_ambiguities:
+- >-
+  “Derived from” and “consistent with” EIP-8011 do not establish which of that
+  draft's transaction, block, header, and base-fee mechanics EIP-8037 imports.
+- >-
+  The Backwards Compatibility section refers to “new calldata cost rules” and
+  “floor cost values,” although the EIP's specification defines state-creation
+  and code-deposit changes rather than a calldata floor.
+- >-
+  The test matrix for the new lookup is multiplicative across CREATE/CREATE2,
+  new/duplicate/empty runtime code, warm/cold status, same-block order,
+  success/revert, and ordinary-gas versus code-deposit-gas boundaries.
+overall_confidence: medium
