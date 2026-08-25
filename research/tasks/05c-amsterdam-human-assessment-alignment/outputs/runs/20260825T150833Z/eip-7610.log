@@ -1,0 +1,5080 @@
+started_at: 2026-08-25T15:08:33.141705Z
+command: /usr/bin/python3 /home/dtopz/code/github/retrospective-complexity-eval/research/tasks/05c-amsterdam-human-assessment-alignment/scripts/run_isolated.py --eip 7610
+
+Reading additional input from stdin...
+OpenAI Codex v0.149.1
+--------
+workdir: /mnt/workspace
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a03977-49ac-7f30-8b5a-e4937299a156
+--------
+user
+Read ASSESSMENT-CONTRACT.md and PROMPT.md completely, then follow them exactly. Work only on the assigned EIP and write only assessment.yaml.
+codex
+I’ll read both instruction files in full, identify the assigned EIP and required assessment process, then produce only `assessment.yaml`.
+exec
+/usr/bin/bash -lc "pwd && rg --files -g 'ASSESSMENT-CONTRACT.md' -g 'PROMPT.md' -g 'AGENTS.md' -g '"'!assessment.yaml'"'" in /mnt/workspace
+ succeeded in 0ms:
+/mnt/workspace
+ASSESSMENT-CONTRACT.md
+PROMPT.md
+
+exec
+/usr/bin/bash -lc "wc -l ASSESSMENT-CONTRACT.md PROMPT.md && sed -n '1,240p' ASSESSMENT-CONTRACT.md && sed -n '1,260p' PROMPT.md" in /mnt/workspace
+ succeeded in 0ms:
+  13 ASSESSMENT-CONTRACT.md
+  33 PROMPT.md
+  46 total
+# Historical-checklist assessment contract
+
+Assess exactly the one proposal in `package/` using only the historical checklist in `package/rubric.md`.
+
+Your readable assessment evidence is positively limited to the paths listed by `assessment_source_files` in `package/manifest.yaml`. `PROMPT.md`, this contract, the manifest, and the output template are operational files, not scoring evidence. Read the rubric, EIP, and every allowlisted supporting file completely. Do not follow links; visible URLs are provenance only.
+
+Apply all historical checklist rows in their exact order, including rows scored zero. Use only a score listed for that row in the output template. A score of 4 requires an exceptional-score justification because the historical rubric permits it only for exceptional complexity or impact. The historical checklist's `Engine API encoding changes` row has no dedicated definition in the source template; do not invent one or import a definition from another rubric. Score it conservatively from the row label and global score range, lower confidence, and record the missing definition as uncertainty.
+
+Ground every score in one or more package-relative evidence entries with `source`, `locator`, and `summary`. Give a concise rationale, confidence (`low`, `medium`, or `high`), and an uncertainty note for every row. Record material under-specification separately; do not multiply one missing detail across unrelated rows. Calculate the total and tier mechanically from the historical thresholds in the template.
+
+The internet, web search, browsers, network commands, apps, plugins, MCP servers, skills, project-management records, human assessments, calibration data, current-rubric scores, other EIP packages, later EIP revisions, implementations, tests, devnets, and fork outcomes are prohibited. Do not search for a hidden repository or use latent knowledge as evidence. Latent model knowledge cannot be removed; rely only on the package and attest to that boundary.
+
+If prohibited information is exposed before completion, set `hindsight_control.contaminated: true`, describe the exposure, do not provide an authoritative result, and stop. Otherwise copy `package/output-template.yaml` to `assessment.yaml`, fill every placeholder, preserve all pre-populated provenance and lists exactly, and write no other file.
+# Assigned assessment: Amsterdam EIP-7610
+
+The identity above and package/manifest.yaml define the sole assigned proposal.
+
+# Perform one blinded historical-checklist assessment
+
+This prompt is a source template. The trusted coordinator must render the assigned fork and EIP identity into PROMPT.md inside one isolated capsule. Never run this prompt directly from the research repository.
+
+You are assessing exactly one historical Ethereum proposal using the checklist sealed in package/rubric.md.
+
+Read ASSESSMENT-CONTRACT.md completely. Then read package/manifest.yaml, package/rubric.md, package/eip.md, package/output-template.yaml, and every file listed in manifest assessment_source_files. Do not read any other file.
+
+Evaluate only the proposal state and evidence inside the package. Apply every anchor in package/rubric.md in its exact order, including anchors scored zero. Do not add criteria from another checklist revision and do not repair missing details from memory.
+
+For each anchor provide:
+
+- one score allowed by that anchor;
+- one or more package-relative evidence locators;
+- a concise technical rationale tied to the anchor definition;
+- confidence;
+- an uncertainty note; and
+- exceptional-score justification when required.
+
+Record material under-specification separately and lower confidence where appropriate. Do not turn the same missing detail into high scores across several anchors.
+
+The internet, web search, browsers, network commands, apps, plugins, MCP servers, skills, project-management records, client implementations, tests, devnets, fork outcomes, later EIP revisions, existing complexity assessments, calibration data, human reviews, current-rubric scores, and other EIP packages are prohibited. A URL visible in a sealed source is provenance only and must not be opened. Do not search for a hidden repository or use a dedicated complexity-assessment skill.
+
+If prohibited information is exposed, follow the contamination procedure in ASSESSMENT-CONTRACT.md and do not produce authoritative scores.
+
+Copy package/output-template.yaml to assessment.yaml and fill every required field. Preserve all launcher-populated provenance, source lists, operational-file lists, and session values exactly. Calculate the total and tier mechanically using only the sealed historical checklist.
+
+Write no file other than /mnt/workspace/assessment.yaml. Do not run repository validators, copy the result elsewhere, or inspect comparison data. Finish after assessment.yaml is complete; the trusted launcher validates and collects it after the process exits.
+
+
+codex
+The contract sets a strict evidence boundary and prohibits external lookup or validators. I’ll now inspect only the manifest, then the explicitly permitted package files it names.
+exec
+/usr/bin/bash -lc "sed -n '1,240p' package/manifest.yaml" in /mnt/workspace
+ succeeded in 0ms:
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-package
+fork_id: amsterdam
+eip:
+  number: 7610
+  title: Revert creation in case of non-empty storage
+  layers:
+  - execution
+task_04_ref:
+  path: research/tasks/04-complexity-assessment-ref-selection/outputs/fork-eips/amsterdam/eip-7610.yaml
+  content_sha256: bd07f37630fb969a359afa1353a659c07d5148a5fc68543176742187f61515ae
+  review_status: approved
+  reviewed_at: '2026-08-25'
+task_05_source:
+  manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7610/manifest.yaml
+  manifest_sha256: 46e935dfbdbf8176f37a28798773c6153447f1a3c338a34647e5fc734297b6da
+  reuse_policy: exact_eip_and_supporting_allowlist_replace_only_rubric_and_output_template
+historical_eip:
+  package_path: eip.md
+  repository: ethereum/EIPs
+  commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
+  path: EIPS/eip-7610.md
+  committed_at: '2024-11-07T08:14:40Z'
+  git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
+  content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
+  immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
+  information_cutoff_at: '2025-09-24T14:40:52Z'
+historical_rubric:
+  repository: ethspecs/pm
+  commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+  committed_at: '2025-11-05T22:50:08Z'
+  path: Templates/EIP-Complexity-Assessment.md
+  git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
+  content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
+  immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
+  task_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/rubrics/template-d936bcb34963cb5eec015dada2e4188e49fc14d5.md
+  anchor_order:
+  - evm_gas_rule_changes
+  - blob_gas_accounting_changes
+  - new_evm_gas_refund
+  - patterns_affecting_pre_existing_tests
+  - transition_tool_interface_changes
+  - cryptography
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - engine_api_encoding_changes
+  - added_system_contracts
+  - modified_system_contracts
+  - added_opcodes
+  - modified_opcodes
+  - added_precompiles
+  - modified_precompiles
+  - encoding_changes_rlp_ssz
+  - new_transaction_types
+  - new_or_modified_transaction_validity_mechanisms
+  - new_block_header_fields
+  - new_fork_activation_mechanism
+  - performance_risks
+  - security_risks
+  - cross_eip_interactions
+  score_domains:
+    evm_gas_rule_changes:
+    - 0
+    - 1
+    - 2
+    - 3
+    blob_gas_accounting_changes:
+    - 0
+    - 1
+    - 2
+    - 3
+    new_evm_gas_refund:
+    - 0
+    - 1
+    - 2
+    - 3
+    patterns_affecting_pre_existing_tests:
+    - 0
+    - 1
+    - 2
+    - 3
+    transition_tool_interface_changes:
+    - 0
+    - 1
+    - 2
+    - 3
+    cryptography:
+    - 0
+    - 1
+    - 2
+    - 3
+    edge_boundary_conditions:
+    - 0
+    - 1
+    - 2
+    - 3
+    block_syncing_changes:
+    - 0
+    - 1
+    - 2
+    - 3
+    engine_api_changes:
+    - 0
+    - 1
+    - 2
+    - 3
+    engine_api_encoding_changes:
+    - 0
+    - 1
+    - 2
+    - 3
+    added_system_contracts:
+    - 0
+    - 1
+    - 2
+    - 3
+    modified_system_contracts:
+    - 0
+    - 1
+    - 2
+    - 3
+    added_opcodes:
+    - 0
+    - 1
+    - 2
+    - 3
+    modified_opcodes:
+    - 0
+    - 3
+    added_precompiles:
+    - 0
+    - 1
+    - 2
+    - 3
+    modified_precompiles:
+    - 0
+    - 1
+    - 2
+    - 3
+    encoding_changes_rlp_ssz:
+    - 0
+    - 3
+    new_transaction_types:
+    - 0
+    - 3
+    new_or_modified_transaction_validity_mechanisms:
+    - 0
+    - 1
+    - 2
+    - 3
+    new_block_header_fields:
+    - 0
+    - 3
+    new_fork_activation_mechanism:
+    - 0
+    - 3
+    performance_risks:
+    - 0
+    - 1
+    - 2
+    - 3
+    security_risks:
+    - 0
+    - 1
+    - 2
+    - 3
+    cross_eip_interactions:
+    - 0
+    - 1
+    - 2
+    - 3
+  exceptional_score: 4
+  maximum_score: 72
+  tier_thresholds:
+    low:
+      minimum: 0
+      maximum: 9
+    medium:
+      minimum: 10
+      maximum: 19
+    high:
+      minimum: 20
+      maximum: null
+  known_source_defects:
+  - The checklist contains Engine API encoding changes but the template has no dedicated definition for
+    that row.
+supporting_documents:
+- kind: linked_eip
+  repository: ethereum/EIPs
+  commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
+  commit_time: '2024-11-07T08:14:40Z'
+  path: EIPS/eip-161.md
+  git_blob_sha: b746c239881f24996f0205855e44f9b2d3b92b6a
+  content_sha256: 45f6beabbf885e3f95199a7ec763a9483d6de61ad689e00fd8e6121c136e991f
+  immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-161.md
+  package_path: supporting/eip-161.md
+- kind: linked_eip
+  repository: ethereum/EIPs
+  commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
+  commit_time: '2024-11-07T08:14:40Z'
+  path: EIPS/eip-684.md
+  git_blob_sha: 9f45676e5f3941888711cc9d9ca5139f26bfda22
+  content_sha256: b53f3a71e47169d295c16018498ed64b57aa67486db7adf3f5e6ffb7ab542b4b
+  immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-684.md
+  package_path: supporting/eip-684.md
+provenance_only_links: []
+assessment_source_files:
+- eip.md
+- rubric.md
+- supporting/eip-161.md
+- supporting/eip-684.md
+source_policy:
+  internet_allowed: false
+  follow_links_allowed: false
+  files_outside_package_allowed: false
+  dedicated_assessment_skill_allowed: false
+  human_assessment_allowed: false
+  current_rubric_or_score_allowed: false
+  implementations_tests_devnets_outcomes_allowed: false
+preparation:
+  script: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/prepare_inputs.py
+  script_sha256: 970df081b8a73d14a3cf7c7ba90d599c994f6a8db650ab0c06016f8cc4f7afee
+  contract_sha256: 3ac28123ef63811b7d00adbe44b870eb38c1febbdc7005cd5314917baf9414e9
+  assessor_prompt_source_sha256: d77d1de647b8e17233acc5e9f8a1c7bd0790eb73b2826647ffdcf3cb29a98aba
+
+exec
+/usr/bin/bash -lc "wc -l package/rubric.md package/eip.md package/output-template.yaml package/supporting/eip-161.md package/supporting/eip-684.md && sed -n '1,400p' package/rubric.md && sed -n '1,400p' package/eip.md && sed -n '1,500p' package/output-template.yaml && sed -n '1,400p' package/supporting/eip-161.md && sed -n '1,400p' package/supporting/eip-684.md" in /mnt/workspace
+ succeeded in 0ms:
+  282 package/rubric.md
+   48 package/eip.md
+  736 package/output-template.yaml
+   69 package/supporting/eip-161.md
+   55 package/supporting/eip-684.md
+ 1190 total
+# EIP-NNNN: EIP Title
+
+Link: https://eips.ethereum.org/EIPS/eip-NNNN
+
+## Execution Specs
+
+### Specs
+
+TBD
+
+### Testing
+
+#### Anchors
+
+All anchors are scored on a 0–3 scale. A score of 4 may be used in exceptional circumstances where the complexity or impact exceeds the defined anchors.
+
+##### EVM Gas rule changes
+
+New EVM gas accounting rules
+- 0. No gas accounting changes.
+- 1. Existing gas accounting mechanism is updated.
+- 2. A new gas accounting mechanism is introduced but it does not affect existing mechanisms nor does it affect existing tests.
+- 3. A new gas accounting mechanism is introduced and affects existing mechanisms which in turn affect existing tests.
+
+##### Blob gas accounting changes
+
+New Blob gas accounting rules which potentially affect pre-existing tests
+
+- 0. No blob gas accounting changes.
+- 1. Existing blob gas accounting mechanism is updated.
+- 2. A new blob gas accounting mechanism is introduced but it does not affect existing mechanisms nor does it affect existing tests.
+- 3. A new blob gas accounting mechanism is introduced and affects existing mechanisms which in turn affect existing tests.
+
+##### New EVM gas refund
+
+New gas-refund mechanism
+
+- 0. No new gas-refund mechanisms are introduced.
+- 1. A new simple gas-refund mechanism is introduced that does not affect either existing tests or existing gas-refund mechanisms.
+- 2. A new complex gas-refund mechanism is introduced or a simple mechanism that affects existing tests or existing gas-refund mechanisms.
+- 3. A new complex gas-refund mechanism is introduced that affects existing tests or existing gas-refund mechanisms.
+
+##### Patterns affecting pre-existing tests
+
+Implements a new validation mechanism or rule that translates in reworking pre-existing tests
+
+- 0. No pre-existing tests are affected by this change.
+- 1. Minor subset of existing tests are affected by this change.
+- 2. Considerable subset of existing tests are affected by this change but involves only a contrived category of tests.
+- 3. Major subset of existing tests are affected, including diverse category of tests (benchmarks, static, multiple forks, etc.).
+
+##### Transition-tool interface changes
+
+Modifies or adds new fields to the transition tool interface.
+
+- 0. No modifications to the transition tool interface are required.
+- 1. A single new field needs to be introduced to the transition tool interface.
+- 2. Multiple new fields or a new mechanism has to be introduced to the transition tool interface.
+- 3. Multiple new fields and a new mechanism has to be introduced to the transition tool interface.
+
+*Special consideration must be paid to this section if the EIP introduces a mechanism that requires the state transition tool to be aware whether the block it is processing is the fork-activation block.
+
+##### Cryptography
+
+Introduces new cryptography mechanisms or modifies existing functionality that involves cryptography
+
+- 0. No cryptography mechanisms are introduced.
+- 1. A new cryptography mechanism is introduced but it is a well known mechanism that is known to have vast resources to aid on its testing.
+- 2. Multiple new cryptography mechanisms are introduced that are well-known or a single but novel mechanism is introduced that is either untested or has limited resources.
+- 3. Multiple new cryptography mechanisms are introduced and at least one of them is a novel mechanism.
+
+##### Edge/boundary conditions
+
+Feature contains edge/boundary conditions.
+
+- 0. No discernible edge cases or boundary conditions are introduced.
+- 1. A single edge-case or boundary-condition prone mechanism is introduced.
+- 2. Multiple edge-case or boundary-condition prone mechanisms are introduced, but none of them requires an elevated number of cases to test.
+- 3. Multiple edge-case or boundary-condition prone mechanisms are introduced and at least one of them requires an elevated number of cases to test.
+
+##### Block syncing changes
+
+Modifies block RLP validation mechanisms that require test client syncing.
+
+- 0. No new RLP validation mechanism is introduced.
+- 1. A single simple RLP validation mechanism is introduced.
+- 2. Multiple simple RLP validation mechanisms are introduced or a single complex one.
+- 3. Multiple RLP validation mechanisms are introduced and at least one of them is deemed complex.
+
+##### Engine API changes
+
+Introduces new fields to the Engine API directives
+
+- 0. No new fields or communication mechanisms are introduced to the Engine API.
+- 1. A single new field is introduced in one of the Engine API endpoints.
+- 2. Multiple fields are introduced to one or multiple Engine API end points, or a new Engine API end-point is introduced.
+- 3. Multiple fields are introduced to one or multiple Engine API end points and a new Engine API end-point is introduced.
+
+##### Added system contracts
+
+Introduces new system contract, stateful or not
+
+- 0. No new system contracts are introduced.
+- 1. A new system contract is introduced that is not stateful nor does it trigger a new system action (e.g. requests to the consensus layer).
+- 2. Multiple new system contracts are introduced or a single new system contract that is either stateful or triggers a new system action (e.g. requests to the consensus layer).
+- 3. Multiple new system contracts are introduced and at least one of them is either stateful or triggers a new system action (e.g. requests to the consensus layer).
+
+##### Modified system contracts
+
+Modifies pre-existing system contracts
+
+- 0. No modifications to pre-existing system contracts are introduced, directly or indirectly.
+- 1. Does not directly modify any system contract, but its behavior has minor indirect effects on one or more system contracts.
+- 2. Does not directly modify any system contract, but its behavior has major indirect effects on one or more system contracts.
+- 3. At least one pre-existing system contract code or state is modified, which would involve irregular state transition or a similarly complex transition methodology.
+
+##### Added opcodes
+
+Introduces new opcodes
+
+- 0. No new opcodes are introduced.
+- 1. A new simple opcode is introduced (no data portion, no complex stack mechanics, and a constant gas cost).
+- 2. Multiple new simple opcodes are introduced, or a single new complex opcode is introduced (has data portion, or complex stack mechanics, or a dynamic gas cost).
+- 3. Multiple new opcodes are introduced, and at least one of them is complex (has data portion, or complex stack mechanics, or a dynamic gas cost).
+
+*Cryptography opcodes are not considered complex by default. Refer to the "Cryptography" section for a separate assessment.
+
+##### Modified opcodes
+
+Modifies pre-existing opcodes
+
+- 0. No pre-existing opcode modifications are introduced.
+- 3. At least one pre-existing opcode's behavior is modified (not including gas changes) or a pre-existing opcode is deprecated.
+
+##### Added precompiles
+
+Introduces new precompiles
+
+- 0. No new precompiles are introduced.
+- 1. A new simple precompile is introduced (constant input length, constant gas cost).
+- 2. Multiple new simple precompiles are introduced, or a single new complex precompile is introduced (dynamic input length or dynamic gas cost).
+- 3. Multiple new precompiles are introduced, and at least one of them is complex (dynamic input length or dynamic gas cost).
+
+*Cryptography precompiles are not considered complex by default. Refer to the "Cryptography" for a separate assessment.
+
+##### Modified precompiles
+
+Modifies pre-existing precompiles logic or gas-accounting
+
+- 0. No pre-existing precompiles are modified.
+- 1. At least one pre-existing precompile has its gas schedule modified.
+- 2. Multiple pre-existing precompiles have their gas schedule modified, or a single pre-existing precompile has its behavior modified.
+- 3. The behavior of multiple pre-existing precompiles, or a single complex pre-existing precompile modified.
+
+##### Encoding changes (RLP/SSZ)
+
+Introduces encoding changes at the transaction/block/interfaces level
+
+- 0. No encoding changes are introduced at the transaction, block, or interfaces levels.
+- 3. An encoding change is introduced at transaction, block or interfaces level (e.g. RLP -> SSZ).
+
+##### New transaction types
+
+Introduces a new transaction type
+
+- 0. No new transaction types are introduced.
+- 3. A new transaction type is introduced.
+
+##### New or modified transaction validity mechanisms
+
+Creates new or modifies pre-existing transaction types' validation mechanisms
+
+- 0. No changes are introduced to the validity rules of existing transaction types or to their intrinsic gas cost calculation.
+- 1. Minor adjustments are introduced to validity rules or intrinsic gas cost calculation, but they do not significantly affect existing tests.
+- 2. Changes to validity rules or intrinsic gas cost calculation affect existing tests, but require only limited updates to test cases and no redesign of the testing infrastructure.
+- 3. Changes to validity rules or intrinsic gas cost calculation require extensive rework or redesign of the tests or testing infrastructure.
+
+##### New block / header fields
+
+Introduces new block or block header fields
+
+- 0. No new block or header fields are introduced.
+- 3. A new block or header field is introduced.
+
+##### New fork activation mechanism
+
+Modifies state, internal variables, or similar, at the fork activation block
+
+- 0. No state modifications, internal variables or similar are modified at the fork activation block.
+- 3. Either a state modification or internal variables are modified at the fork activation block.
+
+*Initialization of new internal variable is not considered a modification.
+
+##### Performance risks
+
+Introduces or modifies mechanisms and requires performance validation.
+
+- 0. No new mechanisms are introduced that require performance validation.
+- 1. The introduced mechanisms can be benchmarked in isolation and do not affect existing performance behavior.
+- 2. The introduced mechanisms cannot be fully benchmarked in isolation, but they only have a limited impact on the existing performance benchmarks.
+- 3. The introduced mechanisms cannot be benchmarked in isolation and have a substantial impact on existing performance benchmarks or have complex interactions with existing mechanisms.
+
+##### Security risks
+
+Introduces or modifies mechanisms that could compromise the security of the chain, users, validators, or other stakeholders, if not implemented properly.
+
+- 0. No new mechanisms are introduced that could pose a security risk.
+- 1. The introduced mechanisms are self-contained, can be validated in isolation, and do not alter existing invariants that could pose a security risk for any stakeholders.
+- 2. The introduced mechanisms interact with a limited number of existing components, slightly altering their security assumptions and requiring a targeted security review or fuzzing.
+- 3. The introduced mechanisms interact with multiple existing components, including critical ones, substantially altering their security assumptions and requiring an extensive security review and fuzzing.
+
+##### Cross-EIP interactions
+
+Introduces or modifies mechanisms that affect other EIPs in either the same or past forks.
+
+- 0. Fully self-contained EIP that does not depend on, modify, or conflict with any other EIP.
+- 1. The EIP interacts with one or more other EIPs in a non-critical and limited way but can be tested independently for the most part.
+- 2. The EIP depends on or modifies one or more other EIPs such that coordinated testing and consideration is required, but interactions are limited in scope and not complex.
+- 3. The EIP has strong interdependencies with multiple EIPs, requiring extensive coordinated cross-EIP testing as well as potential re-design of existing test vectors.
+
+### Checklist
+
+| Anchor | Score (0–3) | Rationale |
+|---|---:|---|
+| **EVM Gas rule changes** |   |   |
+| **Blob gas accounting changes** |   |   |
+| **New EVM gas refund** |   |   |
+| **Patterns affecting pre-existing tests** |   |   |
+| **Transition-tool interface changes** |   |   |
+| **Cryptography-related testing** |   |   |
+| **Edge/boundary conditions** |   |   |
+| **Block syncing changes** |   |   |
+| **Engine API changes** |   |   |
+| **Engine API encoding changes** |   |   |
+| **Added system contracts** |   |   |
+| **Modified system contracts** |   |   |
+| **Added opcodes** |   |   |
+| **Modified opcodes** |   |   |
+| **Added precompiles** |   |   |
+| **Modified precompiles** |   |   |
+| **Encoding changes (RLP/SSZ)** |   |   |
+| **New transaction types** |   |   |
+| **New or modified transaction validity mechanisms** |   |   |
+| **New block / header fields** |   |   |
+| **New fork activation mechanism** |   |   |
+| **Performance risks** |   |   |
+| **Security risks** |   |   |
+| **Cross-EIP interactions** |   |   |
+
+**Total: X**
+
+#### Special Considerations
+
+> Evaluator must write here special considerations that make the EIP particularly complex to test due to reasons not directly included in this checklist.
+
+#### Notes
+
+> Evaluator notes that do not affect the score but are valid points that must be taken into consideration when the tests are being written.
+
+#### Final Assessment
+
+| Category | Description | Value |
+|-----------|--------------|:----:|
+| **Total Score** | Sum of all anchor scores (0–72) | **`XX`** |
+| **Complexity Tier** | Computed from total score | 🟢 / 🟡 / 🔴 |
+
+##### Tier Interpretation
+
+| Tier | Range | Meaning |
+|------|--------|----------|
+| 🟢 **Low Complexity** | **<10** | Minor feature or localized change. Existing tests are largely unaffected. Does not require intensive cross-EIP testing. |
+| 🟡 **Medium Complexity** | **>=10<20** | Moderate change affecting multiple components. Requires moderate cross-EIP testing. |
+| 🔴 **High Complexity** | **>=20** | Broad or deep impact on protocol behavior; high regression risk; and/or requiring intensive cross-EIP testing. |
+
+
+## Consensus Specs
+
+### Specs
+
+### Testing
+
+### Notes
+---
+eip: 7610
+title: Revert creation in case of non-empty storage
+description: Revert contract creation if address already has the non-empty storage
+author: Gary Rong (@rjl493456442), Martin Holst Swende (@holiman)
+discussions-to: https://ethereum-magicians.org/t/eip-revert-creation-in-case-of-non-empty-storage/18452
+status: Last Call
+last-call-deadline: 2024-11-20
+type: Standards Track
+category: Core
+created: 2024-02-02
+---
+
+## Abstract
+
+This EIP causes contract creation to throw an error when attempted at an address with pre-existing storage.
+
+## Specification
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 and RFC 8174.
+
+If a contract creation is attempted due to a creation transaction, the `CREATE` opcode, the `CREATE2` opcode, or any other reason, and the destination address already has either a nonzero nonce, a nonzero code length, or non-empty storage, then the creation MUST throw as if the first byte in the init code were an invalid opcode. This change MUST apply retroactively for all existing blocks.
+
+This EIP amends [EIP-684](./eip-684.md) with one extra condition, requiring empty storage for contract deployment.
+
+## Rationale
+
+EIP-684 defines two conditions for contract deployment: the destination address must have zero nonce and zero code length. Unfortunately, this is not sufficient. Before [EIP-161](./eip-161.md) was applied, the nonce of a newly deployed contract remained set to zero. Therefore, it was entirely possible to create a contract with a zero nonce and zero code length but with non-empty storage, if slots were set in the constructor. There exists 28 such contracts on Ethereum mainnet at this time.
+
+As one of the core tenets of smart contracts is that its code will not change, even if the code is zero length. The contract creation must be rejected in such instanace.
+
+## Backwards Compatibility
+
+This is an execution layer upgrade, and so it requires a hard fork.
+
+## Test Cases
+
+There exists quite a number of tests in the ethereum tests repo as well as in the execution spec tests, which test the scenario of deployment to targets with non-empty storage. These tests have been considered problematic in the past; Reth and EELS both intentionally implement a version of the account reset solely to pass the tests. Py-evm declared the situation impossible and never implemented account reset.
+
+Refilling the existing tests will provide sufficient coverage for this EIP.
+
+## Security Considerations
+
+This EIP is a security upgrade: it enforces the imutability of deployed code.
+
+## Copyright
+
+Copyright and related rights waived via [CC0](../LICENSE.md).
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-automated
+fork_id: amsterdam
+eip:
+  number: 7610
+  title: Revert creation in case of non-empty storage
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: null
+provenance:
+  input_package:
+    manifest_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/packages/eip-7610/manifest.yaml
+    manifest_sha256: b91ee29352ee417a58b2b43c49931a6bfdd875010c0972abd10f44184b6c19d1
+  historical_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
+    path: EIPS/eip-7610.md
+    committed_at: '2024-11-07T08:14:40Z'
+    git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
+    content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
+    immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
+    information_cutoff_at: '2025-09-24T14:40:52Z'
+  historical_rubric:
+    repository: ethspecs/pm
+    commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    committed_at: '2025-11-05T22:50:08Z'
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
+    content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
+    immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
+    anchor_order:
+    - evm_gas_rule_changes
+    - blob_gas_accounting_changes
+    - new_evm_gas_refund
+    - patterns_affecting_pre_existing_tests
+    - transition_tool_interface_changes
+    - cryptography
+    - edge_boundary_conditions
+    - block_syncing_changes
+    - engine_api_changes
+    - engine_api_encoding_changes
+    - added_system_contracts
+    - modified_system_contracts
+    - added_opcodes
+    - modified_opcodes
+    - added_precompiles
+    - modified_precompiles
+    - encoding_changes_rlp_ssz
+    - new_transaction_types
+    - new_or_modified_transaction_validity_mechanisms
+    - new_block_header_fields
+    - new_fork_activation_mechanism
+    - performance_risks
+    - security_risks
+    - cross_eip_interactions
+    score_domains:
+      evm_gas_rule_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      blob_gas_accounting_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      new_evm_gas_refund:
+      - 0
+      - 1
+      - 2
+      - 3
+      patterns_affecting_pre_existing_tests:
+      - 0
+      - 1
+      - 2
+      - 3
+      transition_tool_interface_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      cryptography:
+      - 0
+      - 1
+      - 2
+      - 3
+      edge_boundary_conditions:
+      - 0
+      - 1
+      - 2
+      - 3
+      block_syncing_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      engine_api_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      engine_api_encoding_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      added_system_contracts:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_system_contracts:
+      - 0
+      - 1
+      - 2
+      - 3
+      added_opcodes:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_opcodes:
+      - 0
+      - 3
+      added_precompiles:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_precompiles:
+      - 0
+      - 1
+      - 2
+      - 3
+      encoding_changes_rlp_ssz:
+      - 0
+      - 3
+      new_transaction_types:
+      - 0
+      - 3
+      new_or_modified_transaction_validity_mechanisms:
+      - 0
+      - 1
+      - 2
+      - 3
+      new_block_header_fields:
+      - 0
+      - 3
+      new_fork_activation_mechanism:
+      - 0
+      - 3
+      performance_risks:
+      - 0
+      - 1
+      - 2
+      - 3
+      security_risks:
+      - 0
+      - 1
+      - 2
+      - 3
+      cross_eip_interactions:
+      - 0
+      - 1
+      - 2
+      - 3
+    exceptional_score: 4
+    maximum_score: 72
+    tier_thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+    known_source_defects:
+    - The checklist contains Engine API encoding changes but the template has no dedicated definition
+      for that row.
+  task_contract:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 3ac28123ef63811b7d00adbe44b870eb38c1febbdc7005cd5314917baf9414e9
+  assessor_prompt:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/rendered/eip-7610.md
+    content_sha256: d50ff7e3df970e08a9759e3a065fdf8457001045ed81908e28a53510c624848a
+  assessor_environment:
+    codex_executable_path: /home/dtopz/.local/bin/codex
+    codex_version: codex-cli 0.149.1
+    codex_binary_sha256: 134063e133f0b4244fa3b251acf973d4fe4b4aeeacbdc135211bf480f59f1477
+    command:
+    - /home/dtopz/.local/bin/codex
+    - exec
+    - --strict-config
+    - -C
+    - /mnt/workspace
+    - -m
+    - gpt-5.6-sol
+    - -c
+    - model_reasoning_effort="xhigh"
+    - -c
+    - sandbox_workspace_write.network_access=false
+    - -s
+    - workspace-write
+    - --ephemeral
+    - --skip-git-repo-check
+    - --ignore-rules
+    - --color
+    - never
+    - --disable
+    - apps
+    - --disable
+    - auth_elicitation
+    - --disable
+    - browser_use
+    - --disable
+    - browser_use_external
+    - --disable
+    - browser_use_full_cdp_access
+    - --disable
+    - computer_use
+    - --disable
+    - goals
+    - --disable
+    - hooks
+    - --disable
+    - image_generation
+    - --disable
+    - in_app_browser
+    - --disable
+    - in_app_chat
+    - --disable
+    - multi_agent
+    - --disable
+    - plugins
+    - --disable
+    - plugin_sharing
+    - --disable
+    - remote_plugin
+    - --disable
+    - skill_mcp_dependency_install
+    - --disable
+    - skill_search
+    - --disable
+    - standalone_web_search
+    - --disable
+    - tool_suggest
+    - --disable
+    - tool_call_mcp_elicitation
+    - --disable
+    - view_image
+    - --disable
+    - workspace_dependencies
+    - Read ASSESSMENT-CONTRACT.md and PROMPT.md completely, then follow them exactly. Work only on the
+      assigned EIP and write only assessment.yaml.
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    approval_policy: never
+    run_at: '2026-08-25T15:08:33.416114Z'
+    session_id: assessment-run-e5366eda-a3d5-432a-b5ef-eeaf50345dd2
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    launcher_path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/run_isolated.py
+    launcher_sha256: a33d55a8d3503ff17378cf68014c558a9e92e62e9211b2e7a5fd02d6acd92307
+    agent_identity: Codex
+    skills_used: []
+    prohibited_capability_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-161.md
+  - supporting/eip-684.md
+  operational_files_read:
+  - ASSESSMENT-CONTRACT.md
+  - PROMPT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography-related testing
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: engine_api_encoding_changes
+  label: Engine API encoding changes
+  definition_present: false
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  definition_present: true
+---
+eip: 161
+title: State trie clearing (invariant-preserving alternative)
+author: Gavin Wood (@gavofyork)
+type: Standards Track
+category: Core
+status: Final
+created: 2016-10-24
+---
+
+### Hard fork
+[Spurious Dragon](./eip-607.md)
+
+### Parameters
+- `FORK_BLKNUM`: 2,675,000
+- `CHAIN_ID`: 1 (Mainnet)
+
+### Specification
+
+a. Account creation transactions and the `CREATE` operation SHALL, prior to the execution of the initialisation code, **increment** the **nonce** over and above its normal starting value by **one** (for normal networks, this will be simply 1, however test-nets with non-zero default starting nonces will be different).
+
+b. Whereas `CALL` and `SUICIDE` would charge 25,000 gas when the destination is non-existent, now the charge SHALL **only** be levied if the operation transfers **more than zero value** and the destination account is _dead_.
+
+c. No account may _change state_ from non-existent to existent-but-_empty_. If an operation would do this, the account SHALL instead remain non-existent.
+
+d. _At the end of the transaction_, any account _touched_ by the execution of that transaction which is now _empty_ SHALL instead become non-existent (i.e. **deleted**).
+
+Where:
+
+An account is considered to be _touched_ when it is involved in any potentially _state-changing_ operation. This includes, but is not limited to, being the recipient of a **transfer of zero value**.
+
+An account is considered _empty_ when it has **no code** and **zero nonce** and **zero balance**.
+
+An account is considered _dead_ when either it is non-existent or it is _empty_.
+
+_At the end of the transaction_ is immediately following the execution of the suicide list, prior to the determination of the state trie root for receipt population.
+
+An account _changes state_ when:
+- it is the target or refund of a `SUICIDE` operation for **zero or more** value;
+- it is the source or destination of a `CALL` operation or message-call transaction transferring **zero or more** value;
+- it is the source or creation of a `CREATE` operation or contract-creation transaction endowing **zero or more** value;
+- as the block author ("miner") it is the recipient of block-rewards or transaction-fees of **zero or more** value.
+
+#### Notes
+
+In the present Ethereum protocol, it should be noted that very few state changes can ultimately result in accounts that are empty following the execution of the transaction. In fact there are only four contexts that current implementations need track:
+- an empty account has zero value transferred to it through `CALL`;
+- an empty account has zero value transferred to it through `SUICIDE`;
+- an empty account has zero value transferred to it through a message-call transaction;
+- an empty account has zero value transferred to it through a zero-gas-price fees transfer.
+
+### Rationale
+
+Same as #158 except that several edge cases are avoided since we do not break invariants:
+- ~~that an account can go from having code and storage to not having code or storage mid-way through the execution of a transaction;~~ [corrected]
+- that a newly created account cannot be deleted prior to being deployed.
+
+`CREATE` avoids zero in the nonce to avoid any suggestion of the oddity of `CREATE`d accounts being reaped half-way through their creation.
+
+### Addendum (2017-08-15)
+
+On 2016-11-24, a consensus bug occurred due to two implementations having different behavior in the case of state reverts.[3] The specification was amended to clarify that empty account deletions are reverted when the state is reverted.
+
+### References
+
+1. EIP-158 issue and discussion: https://github.com/ethereum/EIPs/issues/158
+2. EIP-161 issue and discussion: https://github.com/ethereum/EIPs/issues/161
+3. https://blog.ethereum.org/2016/11/25/security-alert-11242016-consensus-bug-geth-v1-4-19-v1-5-2/
+> Details: Geth was failing to revert empty account deletions when the transaction causing the deletions of empty accounts ended with an out-of-gas exception. An additional issue was found in Parity, where the Parity client incorrectly failed to revert empty account deletions in a more limited set of contexts involving out-of-gas calls to precompiled contracts; the new Geth behavior matches Parity’s, and empty accounts will cease to be a source of concern in general in about one week once the state clearing process finishes.
+---
+eip: 684
+title: Revert creation in case of collision
+description: Revert contract creation if address already has code
+author: Vitalik Buterin (@vbuterin), Renan Rodrigues de Souza (@RenanSouza2)
+discussions-to: https://ethereum-magicians.org/t/eip-revert-on-address-collision/13442
+status: Final
+type: Standards Track
+category: Core
+created: 2023-03-20
+---
+
+## Abstract
+
+This EIP causes contract creation to throw an error when attempted at an address with pre-existing code. This prevents an attack consisting of deploying contract code and later changing the code arbitrarily by "creating" an account at that existing address.
+
+## Specification
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 and RFC 8174.
+
+If a contract creation is attempted due to a creation transaction, the `CREATE` opcode, the `CREATE2` opcode, or any other reason, and the destination address already has either a nonzero nonce, or a nonzero code length, then the creation MUST throw as if the first byte in the init code were an invalid opcode. This change MUST apply retroactively for all existing blocks.
+
+## Rationale
+
+One of the core tenants of smart contracts is that its code will not change. However with sufficient computing power an attacker can change the code stored in an address to any other code, steal funds or execute other malicious activity.
+
+## Backwards Compatibility
+
+This is an execution layer upgrade, and so it requires a hard fork.
+
+## Test Cases
+
+Given a genesis allocation of
+
+```
+Address : 0xd0bBEc6D2c628b7e2E6D5556daA14a5181b604C5,
+Balance : 1000000000000000000, // 1 ether
+Nonce   : 0,
+code    : "",
+
+Address : 0x7658771dc6Af74a3d2F8499D349FF9c1a0DF8826,
+Balance : 0,
+Nonce   : 1,
+Code    : "0xB0B0FACE",
+```
+
+A contract created in the first transaction from EOA `0xd0bBEc6...` (`227bcc6959669226360814723ed739f1214201584b6a27409dfb8228b8be5f59`), with no salt, should revert.
+
+## Security Considerations
+
+This EIP is a security upgrade: it enforces the imutability of deployed code.
+
+## Copyright
+
+Copyright and related rights waived via [CC0](../LICENSE.md).
+
+exec
+/usr/bin/bash -lc "sed -n '1,240p' package/output-template.yaml && sed -n '241,480p' package/output-template.yaml && sed -n '481,736p' package/output-template.yaml" in /mnt/workspace
+ succeeded in 0ms:
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-automated
+fork_id: amsterdam
+eip:
+  number: 7610
+  title: Revert creation in case of non-empty storage
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: null
+provenance:
+  input_package:
+    manifest_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/packages/eip-7610/manifest.yaml
+    manifest_sha256: b91ee29352ee417a58b2b43c49931a6bfdd875010c0972abd10f44184b6c19d1
+  historical_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
+    path: EIPS/eip-7610.md
+    committed_at: '2024-11-07T08:14:40Z'
+    git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
+    content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
+    immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
+    information_cutoff_at: '2025-09-24T14:40:52Z'
+  historical_rubric:
+    repository: ethspecs/pm
+    commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    committed_at: '2025-11-05T22:50:08Z'
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
+    content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
+    immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
+    anchor_order:
+    - evm_gas_rule_changes
+    - blob_gas_accounting_changes
+    - new_evm_gas_refund
+    - patterns_affecting_pre_existing_tests
+    - transition_tool_interface_changes
+    - cryptography
+    - edge_boundary_conditions
+    - block_syncing_changes
+    - engine_api_changes
+    - engine_api_encoding_changes
+    - added_system_contracts
+    - modified_system_contracts
+    - added_opcodes
+    - modified_opcodes
+    - added_precompiles
+    - modified_precompiles
+    - encoding_changes_rlp_ssz
+    - new_transaction_types
+    - new_or_modified_transaction_validity_mechanisms
+    - new_block_header_fields
+    - new_fork_activation_mechanism
+    - performance_risks
+    - security_risks
+    - cross_eip_interactions
+    score_domains:
+      evm_gas_rule_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      blob_gas_accounting_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      new_evm_gas_refund:
+      - 0
+      - 1
+      - 2
+      - 3
+      patterns_affecting_pre_existing_tests:
+      - 0
+      - 1
+      - 2
+      - 3
+      transition_tool_interface_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      cryptography:
+      - 0
+      - 1
+      - 2
+      - 3
+      edge_boundary_conditions:
+      - 0
+      - 1
+      - 2
+      - 3
+      block_syncing_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      engine_api_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      engine_api_encoding_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      added_system_contracts:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_system_contracts:
+      - 0
+      - 1
+      - 2
+      - 3
+      added_opcodes:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_opcodes:
+      - 0
+      - 3
+      added_precompiles:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_precompiles:
+      - 0
+      - 1
+      - 2
+      - 3
+      encoding_changes_rlp_ssz:
+      - 0
+      - 3
+      new_transaction_types:
+      - 0
+      - 3
+      new_or_modified_transaction_validity_mechanisms:
+      - 0
+      - 1
+      - 2
+      - 3
+      new_block_header_fields:
+      - 0
+      - 3
+      new_fork_activation_mechanism:
+      - 0
+      - 3
+      performance_risks:
+      - 0
+      - 1
+      - 2
+      - 3
+      security_risks:
+      - 0
+      - 1
+      - 2
+      - 3
+      cross_eip_interactions:
+      - 0
+      - 1
+      - 2
+      - 3
+    exceptional_score: 4
+    maximum_score: 72
+    tier_thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+    known_source_defects:
+    - The checklist contains Engine API encoding changes but the template has no dedicated definition
+      for that row.
+  task_contract:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 3ac28123ef63811b7d00adbe44b870eb38c1febbdc7005cd5314917baf9414e9
+  assessor_prompt:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/rendered/eip-7610.md
+    content_sha256: d50ff7e3df970e08a9759e3a065fdf8457001045ed81908e28a53510c624848a
+  assessor_environment:
+    codex_executable_path: /home/dtopz/.local/bin/codex
+    codex_version: codex-cli 0.149.1
+    codex_binary_sha256: 134063e133f0b4244fa3b251acf973d4fe4b4aeeacbdc135211bf480f59f1477
+    command:
+    - /home/dtopz/.local/bin/codex
+    - exec
+    - --strict-config
+    - -C
+    - /mnt/workspace
+    - -m
+    - gpt-5.6-sol
+    - -c
+    - model_reasoning_effort="xhigh"
+    - -c
+    - sandbox_workspace_write.network_access=false
+    - -s
+    - workspace-write
+    - --ephemeral
+    - --skip-git-repo-check
+    - --ignore-rules
+    - --color
+    - never
+    - --disable
+    - apps
+    - --disable
+    - auth_elicitation
+    - --disable
+    - browser_use
+    - --disable
+    - browser_use_external
+    - --disable
+    - browser_use_full_cdp_access
+    - --disable
+    - computer_use
+    - --disable
+    - goals
+    - --disable
+    - hooks
+    - --disable
+    - image_generation
+    - --disable
+    - in_app_browser
+    - --disable
+    - in_app_chat
+    - --disable
+    - multi_agent
+    - --disable
+    - plugins
+    - --disable
+    - plugin_sharing
+    - --disable
+    - remote_plugin
+    - --disable
+    - skill_mcp_dependency_install
+    - --disable
+    - skill_search
+    - --disable
+    - standalone_web_search
+    - --disable
+    - tool_suggest
+    - --disable
+    - tool_call_mcp_elicitation
+    - --disable
+    - view_image
+    - --disable
+    - workspace_dependencies
+    - Read ASSESSMENT-CONTRACT.md and PROMPT.md completely, then follow them exactly. Work only on the
+      assigned EIP and write only assessment.yaml.
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    approval_policy: never
+    run_at: '2026-08-25T15:08:33.416114Z'
+    session_id: assessment-run-e5366eda-a3d5-432a-b5ef-eeaf50345dd2
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    launcher_path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/run_isolated.py
+    launcher_sha256: a33d55a8d3503ff17378cf68014c558a9e92e62e9211b2e7a5fd02d6acd92307
+    agent_identity: Codex
+    skills_used: []
+    prohibited_capability_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-161.md
+  - supporting/eip-684.md
+  operational_files_read:
+  - ASSESSMENT-CONTRACT.md
+  - PROMPT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography-related testing
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: engine_api_encoding_changes
+  label: Engine API encoding changes
+  definition_present: false
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+totals:
+  primary_score: null
+  maximum_score: 72
+  maximum_kind: nominal_24_rows_times_3_exceptional_scores_may_exceed
+  complexity_tier: null
+  tier_thresholds:
+    low:
+      minimum: 0
+      maximum: 9
+    medium:
+      minimum: 10
+      maximum: 19
+    high:
+      minimum: 20
+      maximum: null
+under_specification:
+  present: null
+  summary: null
+  affected_criteria: []
+  plausible_total_range:
+    minimum: null
+    maximum: null
+  plausible_tiers: []
+  unresolved_questions: []
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  contaminated: false
+  exposure_details: []
+  package_grounding_attestation: null
+  latent_knowledge_limitation_acknowledged: null
+notable_ambiguities: []
+overall_confidence: null
+
+codex
+The scoring is now bounded to the sealed materials. The main complexity comes from existing-test changes, one storage-emptiness boundary, direct `CREATE`/`CREATE2` behavior modification, security implications, and explicit EIP-684/EIP-161 interaction; unrelated checklist rows remain zero.
+exec
+/usr/bin/bash -lc "sed -n '1,736p' package/output-template.yaml" in /mnt/workspace
+ succeeded in 0ms:
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-automated
+fork_id: amsterdam
+eip:
+  number: 7610
+  title: Revert creation in case of non-empty storage
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: null
+provenance:
+  input_package:
+    manifest_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/packages/eip-7610/manifest.yaml
+    manifest_sha256: b91ee29352ee417a58b2b43c49931a6bfdd875010c0972abd10f44184b6c19d1
+  historical_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
+    path: EIPS/eip-7610.md
+    committed_at: '2024-11-07T08:14:40Z'
+    git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
+    content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
+    immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
+    information_cutoff_at: '2025-09-24T14:40:52Z'
+  historical_rubric:
+    repository: ethspecs/pm
+    commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    committed_at: '2025-11-05T22:50:08Z'
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
+    content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
+    immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
+    anchor_order:
+    - evm_gas_rule_changes
+    - blob_gas_accounting_changes
+    - new_evm_gas_refund
+    - patterns_affecting_pre_existing_tests
+    - transition_tool_interface_changes
+    - cryptography
+    - edge_boundary_conditions
+    - block_syncing_changes
+    - engine_api_changes
+    - engine_api_encoding_changes
+    - added_system_contracts
+    - modified_system_contracts
+    - added_opcodes
+    - modified_opcodes
+    - added_precompiles
+    - modified_precompiles
+    - encoding_changes_rlp_ssz
+    - new_transaction_types
+    - new_or_modified_transaction_validity_mechanisms
+    - new_block_header_fields
+    - new_fork_activation_mechanism
+    - performance_risks
+    - security_risks
+    - cross_eip_interactions
+    score_domains:
+      evm_gas_rule_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      blob_gas_accounting_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      new_evm_gas_refund:
+      - 0
+      - 1
+      - 2
+      - 3
+      patterns_affecting_pre_existing_tests:
+      - 0
+      - 1
+      - 2
+      - 3
+      transition_tool_interface_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      cryptography:
+      - 0
+      - 1
+      - 2
+      - 3
+      edge_boundary_conditions:
+      - 0
+      - 1
+      - 2
+      - 3
+      block_syncing_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      engine_api_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      engine_api_encoding_changes:
+      - 0
+      - 1
+      - 2
+      - 3
+      added_system_contracts:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_system_contracts:
+      - 0
+      - 1
+      - 2
+      - 3
+      added_opcodes:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_opcodes:
+      - 0
+      - 3
+      added_precompiles:
+      - 0
+      - 1
+      - 2
+      - 3
+      modified_precompiles:
+      - 0
+      - 1
+      - 2
+      - 3
+      encoding_changes_rlp_ssz:
+      - 0
+      - 3
+      new_transaction_types:
+      - 0
+      - 3
+      new_or_modified_transaction_validity_mechanisms:
+      - 0
+      - 1
+      - 2
+      - 3
+      new_block_header_fields:
+      - 0
+      - 3
+      new_fork_activation_mechanism:
+      - 0
+      - 3
+      performance_risks:
+      - 0
+      - 1
+      - 2
+      - 3
+      security_risks:
+      - 0
+      - 1
+      - 2
+      - 3
+      cross_eip_interactions:
+      - 0
+      - 1
+      - 2
+      - 3
+    exceptional_score: 4
+    maximum_score: 72
+    tier_thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+    known_source_defects:
+    - The checklist contains Engine API encoding changes but the template has no dedicated definition
+      for that row.
+  task_contract:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 3ac28123ef63811b7d00adbe44b870eb38c1febbdc7005cd5314917baf9414e9
+  assessor_prompt:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/rendered/eip-7610.md
+    content_sha256: d50ff7e3df970e08a9759e3a065fdf8457001045ed81908e28a53510c624848a
+  assessor_environment:
+    codex_executable_path: /home/dtopz/.local/bin/codex
+    codex_version: codex-cli 0.149.1
+    codex_binary_sha256: 134063e133f0b4244fa3b251acf973d4fe4b4aeeacbdc135211bf480f59f1477
+    command:
+    - /home/dtopz/.local/bin/codex
+    - exec
+    - --strict-config
+    - -C
+    - /mnt/workspace
+    - -m
+    - gpt-5.6-sol
+    - -c
+    - model_reasoning_effort="xhigh"
+    - -c
+    - sandbox_workspace_write.network_access=false
+    - -s
+    - workspace-write
+    - --ephemeral
+    - --skip-git-repo-check
+    - --ignore-rules
+    - --color
+    - never
+    - --disable
+    - apps
+    - --disable
+    - auth_elicitation
+    - --disable
+    - browser_use
+    - --disable
+    - browser_use_external
+    - --disable
+    - browser_use_full_cdp_access
+    - --disable
+    - computer_use
+    - --disable
+    - goals
+    - --disable
+    - hooks
+    - --disable
+    - image_generation
+    - --disable
+    - in_app_browser
+    - --disable
+    - in_app_chat
+    - --disable
+    - multi_agent
+    - --disable
+    - plugins
+    - --disable
+    - plugin_sharing
+    - --disable
+    - remote_plugin
+    - --disable
+    - skill_mcp_dependency_install
+    - --disable
+    - skill_search
+    - --disable
+    - standalone_web_search
+    - --disable
+    - tool_suggest
+    - --disable
+    - tool_call_mcp_elicitation
+    - --disable
+    - view_image
+    - --disable
+    - workspace_dependencies
+    - Read ASSESSMENT-CONTRACT.md and PROMPT.md completely, then follow them exactly. Work only on the
+      assigned EIP and write only assessment.yaml.
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    approval_policy: never
+    run_at: '2026-08-25T15:08:33.416114Z'
+    session_id: assessment-run-e5366eda-a3d5-432a-b5ef-eeaf50345dd2
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    launcher_path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/run_isolated.py
+    launcher_sha256: a33d55a8d3503ff17378cf68014c558a9e92e62e9211b2e7a5fd02d6acd92307
+    agent_identity: Codex
+    skills_used: []
+    prohibited_capability_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-161.md
+  - supporting/eip-684.md
+  operational_files_read:
+  - ASSESSMENT-CONTRACT.md
+  - PROMPT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography-related testing
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: engine_api_encoding_changes
+  label: Engine API encoding changes
+  definition_present: false
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  definition_present: true
+  allowed_scores:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  score: null
+  evidence:
+  - source: null
+    locator: null
+    summary: null
+  rationale: null
+  confidence: null
+  uncertainty_note: null
+  exceptional_score_justification: null
+totals:
+  primary_score: null
+  maximum_score: 72
+  maximum_kind: nominal_24_rows_times_3_exceptional_scores_may_exceed
+  complexity_tier: null
+  tier_thresholds:
+    low:
+      minimum: 0
+      maximum: 9
+    medium:
+      minimum: 10
+      maximum: 19
+    high:
+      minimum: 20
+      maximum: null
+under_specification:
+  present: null
+  summary: null
+  affected_criteria: []
+  plausible_total_range:
+    minimum: null
+    maximum: null
+  plausible_tiers: []
+  unresolved_questions: []
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  contaminated: false
+  exposure_details: []
+  package_grounding_attestation: null
+  latent_knowledge_limitation_acknowledged: null
+notable_ambiguities: []
+overall_confidence: null
+
+apply patch
+patch: completed
+/mnt/workspace/assessment.yaml
+diff --git a/assessment.yaml b/assessment.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a55ba0fe8ab843baaa2a2b89ee99006beea877b7
+--- /dev/null
++++ b/assessment.yaml
+@@ -0,0 +1,763 @@
++schema_version: 1
++task_id: 05c-amsterdam-human-assessment-alignment-automated
++fork_id: amsterdam
++eip:
++  number: 7610
++  title: Revert creation in case of non-empty storage
++  layers:
++  - execution
++assessment:
++  historical_scope_summary: "At the sealed historical revision, EIP-7610 adds non-empty storage to EIP-684's contract-creation collision predicate for creation transactions, CREATE, CREATE2, and any other creation cause. A collision must throw as though init code began with an invalid opcode; the rule is stated to apply retroactively and to require a hard fork."
++provenance:
++  input_package:
++    manifest_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/packages/eip-7610/manifest.yaml
++    manifest_sha256: b91ee29352ee417a58b2b43c49931a6bfdd875010c0972abd10f44184b6c19d1
++  historical_eip:
++    package_path: eip.md
++    repository: ethereum/EIPs
++    commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
++    path: EIPS/eip-7610.md
++    committed_at: '2024-11-07T08:14:40Z'
++    git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
++    content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
++    immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
++    information_cutoff_at: '2025-09-24T14:40:52Z'
++  historical_rubric:
++    repository: ethspecs/pm
++    commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
++    committed_at: '2025-11-05T22:50:08Z'
++    path: Templates/EIP-Complexity-Assessment.md
++    git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
++    content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
++    immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
++    anchor_order:
++    - evm_gas_rule_changes
++    - blob_gas_accounting_changes
++    - new_evm_gas_refund
++    - patterns_affecting_pre_existing_tests
++    - transition_tool_interface_changes
++    - cryptography
++    - edge_boundary_conditions
++    - block_syncing_changes
++    - engine_api_changes
++    - engine_api_encoding_changes
++    - added_system_contracts
++    - modified_system_contracts
++    - added_opcodes
++    - modified_opcodes
++    - added_precompiles
++    - modified_precompiles
++    - encoding_changes_rlp_ssz
++    - new_transaction_types
++    - new_or_modified_transaction_validity_mechanisms
++    - new_block_header_fields
++    - new_fork_activation_mechanism
++    - performance_risks
++    - security_risks
++    - cross_eip_interactions
++    score_domains:
++      evm_gas_rule_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      blob_gas_accounting_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      new_evm_gas_refund:
++      - 0
++      - 1
++      - 2
++      - 3
++      patterns_affecting_pre_existing_tests:
++      - 0
++      - 1
++      - 2
++      - 3
++      transition_tool_interface_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      cryptography:
++      - 0
++      - 1
++      - 2
++      - 3
++      edge_boundary_conditions:
++      - 0
++      - 1
++      - 2
++      - 3
++      block_syncing_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      engine_api_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      engine_api_encoding_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      added_system_contracts:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_system_contracts:
++      - 0
++      - 1
++      - 2
++      - 3
++      added_opcodes:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_opcodes:
++      - 0
++      - 3
++      added_precompiles:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_precompiles:
++      - 0
++      - 1
++      - 2
++      - 3
++      encoding_changes_rlp_ssz:
++      - 0
++      - 3
++      new_transaction_types:
++      - 0
++      - 3
++      new_or_modified_transaction_validity_mechanisms:
++      - 0
++      - 1
++      - 2
++      - 3
++      new_block_header_fields:
++      - 0
++      - 3
++      new_fork_activation_mechanism:
++      - 0
++      - 3
++      performance_risks:
++      - 0
++      - 1
++      - 2
++      - 3
++      security_risks:
++      - 0
++      - 1
++      - 2
++      - 3
++      cross_eip_interactions:
++      - 0
++      - 1
++      - 2
++      - 3
++    exceptional_score: 4
++    maximum_score: 72
++    tier_thresholds:
++      low:
++        minimum: 0
++        maximum: 9
++      medium:
++        minimum: 10
++        maximum: 19
++      high:
++        minimum: 20
++        maximum: null
++    known_source_defects:
++    - The checklist contains Engine API encoding changes but the template has no dedicated definition
++      for that row.
++  task_contract:
++    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/ASSESSMENT-CONTRACT.md
++    content_sha256: 3ac28123ef63811b7d00adbe44b870eb38c1febbdc7005cd5314917baf9414e9
++  assessor_prompt:
++    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/rendered/eip-7610.md
++    content_sha256: d50ff7e3df970e08a9759e3a065fdf8457001045ed81908e28a53510c624848a
++  assessor_environment:
++    codex_executable_path: /home/dtopz/.local/bin/codex
++    codex_version: codex-cli 0.149.1
++    codex_binary_sha256: 134063e133f0b4244fa3b251acf973d4fe4b4aeeacbdc135211bf480f59f1477
++    command:
++    - /home/dtopz/.local/bin/codex
++    - exec
++    - --strict-config
++    - -C
++    - /mnt/workspace
++    - -m
++    - gpt-5.6-sol
++    - -c
++    - model_reasoning_effort="xhigh"
++    - -c
++    - sandbox_workspace_write.network_access=false
++    - -s
++    - workspace-write
++    - --ephemeral
++    - --skip-git-repo-check
++    - --ignore-rules
++    - --color
++    - never
++    - --disable
++    - apps
++    - --disable
++    - auth_elicitation
++    - --disable
++    - browser_use
++    - --disable
++    - browser_use_external
++    - --disable
++    - browser_use_full_cdp_access
++    - --disable
++    - computer_use
++    - --disable
++    - goals
++    - --disable
++    - hooks
++    - --disable
++    - image_generation
++    - --disable
++    - in_app_browser
++    - --disable
++    - in_app_chat
++    - --disable
++    - multi_agent
++    - --disable
++    - plugins
++    - --disable
++    - plugin_sharing
++    - --disable
++    - remote_plugin
++    - --disable
++    - skill_mcp_dependency_install
++    - --disable
++    - skill_search
++    - --disable
++    - standalone_web_search
++    - --disable
++    - tool_suggest
++    - --disable
++    - tool_call_mcp_elicitation
++    - --disable
++    - view_image
++    - --disable
++    - workspace_dependencies
++    - Read ASSESSMENT-CONTRACT.md and PROMPT.md completely, then follow them exactly. Work only on the
++      assigned EIP and write only assessment.yaml.
++    model: gpt-5.6-sol
++    reasoning_effort: xhigh
++    approval_policy: never
++    run_at: '2026-08-25T15:08:33.416114Z'
++    session_id: assessment-run-e5366eda-a3d5-432a-b5ef-eeaf50345dd2
++    session_id_source: isolated_launcher_run_id
++    isolation_method: bubblewrap_one_eip_capsule_v1
++    launcher_path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/run_isolated.py
++    launcher_sha256: a33d55a8d3503ff17378cf68014c558a9e92e62e9211b2e7a5fd02d6acd92307
++    agent_identity: Codex
++    skills_used: []
++    prohibited_capability_exposure: false
++  sources_consulted:
++  - eip.md
++  - rubric.md
++  - supporting/eip-161.md
++  - supporting/eip-684.md
++  operational_files_read:
++  - ASSESSMENT-CONTRACT.md
++  - PROMPT.md
++  - package/manifest.yaml
++  - package/output-template.yaml
++criteria:
++- id: evm_gas_rule_changes
++  label: EVM Gas rule changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Adds non-empty storage to the destination-address collision predicate and requires creation to throw; it specifies no gas schedule or accounting rule."
++  rationale: "The proposal changes a contract-creation failure condition, not an EVM gas-accounting mechanism, so the no-change anchor applies."
++  confidence: high
++  uncertainty_note: "The invalid-opcode-equivalent failure changes which attempts consume failure-path gas, but the package defines no gas-accounting rule or schedule change."
++  exceptional_score_justification: null
++- id: blob_gas_accounting_changes
++  label: Blob gas accounting changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The proposal is limited to rejecting contract creation at an address with non-empty storage; no blob behavior or blob accounting is specified."
++  rationale: "No blob gas mechanism is introduced or modified."
++  confidence: high
++  uncertainty_note: "None material within the package; the normative scope is execution-layer contract creation."
++  exceptional_score_justification: null
++- id: new_evm_gas_refund
++  label: New EVM gas refund
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "The only prescribed outcome is a creation throw on a destination collision involving nonce, code, or storage; no refund is prescribed."
++  rationale: "The proposal introduces no EVM gas-refund mechanism."
++  confidence: high
++  uncertainty_note: "The package does not discuss refunds, but nothing in the specified rule creates or modifies one."
++  exceptional_score_justification: null
++- id: patterns_affecting_pre_existing_tests
++  label: Patterns affecting pre-existing tests
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Test Cases"
++    summary: "States that quite a number of existing Ethereum tests and execution-spec tests cover deployment to targets with non-empty storage and that refilling those tests provides coverage."
++  rationale: "A considerable existing-test subset is described as affected, but it is confined to the contrived category of deployment against destinations with non-empty storage."
++  confidence: medium
++  uncertainty_note: "The package gives no test count, fork matrix, or inventory, so the affected subset could prove minor rather than considerable."
++  exceptional_score_justification: null
++- id: transition_tool_interface_changes
++  label: Transition-tool interface changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Defines an internal contract-creation collision check and failure outcome without adding any transition-tool input or output field."
++  rationale: "No transition-tool interface field or communication mechanism is introduced."
++  confidence: high
++  uncertainty_note: "The transition tool is not discussed explicitly, so implementation implications are not enumerated, but the proposal requests no interface data."
++  exceptional_score_justification: null
++- id: cryptography
++  label: Cryptography-related testing
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The change is a state predicate over destination nonce, code length, and storage emptiness; it introduces no cryptographic primitive or operation."
++  rationale: "No cryptography mechanism is introduced or modified."
++  confidence: high
++  uncertainty_note: "None material; cryptography is outside the stated mechanism."
++  exceptional_score_justification: null
++- id: edge_boundary_conditions
++  label: Edge/boundary conditions
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 1
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Introduces one new collision boundary—empty versus non-empty destination storage—and applies it to creation transactions, CREATE, CREATE2, and any other creation cause."
++  rationale: "The storage-emptiness decision is one edge-condition-prone mechanism; the several creation entry paths are applications of that same predicate."
++  confidence: medium
++  uncertainty_note: "The open-ended phrase 'any other reason' and retroactive application may add cases, but the package does not enumerate them or define a larger boundary matrix."
++  exceptional_score_justification: null
++- id: block_syncing_changes
++  label: Block syncing changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Changes execution-time contract-creation collision handling and defines no block RLP field or RLP validation mechanism."
++  rationale: "No block RLP validation mechanism requiring sync testing is introduced."
++  confidence: high
++  uncertainty_note: "Retroactive application may motivate historical execution tests, but the rubric row is specifically about block RLP validation, which is unchanged in the package."
++  exceptional_score_justification: null
++- id: engine_api_changes
++  label: Engine API changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "The normative rule uses existing account state and creation execution; it adds no Engine API endpoint, field, or communication mechanism."
++  rationale: "No Engine API fields or endpoints are introduced."
++  confidence: high
++  uncertainty_note: "The Engine API is not discussed explicitly, but no new information exchange is specified."
++  exceptional_score_justification: null
++- id: engine_api_encoding_changes
++  label: Engine API encoding changes
++  definition_present: false
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Specifies only a contract-creation state predicate and throw behavior, with no Engine API encoding change."
++  - source: "rubric.md"
++    locator: "Checklist row 'Engine API encoding changes'"
++    summary: "The checklist contains this row but provides no dedicated scoring definition."
++  rationale: "Scored conservatively from the row label: the proposal describes no Engine API encoding change."
++  confidence: low
++  uncertainty_note: "The historical checklist has no dedicated definition for this row, so the exact intended scoring boundary is unavailable."
++  exceptional_score_justification: null
++- id: added_system_contracts
++  label: Added system contracts
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "Adds a general contract-creation rejection condition and does not deploy or designate any system contract."
++  rationale: "No new system contract is introduced."
++  confidence: high
++  uncertainty_note: "None material; no contract address, code, state, or system action is specified."
++  exceptional_score_justification: null
++- id: modified_system_contracts
++  label: Modified system contracts
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Applies a general creation-collision rule without naming or changing the code or state of any pre-existing system contract."
++  rationale: "The proposal does not directly or indirectly identify a modification to a pre-existing system contract."
++  confidence: medium
++  uncertainty_note: "The package does not inventory system-contract creation behavior, but it identifies no system contract affected by the change."
++  exceptional_score_justification: null
++- id: added_opcodes
++  label: Added opcodes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "References the existing CREATE and CREATE2 opcodes as entry paths and introduces no new opcode."
++  rationale: "No opcode is added."
++  confidence: high
++  uncertainty_note: "None material; all named opcodes are pre-existing mechanisms being covered by the rule."
++  exceptional_score_justification: null
++- id: modified_opcodes
++  label: Modified opcodes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 3
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Requires attempts caused by CREATE or CREATE2 to throw when the destination has non-empty storage, adding a new non-gas failure condition."
++  rationale: "The binary rubric anchor assigns 3 when any pre-existing opcode behavior changes; both CREATE and CREATE2 gain an additional failure case."
++  confidence: high
++  uncertainty_note: "The rule also covers creation transactions and other causes, but that broader scope does not change the direct opcode modification."
++  exceptional_score_justification: null
++- id: added_precompiles
++  label: Added precompiles
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The proposal adds a creation-collision condition and specifies no precompile address, interface, or logic."
++  rationale: "No precompile is introduced."
++  confidence: high
++  uncertainty_note: "None material; precompiles are absent from the proposal."
++  exceptional_score_justification: null
++- id: modified_precompiles
++  label: Modified precompiles
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "No precompile behavior or gas accounting is part of the contract-creation collision rule."
++  rationale: "No pre-existing precompile logic or gas schedule is modified."
++  confidence: high
++  uncertainty_note: "None material; the package identifies no precompile interaction."
++  exceptional_score_justification: null
++- id: encoding_changes_rlp_ssz
++  label: Encoding changes (RLP/SSZ)
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Changes an execution validity outcome without adding or changing transaction, block, interface, RLP, or SSZ encoding."
++  rationale: "No encoding change is introduced at transaction, block, or interface level."
++  confidence: high
++  uncertainty_note: "None material; the proposal defines no serialized field or format."
++  exceptional_score_justification: null
++- id: new_transaction_types
++  label: New transaction types
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Applies to an existing creation transaction and opcode-based creation paths; it defines no new transaction envelope or type."
++  rationale: "No new transaction type is introduced."
++  confidence: high
++  uncertainty_note: "None material; creation transactions are an existing path within the proposal's stated scope."
++  exceptional_score_justification: null
++- id: new_or_modified_transaction_validity_mechanisms
++  label: New or modified transaction validity mechanisms
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "A creation transaction encountering the new collision condition throws as if init code began with an invalid opcode; the transaction itself is not declared invalid and intrinsic gas is unchanged."
++  rationale: "The change affects execution outcome for contract creation, not transaction validity rules or intrinsic gas calculation."
++  confidence: high
++  uncertainty_note: "There is a rubric-boundary ambiguity between transaction execution failure and transaction invalidity, but the specification consistently describes a throw rather than invalidation."
++  exceptional_score_justification: null
++- id: new_block_header_fields
++  label: New block / header fields
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Defines a contract-creation state check and adds no block or block-header field."
++  rationale: "No block or header field is introduced."
++  confidence: high
++  uncertainty_note: "None material; block structure is outside the specified change."
++  exceptional_score_justification: null
++- id: new_fork_activation_mechanism
++  label: New fork activation mechanism
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification and Backwards Compatibility"
++    summary: "States that the rule applies retroactively and requires a hard fork, but specifies no state or internal-variable modification at the activation block."
++  rationale: "A fork is required, but the rubric scores activation-block state or internal-variable modifications, none of which are specified."
++  confidence: medium
++  uncertainty_note: "The relationship between retroactive application and hard-fork activation is not explained, though no activation-block state transition is stated."
++  exceptional_score_justification: null
++- id: performance_risks
++  label: Performance risks
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Adds a destination-storage-emptiness predicate to contract creation but gives no performance requirement, benchmark concern, or broader performance mechanism."
++  rationale: "On the sealed evidence, no mechanism is identified as requiring performance validation, so the zero anchor is applied."
++  confidence: medium
++  uncertainty_note: "The package omits how storage emptiness is determined and its cost; an isolated performance check could justify score 1 if that detail were material."
++  exceptional_score_justification: null
++- id: security_risks
++  label: Security risks
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Security Considerations"
++    summary: "Calls the proposal a security upgrade that enforces immutability of deployed code."
++  - source: "eip.md"
++    locator: "Specification and Rationale"
++    summary: "Changes creation collision handling for all creation paths to protect addresses having zero nonce and code length but non-empty storage."
++  rationale: "The mechanism touches a limited set of critical components—contract creation, collision checks, and destination storage—and changes a code-immutability security assumption, warranting targeted review and fuzzing."
++  confidence: medium
++  uncertainty_note: "The package does not specify review or fuzzing breadth, so a self-contained score of 1 remains plausible; it does not support the multi-component breadth required for 3."
++  exceptional_score_justification: null
++- id: cross_eip_interactions
++  label: Cross-EIP interactions
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Specification and Rationale"
++    summary: "Explicitly amends EIP-684 with an empty-storage condition and explains the historical account state in relation to EIP-161."
++  - source: "supporting/eip-684.md"
++    locator: "Specification"
++    summary: "Defines the existing creation-collision rule using nonzero nonce or nonzero code length, which EIP-7610 extends."
++  - source: "supporting/eip-161.md"
++    locator: "Specification item a and Rationale"
++    summary: "Requires newly created accounts to increment nonce before initialization and explains avoiding zero nonce for created accounts."
++  rationale: "The proposal directly modifies EIP-684 and relies on EIP-161-era account semantics, requiring coordinated consideration while keeping the interaction narrowly scoped to contract creation."
++  confidence: high
++  uncertainty_note: "The dependency is explicit, but the package does not enumerate the exact coordinated cross-EIP test matrix."
++  exceptional_score_justification: null
++totals:
++  primary_score: 10
++  maximum_score: 72
++  maximum_kind: nominal_24_rows_times_3_exceptional_scores_may_exceed
++  complexity_tier: medium
++  tier_thresholds:
++    low:
++      minimum: 0
++      maximum: 9
++    medium:
++      minimum: 10
++      maximum: 19
++    high:
++      minimum: 20
++      maximum: null
++under_specification:
++  present: true
++  summary: "The proposal defines the collision predicate and failure result but does not quantify the affected test inventory, enumerate creation causes covered by 'any other reason,' detail storage-emptiness and reversion handling, or explain performance and security validation. These omissions are kept localized to test breadth, edge cases, performance, and security."
++  affected_criteria:
++  - patterns_affecting_pre_existing_tests
++  - edge_boundary_conditions
++  - performance_risks
++  - security_risks
++  plausible_total_range:
++    minimum: 8
++    maximum: 12
++  plausible_tiers:
++  - low
++  - medium
++  unresolved_questions:
++  - "How many existing tests, forks, and execution paths need changed expectations rather than simple refilling?"
++  - "Which creation causes are included by 'any other reason,' and what boundary cases are required for nested creation and state reversion?"
++  - "How is non-empty storage determined in each relevant state context, and does that check require isolated performance validation?"
++  - "What targeted security and consensus-divergence review is required for retroactive application?"
++hindsight_control:
++  internet_access_attempted: false
++  prohibited_source_exposure: false
++  contaminated: false
++  exposure_details: []
++  package_grounding_attestation: "Every score is grounded exclusively in eip.md, rubric.md, supporting/eip-161.md, and supporting/eip-684.md; no link was followed and no prohibited source was consulted."
++  latent_knowledge_limitation_acknowledged: "Latent model knowledge cannot be removed, but it was not used as evidence; only the sealed package content grounds this assessment."
++notable_ambiguities:
++- "The historical checklist includes Engine API encoding changes but supplies no dedicated definition."
++- "The requirement to apply the change retroactively to all existing blocks is not reconciled with the statement that activation requires a hard fork."
++- "The phrase 'or any other reason' leaves additional contract-creation causes open-ended."
++- "The phrase 'quite a number of tests' does not quantify the affected subset or its fork and client breadth."
++overall_confidence: medium
++
+
+diff --git a/assessment.yaml b/assessment.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a55ba0fe8ab843baaa2a2b89ee99006beea877b7
+--- /dev/null
++++ b/assessment.yaml
+@@ -0,0 +1,763 @@
++schema_version: 1
++task_id: 05c-amsterdam-human-assessment-alignment-automated
++fork_id: amsterdam
++eip:
++  number: 7610
++  title: Revert creation in case of non-empty storage
++  layers:
++  - execution
++assessment:
++  historical_scope_summary: "At the sealed historical revision, EIP-7610 adds non-empty storage to EIP-684's contract-creation collision predicate for creation transactions, CREATE, CREATE2, and any other creation cause. A collision must throw as though init code began with an invalid opcode; the rule is stated to apply retroactively and to require a hard fork."
++provenance:
++  input_package:
++    manifest_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/packages/eip-7610/manifest.yaml
++    manifest_sha256: b91ee29352ee417a58b2b43c49931a6bfdd875010c0972abd10f44184b6c19d1
++  historical_eip:
++    package_path: eip.md
++    repository: ethereum/EIPs
++    commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
++    path: EIPS/eip-7610.md
++    committed_at: '2024-11-07T08:14:40Z'
++    git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
++    content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
++    immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
++    information_cutoff_at: '2025-09-24T14:40:52Z'
++  historical_rubric:
++    repository: ethspecs/pm
++    commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
++    committed_at: '2025-11-05T22:50:08Z'
++    path: Templates/EIP-Complexity-Assessment.md
++    git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
++    content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
++    immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
++    anchor_order:
++    - evm_gas_rule_changes
++    - blob_gas_accounting_changes
++    - new_evm_gas_refund
++    - patterns_affecting_pre_existing_tests
++    - transition_tool_interface_changes
++    - cryptography
++    - edge_boundary_conditions
++    - block_syncing_changes
++    - engine_api_changes
++    - engine_api_encoding_changes
++    - added_system_contracts
++    - modified_system_contracts
++    - added_opcodes
++    - modified_opcodes
++    - added_precompiles
++    - modified_precompiles
++    - encoding_changes_rlp_ssz
++    - new_transaction_types
++    - new_or_modified_transaction_validity_mechanisms
++    - new_block_header_fields
++    - new_fork_activation_mechanism
++    - performance_risks
++    - security_risks
++    - cross_eip_interactions
++    score_domains:
++      evm_gas_rule_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      blob_gas_accounting_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      new_evm_gas_refund:
++      - 0
++      - 1
++      - 2
++      - 3
++      patterns_affecting_pre_existing_tests:
++      - 0
++      - 1
++      - 2
++      - 3
++      transition_tool_interface_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      cryptography:
++      - 0
++      - 1
++      - 2
++      - 3
++      edge_boundary_conditions:
++      - 0
++      - 1
++      - 2
++      - 3
++      block_syncing_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      engine_api_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      engine_api_encoding_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      added_system_contracts:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_system_contracts:
++      - 0
++      - 1
++      - 2
++      - 3
++      added_opcodes:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_opcodes:
++      - 0
++      - 3
++      added_precompiles:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_precompiles:
++      - 0
++      - 1
++      - 2
++      - 3
++      encoding_changes_rlp_ssz:
++      - 0
++      - 3
++      new_transaction_types:
++      - 0
++      - 3
++      new_or_modified_transaction_validity_mechanisms:
++      - 0
++      - 1
++      - 2
++      - 3
++      new_block_header_fields:
++      - 0
++      - 3
++      new_fork_activation_mechanism:
++      - 0
++      - 3
++      performance_risks:
++      - 0
++      - 1
++      - 2
++      - 3
++      security_risks:
++      - 0
++      - 1
++      - 2
++      - 3
++      cross_eip_interactions:
++      - 0
++      - 1
++      - 2
++      - 3
++    exceptional_score: 4
++    maximum_score: 72
++    tier_thresholds:
++      low:
++        minimum: 0
++        maximum: 9
++      medium:
++        minimum: 10
++        maximum: 19
++      high:
++        minimum: 20
++        maximum: null
++    known_source_defects:
++    - The checklist contains Engine API encoding changes but the template has no dedicated definition
++      for that row.
++  task_contract:
++    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/ASSESSMENT-CONTRACT.md
++    content_sha256: 3ac28123ef63811b7d00adbe44b870eb38c1febbdc7005cd5314917baf9414e9
++  assessor_prompt:
++    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/rendered/eip-7610.md
++    content_sha256: d50ff7e3df970e08a9759e3a065fdf8457001045ed81908e28a53510c624848a
++  assessor_environment:
++    codex_executable_path: /home/dtopz/.local/bin/codex
++    codex_version: codex-cli 0.149.1
++    codex_binary_sha256: 134063e133f0b4244fa3b251acf973d4fe4b4aeeacbdc135211bf480f59f1477
++    command:
++    - /home/dtopz/.local/bin/codex
++    - exec
++    - --strict-config
++    - -C
++    - /mnt/workspace
++    - -m
++    - gpt-5.6-sol
++    - -c
++    - model_reasoning_effort="xhigh"
++    - -c
++    - sandbox_workspace_write.network_access=false
++    - -s
++    - workspace-write
++    - --ephemeral
++    - --skip-git-repo-check
++    - --ignore-rules
++    - --color
++    - never
++    - --disable
++    - apps
++    - --disable
++    - auth_elicitation
++    - --disable
++    - browser_use
++    - --disable
++    - browser_use_external
++    - --disable
++    - browser_use_full_cdp_access
++    - --disable
++    - computer_use
++    - --disable
++    - goals
++    - --disable
++    - hooks
++    - --disable
++    - image_generation
++    - --disable
++    - in_app_browser
++    - --disable
++    - in_app_chat
++    - --disable
++    - multi_agent
++    - --disable
++    - plugins
++    - --disable
++    - plugin_sharing
++    - --disable
++    - remote_plugin
++    - --disable
++    - skill_mcp_dependency_install
++    - --disable
++    - skill_search
++    - --disable
++    - standalone_web_search
++    - --disable
++    - tool_suggest
++    - --disable
++    - tool_call_mcp_elicitation
++    - --disable
++    - view_image
++    - --disable
++    - workspace_dependencies
++    - Read ASSESSMENT-CONTRACT.md and PROMPT.md completely, then follow them exactly. Work only on the
++      assigned EIP and write only assessment.yaml.
++    model: gpt-5.6-sol
++    reasoning_effort: xhigh
++    approval_policy: never
++    run_at: '2026-08-25T15:08:33.416114Z'
++    session_id: assessment-run-e5366eda-a3d5-432a-b5ef-eeaf50345dd2
++    session_id_source: isolated_launcher_run_id
++    isolation_method: bubblewrap_one_eip_capsule_v1
++    launcher_path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/run_isolated.py
++    launcher_sha256: a33d55a8d3503ff17378cf68014c558a9e92e62e9211b2e7a5fd02d6acd92307
++    agent_identity: Codex
++    skills_used: []
++    prohibited_capability_exposure: false
++  sources_consulted:
++  - eip.md
++  - rubric.md
++  - supporting/eip-161.md
++  - supporting/eip-684.md
++  operational_files_read:
++  - ASSESSMENT-CONTRACT.md
++  - PROMPT.md
++  - package/manifest.yaml
++  - package/output-template.yaml
++criteria:
++- id: evm_gas_rule_changes
++  label: EVM Gas rule changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Adds non-empty storage to the destination-address collision predicate and requires creation to throw; it specifies no gas schedule or accounting rule."
++  rationale: "The proposal changes a contract-creation failure condition, not an EVM gas-accounting mechanism, so the no-change anchor applies."
++  confidence: high
++  uncertainty_note: "The invalid-opcode-equivalent failure changes which attempts consume failure-path gas, but the package defines no gas-accounting rule or schedule change."
++  exceptional_score_justification: null
++- id: blob_gas_accounting_changes
++  label: Blob gas accounting changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The proposal is limited to rejecting contract creation at an address with non-empty storage; no blob behavior or blob accounting is specified."
++  rationale: "No blob gas mechanism is introduced or modified."
++  confidence: high
++  uncertainty_note: "None material within the package; the normative scope is execution-layer contract creation."
++  exceptional_score_justification: null
++- id: new_evm_gas_refund
++  label: New EVM gas refund
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "The only prescribed outcome is a creation throw on a destination collision involving nonce, code, or storage; no refund is prescribed."
++  rationale: "The proposal introduces no EVM gas-refund mechanism."
++  confidence: high
++  uncertainty_note: "The package does not discuss refunds, but nothing in the specified rule creates or modifies one."
++  exceptional_score_justification: null
++- id: patterns_affecting_pre_existing_tests
++  label: Patterns affecting pre-existing tests
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Test Cases"
++    summary: "States that quite a number of existing Ethereum tests and execution-spec tests cover deployment to targets with non-empty storage and that refilling those tests provides coverage."
++  rationale: "A considerable existing-test subset is described as affected, but it is confined to the contrived category of deployment against destinations with non-empty storage."
++  confidence: medium
++  uncertainty_note: "The package gives no test count, fork matrix, or inventory, so the affected subset could prove minor rather than considerable."
++  exceptional_score_justification: null
++- id: transition_tool_interface_changes
++  label: Transition-tool interface changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Defines an internal contract-creation collision check and failure outcome without adding any transition-tool input or output field."
++  rationale: "No transition-tool interface field or communication mechanism is introduced."
++  confidence: high
++  uncertainty_note: "The transition tool is not discussed explicitly, so implementation implications are not enumerated, but the proposal requests no interface data."
++  exceptional_score_justification: null
++- id: cryptography
++  label: Cryptography-related testing
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The change is a state predicate over destination nonce, code length, and storage emptiness; it introduces no cryptographic primitive or operation."
++  rationale: "No cryptography mechanism is introduced or modified."
++  confidence: high
++  uncertainty_note: "None material; cryptography is outside the stated mechanism."
++  exceptional_score_justification: null
++- id: edge_boundary_conditions
++  label: Edge/boundary conditions
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 1
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Introduces one new collision boundary—empty versus non-empty destination storage—and applies it to creation transactions, CREATE, CREATE2, and any other creation cause."
++  rationale: "The storage-emptiness decision is one edge-condition-prone mechanism; the several creation entry paths are applications of that same predicate."
++  confidence: medium
++  uncertainty_note: "The open-ended phrase 'any other reason' and retroactive application may add cases, but the package does not enumerate them or define a larger boundary matrix."
++  exceptional_score_justification: null
++- id: block_syncing_changes
++  label: Block syncing changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Changes execution-time contract-creation collision handling and defines no block RLP field or RLP validation mechanism."
++  rationale: "No block RLP validation mechanism requiring sync testing is introduced."
++  confidence: high
++  uncertainty_note: "Retroactive application may motivate historical execution tests, but the rubric row is specifically about block RLP validation, which is unchanged in the package."
++  exceptional_score_justification: null
++- id: engine_api_changes
++  label: Engine API changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "The normative rule uses existing account state and creation execution; it adds no Engine API endpoint, field, or communication mechanism."
++  rationale: "No Engine API fields or endpoints are introduced."
++  confidence: high
++  uncertainty_note: "The Engine API is not discussed explicitly, but no new information exchange is specified."
++  exceptional_score_justification: null
++- id: engine_api_encoding_changes
++  label: Engine API encoding changes
++  definition_present: false
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Specifies only a contract-creation state predicate and throw behavior, with no Engine API encoding change."
++  - source: "rubric.md"
++    locator: "Checklist row 'Engine API encoding changes'"
++    summary: "The checklist contains this row but provides no dedicated scoring definition."
++  rationale: "Scored conservatively from the row label: the proposal describes no Engine API encoding change."
++  confidence: low
++  uncertainty_note: "The historical checklist has no dedicated definition for this row, so the exact intended scoring boundary is unavailable."
++  exceptional_score_justification: null
++- id: added_system_contracts
++  label: Added system contracts
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "Adds a general contract-creation rejection condition and does not deploy or designate any system contract."
++  rationale: "No new system contract is introduced."
++  confidence: high
++  uncertainty_note: "None material; no contract address, code, state, or system action is specified."
++  exceptional_score_justification: null
++- id: modified_system_contracts
++  label: Modified system contracts
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Applies a general creation-collision rule without naming or changing the code or state of any pre-existing system contract."
++  rationale: "The proposal does not directly or indirectly identify a modification to a pre-existing system contract."
++  confidence: medium
++  uncertainty_note: "The package does not inventory system-contract creation behavior, but it identifies no system contract affected by the change."
++  exceptional_score_justification: null
++- id: added_opcodes
++  label: Added opcodes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "References the existing CREATE and CREATE2 opcodes as entry paths and introduces no new opcode."
++  rationale: "No opcode is added."
++  confidence: high
++  uncertainty_note: "None material; all named opcodes are pre-existing mechanisms being covered by the rule."
++  exceptional_score_justification: null
++- id: modified_opcodes
++  label: Modified opcodes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 3
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Requires attempts caused by CREATE or CREATE2 to throw when the destination has non-empty storage, adding a new non-gas failure condition."
++  rationale: "The binary rubric anchor assigns 3 when any pre-existing opcode behavior changes; both CREATE and CREATE2 gain an additional failure case."
++  confidence: high
++  uncertainty_note: "The rule also covers creation transactions and other causes, but that broader scope does not change the direct opcode modification."
++  exceptional_score_justification: null
++- id: added_precompiles
++  label: Added precompiles
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The proposal adds a creation-collision condition and specifies no precompile address, interface, or logic."
++  rationale: "No precompile is introduced."
++  confidence: high
++  uncertainty_note: "None material; precompiles are absent from the proposal."
++  exceptional_score_justification: null
++- id: modified_precompiles
++  label: Modified precompiles
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "No precompile behavior or gas accounting is part of the contract-creation collision rule."
++  rationale: "No pre-existing precompile logic or gas schedule is modified."
++  confidence: high
++  uncertainty_note: "None material; the package identifies no precompile interaction."
++  exceptional_score_justification: null
++- id: encoding_changes_rlp_ssz
++  label: Encoding changes (RLP/SSZ)
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Changes an execution validity outcome without adding or changing transaction, block, interface, RLP, or SSZ encoding."
++  rationale: "No encoding change is introduced at transaction, block, or interface level."
++  confidence: high
++  uncertainty_note: "None material; the proposal defines no serialized field or format."
++  exceptional_score_justification: null
++- id: new_transaction_types
++  label: New transaction types
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Applies to an existing creation transaction and opcode-based creation paths; it defines no new transaction envelope or type."
++  rationale: "No new transaction type is introduced."
++  confidence: high
++  uncertainty_note: "None material; creation transactions are an existing path within the proposal's stated scope."
++  exceptional_score_justification: null
++- id: new_or_modified_transaction_validity_mechanisms
++  label: New or modified transaction validity mechanisms
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "A creation transaction encountering the new collision condition throws as if init code began with an invalid opcode; the transaction itself is not declared invalid and intrinsic gas is unchanged."
++  rationale: "The change affects execution outcome for contract creation, not transaction validity rules or intrinsic gas calculation."
++  confidence: high
++  uncertainty_note: "There is a rubric-boundary ambiguity between transaction execution failure and transaction invalidity, but the specification consistently describes a throw rather than invalidation."
++  exceptional_score_justification: null
++- id: new_block_header_fields
++  label: New block / header fields
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Defines a contract-creation state check and adds no block or block-header field."
++  rationale: "No block or header field is introduced."
++  confidence: high
++  uncertainty_note: "None material; block structure is outside the specified change."
++  exceptional_score_justification: null
++- id: new_fork_activation_mechanism
++  label: New fork activation mechanism
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification and Backwards Compatibility"
++    summary: "States that the rule applies retroactively and requires a hard fork, but specifies no state or internal-variable modification at the activation block."
++  rationale: "A fork is required, but the rubric scores activation-block state or internal-variable modifications, none of which are specified."
++  confidence: medium
++  uncertainty_note: "The relationship between retroactive application and hard-fork activation is not explained, though no activation-block state transition is stated."
++  exceptional_score_justification: null
++- id: performance_risks
++  label: Performance risks
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Adds a destination-storage-emptiness predicate to contract creation but gives no performance requirement, benchmark concern, or broader performance mechanism."
++  rationale: "On the sealed evidence, no mechanism is identified as requiring performance validation, so the zero anchor is applied."
++  confidence: medium
++  uncertainty_note: "The package omits how storage emptiness is determined and its cost; an isolated performance check could justify score 1 if that detail were material."
++  exceptional_score_justification: null
++- id: security_risks
++  label: Security risks
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Security Considerations"
++    summary: "Calls the proposal a security upgrade that enforces immutability of deployed code."
++  - source: "eip.md"
++    locator: "Specification and Rationale"
++    summary: "Changes creation collision handling for all creation paths to protect addresses having zero nonce and code length but non-empty storage."
++  rationale: "The mechanism touches a limited set of critical components—contract creation, collision checks, and destination storage—and changes a code-immutability security assumption, warranting targeted review and fuzzing."
++  confidence: medium
++  uncertainty_note: "The package does not specify review or fuzzing breadth, so a self-contained score of 1 remains plausible; it does not support the multi-component breadth required for 3."
++  exceptional_score_justification: null
++- id: cross_eip_interactions
++  label: Cross-EIP interactions
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Specification and Rationale"
++    summary: "Explicitly amends EIP-684 with an empty-storage condition and explains the historical account state in relation to EIP-161."
++  - source: "supporting/eip-684.md"
++    locator: "Specification"
++    summary: "Defines the existing creation-collision rule using nonzero nonce or nonzero code length, which EIP-7610 extends."
++  - source: "supporting/eip-161.md"
++    locator: "Specification item a and Rationale"
++    summary: "Requires newly created accounts to increment nonce before initialization and explains avoiding zero nonce for created accounts."
++  rationale: "The proposal directly modifies EIP-684 and relies on EIP-161-era account semantics, requiring coordinated consideration while keeping the interaction narrowly scoped to contract creation."
++  confidence: high
++  uncertainty_note: "The dependency is explicit, but the package does not enumerate the exact coordinated cross-EIP test matrix."
++  exceptional_score_justification: null
++totals:
++  primary_score: 10
++  maximum_score: 72
++  maximum_kind: nominal_24_rows_times_3_exceptional_scores_may_exceed
++  complexity_tier: medium
++  tier_thresholds:
++    low:
++      minimum: 0
++      maximum: 9
++    medium:
++      minimum: 10
++      maximum: 19
++    high:
++      minimum: 20
++      maximum: null
++under_specification:
++  present: true
++  summary: "The proposal defines the collision predicate and failure result but does not quantify the affected test inventory, enumerate creation causes covered by 'any other reason,' detail storage-emptiness and reversion handling, or explain performance and security validation. These omissions are kept localized to test breadth, edge cases, performance, and security."
++  affected_criteria:
++  - patterns_affecting_pre_existing_tests
++  - edge_boundary_conditions
++  - performance_risks
++  - security_risks
++  plausible_total_range:
++    minimum: 8
++    maximum: 12
++  plausible_tiers:
++  - low
++  - medium
++  unresolved_questions:
++  - "How many existing tests, forks, and execution paths need changed expectations rather than simple refilling?"
++  - "Which creation causes are included by 'any other reason,' and what boundary cases are required for nested creation and state reversion?"
++  - "How is non-empty storage determined in each relevant state context, and does that check require isolated performance validation?"
++  - "What targeted security and consensus-divergence review is required for retroactive application?"
++hindsight_control:
++  internet_access_attempted: false
++  prohibited_source_exposure: false
++  contaminated: false
++  exposure_details: []
++  package_grounding_attestation: "Every score is grounded exclusively in eip.md, rubric.md, supporting/eip-161.md, and supporting/eip-684.md; no link was followed and no prohibited source was consulted."
++  latent_knowledge_limitation_acknowledged: "Latent model knowledge cannot be removed, but it was not used as evidence; only the sealed package content grounds this assessment."
++notable_ambiguities:
++- "The historical checklist includes Engine API encoding changes but supplies no dedicated definition."
++- "The requirement to apply the change retroactively to all existing blocks is not reconciled with the statement that activation requires a hard fork."
++- "The phrase 'or any other reason' leaves additional contract-creation causes open-ended."
++- "The phrase 'quite a number of tests' does not quantify the affected subset or its fork and client breadth."
++overall_confidence: medium
++
+
+codex
+Completed `assessment.yaml`.
+diff --git a/assessment.yaml b/assessment.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a55ba0fe8ab843baaa2a2b89ee99006beea877b7
+--- /dev/null
++++ b/assessment.yaml
+@@ -0,0 +1,763 @@
++schema_version: 1
++task_id: 05c-amsterdam-human-assessment-alignment-automated
++fork_id: amsterdam
++eip:
++  number: 7610
++  title: Revert creation in case of non-empty storage
++  layers:
++  - execution
++assessment:
++  historical_scope_summary: "At the sealed historical revision, EIP-7610 adds non-empty storage to EIP-684's contract-creation collision predicate for creation transactions, CREATE, CREATE2, and any other creation cause. A collision must throw as though init code began with an invalid opcode; the rule is stated to apply retroactively and to require a hard fork."
++provenance:
++  input_package:
++    manifest_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/packages/eip-7610/manifest.yaml
++    manifest_sha256: b91ee29352ee417a58b2b43c49931a6bfdd875010c0972abd10f44184b6c19d1
++  historical_eip:
++    package_path: eip.md
++    repository: ethereum/EIPs
++    commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
++    path: EIPS/eip-7610.md
++    committed_at: '2024-11-07T08:14:40Z'
++    git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
++    content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
++    immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
++    information_cutoff_at: '2025-09-24T14:40:52Z'
++  historical_rubric:
++    repository: ethspecs/pm
++    commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
++    committed_at: '2025-11-05T22:50:08Z'
++    path: Templates/EIP-Complexity-Assessment.md
++    git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
++    content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
++    immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
++    anchor_order:
++    - evm_gas_rule_changes
++    - blob_gas_accounting_changes
++    - new_evm_gas_refund
++    - patterns_affecting_pre_existing_tests
++    - transition_tool_interface_changes
++    - cryptography
++    - edge_boundary_conditions
++    - block_syncing_changes
++    - engine_api_changes
++    - engine_api_encoding_changes
++    - added_system_contracts
++    - modified_system_contracts
++    - added_opcodes
++    - modified_opcodes
++    - added_precompiles
++    - modified_precompiles
++    - encoding_changes_rlp_ssz
++    - new_transaction_types
++    - new_or_modified_transaction_validity_mechanisms
++    - new_block_header_fields
++    - new_fork_activation_mechanism
++    - performance_risks
++    - security_risks
++    - cross_eip_interactions
++    score_domains:
++      evm_gas_rule_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      blob_gas_accounting_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      new_evm_gas_refund:
++      - 0
++      - 1
++      - 2
++      - 3
++      patterns_affecting_pre_existing_tests:
++      - 0
++      - 1
++      - 2
++      - 3
++      transition_tool_interface_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      cryptography:
++      - 0
++      - 1
++      - 2
++      - 3
++      edge_boundary_conditions:
++      - 0
++      - 1
++      - 2
++      - 3
++      block_syncing_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      engine_api_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      engine_api_encoding_changes:
++      - 0
++      - 1
++      - 2
++      - 3
++      added_system_contracts:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_system_contracts:
++      - 0
++      - 1
++      - 2
++      - 3
++      added_opcodes:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_opcodes:
++      - 0
++      - 3
++      added_precompiles:
++      - 0
++      - 1
++      - 2
++      - 3
++      modified_precompiles:
++      - 0
++      - 1
++      - 2
++      - 3
++      encoding_changes_rlp_ssz:
++      - 0
++      - 3
++      new_transaction_types:
++      - 0
++      - 3
++      new_or_modified_transaction_validity_mechanisms:
++      - 0
++      - 1
++      - 2
++      - 3
++      new_block_header_fields:
++      - 0
++      - 3
++      new_fork_activation_mechanism:
++      - 0
++      - 3
++      performance_risks:
++      - 0
++      - 1
++      - 2
++      - 3
++      security_risks:
++      - 0
++      - 1
++      - 2
++      - 3
++      cross_eip_interactions:
++      - 0
++      - 1
++      - 2
++      - 3
++    exceptional_score: 4
++    maximum_score: 72
++    tier_thresholds:
++      low:
++        minimum: 0
++        maximum: 9
++      medium:
++        minimum: 10
++        maximum: 19
++      high:
++        minimum: 20
++        maximum: null
++    known_source_defects:
++    - The checklist contains Engine API encoding changes but the template has no dedicated definition
++      for that row.
++  task_contract:
++    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/ASSESSMENT-CONTRACT.md
++    content_sha256: 3ac28123ef63811b7d00adbe44b870eb38c1febbdc7005cd5314917baf9414e9
++  assessor_prompt:
++    path: research/tasks/05c-amsterdam-human-assessment-alignment/prompts/rendered/eip-7610.md
++    content_sha256: d50ff7e3df970e08a9759e3a065fdf8457001045ed81908e28a53510c624848a
++  assessor_environment:
++    codex_executable_path: /home/dtopz/.local/bin/codex
++    codex_version: codex-cli 0.149.1
++    codex_binary_sha256: 134063e133f0b4244fa3b251acf973d4fe4b4aeeacbdc135211bf480f59f1477
++    command:
++    - /home/dtopz/.local/bin/codex
++    - exec
++    - --strict-config
++    - -C
++    - /mnt/workspace
++    - -m
++    - gpt-5.6-sol
++    - -c
++    - model_reasoning_effort="xhigh"
++    - -c
++    - sandbox_workspace_write.network_access=false
++    - -s
++    - workspace-write
++    - --ephemeral
++    - --skip-git-repo-check
++    - --ignore-rules
++    - --color
++    - never
++    - --disable
++    - apps
++    - --disable
++    - auth_elicitation
++    - --disable
++    - browser_use
++    - --disable
++    - browser_use_external
++    - --disable
++    - browser_use_full_cdp_access
++    - --disable
++    - computer_use
++    - --disable
++    - goals
++    - --disable
++    - hooks
++    - --disable
++    - image_generation
++    - --disable
++    - in_app_browser
++    - --disable
++    - in_app_chat
++    - --disable
++    - multi_agent
++    - --disable
++    - plugins
++    - --disable
++    - plugin_sharing
++    - --disable
++    - remote_plugin
++    - --disable
++    - skill_mcp_dependency_install
++    - --disable
++    - skill_search
++    - --disable
++    - standalone_web_search
++    - --disable
++    - tool_suggest
++    - --disable
++    - tool_call_mcp_elicitation
++    - --disable
++    - view_image
++    - --disable
++    - workspace_dependencies
++    - Read ASSESSMENT-CONTRACT.md and PROMPT.md completely, then follow them exactly. Work only on the
++      assigned EIP and write only assessment.yaml.
++    model: gpt-5.6-sol
++    reasoning_effort: xhigh
++    approval_policy: never
++    run_at: '2026-08-25T15:08:33.416114Z'
++    session_id: assessment-run-e5366eda-a3d5-432a-b5ef-eeaf50345dd2
++    session_id_source: isolated_launcher_run_id
++    isolation_method: bubblewrap_one_eip_capsule_v1
++    launcher_path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/run_isolated.py
++    launcher_sha256: a33d55a8d3503ff17378cf68014c558a9e92e62e9211b2e7a5fd02d6acd92307
++    agent_identity: Codex
++    skills_used: []
++    prohibited_capability_exposure: false
++  sources_consulted:
++  - eip.md
++  - rubric.md
++  - supporting/eip-161.md
++  - supporting/eip-684.md
++  operational_files_read:
++  - ASSESSMENT-CONTRACT.md
++  - PROMPT.md
++  - package/manifest.yaml
++  - package/output-template.yaml
++criteria:
++- id: evm_gas_rule_changes
++  label: EVM Gas rule changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Adds non-empty storage to the destination-address collision predicate and requires creation to throw; it specifies no gas schedule or accounting rule."
++  rationale: "The proposal changes a contract-creation failure condition, not an EVM gas-accounting mechanism, so the no-change anchor applies."
++  confidence: high
++  uncertainty_note: "The invalid-opcode-equivalent failure changes which attempts consume failure-path gas, but the package defines no gas-accounting rule or schedule change."
++  exceptional_score_justification: null
++- id: blob_gas_accounting_changes
++  label: Blob gas accounting changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The proposal is limited to rejecting contract creation at an address with non-empty storage; no blob behavior or blob accounting is specified."
++  rationale: "No blob gas mechanism is introduced or modified."
++  confidence: high
++  uncertainty_note: "None material within the package; the normative scope is execution-layer contract creation."
++  exceptional_score_justification: null
++- id: new_evm_gas_refund
++  label: New EVM gas refund
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "The only prescribed outcome is a creation throw on a destination collision involving nonce, code, or storage; no refund is prescribed."
++  rationale: "The proposal introduces no EVM gas-refund mechanism."
++  confidence: high
++  uncertainty_note: "The package does not discuss refunds, but nothing in the specified rule creates or modifies one."
++  exceptional_score_justification: null
++- id: patterns_affecting_pre_existing_tests
++  label: Patterns affecting pre-existing tests
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Test Cases"
++    summary: "States that quite a number of existing Ethereum tests and execution-spec tests cover deployment to targets with non-empty storage and that refilling those tests provides coverage."
++  rationale: "A considerable existing-test subset is described as affected, but it is confined to the contrived category of deployment against destinations with non-empty storage."
++  confidence: medium
++  uncertainty_note: "The package gives no test count, fork matrix, or inventory, so the affected subset could prove minor rather than considerable."
++  exceptional_score_justification: null
++- id: transition_tool_interface_changes
++  label: Transition-tool interface changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Defines an internal contract-creation collision check and failure outcome without adding any transition-tool input or output field."
++  rationale: "No transition-tool interface field or communication mechanism is introduced."
++  confidence: high
++  uncertainty_note: "The transition tool is not discussed explicitly, so implementation implications are not enumerated, but the proposal requests no interface data."
++  exceptional_score_justification: null
++- id: cryptography
++  label: Cryptography-related testing
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The change is a state predicate over destination nonce, code length, and storage emptiness; it introduces no cryptographic primitive or operation."
++  rationale: "No cryptography mechanism is introduced or modified."
++  confidence: high
++  uncertainty_note: "None material; cryptography is outside the stated mechanism."
++  exceptional_score_justification: null
++- id: edge_boundary_conditions
++  label: Edge/boundary conditions
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 1
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Introduces one new collision boundary—empty versus non-empty destination storage—and applies it to creation transactions, CREATE, CREATE2, and any other creation cause."
++  rationale: "The storage-emptiness decision is one edge-condition-prone mechanism; the several creation entry paths are applications of that same predicate."
++  confidence: medium
++  uncertainty_note: "The open-ended phrase 'any other reason' and retroactive application may add cases, but the package does not enumerate them or define a larger boundary matrix."
++  exceptional_score_justification: null
++- id: block_syncing_changes
++  label: Block syncing changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Changes execution-time contract-creation collision handling and defines no block RLP field or RLP validation mechanism."
++  rationale: "No block RLP validation mechanism requiring sync testing is introduced."
++  confidence: high
++  uncertainty_note: "Retroactive application may motivate historical execution tests, but the rubric row is specifically about block RLP validation, which is unchanged in the package."
++  exceptional_score_justification: null
++- id: engine_api_changes
++  label: Engine API changes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "The normative rule uses existing account state and creation execution; it adds no Engine API endpoint, field, or communication mechanism."
++  rationale: "No Engine API fields or endpoints are introduced."
++  confidence: high
++  uncertainty_note: "The Engine API is not discussed explicitly, but no new information exchange is specified."
++  exceptional_score_justification: null
++- id: engine_api_encoding_changes
++  label: Engine API encoding changes
++  definition_present: false
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Specifies only a contract-creation state predicate and throw behavior, with no Engine API encoding change."
++  - source: "rubric.md"
++    locator: "Checklist row 'Engine API encoding changes'"
++    summary: "The checklist contains this row but provides no dedicated scoring definition."
++  rationale: "Scored conservatively from the row label: the proposal describes no Engine API encoding change."
++  confidence: low
++  uncertainty_note: "The historical checklist has no dedicated definition for this row, so the exact intended scoring boundary is unavailable."
++  exceptional_score_justification: null
++- id: added_system_contracts
++  label: Added system contracts
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "Adds a general contract-creation rejection condition and does not deploy or designate any system contract."
++  rationale: "No new system contract is introduced."
++  confidence: high
++  uncertainty_note: "None material; no contract address, code, state, or system action is specified."
++  exceptional_score_justification: null
++- id: modified_system_contracts
++  label: Modified system contracts
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Applies a general creation-collision rule without naming or changing the code or state of any pre-existing system contract."
++  rationale: "The proposal does not directly or indirectly identify a modification to a pre-existing system contract."
++  confidence: medium
++  uncertainty_note: "The package does not inventory system-contract creation behavior, but it identifies no system contract affected by the change."
++  exceptional_score_justification: null
++- id: added_opcodes
++  label: Added opcodes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "References the existing CREATE and CREATE2 opcodes as entry paths and introduces no new opcode."
++  rationale: "No opcode is added."
++  confidence: high
++  uncertainty_note: "None material; all named opcodes are pre-existing mechanisms being covered by the rule."
++  exceptional_score_justification: null
++- id: modified_opcodes
++  label: Modified opcodes
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 3
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Requires attempts caused by CREATE or CREATE2 to throw when the destination has non-empty storage, adding a new non-gas failure condition."
++  rationale: "The binary rubric anchor assigns 3 when any pre-existing opcode behavior changes; both CREATE and CREATE2 gain an additional failure case."
++  confidence: high
++  uncertainty_note: "The rule also covers creation transactions and other causes, but that broader scope does not change the direct opcode modification."
++  exceptional_score_justification: null
++- id: added_precompiles
++  label: Added precompiles
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Abstract and Specification"
++    summary: "The proposal adds a creation-collision condition and specifies no precompile address, interface, or logic."
++  rationale: "No precompile is introduced."
++  confidence: high
++  uncertainty_note: "None material; precompiles are absent from the proposal."
++  exceptional_score_justification: null
++- id: modified_precompiles
++  label: Modified precompiles
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "No precompile behavior or gas accounting is part of the contract-creation collision rule."
++  rationale: "No pre-existing precompile logic or gas schedule is modified."
++  confidence: high
++  uncertainty_note: "None material; the package identifies no precompile interaction."
++  exceptional_score_justification: null
++- id: encoding_changes_rlp_ssz
++  label: Encoding changes (RLP/SSZ)
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Changes an execution validity outcome without adding or changing transaction, block, interface, RLP, or SSZ encoding."
++  rationale: "No encoding change is introduced at transaction, block, or interface level."
++  confidence: high
++  uncertainty_note: "None material; the proposal defines no serialized field or format."
++  exceptional_score_justification: null
++- id: new_transaction_types
++  label: New transaction types
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "Applies to an existing creation transaction and opcode-based creation paths; it defines no new transaction envelope or type."
++  rationale: "No new transaction type is introduced."
++  confidence: high
++  uncertainty_note: "None material; creation transactions are an existing path within the proposal's stated scope."
++  exceptional_score_justification: null
++- id: new_or_modified_transaction_validity_mechanisms
++  label: New or modified transaction validity mechanisms
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification, second paragraph"
++    summary: "A creation transaction encountering the new collision condition throws as if init code began with an invalid opcode; the transaction itself is not declared invalid and intrinsic gas is unchanged."
++  rationale: "The change affects execution outcome for contract creation, not transaction validity rules or intrinsic gas calculation."
++  confidence: high
++  uncertainty_note: "There is a rubric-boundary ambiguity between transaction execution failure and transaction invalidity, but the specification consistently describes a throw rather than invalidation."
++  exceptional_score_justification: null
++- id: new_block_header_fields
++  label: New block / header fields
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Defines a contract-creation state check and adds no block or block-header field."
++  rationale: "No block or header field is introduced."
++  confidence: high
++  uncertainty_note: "None material; block structure is outside the specified change."
++  exceptional_score_justification: null
++- id: new_fork_activation_mechanism
++  label: New fork activation mechanism
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification and Backwards Compatibility"
++    summary: "States that the rule applies retroactively and requires a hard fork, but specifies no state or internal-variable modification at the activation block."
++  rationale: "A fork is required, but the rubric scores activation-block state or internal-variable modifications, none of which are specified."
++  confidence: medium
++  uncertainty_note: "The relationship between retroactive application and hard-fork activation is not explained, though no activation-block state transition is stated."
++  exceptional_score_justification: null
++- id: performance_risks
++  label: Performance risks
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 0
++  evidence:
++  - source: "eip.md"
++    locator: "Specification"
++    summary: "Adds a destination-storage-emptiness predicate to contract creation but gives no performance requirement, benchmark concern, or broader performance mechanism."
++  rationale: "On the sealed evidence, no mechanism is identified as requiring performance validation, so the zero anchor is applied."
++  confidence: medium
++  uncertainty_note: "The package omits how storage emptiness is determined and its cost; an isolated performance check could justify score 1 if that detail were material."
++  exceptional_score_justification: null
++- id: security_risks
++  label: Security risks
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Security Considerations"
++    summary: "Calls the proposal a security upgrade that enforces immutability of deployed code."
++  - source: "eip.md"
++    locator: "Specification and Rationale"
++    summary: "Changes creation collision handling for all creation paths to protect addresses having zero nonce and code length but non-empty storage."
++  rationale: "The mechanism touches a limited set of critical components—contract creation, collision checks, and destination storage—and changes a code-immutability security assumption, warranting targeted review and fuzzing."
++  confidence: medium
++  uncertainty_note: "The package does not specify review or fuzzing breadth, so a self-contained score of 1 remains plausible; it does not support the multi-component breadth required for 3."
++  exceptional_score_justification: null
++- id: cross_eip_interactions
++  label: Cross-EIP interactions
++  definition_present: true
++  allowed_scores:
++  - 0
++  - 1
++  - 2
++  - 3
++  - 4
++  score: 2
++  evidence:
++  - source: "eip.md"
++    locator: "Specification and Rationale"
++    summary: "Explicitly amends EIP-684 with an empty-storage condition and explains the historical account state in relation to EIP-161."
++  - source: "supporting/eip-684.md"
++    locator: "Specification"
++    summary: "Defines the existing creation-collision rule using nonzero nonce or nonzero code length, which EIP-7610 extends."
++  - source: "supporting/eip-161.md"
++    locator: "Specification item a and Rationale"
++    summary: "Requires newly created accounts to increment nonce before initialization and explains avoiding zero nonce for created accounts."
++  rationale: "The proposal directly modifies EIP-684 and relies on EIP-161-era account semantics, requiring coordinated consideration while keeping the interaction narrowly scoped to contract creation."
++  confidence: high
++  uncertainty_note: "The dependency is explicit, but the package does not enumerate the exact coordinated cross-EIP test matrix."
++  exceptional_score_justification: null
++totals:
++  primary_score: 10
++  maximum_score: 72
++  maximum_kind: nominal_24_rows_times_3_exceptional_scores_may_exceed
++  complexity_tier: medium
++  tier_thresholds:
++    low:
++      minimum: 0
++      maximum: 9
++    medium:
++      minimum: 10
++      maximum: 19
++    high:
++      minimum: 20
++      maximum: null
++under_specification:
++  present: true
++  summary: "The proposal defines the collision predicate and failure result but does not quantify the affected test inventory, enumerate creation causes covered by 'any other reason,' detail storage-emptiness and reversion handling, or explain performance and security validation. These omissions are kept localized to test breadth, edge cases, performance, and security."
++  affected_criteria:
++  - patterns_affecting_pre_existing_tests
++  - edge_boundary_conditions
++  - performance_risks
++  - security_risks
++  plausible_total_range:
++    minimum: 8
++    maximum: 12
++  plausible_tiers:
++  - low
++  - medium
++  unresolved_questions:
++  - "How many existing tests, forks, and execution paths need changed expectations rather than simple refilling?"
++  - "Which creation causes are included by 'any other reason,' and what boundary cases are required for nested creation and state reversion?"
++  - "How is non-empty storage determined in each relevant state context, and does that check require isolated performance validation?"
++  - "What targeted security and consensus-divergence review is required for retroactive application?"
++hindsight_control:
++  internet_access_attempted: false
++  prohibited_source_exposure: false
++  contaminated: false
++  exposure_details: []
++  package_grounding_attestation: "Every score is grounded exclusively in eip.md, rubric.md, supporting/eip-161.md, and supporting/eip-684.md; no link was followed and no prohibited source was consulted."
++  latent_knowledge_limitation_acknowledged: "Latent model knowledge cannot be removed, but it was not used as evidence; only the sealed package content grounds this assessment."
++notable_ambiguities:
++- "The historical checklist includes Engine API encoding changes but supplies no dedicated definition."
++- "The requirement to apply the change retroactively to all existing blocks is not reconciled with the statement that activation requires a hard fork."
++- "The phrase 'or any other reason' leaves additional contract-creation causes open-ended."
++- "The phrase 'quite a number of tests' does not quantify the affected subset or its fork and client breadth."
++overall_confidence: medium
++
+
+tokens used
+51,853
+Completed `assessment.yaml`.
+staged isolated capsule: /tmp/retrospective-complexity-05c-runs/amsterdam-eip-7610-e5366eda-a3d5-432a-b5ef-eeaf50345dd2-l3dqy7_2
+launcher session ID: assessment-run-e5366eda-a3d5-432a-b5ef-eeaf50345dd2
+isolated launch error: EIP-7610 latent knowledge limitation not acknowledged
+
+finished_at: 2026-08-25T15:12:58.490996Z
+exit_code: 1

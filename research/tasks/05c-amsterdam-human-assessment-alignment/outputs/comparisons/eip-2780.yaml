@@ -1,0 +1,760 @@
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-comparison
+fork_id: amsterdam
+eip:
+  number: 2780
+  title: Resource-based intrinsic transaction gas
+  layers:
+  - execution
+observations:
+  A_current_rubric_automated:
+    path: research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips/amsterdam/eip-2780.yaml
+    sha256: 23973bd9b6f6a75fac3960a4f82a8480b2b9687c9a792406c3c15598b00ed483
+    session_id: assessment-run-6e7b6ec4-d760-454e-ac5e-b82ce6ed9819
+    rubric_revision: 2
+    total: 25
+    maximum: 84 nominal across 28 rows; Cross-EIP interactions is uncapped
+    tier: high
+    thresholds:
+      low: <12
+      medium: '>=12 and <23'
+      high: '>=23'
+  B_historical_rubric_automated:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated/eip-2780.yaml
+    sha256: 12ba5918596612a4282dce63638650fc436915832f1a809c132f0c32e08af5f4
+    session_id: assessment-run-e49683cb-88b4-4227-bcec-b34889fb2387
+    rubric_commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    total: 20
+    maximum: 72
+    tier: high
+    thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+  C_historical_human:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/human/eip-2780.yaml
+    sha256: d3e77c8c9c5a7d0578e8b302a97f8a5b3cc137d1b20e0148f70ba2a8dcaaca91
+    event_commit: d49a44fe77adadea547a939e4e473a949e7b5a99
+    rubric_commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    published_total: 13
+    recomputed_total: 13
+    maximum: 72
+    published_tier: medium
+    recomputed_tier: medium
+    thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+confounds:
+  input_alignment:
+    classification: substantive_drift
+    summary: 'Substantive intervening revisions: Extends the proposal into a granular state-operation
+      gas model (PR #10594, ''Include Call changes''): TX_BASE_COST 6,000 to 4,500; introduces STATE_UPDATE
+      = 1,000, COLD_ACCOUNT_COST_CODE = 2,600, COLD_ACCOUNT_COST_NOCODE = 500, WARM_STATE_READ = 100;
+      reprices value-moving calls (CALL_VALUE_COST 9,000 to 2,000, or 26,000 when creating an account);
+      specifies a PAY-style primitive''s warmth/code-load behavior, self-transfer rule, and warmth policy;
+      adds transaction reference cases; EIP-2929 described as ''refined by this EIP''. | Adds an explicit
+      warmth-pricing specification that overrides EIP-2929''s ''all tx addresses are warm'' rule (per-type
+      charges for tx.sender and tx.to, precompiles warm, access-list override), plus a ''Monetary Context''
+      motivation section (PR #10595, ''Add context''). | Clarifications with normative effect (PR #10598):
+      CALL_VALUE_COST = 2,000 applies to all value-carrying calls regardless of prior account updates
+      (2300-gas stipend safety); EIP-7702 senders must not trigger a disk code-load for classification;
+      new-account surcharge component table restated; test vectors 7-14 added (warmth/access-list interplay,
+      7702 cases, precompile transfers, self-transfer, internal CALL repricing, Perfnet stress, SELFDESTRUCT);
+      SELFDESTRUCT/EIP-6780 security note; throughput/payload/basefee levers section.'
+    classification_source: research/tasks/01-fork-eip-history/outputs/eips/eip-2780.yaml
+  intervening_eip_commits:
+  - id: eip2780-e21
+    event_kind: revision
+    authored_at: '2025-09-26T08:37:30Z'
+    committed_at: '2025-09-26T08:37:30Z'
+    commit: 191353ed4ef5a64c3e4c9f8336ba590881bdb40b
+    path: EIPS/eip-2780.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Adds co-author Maria Ines Silva (PR #10432).'
+    rationale: Author-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-191353ed4ef5
+    - gh-pr-map-eip-2780
+  - id: eip2780-e22
+    event_kind: revision
+    authored_at: '2025-10-23T05:40:15Z'
+    committed_at: '2025-10-23T05:40:15Z'
+    commit: f363c3d806e0fcc483c61d49e39a2ef3dca1976f
+    path: EIPS/eip-2780.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Adds co-author Anders Elowsson (PR #10591).'
+    rationale: Author-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-f363c3d806e0
+    - gh-pr-map-eip-2780
+  - id: eip2780-e23
+    event_kind: revision
+    authored_at: '2025-10-23T17:20:37Z'
+    committed_at: '2025-10-23T17:20:37Z'
+    commit: c91dc31f164fa50bc58e8b6c68fd44774a1f1828
+    path: EIPS/eip-2780.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Extends the proposal into a granular state-operation gas model (PR #10594, ''Include Call
+      changes''): TX_BASE_COST 6,000 to 4,500; introduces STATE_UPDATE = 1,000, COLD_ACCOUNT_COST_CODE
+      = 2,600, COLD_ACCOUNT_COST_NOCODE = 500, WARM_STATE_READ = 100; reprices value-moving calls (CALL_VALUE_COST
+      9,000 to 2,000, or 26,000 when creating an account); specifies a PAY-style primitive''s warmth/code-load
+      behavior, self-transfer rule, and warmth policy; adds transaction reference cases; EIP-2929 described
+      as ''refined by this EIP''.'
+    rationale: Major expansion of normative scope from intrinsic gas into EVM gas-schedule adjustments
+      with a parameter change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-c91dc31f164f
+    - gh-pr-map-eip-2780
+  - id: eip2780-e24
+    event_kind: revision
+    authored_at: '2025-10-23T22:57:38Z'
+    committed_at: '2025-10-23T22:57:38Z'
+    commit: 5ed360f38d7867c0f677104c10aabe657da60f11
+    path: EIPS/eip-2780.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds an explicit warmth-pricing specification that overrides EIP-2929''s ''all tx addresses
+      are warm'' rule (per-type charges for tx.sender and tx.to, precompiles warm, access-list override),
+      plus a ''Monetary Context'' motivation section (PR #10595, ''Add context'').'
+    rationale: The warmth-decomposition block is normative and changes how intrinsic accounts are charged
+      relative to EIP-2929.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-5ed360f38d78
+    - gh-pr-map-eip-2780
+  - id: eip2780-e25
+    event_kind: revision
+    authored_at: '2025-10-23T23:53:22Z'
+    committed_at: '2025-10-23T23:53:22Z'
+    commit: 6585d4abd1d7f3ba42cdc3ba42078015822a2308
+    path: EIPS/eip-2780.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Rewrites the Monetary Context motivation into unit-of-account/medium-of-exchange/store-of-value/velocity/competition
+      bullet points (PR #10596).'
+    rationale: Motivation-only rewrite.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-6585d4abd1d7
+    - gh-pr-map-eip-2780
+  - id: eip2780-e26
+    event_kind: revision
+    authored_at: '2025-10-24T06:16:32Z'
+    committed_at: '2025-10-24T06:16:32Z'
+    commit: 8879efe2c600272a6358b037e70f54a3e4f5571c
+    path: EIPS/eip-2780.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: 'Adds co-author Anthony Sassano and a motivation note that the lower base applies to every
+      transaction type (PR #10597, ''Feedback'').'
+    rationale: Author metadata plus a motivation note; no normative change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-8879efe2c600
+    - gh-pr-map-eip-2780
+  - id: eip2780-e27
+    event_kind: revision
+    authored_at: '2025-10-24T07:33:36Z'
+    committed_at: '2025-10-24T07:33:36Z'
+    commit: b87dc57975b0f4a59edd35090ccb366a76365709
+    path: EIPS/eip-2780.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Clarifications with normative effect (PR #10598): CALL_VALUE_COST = 2,000 applies to all
+      value-carrying calls regardless of prior account updates (2300-gas stipend safety); EIP-7702 senders
+      must not trigger a disk code-load for classification; new-account surcharge component table restated;
+      test vectors 7-14 added (warmth/access-list interplay, 7702 cases, precompile transfers, self-transfer,
+      internal CALL repricing, Perfnet stress, SELFDESTRUCT); SELFDESTRUCT/EIP-6780 security note; throughput/payload/basefee
+      levers section.'
+    rationale: Materially clarifies normative charging rules and expands the test plan.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-b87dc57975b0
+    - gh-pr-map-eip-2780
+  - id: eip2780-e28
+    event_kind: revision
+    authored_at: '2025-10-26T08:00:27Z'
+    committed_at: '2025-10-26T08:00:27Z'
+    commit: 95b0b92a3bfded8cb2eb5a86add5972cb17b8871
+    path: EIPS/eip-2780.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Reformats the Abstract''s capacity-impact summary into a table with updated illustrative
+      figures (+367% minimal txs, +250% ETH transfers at a 60M gaslimit) (PR #10616, ''Formatting'').'
+    rationale: Illustrative capacity figures in the abstract; not normative parameters.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-95b0b92a3bfd
+    - gh-pr-map-eip-2780
+  - id: eip2780-e29
+    event_kind: revision
+    authored_at: '2025-10-26T09:01:59Z'
+    committed_at: '2025-10-26T09:01:59Z'
+    commit: bfd3e23acd07b3eac73f780313ef83413c4a0c40
+    path: EIPS/eip-2780.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Adds a ''Monetary Effects'' motivation section (velocity of money, moneyness) (PR #10617).'
+    rationale: Motivation-only addition.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-bfd3e23acd07
+    - gh-pr-map-eip-2780
+  - id: eip2780-e30
+    event_kind: revision
+    authored_at: '2025-10-26T10:26:32Z'
+    committed_at: '2025-10-26T10:26:32Z'
+    commit: d5e16901ed417747af2177275838c74075a61d38
+    path: EIPS/eip-2780.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: 'Adds a minimum-economical-payment formula (v_min) and quantity-relation reasoning to the
+      Monetary Effects section (PR #10618, ''Add formula'').'
+    rationale: Motivation-only mathematical illustration.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-d5e16901ed41
+    - gh-pr-map-eip-2780
+  template_match:
+    classification: exact
+    rationale: Anchor inventory, definitions, score domains, nominal maximum, and thresholds match.
+  human_timing_exposure:
+    classification: possible_exposure
+    rationale: The rationale discusses existing EIP-7702 tests needing updates, indicating awareness of
+      a concrete test corpus but not a completed implementation of EIP-2780.
+    evidence_source: the exact historical human assessment blob
+clean_comparison:
+  eligible: false
+  failed_conditions:
+  - substantive_or_unknown_eip_input_drift
+  low_exposure_eligible: false
+totals:
+  b_minus_c: 7
+  absolute_b_minus_c: 7
+  a_minus_b: 5
+  b_vs_c_exact_total_agreement: false
+  b_vs_c_tier_agreement: false
+  cross_rubric_warning: A and B use different row inventories, nominal maxima, and thresholds; A-minus-B
+    is descriptive rubric sensitivity, not a like-for-like scale estimate.
+historical_anchor_comparison:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  human_raw_score_cell: '1'
+  human_parsed_terms:
+  - 1
+  human_normalized_contribution: 1
+  automated_historical_score: 0
+  b_minus_c: -1
+  absolute_error: 1
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: cryptography
+  label: Cryptography-related testing
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  human_raw_score_cell: '2'
+  human_parsed_terms:
+  - 2
+  human_normalized_contribution: 2
+  automated_historical_score: 2
+  b_minus_c: 0
+  absolute_error: 0
+- id: block_syncing_changes
+  label: Block syncing changes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: engine_api_changes
+  label: Engine API changes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: engine_api_encoding_changes
+  label: Engine API encoding changes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_system_contracts
+  label: Added system contracts
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_system_contracts
+  label: Modified system contracts
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_opcodes
+  label: Added opcodes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_opcodes
+  label: Modified opcodes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_precompiles
+  label: Added precompiles
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_precompiles
+  label: Modified precompiles
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_transaction_types
+  label: New transaction types
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_block_header_fields
+  label: New block / header fields
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: performance_risks
+  label: Performance risks
+  human_raw_score_cell: '1'
+  human_parsed_terms:
+  - 1
+  human_normalized_contribution: 1
+  automated_historical_score: 3
+  b_minus_c: 2
+  absolute_error: 2
+- id: security_risks
+  label: Security risks
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 3
+  b_minus_c: 3
+  absolute_error: 3
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 3
+  b_minus_c: 3
+  absolute_error: 3
+rubric_revision_mapping:
+- revision_1_id: evm_gas_rule_changes
+  revision_1_label: EVM Gas rule changes
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - evm_gas_rule_changes
+  revision_2_scores:
+  - 3
+- revision_1_id: blob_gas_accounting_changes
+  revision_1_label: Blob gas accounting changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - blob_gas_accounting_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: new_evm_gas_refund
+  revision_1_label: New EVM gas refund
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_evm_gas_refund
+  revision_2_scores:
+  - 0
+- revision_1_id: patterns_affecting_pre_existing_tests
+  revision_1_label: Patterns affecting pre-existing tests
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - patterns_affecting_pre_existing_tests
+  revision_2_scores:
+  - 3
+- revision_1_id: transition_tool_interface_changes
+  revision_1_label: Transition-tool interface changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - transition_tool_interface_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: cryptography
+  revision_1_label: Cryptography-related testing
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - cryptography
+  revision_2_scores:
+  - 0
+- revision_1_id: edge_boundary_conditions
+  revision_1_label: Edge/boundary conditions
+  revision_1_score: 2
+  status: exact
+  revision_2_ids:
+  - edge_boundary_conditions
+  revision_2_scores:
+  - 3
+- revision_1_id: block_syncing_changes
+  revision_1_label: Block syncing changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - block_syncing_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: engine_api_changes
+  revision_1_label: Engine API changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - engine_api_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: engine_api_encoding_changes
+  revision_1_label: Engine API encoding changes
+  revision_1_score: 0
+  status: revision_1_only
+  revision_2_ids:
+  - encoding_changes_rlp_ssz
+  revision_2_scores:
+  - 0
+- revision_1_id: added_system_contracts
+  revision_1_label: Added system contracts
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_system_contracts
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_system_contracts
+  revision_1_label: Modified system contracts
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_system_contracts
+  revision_2_scores:
+  - 0
+- revision_1_id: added_opcodes
+  revision_1_label: Added opcodes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_opcodes
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_opcodes
+  revision_1_label: Modified opcodes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_opcodes
+  revision_2_scores:
+  - 0
+- revision_1_id: added_precompiles
+  revision_1_label: Added precompiles
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_precompiles
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_precompiles
+  revision_1_label: Modified precompiles
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_precompiles
+  revision_2_scores:
+  - 0
+- revision_1_id: encoding_changes_rlp_ssz
+  revision_1_label: Encoding changes (RLP/SSZ)
+  revision_1_score: 0
+  status: changed
+  revision_2_ids:
+  - encoding_changes_rlp_ssz
+  revision_2_scores:
+  - 0
+- revision_1_id: new_transaction_types
+  revision_1_label: New transaction types
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_transaction_types
+  revision_2_scores:
+  - 0
+- revision_1_id: new_or_modified_transaction_validity_mechanisms
+  revision_1_label: New or modified transaction validity mechanisms
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - new_or_modified_transaction_validity_mechanisms
+  revision_2_scores:
+  - 3
+- revision_1_id: new_block_header_fields
+  revision_1_label: New block / header fields
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_block_header_fields
+  revision_2_scores:
+  - 0
+- revision_1_id: new_fork_activation_mechanism
+  revision_1_label: New fork activation mechanism
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_fork_activation_mechanism
+  revision_2_scores:
+  - 0
+- revision_1_id: performance_risks
+  revision_1_label: Performance risks
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - performance_risks
+  revision_2_scores:
+  - 3
+- revision_1_id: security_risks
+  revision_1_label: Security risks
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - security_risks
+  revision_2_scores:
+  - 3
+- revision_1_id: cross_eip_interactions
+  revision_1_label: Cross-EIP interactions
+  revision_1_score: 3
+  status: changed
+  revision_2_ids:
+  - cross_eip_interactions
+  revision_2_scores:
+  - 5
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - state_access_ordering_within_opcode_execution
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - state_gas_accounting_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - new_invariant_on_pre_existing_tests
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - new_test_framework_primitives
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - unspecified_behavior_requiring_cross_client_consensus
+  revision_2_scores:
+  - 2
+notes:
+  factual_disagreement: Not independently adjudicated; a nonzero anchor delta alone does not establish
+    a factual error.
+  rubric_interpretation:
+  - The historical Engine API encoding changes row lacks a dedicated definition in the source template.
+  - Rows marked changed or revision-specific in rubric_revision_mapping are not forced into one-to-one
+    equivalence.
+  evaluator_judgment:
+  - blob_gas_accounting_changes
+  - performance_risks
+  - security_risks
+  - cross_eip_interactions
+  input_drift: 'Substantive intervening revisions: Extends the proposal into a granular state-operation
+    gas model (PR #10594, ''Include Call changes''): TX_BASE_COST 6,000 to 4,500; introduces STATE_UPDATE
+    = 1,000, COLD_ACCOUNT_COST_CODE = 2,600, COLD_ACCOUNT_COST_NOCODE = 500, WARM_STATE_READ = 100; reprices
+    value-moving calls (CALL_VALUE_COST 9,000 to 2,000, or 26,000 when creating an account); specifies
+    a PAY-style primitive''s warmth/code-load behavior, self-transfer rule, and warmth policy; adds transaction
+    reference cases; EIP-2929 described as ''refined by this EIP''. | Adds an explicit warmth-pricing
+    specification that overrides EIP-2929''s ''all tx addresses are warm'' rule (per-type charges for
+    tx.sender and tx.to, precompiles warm, access-list override), plus a ''Monetary Context'' motivation
+    section (PR #10595, ''Add context''). | Clarifications with normative effect (PR #10598): CALL_VALUE_COST
+    = 2,000 applies to all value-carrying calls regardless of prior account updates (2300-gas stipend
+    safety); EIP-7702 senders must not trigger a disk code-load for classification; new-account surcharge
+    component table restated; test vectors 7-14 added (warmth/access-list interplay, 7702 cases, precompile
+    transfers, self-transfer, internal CALL repricing, Perfnet stress, SELFDESTRUCT); SELFDESTRUCT/EIP-6780
+    security note; throughput/payload/basefee levers section.'
+  parsing:
+  - Blank cells are interpreted as zero only because the published total exactly equals the sum of every
+    nonblank parsed contribution.
+provenance:
+  comparison_script:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/compare.py
+    sha256: b901d696ef904ef5e0a7bfc66bed200ea1e9a0dfe5a15f02b70603e36ae729fd
+  automated_freeze:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated-freeze.yaml
+    sha256: 37b7eb14ddb572c7d5731814b059c4c87574075956fd296e0cca7b1bd9518d87
+  consumed_inputs:
+  - path: research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips/amsterdam/eip-2780.yaml
+    sha256: 23973bd9b6f6a75fac3960a4f82a8480b2b9687c9a792406c3c15598b00ed483
+  - path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated/eip-2780.yaml
+    sha256: 12ba5918596612a4282dce63638650fc436915832f1a809c132f0c32e08af5f4
+  - path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/human/eip-2780.yaml
+    sha256: d3e77c8c9c5a7d0578e8b302a97f8a5b3cc137d1b20e0148f70ba2a8dcaaca91
+  generated_at: '2026-08-25T15:39:14.174993Z'

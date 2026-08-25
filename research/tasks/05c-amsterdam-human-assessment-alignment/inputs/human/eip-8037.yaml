@@ -1,0 +1,991 @@
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-human
+eip:
+  number: 8037
+  title: State Creation Gas Cost Increase
+  layers:
+  - execution
+human_event:
+  repository: ethspecs/pm
+  commit: eb0d24aec552ce5ec5eca689a37f0eb47fe75203
+  committed_at: '2025-12-04T14:04:31Z'
+  path: complexity_assessments/EIPs/EIP-8037.md
+  git_blob_sha: 55fd5115c92d96f4d16d3be69dd87e04ce037ba0
+  content_sha256: f37704066caeca7e1e6f0275dcabc9430781fbd3bd640bf222d9683a2b2eed52
+  immutable_url: https://github.com/ethspecs/pm/blob/eb0d24aec552ce5ec5eca689a37f0eb47fe75203/complexity_assessments/EIPs/EIP-8037.md
+  selection_rule: latest substantive score or rationale event in the complete reachable file history
+  selection_evidence: The commit first establishes a complete checklist with published score content.
+commit_history:
+- commit: 8fff39be498815decf68356983af71a1e3b5b211
+  committed_at: '2025-12-04T14:03:10Z'
+  subject: EIP-8037 assessment
+  path: complexity_assessments/EIPs/EIP-8037.md
+  git_blob_sha: 55fd5115c92d96f4d16d3be69dd87e04ce037ba0
+  content_sha256: f37704066caeca7e1e6f0275dcabc9430781fbd3bd640bf222d9683a2b2eed52
+  classification: initial_substantive_scoring
+  classification_evidence: The commit first establishes a complete checklist with published score content.
+  immutable_url: https://github.com/ethspecs/pm/blob/8fff39be498815decf68356983af71a1e3b5b211/complexity_assessments/EIPs/EIP-8037.md
+- commit: eb0d24aec552ce5ec5eca689a37f0eb47fe75203
+  committed_at: '2025-12-04T14:04:31Z'
+  subject: More complexity assessments (#26)
+  path: complexity_assessments/EIPs/EIP-8037.md
+  git_blob_sha: 55fd5115c92d96f4d16d3be69dd87e04ce037ba0
+  content_sha256: f37704066caeca7e1e6f0275dcabc9430781fbd3bd640bf222d9683a2b2eed52
+  classification: initial_substantive_scoring
+  classification_evidence: The commit first establishes a complete checklist with published score content.
+  immutable_url: https://github.com/ethspecs/pm/blob/eb0d24aec552ce5ec5eca689a37f0eb47fe75203/complexity_assessments/EIPs/EIP-8037.md
+- commit: 0330c11ba99afc90e7c1afba6bcb0237bcf7d4d5
+  committed_at: '2026-08-20T09:21:02Z'
+  subject: Rename checklist "anchors" to "criteria"
+  path: complexity_assessments/EIPs/EIP-8037.md
+  git_blob_sha: c70a0ac732a30f482afa2c759bc3fe5cb2fc2780
+  content_sha256: 7613093cd3fe64c2d8a5cfe6b3b19f10d743896c45aa2b721a22f702b8df375a
+  classification: title_link_formatting_or_editorial_change
+  classification_evidence: Campaign-wide terminology-only rename; scores, rationales, definitions, domains,
+    and thresholds are unchanged.
+  immutable_url: https://github.com/ethspecs/pm/blob/0330c11ba99afc90e7c1afba6bcb0237bcf7d4d5/complexity_assessments/EIPs/EIP-8037.md
+scores:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  raw_score_cell: 2 + 2 + 3 + 1
+  parsed_terms:
+  - 2
+  - 2
+  - 3
+  - 1
+  numeric_contribution: 8
+  rationale: GAS_CREATE + GAS_CODE_DEPOSIT can be considered the same category of change; CALL by itself
+    requires testing must be separated; SSTORE requires its own testing plus the new multidimensional
+    metering logic; EOA changes are simple and reduced in scope.
+  blank_interpretation: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  raw_score_cell: '2'
+  parsed_terms:
+  - 2
+  numeric_contribution: 2
+  rationale: Refund tests are indirectly affected by the SSTORE change.
+  blank_interpretation: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  raw_score_cell: 3 + 3 + 3
+  parsed_terms:
+  - 3
+  - 3
+  - 3
+  numeric_contribution: 9
+  rationale: CREATE, CALL, and SSTORE are values that have not been updated since Frontier. This change
+    will break an excessive amount of static tests (https://github.com/ethereum/execution-specs/tree/forks/osaka/tests/static)
+    and will require some rework in existing python tests. Counting each of these as a multiplier for
+    this row.
+  blank_interpretation: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: cryptography
+  label: Cryptography-related testing
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  raw_score_cell: '3'
+  parsed_terms:
+  - 3
+  numeric_contribution: 3
+  rationale: Bundling all changes into this single row since they are similar.
+  blank_interpretation: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: engine_api_changes
+  label: Engine API changes
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: engine_api_encoding_changes
+  label: Engine API encoding changes
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: added_system_contracts
+  label: Added system contracts
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: modified_system_contracts
+  label: Modified system contracts
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: added_opcodes
+  label: Added opcodes
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: modified_opcodes
+  label: Modified opcodes
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: added_precompiles
+  label: Added precompiles
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: modified_precompiles
+  label: Modified precompiles
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: new_transaction_types
+  label: New transaction types
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  raw_score_cell: 3 + 1
+  parsed_terms:
+  - 3
+  - 1
+  numeric_contribution: 4
+  rationale: Modifies the contract creation from a contract-creating transaction, and the EOA delegation
+    cost.
+  blank_interpretation: null
+- id: new_block_header_fields
+  label: New block / header fields
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: performance_risks
+  label: Performance risks
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: security_risks
+  label: Security risks
+  raw_score_cell: ''
+  parsed_terms: []
+  numeric_contribution: 0
+  rationale: ''
+  blank_interpretation: explicit_zero_by_published_arithmetic
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  raw_score_cell: '2'
+  parsed_terms:
+  - 2
+  numeric_contribution: 2
+  rationale: Considering contract creation and account calling are so fundamental, this will require oversight
+    on other EIPs that are CFI'd.
+  blank_interpretation: null
+published_total: 28
+published_tier_raw: 🔴
+published_tier: high
+recomputed_total: 28
+recomputed_tier: high
+numeric_total_unambiguous: true
+parser_notes:
+- Blank cells are interpreted as zero only because the published total exactly equals the sum of every
+  nonblank parsed contribution.
+historical_rubric:
+  repository: ethspecs/pm
+  commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+  committed_at: '2025-11-05T22:50:08Z'
+  path: Templates/EIP-Complexity-Assessment.md
+  git_blob_sha: f69abefe2cccd13eb0d65eac8b4619ceda248755
+  content_sha256: b5b24d8bc9dfdfa2e66784ad7e64ddc16f32a523255e1b507aa52e8e1c890b02
+  immutable_url: https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
+  task_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/rubrics/template-d936bcb34963cb5eec015dada2e4188e49fc14d5.md
+  anchor_order:
+  - evm_gas_rule_changes
+  - blob_gas_accounting_changes
+  - new_evm_gas_refund
+  - patterns_affecting_pre_existing_tests
+  - transition_tool_interface_changes
+  - cryptography
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - engine_api_encoding_changes
+  - added_system_contracts
+  - modified_system_contracts
+  - added_opcodes
+  - modified_opcodes
+  - added_precompiles
+  - modified_precompiles
+  - encoding_changes_rlp_ssz
+  - new_transaction_types
+  - new_or_modified_transaction_validity_mechanisms
+  - new_block_header_fields
+  - new_fork_activation_mechanism
+  - performance_risks
+  - security_risks
+  - cross_eip_interactions
+  anchors:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    definition_present: true
+    definition: 'New EVM gas accounting rules
+
+      - 0. No gas accounting changes.
+
+      - 1. Existing gas accounting mechanism is updated.
+
+      - 2. A new gas accounting mechanism is introduced but it does not affect existing mechanisms nor
+      does it affect existing tests.
+
+      - 3. A new gas accounting mechanism is introduced and affects existing mechanisms which in turn
+      affect existing tests.'
+    base_allowed_scores: &id001
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    definition_present: true
+    definition: 'New Blob gas accounting rules which potentially affect pre-existing tests
+
+
+      - 0. No blob gas accounting changes.
+
+      - 1. Existing blob gas accounting mechanism is updated.
+
+      - 2. A new blob gas accounting mechanism is introduced but it does not affect existing mechanisms
+      nor does it affect existing tests.
+
+      - 3. A new blob gas accounting mechanism is introduced and affects existing mechanisms which in
+      turn affect existing tests.'
+    base_allowed_scores: &id002
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    definition_present: true
+    definition: 'New gas-refund mechanism
+
+
+      - 0. No new gas-refund mechanisms are introduced.
+
+      - 1. A new simple gas-refund mechanism is introduced that does not affect either existing tests
+      or existing gas-refund mechanisms.
+
+      - 2. A new complex gas-refund mechanism is introduced or a simple mechanism that affects existing
+      tests or existing gas-refund mechanisms.
+
+      - 3. A new complex gas-refund mechanism is introduced that affects existing tests or existing gas-refund
+      mechanisms.'
+    base_allowed_scores: &id003
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    definition_present: true
+    definition: 'Implements a new validation mechanism or rule that translates in reworking pre-existing
+      tests
+
+
+      - 0. No pre-existing tests are affected by this change.
+
+      - 1. Minor subset of existing tests are affected by this change.
+
+      - 2. Considerable subset of existing tests are affected by this change but involves only a contrived
+      category of tests.
+
+      - 3. Major subset of existing tests are affected, including diverse category of tests (benchmarks,
+      static, multiple forks, etc.).'
+    base_allowed_scores: &id004
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    definition_present: true
+    definition: 'Modifies or adds new fields to the transition tool interface.
+
+
+      - 0. No modifications to the transition tool interface are required.
+
+      - 1. A single new field needs to be introduced to the transition tool interface.
+
+      - 2. Multiple new fields or a new mechanism has to be introduced to the transition tool interface.
+
+      - 3. Multiple new fields and a new mechanism has to be introduced to the transition tool interface.
+
+
+      *Special consideration must be paid to this section if the EIP introduces a mechanism that requires
+      the state transition tool to be aware whether the block it is processing is the fork-activation
+      block.'
+    base_allowed_scores: &id005
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: cryptography
+    label: Cryptography-related testing
+    definition_present: true
+    definition: 'Introduces new cryptography mechanisms or modifies existing functionality that involves
+      cryptography
+
+
+      - 0. No cryptography mechanisms are introduced.
+
+      - 1. A new cryptography mechanism is introduced but it is a well known mechanism that is known to
+      have vast resources to aid on its testing.
+
+      - 2. Multiple new cryptography mechanisms are introduced that are well-known or a single but novel
+      mechanism is introduced that is either untested or has limited resources.
+
+      - 3. Multiple new cryptography mechanisms are introduced and at least one of them is a novel mechanism.'
+    base_allowed_scores: &id006
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    definition_present: true
+    definition: 'Feature contains edge/boundary conditions.
+
+
+      - 0. No discernible edge cases or boundary conditions are introduced.
+
+      - 1. A single edge-case or boundary-condition prone mechanism is introduced.
+
+      - 2. Multiple edge-case or boundary-condition prone mechanisms are introduced, but none of them
+      requires an elevated number of cases to test.
+
+      - 3. Multiple edge-case or boundary-condition prone mechanisms are introduced and at least one of
+      them requires an elevated number of cases to test.'
+    base_allowed_scores: &id007
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: block_syncing_changes
+    label: Block syncing changes
+    definition_present: true
+    definition: 'Modifies block RLP validation mechanisms that require test client syncing.
+
+
+      - 0. No new RLP validation mechanism is introduced.
+
+      - 1. A single simple RLP validation mechanism is introduced.
+
+      - 2. Multiple simple RLP validation mechanisms are introduced or a single complex one.
+
+      - 3. Multiple RLP validation mechanisms are introduced and at least one of them is deemed complex.'
+    base_allowed_scores: &id008
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: engine_api_changes
+    label: Engine API changes
+    definition_present: true
+    definition: 'Introduces new fields to the Engine API directives
+
+
+      - 0. No new fields or communication mechanisms are introduced to the Engine API.
+
+      - 1. A single new field is introduced in one of the Engine API endpoints.
+
+      - 2. Multiple fields are introduced to one or multiple Engine API end points, or a new Engine API
+      end-point is introduced.
+
+      - 3. Multiple fields are introduced to one or multiple Engine API end points and a new Engine API
+      end-point is introduced.'
+    base_allowed_scores: &id009
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: engine_api_encoding_changes
+    label: Engine API encoding changes
+    definition_present: false
+    definition: null
+    base_allowed_scores: &id010
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: added_system_contracts
+    label: Added system contracts
+    definition_present: true
+    definition: 'Introduces new system contract, stateful or not
+
+
+      - 0. No new system contracts are introduced.
+
+      - 1. A new system contract is introduced that is not stateful nor does it trigger a new system action
+      (e.g. requests to the consensus layer).
+
+      - 2. Multiple new system contracts are introduced or a single new system contract that is either
+      stateful or triggers a new system action (e.g. requests to the consensus layer).
+
+      - 3. Multiple new system contracts are introduced and at least one of them is either stateful or
+      triggers a new system action (e.g. requests to the consensus layer).'
+    base_allowed_scores: &id011
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: modified_system_contracts
+    label: Modified system contracts
+    definition_present: true
+    definition: 'Modifies pre-existing system contracts
+
+
+      - 0. No modifications to pre-existing system contracts are introduced, directly or indirectly.
+
+      - 1. Does not directly modify any system contract, but its behavior has minor indirect effects on
+      one or more system contracts.
+
+      - 2. Does not directly modify any system contract, but its behavior has major indirect effects on
+      one or more system contracts.
+
+      - 3. At least one pre-existing system contract code or state is modified, which would involve irregular
+      state transition or a similarly complex transition methodology.'
+    base_allowed_scores: &id012
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: added_opcodes
+    label: Added opcodes
+    definition_present: true
+    definition: 'Introduces new opcodes
+
+
+      - 0. No new opcodes are introduced.
+
+      - 1. A new simple opcode is introduced (no data portion, no complex stack mechanics, and a constant
+      gas cost).
+
+      - 2. Multiple new simple opcodes are introduced, or a single new complex opcode is introduced (has
+      data portion, or complex stack mechanics, or a dynamic gas cost).
+
+      - 3. Multiple new opcodes are introduced, and at least one of them is complex (has data portion,
+      or complex stack mechanics, or a dynamic gas cost).
+
+
+      *Cryptography opcodes are not considered complex by default. Refer to the "Cryptography" section
+      for a separate assessment.'
+    base_allowed_scores: &id013
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: modified_opcodes
+    label: Modified opcodes
+    definition_present: true
+    definition: 'Modifies pre-existing opcodes
+
+
+      - 0. No pre-existing opcode modifications are introduced.
+
+      - 3. At least one pre-existing opcode''s behavior is modified (not including gas changes) or a pre-existing
+      opcode is deprecated.'
+    base_allowed_scores: &id014
+    - 0
+    - 3
+    allowed_scores:
+    - 0
+    - 3
+    - 4
+  - id: added_precompiles
+    label: Added precompiles
+    definition_present: true
+    definition: 'Introduces new precompiles
+
+
+      - 0. No new precompiles are introduced.
+
+      - 1. A new simple precompile is introduced (constant input length, constant gas cost).
+
+      - 2. Multiple new simple precompiles are introduced, or a single new complex precompile is introduced
+      (dynamic input length or dynamic gas cost).
+
+      - 3. Multiple new precompiles are introduced, and at least one of them is complex (dynamic input
+      length or dynamic gas cost).
+
+
+      *Cryptography precompiles are not considered complex by default. Refer to the "Cryptography" for
+      a separate assessment.'
+    base_allowed_scores: &id015
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: modified_precompiles
+    label: Modified precompiles
+    definition_present: true
+    definition: 'Modifies pre-existing precompiles logic or gas-accounting
+
+
+      - 0. No pre-existing precompiles are modified.
+
+      - 1. At least one pre-existing precompile has its gas schedule modified.
+
+      - 2. Multiple pre-existing precompiles have their gas schedule modified, or a single pre-existing
+      precompile has its behavior modified.
+
+      - 3. The behavior of multiple pre-existing precompiles, or a single complex pre-existing precompile
+      modified.'
+    base_allowed_scores: &id016
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    definition_present: true
+    definition: 'Introduces encoding changes at the transaction/block/interfaces level
+
+
+      - 0. No encoding changes are introduced at the transaction, block, or interfaces levels.
+
+      - 3. An encoding change is introduced at transaction, block or interfaces level (e.g. RLP -> SSZ).'
+    base_allowed_scores: &id017
+    - 0
+    - 3
+    allowed_scores:
+    - 0
+    - 3
+    - 4
+  - id: new_transaction_types
+    label: New transaction types
+    definition_present: true
+    definition: 'Introduces a new transaction type
+
+
+      - 0. No new transaction types are introduced.
+
+      - 3. A new transaction type is introduced.'
+    base_allowed_scores: &id018
+    - 0
+    - 3
+    allowed_scores:
+    - 0
+    - 3
+    - 4
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    definition_present: true
+    definition: 'Creates new or modifies pre-existing transaction types'' validation mechanisms
+
+
+      - 0. No changes are introduced to the validity rules of existing transaction types or to their intrinsic
+      gas cost calculation.
+
+      - 1. Minor adjustments are introduced to validity rules or intrinsic gas cost calculation, but they
+      do not significantly affect existing tests.
+
+      - 2. Changes to validity rules or intrinsic gas cost calculation affect existing tests, but require
+      only limited updates to test cases and no redesign of the testing infrastructure.
+
+      - 3. Changes to validity rules or intrinsic gas cost calculation require extensive rework or redesign
+      of the tests or testing infrastructure.'
+    base_allowed_scores: &id019
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: new_block_header_fields
+    label: New block / header fields
+    definition_present: true
+    definition: 'Introduces new block or block header fields
+
+
+      - 0. No new block or header fields are introduced.
+
+      - 3. A new block or header field is introduced.'
+    base_allowed_scores: &id020
+    - 0
+    - 3
+    allowed_scores:
+    - 0
+    - 3
+    - 4
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    definition_present: true
+    definition: 'Modifies state, internal variables, or similar, at the fork activation block
+
+
+      - 0. No state modifications, internal variables or similar are modified at the fork activation block.
+
+      - 3. Either a state modification or internal variables are modified at the fork activation block.
+
+
+      *Initialization of new internal variable is not considered a modification.'
+    base_allowed_scores: &id021
+    - 0
+    - 3
+    allowed_scores:
+    - 0
+    - 3
+    - 4
+  - id: performance_risks
+    label: Performance risks
+    definition_present: true
+    definition: 'Introduces or modifies mechanisms and requires performance validation.
+
+
+      - 0. No new mechanisms are introduced that require performance validation.
+
+      - 1. The introduced mechanisms can be benchmarked in isolation and do not affect existing performance
+      behavior.
+
+      - 2. The introduced mechanisms cannot be fully benchmarked in isolation, but they only have a limited
+      impact on the existing performance benchmarks.
+
+      - 3. The introduced mechanisms cannot be benchmarked in isolation and have a substantial impact
+      on existing performance benchmarks or have complex interactions with existing mechanisms.'
+    base_allowed_scores: &id022
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: security_risks
+    label: Security risks
+    definition_present: true
+    definition: 'Introduces or modifies mechanisms that could compromise the security of the chain, users,
+      validators, or other stakeholders, if not implemented properly.
+
+
+      - 0. No new mechanisms are introduced that could pose a security risk.
+
+      - 1. The introduced mechanisms are self-contained, can be validated in isolation, and do not alter
+      existing invariants that could pose a security risk for any stakeholders.
+
+      - 2. The introduced mechanisms interact with a limited number of existing components, slightly altering
+      their security assumptions and requiring a targeted security review or fuzzing.
+
+      - 3. The introduced mechanisms interact with multiple existing components, including critical ones,
+      substantially altering their security assumptions and requiring an extensive security review and
+      fuzzing.'
+    base_allowed_scores: &id023
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    definition_present: true
+    definition: 'Introduces or modifies mechanisms that affect other EIPs in either the same or past forks.
+
+
+      - 0. Fully self-contained EIP that does not depend on, modify, or conflict with any other EIP.
+
+      - 1. The EIP interacts with one or more other EIPs in a non-critical and limited way but can be
+      tested independently for the most part.
+
+      - 2. The EIP depends on or modifies one or more other EIPs such that coordinated testing and consideration
+      is required, but interactions are limited in scope and not complex.
+
+      - 3. The EIP has strong interdependencies with multiple EIPs, requiring extensive coordinated cross-EIP
+      testing as well as potential re-design of existing test vectors.'
+    base_allowed_scores: &id024
+    - 0
+    - 1
+    - 2
+    - 3
+    allowed_scores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  score_domains:
+    evm_gas_rule_changes: *id001
+    blob_gas_accounting_changes: *id002
+    new_evm_gas_refund: *id003
+    patterns_affecting_pre_existing_tests: *id004
+    transition_tool_interface_changes: *id005
+    cryptography: *id006
+    edge_boundary_conditions: *id007
+    block_syncing_changes: *id008
+    engine_api_changes: *id009
+    engine_api_encoding_changes: *id010
+    added_system_contracts: *id011
+    modified_system_contracts: *id012
+    added_opcodes: *id013
+    modified_opcodes: *id014
+    added_precompiles: *id015
+    modified_precompiles: *id016
+    encoding_changes_rlp_ssz: *id017
+    new_transaction_types: *id018
+    new_or_modified_transaction_validity_mechanisms: *id019
+    new_block_header_fields: *id020
+    new_fork_activation_mechanism: *id021
+    performance_risks: *id022
+    security_risks: *id023
+    cross_eip_interactions: *id024
+  exceptional_score: 4
+  maximum_score: 72
+  tier_thresholds:
+    low:
+      minimum: 0
+      maximum: 9
+    medium:
+      minimum: 10
+      maximum: 19
+    high:
+      minimum: 20
+      maximum: null
+  known_source_defects:
+  - The checklist contains Engine API encoding changes but the template has no dedicated definition for
+    that row.
+  manifest_path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/rubrics/template-d936bcb34963cb5eec015dada2e4188e49fc14d5.yaml
+  manifest_sha256: b55b6feb2c0969625b253c5f7c88780eec706f47e392c5cf6dce75c0e05f3880
+template_match:
+  classification: exact
+  rationale: Anchor inventory, definitions, score domains, nominal maximum, and thresholds match.
+human_time_eip:
+  repository: ethereum/EIPs
+  commit: dee539a58f206ce2a3bf08130605adf50938c40f
+  committed_at: '2025-10-28T10:20:33Z'
+  path: EIPS/eip-8037.md
+  git_blob_sha: 176cab4ecae238d73b95747591895904a1cd31ef
+  content_sha256: 8ee674c5e6bb08ab4888df2571c712a17dfddfbbb492583caad8061f9e54366e
+  immutable_url: https://github.com/ethereum/EIPs/blob/dee539a58f206ce2a3bf08130605adf50938c40f/EIPS/eip-8037.md
+approved_task_04_eip:
+  revision_event_id: eip8037-e00
+  event_kind: creation
+  repository: ethereum/EIPs
+  commit: c47ae3be2144ac32c0eb9238b01b005b188139e2
+  path: EIPS/eip-8037.md
+  committed_at: '2025-10-07T21:20:16Z'
+  offset_from_anchor_seconds: -730280
+  git_blob_sha: 5d0192d26387e5d8f962a2ffa03df5a71a4e6b8c
+  content_sha256: 03b57db0f7031fa1e29d2ae88a46a94cbd33c2c7ec8f52f0e95a531a72f2442f
+  immutable_url: https://github.com/ethereum/EIPs/blob/c47ae3be2144ac32c0eb9238b01b005b188139e2/EIPS/eip-8037.md
+  source_ids:
+  - eips-commit-c47ae3be2144
+intervening_eip_commits:
+- id: eip8037-e01
+  event_kind: revision
+  authored_at: '2025-10-22T16:28:38+02:00'
+  committed_at: '2025-10-22T14:28:38+00:00'
+  commit: 4e9dba1082fbd729d3d8f66d8538f14f7e3a363a
+  path: EIPS/eip-8037.md
+  change_type: normative_behavior
+  semantic_effect: substantive
+  summary: 'Defines success-vs-failure gas accounting for contract deployment: GAS_NEW_ACCOUNT, GAS_CODE_DEPOSIT*L
+    and HASH_COST(L) are charged only on the success path, with explicit total-gas formulas and check
+    ordering; removes the duplicated-code deposit-exemption sentence from the abstract; reformats the
+    parameter table.'
+  rationale: Materially specifies when deployment charges apply, replacing the previous duplication-check
+    design.
+  change_group: null
+  confidence: high
+  source_ids:
+  - eips-commit-4e9dba1082fb
+- id: eip8037-e02
+  event_kind: revision
+  authored_at: '2025-10-28T11:20:33+01:00'
+  committed_at: '2025-10-28T10:20:33+00:00'
+  commit: dee539a58f206ce2a3bf08130605adf50938c40f
+  path: EIPS/eip-8037.md
+  change_type: parameter
+  semantic_effect: substantive
+  summary: Changes GAS_NEW_ACCOUNT's affected operations to CALL*, removes GAS_SELF_DESTRUCT_NEW_ACCOUNT
+    (replaced by GAS_NEW_ACCOUNT), and corrects the deployment cost example accordingly.
+  rationale: Changes the parameter schedule's scope and removes a distinct constant.
+  change_group: null
+  confidence: high
+  source_ids:
+  - eips-commit-dee539a58f20
+input_alignment:
+  classification: substantive_drift
+  summary: 'Substantive intervening revisions: Defines success-vs-failure gas accounting for contract
+    deployment: GAS_NEW_ACCOUNT, GAS_CODE_DEPOSIT*L and HASH_COST(L) are charged only on the success path,
+    with explicit total-gas formulas and check ordering; removes the duplicated-code deposit-exemption
+    sentence from the abstract; reformats the parameter table. | Changes GAS_NEW_ACCOUNT''s affected operations
+    to CALL*, removes GAS_SELF_DESTRUCT_NEW_ACCOUNT (replaced by GAS_NEW_ACCOUNT), and corrects the deployment
+    cost example accordingly.'
+  classification_source: research/tasks/01-fork-eip-history/outputs/eips/eip-8037.yaml
+human_timing_exposure:
+  classification: high_exposure
+  rationale: The assessment links the execution-specs static-test tree and describes rework of existing
+    Python tests.
+  evidence_source: the exact historical human assessment blob
+evidence_locators:
+- https://github.com/ethspecs/pm/blob/eb0d24aec552ce5ec5eca689a37f0eb47fe75203/complexity_assessments/EIPs/EIP-8037.md
+- https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md
+- https://github.com/ethereum/EIPs/blob/dee539a58f206ce2a3bf08130605adf50938c40f/EIPS/eip-8037.md
+confidence: high
+unresolved_issues: []
+generation:
+  script: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/discover_human_assessments.py
+  script_sha256: ddc735927e52acd2daecb32fb7ee848f249029ebe287a80b26351c08c4e70a50
+  generated_at: '2026-08-25T15:03:27.299498Z'
+  record_payload_sha256: 7ce4f10ced6c23fd0c4a68d16d7a7d7fde304da803a7167b86544d320fc853fd

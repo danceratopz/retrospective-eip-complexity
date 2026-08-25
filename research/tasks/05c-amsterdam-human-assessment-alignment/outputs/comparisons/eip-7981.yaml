@@ -1,0 +1,593 @@
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-comparison
+fork_id: amsterdam
+eip:
+  number: 7981
+  title: Increase Access List Cost
+  layers:
+  - execution
+observations:
+  A_current_rubric_automated:
+    path: research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips/amsterdam/eip-7981.yaml
+    sha256: 76937733b242460b4a891574c82fbd31cdd9027eb5add0c845e13a6a8c63a67b
+    session_id: assessment-run-9f5107e1-39c3-487c-8cb3-bd9e6f630da4
+    rubric_revision: 2
+    total: 11
+    maximum: 84 nominal across 28 rows; Cross-EIP interactions is uncapped
+    tier: low
+    thresholds:
+      low: <12
+      medium: '>=12 and <23'
+      high: '>=23'
+  B_historical_rubric_automated:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated/eip-7981.yaml
+    sha256: da14a23b399011cca800703c0ac400f8d73c18cbe45d8f356520e866a888e681
+    session_id: assessment-run-7ed45a27-0fab-4634-9847-cebb30219102
+    rubric_commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    total: 11
+    maximum: 72
+    tier: medium
+    thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+  C_historical_human:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/human/eip-7981.yaml
+    sha256: d6bacd2127c0c3a01fca32aef03605cdc7be3ca4b12c2d97900a1abbd5d9f3c2
+    event_commit: eb0d24aec552ce5ec5eca689a37f0eb47fe75203
+    rubric_commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    published_total: 6
+    recomputed_total: 6
+    maximum: 72
+    published_tier: low
+    recomputed_tier: low
+    thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+confounds:
+  input_alignment:
+    classification: substantive_drift
+    summary: 'Substantive intervening revisions: Re-parameterises the surcharge in terms of the EIP-7623
+      token abstraction. The two EIP-owned constants ACCESS_LIST_NONZERO_BYTE_COST and ACCESS_LIST_ZERO_BYTE_COST
+      are replaced in the parameter table by TOTAL_COST_FLOOR_PER_TOKEN = 10, sourced from EIP-7623, and
+      the formula becomes access_list_tokens = nonzero * 4 + zero followed by access_list_data_cost =
+      access_list_tokens * TOTAL_COST_FLOOR_PER_TOKEN. Description, Abstract and Motivation are rewritten
+      (adding the ''~21% worst-case block size reduction'' claim and the ''contributing to EVM gas while
+      still leaving a non-negligible data footprint'' framing); ''Maximum Block Size Impact'' is renamed
+      ''Access List Size Impact'' and recomputed at a 60M gas limit (1012 KB -> 604 KB); a new ''Maximum
+      Block Size Impact'' section states the Snappy-compressed maximum falls from 2.71 MiB to 2.13 MiB.
+      The description acquires the typo ''footpring''.'
+    classification_source: research/tasks/01-fork-eip-history/outputs/eips/eip-7981.yaml
+  intervening_eip_commits:
+  - id: eip7981-e03
+    event_kind: revision
+    authored_at: '2025-09-04T14:47:19+02:00'
+    committed_at: '2025-09-04T12:47:19+00:00'
+    commit: 5aea12c20ee27b3d85f7c2ec9e6a09e451fd81f0
+    path: EIPS/eip-7981.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Re-parameterises the surcharge in terms of the EIP-7623 token abstraction. The two EIP-owned
+      constants ACCESS_LIST_NONZERO_BYTE_COST and ACCESS_LIST_ZERO_BYTE_COST are replaced in the parameter
+      table by TOTAL_COST_FLOOR_PER_TOKEN = 10, sourced from EIP-7623, and the formula becomes access_list_tokens
+      = nonzero * 4 + zero followed by access_list_data_cost = access_list_tokens * TOTAL_COST_FLOOR_PER_TOKEN.
+      Description, Abstract and Motivation are rewritten (adding the '~21% worst-case block size reduction'
+      claim and the 'contributing to EVM gas while still leaving a non-negligible data footprint' framing);
+      'Maximum Block Size Impact' is renamed 'Access List Size Impact' and recomputed at a 60M gas limit
+      (1012 KB -> 604 KB); a new 'Maximum Block Size Impact' section states the Snappy-compressed maximum
+      falls from 2.71 MiB to 2.13 MiB. The description acquires the typo 'footpring'.
+    rationale: The effective rates are numerically unchanged (4 tokens * 10 = 40 gas per non-zero byte,
+      1 token * 10 = 10 gas per zero byte), but the EIP stops owning its pricing constants and instead
+      derives them from another EIP's TOTAL_COST_FLOOR_PER_TOKEN. That makes the charge track future changes
+      to EIP-7623 - as the next two revisions demonstrate - so it is a substantive change to the specification
+      even though no gas value moves in this commit.
+    change_group: null
+    confidence: high
+    source_ids:
+    - eips-commit-5aea12c20ee2
+    - gh-pr-map-eip-7981
+  template_match:
+    classification: exact
+    rationale: Anchor inventory, definitions, score domains, nominal maximum, and thresholds match.
+  human_timing_exposure:
+    classification: high_exposure
+    rationale: The assessment reasons from an existing intrinsic-gas calculator interface used by many
+      access-list tests.
+    evidence_source: the exact historical human assessment blob
+clean_comparison:
+  eligible: false
+  failed_conditions:
+  - substantive_or_unknown_eip_input_drift
+  low_exposure_eligible: false
+totals:
+  b_minus_c: 5
+  absolute_b_minus_c: 5
+  a_minus_b: 0
+  b_vs_c_exact_total_agreement: false
+  b_vs_c_tier_agreement: false
+  cross_rubric_warning: A and B use different row inventories, nominal maxima, and thresholds; A-minus-B
+    is descriptive rubric sensitivity, not a like-for-like scale estimate.
+historical_anchor_comparison:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  human_raw_score_cell: '2'
+  human_parsed_terms:
+  - 2
+  human_normalized_contribution: 2
+  automated_historical_score: 1
+  b_minus_c: -1
+  absolute_error: 1
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  human_raw_score_cell: '2'
+  human_parsed_terms:
+  - 2
+  human_normalized_contribution: 2
+  automated_historical_score: 1
+  b_minus_c: -1
+  absolute_error: 1
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: cryptography
+  label: Cryptography-related testing
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  human_raw_score_cell: '1'
+  human_parsed_terms:
+  - 1
+  human_normalized_contribution: 1
+  automated_historical_score: 1
+  b_minus_c: 0
+  absolute_error: 0
+- id: block_syncing_changes
+  label: Block syncing changes
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: engine_api_changes
+  label: Engine API changes
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: engine_api_encoding_changes
+  label: Engine API encoding changes
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_system_contracts
+  label: Added system contracts
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_system_contracts
+  label: Modified system contracts
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_opcodes
+  label: Added opcodes
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_opcodes
+  label: Modified opcodes
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_precompiles
+  label: Added precompiles
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_precompiles
+  label: Modified precompiles
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_transaction_types
+  label: New transaction types
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  human_raw_score_cell: '1'
+  human_parsed_terms:
+  - 1
+  human_normalized_contribution: 1
+  automated_historical_score: 2
+  b_minus_c: 1
+  absolute_error: 1
+- id: new_block_header_fields
+  label: New block / header fields
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: performance_risks
+  label: Performance risks
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 2
+  b_minus_c: 2
+  absolute_error: 2
+- id: security_risks
+  label: Security risks
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 2
+  b_minus_c: 2
+  absolute_error: 2
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  human_raw_score_cell: ''
+  human_parsed_terms: []
+  human_normalized_contribution: 0
+  automated_historical_score: 2
+  b_minus_c: 2
+  absolute_error: 2
+rubric_revision_mapping:
+- revision_1_id: evm_gas_rule_changes
+  revision_1_label: EVM Gas rule changes
+  revision_1_score: 1
+  status: exact
+  revision_2_ids:
+  - evm_gas_rule_changes
+  revision_2_scores:
+  - 1
+- revision_1_id: blob_gas_accounting_changes
+  revision_1_label: Blob gas accounting changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - blob_gas_accounting_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: new_evm_gas_refund
+  revision_1_label: New EVM gas refund
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_evm_gas_refund
+  revision_2_scores:
+  - 0
+- revision_1_id: patterns_affecting_pre_existing_tests
+  revision_1_label: Patterns affecting pre-existing tests
+  revision_1_score: 1
+  status: exact
+  revision_2_ids:
+  - patterns_affecting_pre_existing_tests
+  revision_2_scores:
+  - 2
+- revision_1_id: transition_tool_interface_changes
+  revision_1_label: Transition-tool interface changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - transition_tool_interface_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: cryptography
+  revision_1_label: Cryptography-related testing
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - cryptography
+  revision_2_scores:
+  - 0
+- revision_1_id: edge_boundary_conditions
+  revision_1_label: Edge/boundary conditions
+  revision_1_score: 1
+  status: exact
+  revision_2_ids:
+  - edge_boundary_conditions
+  revision_2_scores:
+  - 1
+- revision_1_id: block_syncing_changes
+  revision_1_label: Block syncing changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - block_syncing_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: engine_api_changes
+  revision_1_label: Engine API changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - engine_api_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: engine_api_encoding_changes
+  revision_1_label: Engine API encoding changes
+  revision_1_score: 0
+  status: revision_1_only
+  revision_2_ids:
+  - encoding_changes_rlp_ssz
+  revision_2_scores:
+  - 0
+- revision_1_id: added_system_contracts
+  revision_1_label: Added system contracts
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_system_contracts
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_system_contracts
+  revision_1_label: Modified system contracts
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_system_contracts
+  revision_2_scores:
+  - 0
+- revision_1_id: added_opcodes
+  revision_1_label: Added opcodes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_opcodes
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_opcodes
+  revision_1_label: Modified opcodes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_opcodes
+  revision_2_scores:
+  - 0
+- revision_1_id: added_precompiles
+  revision_1_label: Added precompiles
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_precompiles
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_precompiles
+  revision_1_label: Modified precompiles
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_precompiles
+  revision_2_scores:
+  - 0
+- revision_1_id: encoding_changes_rlp_ssz
+  revision_1_label: Encoding changes (RLP/SSZ)
+  revision_1_score: 0
+  status: changed
+  revision_2_ids:
+  - encoding_changes_rlp_ssz
+  revision_2_scores:
+  - 0
+- revision_1_id: new_transaction_types
+  revision_1_label: New transaction types
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_transaction_types
+  revision_2_scores:
+  - 0
+- revision_1_id: new_or_modified_transaction_validity_mechanisms
+  revision_1_label: New or modified transaction validity mechanisms
+  revision_1_score: 2
+  status: exact
+  revision_2_ids:
+  - new_or_modified_transaction_validity_mechanisms
+  revision_2_scores:
+  - 2
+- revision_1_id: new_block_header_fields
+  revision_1_label: New block / header fields
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_block_header_fields
+  revision_2_scores:
+  - 0
+- revision_1_id: new_fork_activation_mechanism
+  revision_1_label: New fork activation mechanism
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_fork_activation_mechanism
+  revision_2_scores:
+  - 0
+- revision_1_id: performance_risks
+  revision_1_label: Performance risks
+  revision_1_score: 2
+  status: exact
+  revision_2_ids:
+  - performance_risks
+  revision_2_scores:
+  - 1
+- revision_1_id: security_risks
+  revision_1_label: Security risks
+  revision_1_score: 2
+  status: exact
+  revision_2_ids:
+  - security_risks
+  revision_2_scores:
+  - 2
+- revision_1_id: cross_eip_interactions
+  revision_1_label: Cross-EIP interactions
+  revision_1_score: 2
+  status: changed
+  revision_2_ids:
+  - cross_eip_interactions
+  revision_2_scores:
+  - 2
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - state_access_ordering_within_opcode_execution
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - state_gas_accounting_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - new_invariant_on_pre_existing_tests
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - new_test_framework_primitives
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - unspecified_behavior_requiring_cross_client_consensus
+  revision_2_scores:
+  - 0
+notes:
+  factual_disagreement: Not independently adjudicated; a nonzero anchor delta alone does not establish
+    a factual error.
+  rubric_interpretation:
+  - The historical Engine API encoding changes row lacks a dedicated definition in the source template.
+  - Rows marked changed or revision-specific in rubric_revision_mapping are not forced into one-to-one
+    equivalence.
+  evaluator_judgment:
+  - evm_gas_rule_changes
+  - patterns_affecting_pre_existing_tests
+  - new_or_modified_transaction_validity_mechanisms
+  - performance_risks
+  - security_risks
+  - cross_eip_interactions
+  input_drift: 'Substantive intervening revisions: Re-parameterises the surcharge in terms of the EIP-7623
+    token abstraction. The two EIP-owned constants ACCESS_LIST_NONZERO_BYTE_COST and ACCESS_LIST_ZERO_BYTE_COST
+    are replaced in the parameter table by TOTAL_COST_FLOOR_PER_TOKEN = 10, sourced from EIP-7623, and
+    the formula becomes access_list_tokens = nonzero * 4 + zero followed by access_list_data_cost = access_list_tokens
+    * TOTAL_COST_FLOOR_PER_TOKEN. Description, Abstract and Motivation are rewritten (adding the ''~21%
+    worst-case block size reduction'' claim and the ''contributing to EVM gas while still leaving a non-negligible
+    data footprint'' framing); ''Maximum Block Size Impact'' is renamed ''Access List Size Impact'' and
+    recomputed at a 60M gas limit (1012 KB -> 604 KB); a new ''Maximum Block Size Impact'' section states
+    the Snappy-compressed maximum falls from 2.71 MiB to 2.13 MiB. The description acquires the typo ''footpring''.'
+  parsing:
+  - Blank cells are interpreted as zero only because the published total exactly equals the sum of every
+    nonblank parsed contribution.
+provenance:
+  comparison_script:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/compare.py
+    sha256: b901d696ef904ef5e0a7bfc66bed200ea1e9a0dfe5a15f02b70603e36ae729fd
+  automated_freeze:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated-freeze.yaml
+    sha256: 37b7eb14ddb572c7d5731814b059c4c87574075956fd296e0cca7b1bd9518d87
+  consumed_inputs:
+  - path: research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips/amsterdam/eip-7981.yaml
+    sha256: 76937733b242460b4a891574c82fbd31cdd9027eb5add0c845e13a6a8c63a67b
+  - path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated/eip-7981.yaml
+    sha256: da14a23b399011cca800703c0ac400f8d73c18cbe45d8f356520e866a888e681
+  - path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/human/eip-7981.yaml
+    sha256: d6bacd2127c0c3a01fca32aef03605cdc7be3ca4b12c2d97900a1abbd5d9f3c2
+  generated_at: '2026-08-25T15:39:15.680517Z'

@@ -1,0 +1,1456 @@
+schema_version: 1
+task_id: 05c-amsterdam-human-assessment-alignment-comparison
+fork_id: amsterdam
+eip:
+  number: 7928
+  title: Block-Level Access Lists
+  layers:
+  - execution
+observations:
+  A_current_rubric_automated:
+    path: research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips/amsterdam/eip-7928.yaml
+    sha256: 3b2272986a041633b681ebcae0b5678d6d59ed6c0f94ef3bd279efe6689e0ffe
+    session_id: assessment-run-64884d10-8a55-4b61-be66-691ef1ac1ac7
+    rubric_revision: 2
+    total: 40
+    maximum: 84 nominal across 28 rows; Cross-EIP interactions is uncapped
+    tier: high
+    thresholds:
+      low: <12
+      medium: '>=12 and <23'
+      high: '>=23'
+  B_historical_rubric_automated:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated/eip-7928.yaml
+    sha256: 900cf876cd5ac525a1cb588e8ad63f04d9c0a0980aeb90c665044d79b5074de2
+    session_id: assessment-run-98b07134-fd92-4a4f-8aa7-1824ca05f3f2
+    rubric_commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    total: 26
+    maximum: 72
+    tier: high
+    thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+  C_historical_human:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/human/eip-7928.yaml
+    sha256: b0ff6c50cbc4542bd8f14d47fb407f43d939c03bc43a58eaed6252036844e7b3
+    event_commit: 6d744f3a809a69182166c8c76e793ac2fcb34bd4
+    rubric_commit: d936bcb34963cb5eec015dada2e4188e49fc14d5
+    published_total: 29
+    recomputed_total: 29
+    maximum: 72
+    published_tier: high
+    recomputed_tier: high
+    thresholds:
+      low:
+        minimum: 0
+        maximum: 9
+      medium:
+        minimum: 10
+        maximum: 19
+      high:
+        minimum: 20
+        maximum: null
+confounds:
+  input_alignment:
+    classification: substantive_drift
+    summary: 'Substantive intervening revisions: Renames header field bal_hash->block_access_list_hash,
+      specifies system-contract changes use tx_index = len(transactions) + 1, adds the rule that EIP-2930
+      access-list entries MUST NOT be auto-included, and extends the example. | Code changes now also
+      track EIP-7702 delegation indicators. | Fixes system-contract tx_index from len(transactions) +
+      1 to len(transactions) throughout text, example and pseudocode. | Splits system-contract handling
+      into pre-execution (tx_index = len(transactions)) and post-execution (len(transactions) + 1) phases,
+      adds the explicit EIP-4895 reference for withdrawal recipients, restricts recipient balance recording
+      to value > 0, and rebuilds the example with lexicographic ordering. | Switches BAL encoding from
+      SSZ to RLP, introduces BlockAccessIndex (0 = pre-execution, 1..n = transactions, n+1 = post-execution),
+      widens Balance to uint256, adds Engine API validation flow, and fixes the eip-7792.md link typo
+      to eip-7702.md. | Fixes the block-hash system-contract address in the example from 0x...0001 to
+      the actual EIP-2935 address 0x0000F90827F1C53a10cb7A02335B175320002935. | Restructures the Specification
+      into dedicated sections (Scope and Inclusion, Ordering and Determinism, BlockAccessIndex Assignment,
+      Recording Semantics, Edge Cases (Normative), Engine API); adds the Engine API statement that the
+      EL provides both block_access_list and block_access_list_hash in the ExecutionPayload; updates description
+      frontmatter and size figure (~45 KiB). | Specifies empty-BAL encoding: header hash is keccak256(rlp.encode([]))
+      and the body field is the empty RLP list 0xc0; converts bullets to hyphen style. | Expands the exceptional-halts
+      rule (accessed addresses of reverted calls MUST be included; reads appear in storage_reads) and
+      downgrades validation-by-comparison from MUST (per EIP-2929) to MAY, dropping that EIP-2929 reference.
+      | Splits SENDALL from SELFDESTRUCT and defines the in-transaction selfdestruct canonical signal
+      (nonce 0, empty code, zero balance at that index). | Reverses the previous selfdestruct signal:
+      destroyed-in-transaction accounts are included without balance/nonce/code changes; touched storage
+      keys become storage_reads. | Adds a precompiled-contracts edge case: precompiles MUST be included
+      when accessed, with a balance change if they receive value. | Expands the MUST-include list (opcode
+      targets, reverting calls, failed CREATE targets, senders/recipients, coinbase, selfdestruct beneficiaries,
+      system contracts, withdrawal recipients, precompiles), adds the no-op-write pre-value check note,
+      and adds an EIP-7702 delegations edge case. | In-transaction selfdestruct: if the account had a
+      positive pre-transaction balance, the balance change to zero MUST be recorded. | Restricts EIP-7702
+      tracking to successful delegations and rewrites authority/delegation-target inclusion rules (empty
+      change set on invalid-nonce failure; target only when actually loaded). | Adds the unaltered-balance
+      rule (post == pre MUST NOT be recorded), extends balance recording to CALL/CALLCODE senders and
+      recipients and CREATE/CREATE2 recipients, and conditions failed-authorization inclusion on accessed_addresses
+      per EIP-2929. | Specifies Engine API structures and methods: ExecutionPayloadV4 with blockAccessList,
+      engine_newPayloadV5, engine_getPayloadV6; CL computes the SSZ hash_tree_root. | Rewrites the ordering
+      rules per-field (accounts, storage_changes, storage_reads, balance/nonce/code_changes ordered by
+      block access index). | Deletes the MAX_* constants block entirely (MAX_TXS, MAX_SLOTS, MAX_ACCOUNTS,
+      MAX_CODE_SIZE, MAX_CODE_CHANGES) and adds the zero-value block-reward recipient rule. | Refines
+      the zero-value block-reward wording: no balance change and no read-only inclusion; include with
+      a balance change only when the reward is positive. | Adds the COINBASE / fee-recipient edge case
+      (include on any state change; exclude in empty blocks; include as a read when the reward is zero)
+      and normalizes Coinbase->COINBASE. | Type aliases: Address bytes->bytes20, StorageKey/StorageValue
+      bytes->bytes32, CodeData->Bytecode; balance recording text uint128->uint256. | Changes StorageKey
+      and StorageValue from bytes32 to uint256. | Adds the rule that call-operation targets are included
+      only if gas checks (memory expansion, access cost, transfer cost) pass before state access. | SYSTEM_ADDRESS
+      (0xffff...fffe) MUST NOT be included unless it experiences state access itself. | Adds inclusion
+      of deployed contract addresses from calls with initcode to empty addresses (e.g., calling 0x0 with
+      initcode). | Removes the BAL from the EL block body (stored separately, transmitted in the ExecutionPayload),
+      specifies the block-processing flow, adds engine_getBALsByHashV1/engine_getBALsByRangeV1 retrieval
+      methods and a retention requirement, and updates the abstract (parallel state-root computation)
+      and size figure (~70 KiB). | Despite the ''fix linter issues'' subject, changes the BAL retention
+      requirement from ''until the last finalized checkpoint'' to ''the weak subjectivity period (=3533
+      epochs)'' (plus formatting fixes). | Rewrites the EIP-7702 delegation edge case: authority included
+      on successful set/update/clear; inclusion on failed authorization depends on whether the authority
+      was loaded; delegation target included only when loaded as an execution target. | Adds that spurious
+      entries MAY be detected by validating BAL indices, which MUST never exceed len(transactions) + 1;
+      fixes typos. | COINBASE included if the block contains transactions or withdrawals; withdrawal recipients
+      included regardless of the withdrawal amount. | Replaces engine_getBALsByHashV1/RangeV1 with engine_getPayloadBodiesByHashV2/RangeV2
+      returning ExecutionPayloadBodyV2 (blockAccessList null for pre-Amsterdam or pruned blocks). | Adds
+      the ''Gas Validation Before State Access'' section: pre-/post-state validation phases, a per-opcode
+      pre-state gas table anchored to EIP-2929 constants, EIP-7702 delegation resolution rules and the
+      SSTORE stipend check. | CREATE/CREATE2 targets included only ''if the target account is accessed'';
+      COINBASE inclusion narrowed to withdrawals to the COINBASE address; storage_read->storage_reads
+      naming and wording fixes. | Adds the Block Access List Size Constraint: bal_items * ITEM_COST <=
+      available_gas + system_allowance, with constants from EIP-7002 and EIP-7251. | Adds the ''Early
+      Rejection of Malicious BALs'' security consideration: clients SHOULD enforce G_remaining >= R_remaining
+      * 2000 at transaction boundaries against phantom storage reads. | Simplifies the size cap to bal_items
+      <= block_gas_limit // ITEM_COST with ITEM_COST = 2000, justified via the EIP-7981 cold-SLOAD floor;
+      specifies EIP-7002/7251 queue-data slots appearing as storage_reads. | Adds uniqueness constraints:
+      unique addresses, storage keys at most once per list, no key in both storage_changes and storage_reads,
+      unique block_access_index per change list. | Adds an implementation note: the BAL need not enter
+      the state transition function; implementations MAY validate a virtual BAL hash against the header
+      (execution-specs approach). | Fixes contradictory fee-recipient rules: removes the COINBASE bullet
+      from the MUST-include list; COINBASE now follows the same inclusion rules as any account; zero-value
+      block rewards no longer force inclusion. | Widens BlockAccessIndex uint16->uint64 and specifies
+      CL-side storage: BAL as an SSZ ExecutionPayload field, prunable to its hash_tree_root. | Adjusts
+      BlockAccessIndex from uint64 to uint32.'
+    classification_source: research/tasks/01-fork-eip-history/outputs/eips/eip-7928.yaml
+  intervening_eip_commits:
+  - id: eip7928-e21
+    event_kind: revision
+    authored_at: '2025-08-05T14:02:21+02:00'
+    committed_at: '2025-08-05T12:02:21+00:00'
+    commit: 577232c6d1aba03e21677b538e9076a54c5f0ff6
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Renames header field bal_hash->block_access_list_hash, specifies system-contract changes
+      use tx_index = len(transactions) + 1, adds the rule that EIP-2930 access-list entries MUST NOT be
+      auto-included, and extends the example.
+    rationale: Changes header naming, index assignment and adds a normative exclusion rule tightening
+      the EIP-2930 relationship.
+    change_group: cg-system-contract-handling
+    confidence: high
+    source_ids:
+    - git-eip7928-577232c6d1ab
+  - id: eip7928-e22
+    event_kind: revision
+    authored_at: '2025-08-11T09:31:38+02:00'
+    committed_at: '2025-08-11T07:31:38+00:00'
+    commit: e8bf55aa9a3736b38b229f7396f51aca164be430
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Code changes now also track EIP-7702 delegation indicators.
+    rationale: Expands the normative scope of code_changes.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-e8bf55aa9a37
+  - id: eip7928-e23
+    event_kind: revision
+    authored_at: '2025-08-11T13:55:51+02:00'
+    committed_at: '2025-08-11T11:55:51+00:00'
+    commit: 293637c061f62268fb9c8bda42b110f2f5ce3b7b
+    path: EIPS/eip-7928.md
+    change_type: parameter
+    semantic_effect: substantive
+    summary: Fixes system-contract tx_index from len(transactions) + 1 to len(transactions) throughout
+      text, example and pseudocode.
+    rationale: Changes a concrete index value used in consensus data.
+    change_group: cg-system-contract-handling
+    confidence: high
+    source_ids:
+    - git-eip7928-293637c061f6
+  - id: eip7928-e24
+    event_kind: revision
+    authored_at: '2025-08-14T13:36:59+02:00'
+    committed_at: '2025-08-14T11:36:59+00:00'
+    commit: 346fbe44617dfeb83298c117cad7b6370a53abbf
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Splits system-contract handling into pre-execution (tx_index = len(transactions)) and post-execution
+      (len(transactions) + 1) phases, adds the explicit EIP-4895 reference for withdrawal recipients,
+      restricts recipient balance recording to value > 0, and rebuilds the example with lexicographic
+      ordering.
+    rationale: Changes index assignment and balance-recording rules; introduces the EIP-4895 reference
+      (see dependency_history).
+    change_group: cg-system-contract-handling
+    confidence: high
+    source_ids:
+    - git-eip7928-346fbe44617d
+  - id: eip7928-e25
+    event_kind: revision
+    authored_at: '2025-08-16T09:38:45+02:00'
+    committed_at: '2025-08-16T07:38:45+00:00'
+    commit: 1e2741c16890472e1d6d6f7b5f11c7c196609b99
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Switches BAL encoding from SSZ to RLP, introduces BlockAccessIndex (0 = pre-execution, 1..n
+      = transactions, n+1 = post-execution), widens Balance to uint256, adds Engine API validation flow,
+      and fixes the eip-7792.md link typo to eip-7702.md.
+    rationale: Fundamental encoding and index-semantics change.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-1e2741c16890
+  - id: eip7928-e26
+    event_kind: revision
+    authored_at: '2025-08-18T15:35:10+02:00'
+    committed_at: '2025-08-18T13:35:10+00:00'
+    commit: 91529b376fc31ce154190e5e748b268365e3f26f
+    path: EIPS/eip-7928.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Fixes the block-hash system-contract address in the example from 0x...0001 to the actual
+      EIP-2935 address 0x0000F90827F1C53a10cb7A02335B175320002935.
+    rationale: Example-only change, but the previous address was factually wrong; borderline with editorial.
+    change_group: cg-system-contract-handling
+    confidence: medium
+    source_ids:
+    - git-eip7928-91529b376fc3
+  - id: eip7928-e27
+    event_kind: revision
+    authored_at: '2025-08-22T10:14:11+02:00'
+    committed_at: '2025-08-22T08:14:11+00:00'
+    commit: 667c51fa84bd62c149894e135438884fa20f5619
+    path: EIPS/eip-7928.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Restructures the Specification into dedicated sections (Scope and Inclusion, Ordering and
+      Determinism, BlockAccessIndex Assignment, Recording Semantics, Edge Cases (Normative), Engine API);
+      adds the Engine API statement that the EL provides both block_access_list and block_access_list_hash
+      in the ExecutionPayload; updates description frontmatter and size figure (~45 KiB).
+    rationale: Mostly reorganization, but the Engine API paragraph adds new interface content.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-667c51fa84bd
+  - id: eip7928-e28
+    event_kind: revision
+    authored_at: '2025-09-19T08:20:18-06:00'
+    committed_at: '2025-09-19T22:20:18+08:00'
+    commit: 923722a9ba1a5ed88479a02ebe16eac0447a2bba
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Specifies empty-BAL encoding: header hash is keccak256(rlp.encode([])) and the body field
+      is the empty RLP list 0xc0; converts bullets to hyphen style.'
+    rationale: Defines consensus-relevant behavior for the no-state-changes case.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-923722a9ba1a
+  - id: eip7928-e29
+    event_kind: revision
+    authored_at: '2025-09-22T13:53:11+02:00'
+    committed_at: '2025-09-22T11:53:11+00:00'
+    commit: 7c028ae22339ca223a16acdc22f07718c5469910
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Expands the exceptional-halts rule (accessed addresses of reverted calls MUST be included;
+      reads appear in storage_reads) and downgrades validation-by-comparison from MUST (per EIP-2929)
+      to MAY, dropping that EIP-2929 reference.
+    rationale: Changes inclusion requirements and a conformance requirement level; removes an explicit
+      EIP-2929 reference (see dependency_history).
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-7c028ae22339
+  - id: eip7928-e30
+    event_kind: revision
+    authored_at: '2025-09-23T18:38:11+02:00'
+    committed_at: '2025-09-23T16:38:11+00:00'
+    commit: 057987423e93d49eeaa99e9d42a0cee8966d4c99
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Splits SENDALL from SELFDESTRUCT and defines the in-transaction selfdestruct canonical signal
+      (nonce 0, empty code, zero balance at that index).
+    rationale: New normative edge-case semantics.
+    change_group: cg-selfdestruct-semantics
+    confidence: high
+    source_ids:
+    - git-eip7928-057987423e93
+  - id: eip7928-e31
+    event_kind: revision
+    authored_at: '2025-09-25T08:06:59+02:00'
+    committed_at: '2025-09-25T06:06:59+00:00'
+    commit: 115b460c3953133941348d208aa2beae5a663fd6
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Reverses the previous selfdestruct signal: destroyed-in-transaction accounts are included
+      without balance/nonce/code changes; touched storage keys become storage_reads.'
+    rationale: Changes the normative recording of in-transaction selfdestructs.
+    change_group: cg-selfdestruct-semantics
+    confidence: high
+    source_ids:
+    - git-eip7928-115b460c3953
+  - id: eip7928-e32
+    event_kind: revision
+    authored_at: '2025-09-25T11:30:00+02:00'
+    committed_at: '2025-09-25T09:30:00+00:00'
+    commit: ad2c1e15fd58522c4824a8217f0c52d1b81d21e4
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds a precompiled-contracts edge case: precompiles MUST be included when accessed, with
+      a balance change if they receive value.'
+    rationale: New normative inclusion rule.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-ad2c1e15fd58
+  - id: eip7928-e33
+    event_kind: revision
+    authored_at: '2025-09-26T11:46:49+02:00'
+    committed_at: '2025-09-26T09:46:49+00:00'
+    commit: 613fcc426884471ddb91e263a2cf68da51da141f
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Expands the MUST-include list (opcode targets, reverting calls, failed CREATE targets, senders/recipients,
+      coinbase, selfdestruct beneficiaries, system contracts, withdrawal recipients, precompiles), adds
+      the no-op-write pre-value check note, and adds an EIP-7702 delegations edge case.
+    rationale: Substantially extends normative inclusion requirements.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-613fcc426884
+  - id: eip7928-e34
+    event_kind: revision
+    authored_at: '2025-09-29T13:11:38+02:00'
+    committed_at: '2025-09-29T11:11:38+00:00'
+    commit: 35748d5bbda41b0de484c4cd8fa0fd0643fe1b33
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'In-transaction selfdestruct: if the account had a positive pre-transaction balance, the
+      balance change to zero MUST be recorded.'
+    rationale: Refines a normative edge case.
+    change_group: cg-selfdestruct-semantics
+    confidence: high
+    source_ids:
+    - git-eip7928-35748d5bbda4
+  - id: eip7928-e35
+    event_kind: revision
+    authored_at: '2025-10-04T11:17:18+02:00'
+    committed_at: '2025-10-04T09:17:18+00:00'
+    commit: 27d7c9e30f44fbedc2c675d65409a81316248729
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Restricts EIP-7702 tracking to successful delegations and rewrites authority/delegation-target
+      inclusion rules (empty change set on invalid-nonce failure; target only when actually loaded).
+    rationale: Changes normative 7702 recording conditions.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-27d7c9e30f44
+  - id: eip7928-e36
+    event_kind: revision
+    authored_at: '2025-10-13T13:46:27+02:00'
+    committed_at: '2025-10-13T11:46:27+00:00'
+    commit: 3a1baa18422f5bbbb1bc96af95b4b80375e8f2e8
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds the unaltered-balance rule (post == pre MUST NOT be recorded), extends balance recording
+      to CALL/CALLCODE senders and recipients and CREATE/CREATE2 recipients, and conditions failed-authorization
+      inclusion on accessed_addresses per EIP-2929.
+    rationale: Changes balance-recording semantics; re-introduces the explicit EIP-2929 reference (see
+      dependency_history).
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-3a1baa18422f
+  - id: eip7928-e37
+    event_kind: revision
+    authored_at: '2025-10-14T14:41:42+02:00'
+    committed_at: '2025-10-14T12:41:42+00:00'
+    commit: f6c05d8827f22d4cb50fffcf7bbd10d1b45e85e1
+    path: EIPS/eip-7928.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Specifies Engine API structures and methods: ExecutionPayloadV4 with blockAccessList, engine_newPayloadV5,
+      engine_getPayloadV6; CL computes the SSZ hash_tree_root.'
+    rationale: New external interface definitions.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-f6c05d8827f2
+  - id: eip7928-e38
+    event_kind: revision
+    authored_at: '2025-10-14T22:29:44+02:00'
+    committed_at: '2025-10-14T20:29:44+00:00'
+    commit: cb7d3ec59ab77aed4eed2a18a1c9d50b43f9c0dd
+    path: EIPS/eip-7928.md
+    change_type: dependency
+    semantic_effect: non_substantive
+    summary: Adds a citation that MAX_CODE_SIZE = 24_576 is 'as defined in EIP-170'.
+    rationale: Comment-only provenance citation for an existing constant; introduces an explicit EIP-170
+      reference (see dependency_history) without changing behavior.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - git-eip7928-cb7d3ec59ab7
+  - id: eip7928-e39
+    event_kind: revision
+    authored_at: '2025-10-14T23:26:26+02:00'
+    committed_at: '2025-10-14T21:26:26+00:00'
+    commit: 8d1fa390193ecbc21e1b5736a107aadc00342aaf
+    path: EIPS/eip-7928.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: Rewrites the ordering rules per-field (accounts, storage_changes, storage_reads, balance/nonce/code_changes
+      ordered by block access index).
+    rationale: Materially sharpens consensus-critical ordering requirements.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-8d1fa390193e
+  - id: eip7928-e40
+    event_kind: revision
+    authored_at: '2025-10-16T16:36:11+02:00'
+    committed_at: '2025-10-16T14:36:11+00:00'
+    commit: 775c98c4d8e4a62ac1f1619042125ff7b9a76795
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Deletes the MAX_* constants block entirely (MAX_TXS, MAX_SLOTS, MAX_ACCOUNTS, MAX_CODE_SIZE,
+      MAX_CODE_CHANGES) and adds the zero-value block-reward recipient rule.
+    rationale: Removes normative size limits and adds an inclusion rule; the deletion also removes the
+      EIP-170 citation (see dependency_history).
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-775c98c4d8e4
+  - id: eip7928-e41
+    event_kind: revision
+    authored_at: '2025-10-19T19:55:09+02:00'
+    committed_at: '2025-10-19T17:55:09+00:00'
+    commit: 68efdc9c86ea6465239e6fb469378cfbc05990b3
+    path: EIPS/eip-7928.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Refines the zero-value block-reward wording: no balance change and no read-only inclusion;
+      include with a balance change only when the reward is positive.'
+    rationale: Materially clarifies a normative inclusion condition.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-68efdc9c86ea
+  - id: eip7928-e42
+    event_kind: revision
+    authored_at: '2025-10-23T16:36:30+02:00'
+    committed_at: '2025-10-23T14:36:30+00:00'
+    commit: af4d0bbb478059e50943cb107c751904bff3be4d
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds the COINBASE / fee-recipient edge case (include on any state change; exclude in empty
+      blocks; include as a read when the reward is zero) and normalizes Coinbase->COINBASE.
+    rationale: New normative inclusion rules for the fee recipient.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-af4d0bbb4780
+  - id: eip7928-e43
+    event_kind: revision
+    authored_at: '2025-10-31T20:20:26+08:00'
+    committed_at: '2025-10-31T12:20:26+00:00'
+    commit: 7b818e59dccaad7aa1e464943191e4c762b1eda0
+    path: EIPS/eip-7928.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Type aliases: Address bytes->bytes20, StorageKey/StorageValue bytes->bytes32, CodeData->Bytecode;
+      balance recording text uint128->uint256.'
+    rationale: Changes normative type definitions (and completes the earlier uint256 balance change in
+      prose).
+    change_group: cg-bytecode-type-rename
+    confidence: high
+    source_ids:
+    - git-eip7928-7b818e59dcca
+  - id: eip7928-e44
+    event_kind: revision
+    authored_at: '2025-11-27T03:09:39+08:00'
+    committed_at: '2025-11-27T03:09:39+08:00'
+    commit: 6c6b1e72412460d9888e47f3549b2c926cf13b19
+    path: EIPS/eip-7928.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Changes StorageKey and StorageValue from bytes32 to uint256.
+    rationale: Changes normative RLP type definitions.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-6c6b1e724124
+  - id: eip7928-e45
+    event_kind: revision
+    authored_at: '2025-12-02T22:49:25+01:00'
+    committed_at: '2025-12-02T21:49:25+00:00'
+    commit: 6f8ac7b8e8504d93b2f4b363944ad61f0234c99a
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds the rule that call-operation targets are included only if gas checks (memory expansion,
+      access cost, transfer cost) pass before state access.
+    rationale: New normative inclusion condition for BAL entries.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-6f8ac7b8e850
+  - id: eip7928-e46
+    event_kind: revision
+    authored_at: '2025-12-09T12:25:29-07:00'
+    committed_at: '2025-12-09T19:25:29+00:00'
+    commit: c6a485b4b797f452b5ff7ebbfd082a16ce5abaa7
+    path: EIPS/eip-7928.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds a link to the updated 60M-gas BAL size analysis in assets.
+    rationale: Informational link only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-c6a485b4b797
+  - id: eip7928-e47
+    event_kind: revision
+    authored_at: '2025-12-10T14:03:25-07:00'
+    committed_at: '2025-12-10T21:03:25+00:00'
+    commit: 293d1a708b7e504b4823c04aab727bdd63ad2c2c
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: SYSTEM_ADDRESS (0xffff...fffe) MUST NOT be included unless it experiences state access itself.
+    rationale: New normative exclusion rule.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-293d1a708b7e
+  - id: eip7928-e48
+    event_kind: revision
+    authored_at: '2025-12-11T10:28:03-05:00'
+    committed_at: '2025-12-11T15:28:03+00:00'
+    commit: 42a64362448487e1e671791448d7d1e728ef0c47
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds inclusion of deployed contract addresses from calls with initcode to empty addresses
+      (e.g., calling 0x0 with initcode).
+    rationale: New normative inclusion rule.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-42a643624484
+  - id: eip7928-e49
+    event_kind: revision
+    authored_at: '2025-12-11T23:48:56-05:00'
+    committed_at: '2025-12-12T04:48:56+00:00'
+    commit: c8f453f504f0c3c9ad44af08d01b58ae210502df
+    path: EIPS/eip-7928.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds a trailing period to the size-analysis link sentence (the substantive analysis change
+      happened in the assets file, outside this EIP file).
+    rationale: Punctuation-only change in this file.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-c8f453f504f0
+  - id: eip7928-e50
+    event_kind: revision
+    authored_at: '2025-12-15T18:08:59+09:00'
+    committed_at: '2025-12-15T17:08:59+08:00'
+    commit: 08055c3a5b98b7665774ee866ca42de2f3fbf8e8
+    path: EIPS/eip-7928.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Updates CodeChange to use the Bytecode alias, fixing the dangling CodeData name left over
+      from the earlier rename.
+    rationale: Consistency fix completing the CodeData->Bytecode rename; no semantic change since the
+      intended type was unambiguous. Borderline with interface change.
+    change_group: cg-bytecode-type-rename
+    confidence: medium
+    source_ids:
+    - git-eip7928-08055c3a5b98
+  - id: eip7928-e51
+    event_kind: revision
+    authored_at: '2025-12-16T19:31:24+01:00'
+    committed_at: '2025-12-16T18:31:24+00:00'
+    commit: e0c70bd6a51e53525297601bf9d8244391d7e825
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Removes the BAL from the EL block body (stored separately, transmitted in the ExecutionPayload),
+      specifies the block-processing flow, adds engine_getBALsByHashV1/engine_getBALsByRangeV1 retrieval
+      methods and a retention requirement, and updates the abstract (parallel state-root computation)
+      and size figure (~70 KiB).
+    rationale: Major change to block structure, Engine API surface and node obligations.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-e0c70bd6a51e
+  - id: eip7928-e52
+    event_kind: revision
+    authored_at: '2025-12-16T22:49:04+01:00'
+    committed_at: '2025-12-16T21:49:04+00:00'
+    commit: 0d1e88bcf8de24a5f8a58dd52b237616a756babf
+    path: EIPS/eip-7928.md
+    change_type: clarification
+    semantic_effect: non_substantive
+    summary: Replaces the 36M-gas size-consideration figures with a 60M-gas component breakdown (~72.4
+      KiB average) in the Rationale.
+    rationale: Informational size-analysis update in a non-normative section; does not change implementable
+      behavior.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - git-eip7928-0d1e88bcf8de
+  - id: eip7928-e53
+    event_kind: revision
+    authored_at: '2025-12-17T00:37:29+01:00'
+    committed_at: '2025-12-16T23:37:29+00:00'
+    commit: f7efd2acb666456d5e9237e02a8de5f54547e0ee
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Despite the 'fix linter issues' subject, changes the BAL retention requirement from 'until
+      the last finalized checkpoint' to 'the weak subjectivity period (=3533 epochs)' (plus formatting
+      fixes).
+    rationale: Changes a normative node obligation; flagged because the commit subject suggests formatting
+      only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-f7efd2acb666
+  - id: eip7928-e54
+    event_kind: revision
+    authored_at: '2025-12-25T11:03:18+01:00'
+    committed_at: '2025-12-25T10:03:18+00:00'
+    commit: ed02a9464d989a00a9bd22347568e3207b5438af
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Rewrites the EIP-7702 delegation edge case: authority included on successful set/update/clear;
+      inclusion on failed authorization depends on whether the authority was loaded; delegation target
+      included only when loaded as an execution target.'
+    rationale: Changes normative 7702 recording conditions.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-ed02a9464d98
+  - id: eip7928-e55
+    event_kind: revision
+    authored_at: '2025-12-29T15:20:03+01:00'
+    committed_at: '2025-12-29T14:20:03+00:00'
+    commit: f397e6ce2dfd15b6ea26e00fdaa228920fa13e5e
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Adds that spurious entries MAY be detected by validating BAL indices, which MUST never exceed
+      len(transactions) + 1; fixes typos.
+    rationale: Adds a normative bound on block_access_index values.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-f397e6ce2dfd
+  - id: eip7928-e56
+    event_kind: revision
+    authored_at: '2026-01-21T14:59:04+09:00'
+    committed_at: '2026-01-21T13:59:04+08:00'
+    commit: fb92e842cfb4463d151877028e4837f9c177184d
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: COINBASE included if the block contains transactions or withdrawals; withdrawal recipients
+      included regardless of the withdrawal amount.
+    rationale: Changes normative inclusion conditions.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-fb92e842cfb4
+  - id: eip7928-e57
+    event_kind: revision
+    authored_at: '2026-01-22T13:38:27+01:00'
+    committed_at: '2026-01-22T12:38:27+00:00'
+    commit: ac65351d4b681a288a400326183066fbcb6eb3dd
+    path: EIPS/eip-7928.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Replaces engine_getBALsByHashV1/RangeV1 with engine_getPayloadBodiesByHashV2/RangeV2 returning
+      ExecutionPayloadBodyV2 (blockAccessList null for pre-Amsterdam or pruned blocks).
+    rationale: Changes the Engine API retrieval interface.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-ac65351d4b68
+  - id: eip7928-e58
+    event_kind: revision
+    authored_at: '2026-01-27T09:22:22+01:00'
+    committed_at: '2026-01-27T16:22:22+08:00'
+    commit: 78143cb526938f7ce9176afe7b0be8af4a3c7ef8
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds the ''Gas Validation Before State Access'' section: pre-/post-state validation phases,
+      a per-opcode pre-state gas table anchored to EIP-2929 constants, EIP-7702 delegation resolution
+      rules and the SSTORE stipend check.'
+    rationale: Substantial new normative machinery governing BAL inclusion; deepens the EIP-2929 and EIP-7702
+      relationships (see dependency_history).
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-78143cb52693
+  - id: eip7928-e59
+    event_kind: revision
+    authored_at: '2026-02-03T09:48:16+01:00'
+    committed_at: '2026-02-03T08:48:16+00:00'
+    commit: fad1a1acab0a433970e47e0b73a4f8a28c220675
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: CREATE/CREATE2 targets included only 'if the target account is accessed'; COINBASE inclusion
+      narrowed to withdrawals to the COINBASE address; storage_read->storage_reads naming and wording
+      fixes.
+    rationale: Changes normative inclusion conditions.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-fad1a1acab0a
+  - id: eip7928-e60
+    event_kind: revision
+    authored_at: '2026-02-16T14:52:15+01:00'
+    committed_at: '2026-02-16T13:52:15+00:00'
+    commit: f1b1370a4100b90e797be361a9387fc099715fff
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds the Block Access List Size Constraint: bal_items * ITEM_COST <= available_gas + system_allowance,
+      with constants from EIP-7002 and EIP-7251.'
+    rationale: New normative validity constraint on BAL size.
+    change_group: cg-bal-size-cap
+    confidence: high
+    source_ids:
+    - git-eip7928-f1b1370a4100
+  - id: eip7928-e61
+    event_kind: revision
+    authored_at: '2026-02-17T17:21:12+01:00'
+    committed_at: '2026-02-18T00:21:12+08:00'
+    commit: b7aedd8a1545ffb0d0ed088fbfbb0fc5419e0ed4
+    path: EIPS/eip-7928.md
+    change_type: security_assumption
+    semantic_effect: substantive
+    summary: 'Adds the ''Early Rejection of Malicious BALs'' security consideration: clients SHOULD enforce
+      G_remaining >= R_remaining * 2000 at transaction boundaries against phantom storage reads.'
+    rationale: Addresses a DoS vector with a recommended check.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-b7aedd8a1545
+  - id: eip7928-e62
+    event_kind: revision
+    authored_at: '2026-02-19T10:02:13+01:00'
+    committed_at: '2026-02-19T17:02:13+08:00'
+    commit: d9face84afd64a1fba0fd672de83d1398c8fe1c4
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: Simplifies the size cap to bal_items <= block_gas_limit // ITEM_COST with ITEM_COST = 2000,
+      justified via the EIP-7981 cold-SLOAD floor; specifies EIP-7002/7251 queue-data slots appearing
+      as storage_reads.
+    rationale: Changes the normative cap formula; introduces the explicit EIP-7981 reference (see dependency_history).
+    change_group: cg-bal-size-cap
+    confidence: high
+    source_ids:
+    - git-eip7928-d9face84afd6
+  - id: eip7928-e63
+    event_kind: revision
+    authored_at: '2026-02-20T09:27:05+01:00'
+    committed_at: '2026-02-20T08:27:05+00:00'
+    commit: 5d60ba8680ce18aed488cfd655e6f3b597a5218b
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Adds uniqueness constraints: unique addresses, storage keys at most once per list, no key
+      in both storage_changes and storage_reads, unique block_access_index per change list.'
+    rationale: New normative validity rules.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-5d60ba8680ce
+  - id: eip7928-e64
+    event_kind: revision
+    authored_at: '2026-02-20T19:49:06+01:00'
+    committed_at: '2026-02-21T02:49:06+08:00'
+    commit: 72e88aaa72ea79bf36ab8bc415e7af3624700ad0
+    path: EIPS/eip-7928.md
+    change_type: clarification
+    semantic_effect: substantive
+    summary: 'Adds an implementation note: the BAL need not enter the state transition function; implementations
+      MAY validate a virtual BAL hash against the header (execution-specs approach).'
+    rationale: Non-mandatory note, but materially clarifies conformant validation strategies; borderline
+      with editorial.
+    change_group: null
+    confidence: medium
+    source_ids:
+    - git-eip7928-72e88aaa72ea
+  - id: eip7928-e65
+    event_kind: revision
+    authored_at: '2026-03-16T22:02:46+01:00'
+    committed_at: '2026-03-17T05:02:46+08:00'
+    commit: 00c6dbd1c7f24a3c474bf28a04efb667ac97c62d
+    path: EIPS/eip-7928.md
+    change_type: editorial
+    semantic_effect: non_substantive
+    summary: Adds Felipe Selmo, Rahul and Stefan as co-authors in the frontmatter.
+    rationale: Author-metadata change only.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-00c6dbd1c7f2
+  - id: eip7928-e66
+    event_kind: revision
+    authored_at: '2026-03-19T15:05:05+01:00'
+    committed_at: '2026-03-19T22:05:05+08:00'
+    commit: af481a64b9bf555699ac5e3030c1b3921dfc383f
+    path: EIPS/eip-7928.md
+    change_type: normative_behavior
+    semantic_effect: substantive
+    summary: 'Fixes contradictory fee-recipient rules: removes the COINBASE bullet from the MUST-include
+      list; COINBASE now follows the same inclusion rules as any account; zero-value block rewards no
+      longer force inclusion.'
+    rationale: Changes normative inclusion conditions to resolve a contradiction.
+    change_group: null
+    confidence: high
+    source_ids:
+    - git-eip7928-af481a64b9bf
+  - id: eip7928-e67
+    event_kind: revision
+    authored_at: '2026-04-19T07:11:12+02:00'
+    committed_at: '2026-04-19T13:11:12+08:00'
+    commit: 5ba661a10afbfd4b2f66ee9cd7480678b435e9e3
+    path: EIPS/eip-7928.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: 'Widens BlockAccessIndex uint16->uint64 and specifies CL-side storage: BAL as an SSZ ExecutionPayload
+      field, prunable to its hash_tree_root.'
+    rationale: Changes a normative type width and CL storage semantics.
+    change_group: cg-bai-width
+    confidence: high
+    source_ids:
+    - git-eip7928-5ba661a10afb
+  - id: eip7928-e68
+    event_kind: revision
+    authored_at: '2026-04-21T01:50:20+02:00'
+    committed_at: '2026-04-21T07:50:20+08:00'
+    commit: 645099785a50a0c9eb568496fffc2a8978b3e9f4
+    path: EIPS/eip-7928.md
+    change_type: interface_or_data_structure
+    semantic_effect: substantive
+    summary: Adjusts BlockAccessIndex from uint64 to uint32.
+    rationale: Changes a normative type width (follow-up to the previous widening).
+    change_group: cg-bai-width
+    confidence: high
+    source_ids:
+    - git-eip7928-645099785a50
+  template_match:
+    classification: exact
+    rationale: Anchor inventory, definitions, score domains, nominal maximum, and thresholds match.
+  human_timing_exposure:
+    classification: high_exposure
+    rationale: The assessment explicitly relies on implementation files, permanent framework additions,
+      benchmarks, planned and completed tests, spec churn, and bugs found by tests.
+    evidence_source: the exact historical human assessment blob
+clean_comparison:
+  eligible: false
+  failed_conditions:
+  - substantive_or_unknown_eip_input_drift
+  low_exposure_eligible: false
+totals:
+  b_minus_c: -3
+  absolute_b_minus_c: 3
+  a_minus_b: 14
+  b_vs_c_exact_total_agreement: false
+  b_vs_c_tier_agreement: true
+  cross_rubric_warning: A and B use different row inventories, nominal maxima, and thresholds; A-minus-B
+    is descriptive rubric sensitivity, not a like-for-like scale estimate.
+historical_anchor_comparison:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 0
+  b_minus_c: -3
+  absolute_error: 3
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  human_raw_score_cell: '2'
+  human_parsed_terms:
+  - 2
+  human_normalized_contribution: 2
+  automated_historical_score: 3
+  b_minus_c: 1
+  absolute_error: 1
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  human_raw_score_cell: '2'
+  human_parsed_terms:
+  - 2
+  human_normalized_contribution: 2
+  automated_historical_score: 2
+  b_minus_c: 0
+  absolute_error: 0
+- id: cryptography
+  label: Cryptography-related testing
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+- id: block_syncing_changes
+  label: Block syncing changes
+  human_raw_score_cell: '2'
+  human_parsed_terms:
+  - 2
+  human_normalized_contribution: 2
+  automated_historical_score: 2
+  b_minus_c: 0
+  absolute_error: 0
+- id: engine_api_changes
+  label: Engine API changes
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 0
+  b_minus_c: -3
+  absolute_error: 3
+- id: engine_api_encoding_changes
+  label: Engine API encoding changes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_system_contracts
+  label: Added system contracts
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_system_contracts
+  label: Modified system contracts
+  human_raw_score_cell: '2'
+  human_parsed_terms:
+  - 2
+  human_normalized_contribution: 2
+  automated_historical_score: 1
+  b_minus_c: -1
+  absolute_error: 1
+- id: added_opcodes
+  label: Added opcodes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_opcodes
+  label: Modified opcodes
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: added_precompiles
+  label: Added precompiles
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: modified_precompiles
+  label: Modified precompiles
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 3
+  b_minus_c: 3
+  absolute_error: 3
+- id: new_transaction_types
+  label: New transaction types
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_block_header_fields
+  label: New block / header fields
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  human_raw_score_cell: '0'
+  human_parsed_terms:
+  - 0
+  human_normalized_contribution: 0
+  automated_historical_score: 0
+  b_minus_c: 0
+  absolute_error: 0
+- id: performance_risks
+  label: Performance risks
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+- id: security_risks
+  label: Security risks
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  human_raw_score_cell: '3'
+  human_parsed_terms:
+  - 3
+  human_normalized_contribution: 3
+  automated_historical_score: 3
+  b_minus_c: 0
+  absolute_error: 0
+rubric_revision_mapping:
+- revision_1_id: evm_gas_rule_changes
+  revision_1_label: EVM Gas rule changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - evm_gas_rule_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: blob_gas_accounting_changes
+  revision_1_label: Blob gas accounting changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - blob_gas_accounting_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: new_evm_gas_refund
+  revision_1_label: New EVM gas refund
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_evm_gas_refund
+  revision_2_scores:
+  - 0
+- revision_1_id: patterns_affecting_pre_existing_tests
+  revision_1_label: Patterns affecting pre-existing tests
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - patterns_affecting_pre_existing_tests
+  revision_2_scores:
+  - 3
+- revision_1_id: transition_tool_interface_changes
+  revision_1_label: Transition-tool interface changes
+  revision_1_score: 2
+  status: exact
+  revision_2_ids:
+  - transition_tool_interface_changes
+  revision_2_scores:
+  - 2
+- revision_1_id: cryptography
+  revision_1_label: Cryptography-related testing
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - cryptography
+  revision_2_scores:
+  - 0
+- revision_1_id: edge_boundary_conditions
+  revision_1_label: Edge/boundary conditions
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - edge_boundary_conditions
+  revision_2_scores:
+  - 3
+- revision_1_id: block_syncing_changes
+  revision_1_label: Block syncing changes
+  revision_1_score: 2
+  status: exact
+  revision_2_ids:
+  - block_syncing_changes
+  revision_2_scores:
+  - 3
+- revision_1_id: engine_api_changes
+  revision_1_label: Engine API changes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - engine_api_changes
+  revision_2_scores:
+  - 2
+- revision_1_id: engine_api_encoding_changes
+  revision_1_label: Engine API encoding changes
+  revision_1_score: 0
+  status: revision_1_only
+  revision_2_ids:
+  - encoding_changes_rlp_ssz
+  revision_2_scores:
+  - 3
+- revision_1_id: added_system_contracts
+  revision_1_label: Added system contracts
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_system_contracts
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_system_contracts
+  revision_1_label: Modified system contracts
+  revision_1_score: 1
+  status: exact
+  revision_2_ids:
+  - modified_system_contracts
+  revision_2_scores:
+  - 2
+- revision_1_id: added_opcodes
+  revision_1_label: Added opcodes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_opcodes
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_opcodes
+  revision_1_label: Modified opcodes
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_opcodes
+  revision_2_scores:
+  - 0
+- revision_1_id: added_precompiles
+  revision_1_label: Added precompiles
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - added_precompiles
+  revision_2_scores:
+  - 0
+- revision_1_id: modified_precompiles
+  revision_1_label: Modified precompiles
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - modified_precompiles
+  revision_2_scores:
+  - 0
+- revision_1_id: encoding_changes_rlp_ssz
+  revision_1_label: Encoding changes (RLP/SSZ)
+  revision_1_score: 3
+  status: changed
+  revision_2_ids:
+  - encoding_changes_rlp_ssz
+  revision_2_scores:
+  - 3
+- revision_1_id: new_transaction_types
+  revision_1_label: New transaction types
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_transaction_types
+  revision_2_scores:
+  - 0
+- revision_1_id: new_or_modified_transaction_validity_mechanisms
+  revision_1_label: New or modified transaction validity mechanisms
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_or_modified_transaction_validity_mechanisms
+  revision_2_scores:
+  - 0
+- revision_1_id: new_block_header_fields
+  revision_1_label: New block / header fields
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - new_block_header_fields
+  revision_2_scores:
+  - 3
+- revision_1_id: new_fork_activation_mechanism
+  revision_1_label: New fork activation mechanism
+  revision_1_score: 0
+  status: exact
+  revision_2_ids:
+  - new_fork_activation_mechanism
+  revision_2_scores:
+  - 0
+- revision_1_id: performance_risks
+  revision_1_label: Performance risks
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - performance_risks
+  revision_2_scores:
+  - 3
+- revision_1_id: security_risks
+  revision_1_label: Security risks
+  revision_1_score: 3
+  status: exact
+  revision_2_ids:
+  - security_risks
+  revision_2_scores:
+  - 3
+- revision_1_id: cross_eip_interactions
+  revision_1_label: Cross-EIP interactions
+  revision_1_score: 3
+  status: changed
+  revision_2_ids:
+  - cross_eip_interactions
+  revision_2_scores:
+  - 4
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - state_access_ordering_within_opcode_execution
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - state_gas_accounting_changes
+  revision_2_scores:
+  - 0
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - new_invariant_on_pre_existing_tests
+  revision_2_scores:
+  - 3
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - new_test_framework_primitives
+  revision_2_scores:
+  - 3
+- revision_1_id: null
+  revision_1_label: null
+  revision_1_score: null
+  status: revision_2_only
+  revision_2_ids:
+  - unspecified_behavior_requiring_cross_client_consensus
+  revision_2_scores:
+  - 3
+notes:
+  factual_disagreement: Not independently adjudicated; a nonzero anchor delta alone does not establish
+    a factual error.
+  rubric_interpretation:
+  - The historical Engine API encoding changes row lacks a dedicated definition in the source template.
+  - Rows marked changed or revision-specific in rubric_revision_mapping are not forced into one-to-one
+    equivalence.
+  evaluator_judgment:
+  - evm_gas_rule_changes
+  - patterns_affecting_pre_existing_tests
+  - engine_api_changes
+  - modified_system_contracts
+  - encoding_changes_rlp_ssz
+  input_drift: 'Substantive intervening revisions: Renames header field bal_hash->block_access_list_hash,
+    specifies system-contract changes use tx_index = len(transactions) + 1, adds the rule that EIP-2930
+    access-list entries MUST NOT be auto-included, and extends the example. | Code changes now also track
+    EIP-7702 delegation indicators. | Fixes system-contract tx_index from len(transactions) + 1 to len(transactions)
+    throughout text, example and pseudocode. | Splits system-contract handling into pre-execution (tx_index
+    = len(transactions)) and post-execution (len(transactions) + 1) phases, adds the explicit EIP-4895
+    reference for withdrawal recipients, restricts recipient balance recording to value > 0, and rebuilds
+    the example with lexicographic ordering. | Switches BAL encoding from SSZ to RLP, introduces BlockAccessIndex
+    (0 = pre-execution, 1..n = transactions, n+1 = post-execution), widens Balance to uint256, adds Engine
+    API validation flow, and fixes the eip-7792.md link typo to eip-7702.md. | Fixes the block-hash system-contract
+    address in the example from 0x...0001 to the actual EIP-2935 address 0x0000F90827F1C53a10cb7A02335B175320002935.
+    | Restructures the Specification into dedicated sections (Scope and Inclusion, Ordering and Determinism,
+    BlockAccessIndex Assignment, Recording Semantics, Edge Cases (Normative), Engine API); adds the Engine
+    API statement that the EL provides both block_access_list and block_access_list_hash in the ExecutionPayload;
+    updates description frontmatter and size figure (~45 KiB). | Specifies empty-BAL encoding: header
+    hash is keccak256(rlp.encode([])) and the body field is the empty RLP list 0xc0; converts bullets
+    to hyphen style. | Expands the exceptional-halts rule (accessed addresses of reverted calls MUST be
+    included; reads appear in storage_reads) and downgrades validation-by-comparison from MUST (per EIP-2929)
+    to MAY, dropping that EIP-2929 reference. | Splits SENDALL from SELFDESTRUCT and defines the in-transaction
+    selfdestruct canonical signal (nonce 0, empty code, zero balance at that index). | Reverses the previous
+    selfdestruct signal: destroyed-in-transaction accounts are included without balance/nonce/code changes;
+    touched storage keys become storage_reads. | Adds a precompiled-contracts edge case: precompiles MUST
+    be included when accessed, with a balance change if they receive value. | Expands the MUST-include
+    list (opcode targets, reverting calls, failed CREATE targets, senders/recipients, coinbase, selfdestruct
+    beneficiaries, system contracts, withdrawal recipients, precompiles), adds the no-op-write pre-value
+    check note, and adds an EIP-7702 delegations edge case. | In-transaction selfdestruct: if the account
+    had a positive pre-transaction balance, the balance change to zero MUST be recorded. | Restricts EIP-7702
+    tracking to successful delegations and rewrites authority/delegation-target inclusion rules (empty
+    change set on invalid-nonce failure; target only when actually loaded). | Adds the unaltered-balance
+    rule (post == pre MUST NOT be recorded), extends balance recording to CALL/CALLCODE senders and recipients
+    and CREATE/CREATE2 recipients, and conditions failed-authorization inclusion on accessed_addresses
+    per EIP-2929. | Specifies Engine API structures and methods: ExecutionPayloadV4 with blockAccessList,
+    engine_newPayloadV5, engine_getPayloadV6; CL computes the SSZ hash_tree_root. | Rewrites the ordering
+    rules per-field (accounts, storage_changes, storage_reads, balance/nonce/code_changes ordered by block
+    access index). | Deletes the MAX_* constants block entirely (MAX_TXS, MAX_SLOTS, MAX_ACCOUNTS, MAX_CODE_SIZE,
+    MAX_CODE_CHANGES) and adds the zero-value block-reward recipient rule. | Refines the zero-value block-reward
+    wording: no balance change and no read-only inclusion; include with a balance change only when the
+    reward is positive. | Adds the COINBASE / fee-recipient edge case (include on any state change; exclude
+    in empty blocks; include as a read when the reward is zero) and normalizes Coinbase->COINBASE. | Type
+    aliases: Address bytes->bytes20, StorageKey/StorageValue bytes->bytes32, CodeData->Bytecode; balance
+    recording text uint128->uint256. | Changes StorageKey and StorageValue from bytes32 to uint256. |
+    Adds the rule that call-operation targets are included only if gas checks (memory expansion, access
+    cost, transfer cost) pass before state access. | SYSTEM_ADDRESS (0xffff...fffe) MUST NOT be included
+    unless it experiences state access itself. | Adds inclusion of deployed contract addresses from calls
+    with initcode to empty addresses (e.g., calling 0x0 with initcode). | Removes the BAL from the EL
+    block body (stored separately, transmitted in the ExecutionPayload), specifies the block-processing
+    flow, adds engine_getBALsByHashV1/engine_getBALsByRangeV1 retrieval methods and a retention requirement,
+    and updates the abstract (parallel state-root computation) and size figure (~70 KiB). | Despite the
+    ''fix linter issues'' subject, changes the BAL retention requirement from ''until the last finalized
+    checkpoint'' to ''the weak subjectivity period (=3533 epochs)'' (plus formatting fixes). | Rewrites
+    the EIP-7702 delegation edge case: authority included on successful set/update/clear; inclusion on
+    failed authorization depends on whether the authority was loaded; delegation target included only
+    when loaded as an execution target. | Adds that spurious entries MAY be detected by validating BAL
+    indices, which MUST never exceed len(transactions) + 1; fixes typos. | COINBASE included if the block
+    contains transactions or withdrawals; withdrawal recipients included regardless of the withdrawal
+    amount. | Replaces engine_getBALsByHashV1/RangeV1 with engine_getPayloadBodiesByHashV2/RangeV2 returning
+    ExecutionPayloadBodyV2 (blockAccessList null for pre-Amsterdam or pruned blocks). | Adds the ''Gas
+    Validation Before State Access'' section: pre-/post-state validation phases, a per-opcode pre-state
+    gas table anchored to EIP-2929 constants, EIP-7702 delegation resolution rules and the SSTORE stipend
+    check. | CREATE/CREATE2 targets included only ''if the target account is accessed''; COINBASE inclusion
+    narrowed to withdrawals to the COINBASE address; storage_read->storage_reads naming and wording fixes.
+    | Adds the Block Access List Size Constraint: bal_items * ITEM_COST <= available_gas + system_allowance,
+    with constants from EIP-7002 and EIP-7251. | Adds the ''Early Rejection of Malicious BALs'' security
+    consideration: clients SHOULD enforce G_remaining >= R_remaining * 2000 at transaction boundaries
+    against phantom storage reads. | Simplifies the size cap to bal_items <= block_gas_limit // ITEM_COST
+    with ITEM_COST = 2000, justified via the EIP-7981 cold-SLOAD floor; specifies EIP-7002/7251 queue-data
+    slots appearing as storage_reads. | Adds uniqueness constraints: unique addresses, storage keys at
+    most once per list, no key in both storage_changes and storage_reads, unique block_access_index per
+    change list. | Adds an implementation note: the BAL need not enter the state transition function;
+    implementations MAY validate a virtual BAL hash against the header (execution-specs approach). | Fixes
+    contradictory fee-recipient rules: removes the COINBASE bullet from the MUST-include list; COINBASE
+    now follows the same inclusion rules as any account; zero-value block rewards no longer force inclusion.
+    | Widens BlockAccessIndex uint16->uint64 and specifies CL-side storage: BAL as an SSZ ExecutionPayload
+    field, prunable to its hash_tree_root. | Adjusts BlockAccessIndex from uint64 to uint32.'
+  parsing: []
+provenance:
+  comparison_script:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/scripts/compare.py
+    sha256: b901d696ef904ef5e0a7bfc66bed200ea1e9a0dfe5a15f02b70603e36ae729fd
+  automated_freeze:
+    path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated-freeze.yaml
+    sha256: 37b7eb14ddb572c7d5731814b059c4c87574075956fd296e0cca7b1bd9518d87
+  consumed_inputs:
+  - path: research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips/amsterdam/eip-7928.yaml
+    sha256: 3b2272986a041633b681ebcae0b5678d6d59ed6c0f94ef3bd279efe6689e0ffe
+  - path: research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated/eip-7928.yaml
+    sha256: 900cf876cd5ac525a1cb588e8ad63f04d9c0a0980aeb90c665044d79b5074de2
+  - path: research/tasks/05c-amsterdam-human-assessment-alignment/inputs/human/eip-7928.yaml
+    sha256: b0ff6c50cbc4542bd8f14d47fb407f43d939c03bc43a58eaed6252036844e7b3
+  generated_at: '2026-08-25T15:39:15.237921Z'
