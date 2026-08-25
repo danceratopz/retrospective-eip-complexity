@@ -25,14 +25,22 @@ class CompletionError(RuntimeError):
     """Raised when the validated assessment cannot be marked complete."""
 
 
-def checklist_path(fork_id: str) -> Path:
+def checklist_path(fork_id: str) -> Path | None:
     config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
-    if fork_id != "osaka":
-        raise CompletionError(f"No vault checklist configured for fork {fork_id}")
-    return Path(config["vault"]["osaka_checklist"])
+    vault = config.get("vault", {})
+    configured = vault.get("checklists", {}).get(fork_id)
+    if configured is None and fork_id == "osaka":
+        configured = vault.get("osaka_checklist")
+    return Path(configured) if configured else None
 
 
-def tick(path: Path, number: int) -> None:
+def tick(path: Path | None, number: int) -> None:
+    if path is None:
+        print(
+            f"no shared checklist configured for EIP-{number}; "
+            "the validated canonical output is the completion record"
+        )
+        return
     if not path.is_file():
         raise CompletionError(f"Vault checklist is missing: {path}")
     unchecked = re.compile(rf"(?m)^- \[ \] EIP-{number}\b")

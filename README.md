@@ -45,7 +45,7 @@ Task 02 is independent supporting research and is not required to choose the Tas
 | Task 03 | All five fork timelines rendered and validated |
 | Task 04 | All 49 execution-affecting fork–EIP refs selected, human-approved, and mechanically validated |
 | Task 04b | Cutoffs and initial/late aggregation cohorts proposed for all five forks; human review pending |
-| Task 05 | Twelve Osaka assessments completed and mechanically validated |
+| Task 05 | All 49 packages sealed and validated; 12 Osaka assessments complete and 37 assessments pending |
 | Task 06 | Not yet defined |
 
 ## Reproducibility model

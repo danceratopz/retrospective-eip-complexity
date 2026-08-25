@@ -27,6 +27,10 @@ GITHUB_BLOB_RE = re.compile(
     r"(?P<commit>[0-9a-f]{40})/(?P<path>[^)\s]+)"
 )
 RELATIVE_EIP_RE = re.compile(r"\]\(\./eip-(?P<number>\d+)\.md\)")
+PROVENANCE_ONLY_REPOSITORIES = {
+    "ethereum/execution-specs",
+    "ethereum/execution-spec-tests",
+}
 
 
 class InputError(RuntimeError):
@@ -89,6 +93,8 @@ def git_commit_time(repo: Path, commit: str) -> str:
 
 
 def parse_datetime(value: str) -> datetime:
+    if len(value) == 10:
+        return datetime.fromisoformat(value).replace(tzinfo=UTC)
     parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     if parsed.tzinfo is None:
         raise InputError(f"Timestamp lacks a UTC offset: {value}")
@@ -200,8 +206,9 @@ def supporting_documents(
     eip_text: str,
     package_dir: Path,
     external_repos: dict[str, Path],
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     records: list[dict[str, Any]] = []
+    provenance_only_links: list[dict[str, Any]] = []
     supporting_dir = package_dir / "supporting"
 
     for number in sorted(required_eips(eip_text)):
@@ -229,12 +236,28 @@ def supporting_documents(
     for match in GITHUB_BLOB_RE.finditer(eip_text):
         repository = match.group("repository")
         commit = match.group("commit")
-        path = match.group("path")
+        linked_path = match.group("path")
+        path = linked_path.split("#", 1)[0].split("?", 1)[0]
         key = (repository, commit, path)
         if key in seen_external:
             continue
         seen_external.add(key)
         if repository == "ethereum/EIPs":
+            continue
+        if repository in PROVENANCE_ONLY_REPOSITORIES:
+            provenance_only_links.append(
+                {
+                    "repository": repository,
+                    "commit": commit,
+                    "path": path,
+                    "immutable_url": match.group(0),
+                    "use": "provenance_only",
+                    "reason": (
+                        "Task 04c excludes execution-spec and execution-spec-test "
+                        "artifacts from primary Task 05 evidence."
+                    ),
+                }
+            )
             continue
         if repository not in external_repos:
             raise InputError(
@@ -264,7 +287,7 @@ def supporting_documents(
             }
         )
 
-    return records
+    return records, provenance_only_links
 
 
 def wrapper_text(fork_id: str, number: int) -> str:
@@ -388,7 +411,7 @@ def prepare_eip(
     write_bytes(package_dir / "eip.md", eip_data)
     rubric_data = (TASK_ROOT / "inputs" / "rubric" / "assessor-view.md").read_bytes()
     write_bytes(package_dir / "rubric.md", rubric_data)
-    supporting = supporting_documents(
+    supporting, provenance_only_links = supporting_documents(
         eips_repo=eips_repo,
         selected_commit=selected["commit"],
         information_cutoff_at=record["selection"]["information_cutoff_at"],
@@ -426,6 +449,7 @@ def prepare_eip(
             "transformation": rubric_manifest["assessor_view"]["transformation"],
         },
         "supporting_documents": supporting,
+        "provenance_only_links": provenance_only_links,
         "assessment_source_files": [
             "eip.md",
             "rubric.md",
@@ -436,6 +460,8 @@ def prepare_eip(
             "follow_links_allowed": False,
             "files_outside_package_allowed": False,
             "dedicated_assessment_skill_allowed": False,
+            "opportunistic_repository_evidence_allowed": False,
+            "provenance_only_repositories": sorted(PROVENANCE_ONLY_REPOSITORIES),
         },
         "preparation": {
             "script": (Path(__file__).resolve().relative_to(REPO_ROOT).as_posix()),
@@ -465,6 +491,7 @@ def prepare_eip(
     write_bytes(package_dir / "output-template.yaml", yaml_bytes(populated))
     print(
         f"prepared {fork_id} EIP-{number}: supporting={len(supporting)} "
+        f"provenance_only_links={len(provenance_only_links)} "
         f"manifest={manifest_sha[:12]}"
     )
 

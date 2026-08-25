@@ -14,6 +14,10 @@ import yaml
 TASK_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = TASK_ROOT.parents[2]
 TASK04_ROOT = REPO_ROOT / "research" / "tasks" / "04-complexity-assessment-ref-selection"
+PROVENANCE_ONLY_REPOSITORIES = {
+    "ethereum/execution-specs",
+    "ethereum/execution-spec-tests",
+}
 
 
 class ValidationError(RuntimeError):
@@ -59,12 +63,63 @@ def validate_package(fork_id: str, package: Path) -> None:
 
     expected_sources = ["eip.md", "rubric.md"]
     for supporting in manifest.get("supporting_documents", []):
+        if supporting.get("repository") in PROVENANCE_ONLY_REPOSITORIES:
+            raise ValidationError(
+                f"EIP-{number} packages prohibited repository evidence: "
+                f"{supporting['repository']}"
+            )
         path = package / supporting["package_path"]
         if sha256(path) != supporting["content_sha256"]:
             raise ValidationError(f"EIP-{number} supporting-document hash mismatch: {path}")
         expected_sources.append(supporting["package_path"])
     if manifest.get("assessment_source_files") != expected_sources:
         raise ValidationError(f"EIP-{number} assessment source allowlist mismatch")
+
+    provenance_links = manifest.get("provenance_only_links", [])
+    if not isinstance(provenance_links, list):
+        raise ValidationError(f"EIP-{number} provenance_only_links must be a list")
+    seen_links: set[tuple[str, str, str]] = set()
+    for link in provenance_links:
+        if not isinstance(link, dict):
+            raise ValidationError(f"EIP-{number} provenance-only link must be a mapping")
+        identity = (
+            str(link.get("repository")),
+            str(link.get("commit")),
+            str(link.get("path")),
+        )
+        if identity[0] not in PROVENANCE_ONLY_REPOSITORIES:
+            raise ValidationError(
+                f"EIP-{number} unknown provenance-only repository: {identity[0]}"
+            )
+        if identity in seen_links:
+            raise ValidationError(f"EIP-{number} duplicate provenance-only link: {identity}")
+        seen_links.add(identity)
+        if link.get("use") != "provenance_only" or "package_path" in link:
+            raise ValidationError(
+                f"EIP-{number} provenance-only link became package evidence: {identity}"
+            )
+
+    source_policy = manifest.get("source_policy", {})
+    explicit_policy = source_policy.get("opportunistic_repository_evidence_allowed")
+    if explicit_policy is None:
+        completed_output = (
+            TASK_ROOT / "outputs" / "fork-eips" / fork_id / f"eip-{number}.yaml"
+        )
+        if fork_id != "osaka" or not completed_output.is_file():
+            raise ValidationError(
+                f"EIP-{number} pending package lacks the repository-evidence policy"
+            )
+    else:
+        if explicit_policy is not False:
+            raise ValidationError(
+                f"EIP-{number} does not prohibit opportunistic repository evidence"
+            )
+        if source_policy.get("provenance_only_repositories") != sorted(
+            PROVENANCE_ONLY_REPOSITORIES
+        ):
+            raise ValidationError(
+                f"EIP-{number} provenance-only repository policy mismatch"
+            )
 
     prompt_path = TASK_ROOT / "prompts" / fork_id / f"eip-{number}.md"
     if not prompt_path.is_file():
@@ -121,4 +176,3 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except ValidationError as error:
         raise SystemExit(f"validation error: {error}") from error
-

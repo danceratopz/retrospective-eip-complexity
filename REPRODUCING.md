@@ -116,21 +116,21 @@ Task 05 consumes an approved Task 04 ref and packages exactly the permitted hist
 Rebuild and validate deterministic packages from the repository root:
 
 ```bash
-uv run --project research/tasks/05-retrospective-complexity-assignment --locked python research/tasks/05-retrospective-complexity-assignment/scripts/prepare_inputs.py --fork osaka
-uv run --project research/tasks/05-retrospective-complexity-assignment --locked python research/tasks/05-retrospective-complexity-assignment/scripts/validate_inputs.py --fork osaka
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked python research/tasks/05-retrospective-complexity-assignment/scripts/prepare_inputs.py --fork FORK
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked python research/tasks/05-retrospective-complexity-assignment/scripts/validate_inputs.py --fork FORK
 ```
 
 Preview or run pending isolated sessions from the Task 05 directory:
 
 ```bash
 cd research/tasks/05-retrospective-complexity-assignment
-uv run --locked python scripts/run_fork.py --fork osaka --jobs 3 --dry-run
-uv run --locked python scripts/run_fork.py --fork osaka --jobs 3
+uv run --locked python scripts/run_fork.py --fork FORK --jobs 3 --dry-run
+uv run --locked python scripts/run_fork.py --fork FORK --jobs 3
 ```
 
-The initial Osaka assignments are already complete. The orchestrator skips canonical outputs that already exist. Do not delete or overwrite an original assessment to force a rerun; independent verification belongs to Task 06 and must preserve the original score.
+All 49 packages are sealed and validated. The 12 Osaka assignments are already complete; Shanghai, Cancun, Prague, and Amsterdam contain 37 pending assignments. The orchestrator skips canonical outputs that already exist. Do not delete or overwrite an original assessment to force a rerun; independent verification belongs to Task 06 and must preserve the original score.
 
-Task 05 currently records completion in a Danos vault checklist through a machine-local path in `config.yaml`. This integration is optional for data validation but required by the current launcher completion step; make it configurable before running on another machine.
+Task 05 excludes opportunistic execution-specs and execution-spec-tests evidence from primary assessor packages. Exact immutable links to those repositories are retained only as manifest provenance and never enter `assessment_source_files`. A Danos checklist may be configured per fork through a machine-local path; when none is configured, the validated canonical output remains the completion record.
 
 ## Deterministic rerender check
 
