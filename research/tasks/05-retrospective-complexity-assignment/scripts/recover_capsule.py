@@ -116,12 +116,29 @@ def normalize(
     result: dict[str, Any],
     *,
     expected_sources: list[str],
+    expected_rubric_source: dict[str, Any],
     raw_path: Path,
     raw_sha256: str,
     syntax_repairs: int = 0,
 ) -> dict[str, Any]:
     normalized = copy.deepcopy(result)
     provenance = normalized.setdefault("provenance", {})
+    rubric_source_restored = False
+    actual_rubric_source = provenance.get("rubric_source")
+    if actual_rubric_source != expected_rubric_source:
+        if not isinstance(actual_rubric_source, dict):
+            raise RecoveryError("Legacy rubric_source is not a mapping")
+        differing_keys = {
+            key
+            for key in set(actual_rubric_source) | set(expected_rubric_source)
+            if actual_rubric_source.get(key) != expected_rubric_source.get(key)
+        }
+        if differing_keys != {"immutable_url"}:
+            raise RecoveryError(
+                "Refusing to restore rubric_source because fields other than immutable_url differ"
+            )
+        provenance["rubric_source"] = copy.deepcopy(expected_rubric_source)
+        rubric_source_restored = True
     original_sources = provenance.get("sources_consulted")
     if not isinstance(original_sources, list) or not all(
         isinstance(item, str) for item in original_sources
@@ -215,6 +232,10 @@ def normalize(
         changes.append(
             f"quoted {syntax_repairs} unsafe plain YAML free-text scalars"
         )
+    if rubric_source_restored:
+        changes.append(
+            "restored the rubric immutable URL from the capsule output template"
+        )
     if sources_split:
         changes.append("split assessment sources from operational files")
     if evidence_converted:
@@ -252,9 +273,13 @@ def recover(fork_id: str, number: int, capsule: Path) -> Path:
         raise RecoveryError(f"Capsule output is missing: {capsule_output}")
     package, canonical_output, _, _ = package_paths(fork_id, number)
     manifest = load_yaml(package / "manifest.yaml")
+    template = load_yaml(package / "output-template.yaml")
     expected_sources = manifest.get("assessment_source_files")
     if not isinstance(expected_sources, list) or not expected_sources:
         raise RecoveryError("Canonical package has no assessment source allowlist")
+    expected_rubric_source = template.get("provenance", {}).get("rubric_source")
+    if not isinstance(expected_rubric_source, dict):
+        raise RecoveryError("Canonical output template has no rubric_source mapping")
 
     raw_payload = capsule_output.read_bytes()
     raw_path = (
@@ -284,6 +309,7 @@ def recover(fork_id: str, number: int, capsule: Path) -> Path:
     result = normalize(
         parsed,
         expected_sources=expected_sources,
+        expected_rubric_source=expected_rubric_source,
         raw_path=raw_path,
         raw_sha256=sha256(raw_payload),
         syntax_repairs=syntax_repairs,
