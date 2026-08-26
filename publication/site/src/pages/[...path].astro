@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Chart from '../components/Chart.astro';
+import AssessmentTable from '../components/AssessmentTable.astro';
+import { loadPublication, basePath } from '../lib/data.js';
+
+export function getStaticPaths() {
+  const data = loadPublication();
+  const pages: [string, any][] = [
+    ['study/question-and-population', { kind: 'study', section: 'question' }],
+    ['study/workflow', { kind: 'study', section: 'workflow' }],
+    ['study/evidence-controls', { kind: 'study', section: 'evidence' }],
+    ['study/scoring-rubric', { kind: 'study', section: 'rubric' }],
+    ['study/alternatives-and-decisions', { kind: 'study', section: 'decisions' }],
+    ['forks', { kind: 'fork-index' }],
+    ['eips', { kind: 'eip-index' }],
+    ['results/predicted-complexity', { kind: 'result', result: 'predicted' }],
+    ['results/observed-effort', { kind: 'result', result: 'observed' }],
+    ['results/predicted-vs-observed', { kind: 'result', result: 'association' }],
+    ['results/human-automated-alignment', { kind: 'result', result: 'alignment' }],
+    ['data', { kind: 'data', section: 'catalog' }],
+    ['data/canonical', { kind: 'data', section: 'canonical' }],
+    ['data/derived', { kind: 'data', section: 'derived' }],
+    ['data/downloads', { kind: 'data', section: 'downloads' }],
+    ['limitations', { kind: 'limitations' }],
+    ['reproduce', { kind: 'reproduce' }],
+    ['prospective/hegota', { kind: 'hegota' }],
+  ];
+  for (const fork of data.forks.filter((item) => item.fork !== 'hegota')) pages.push([`forks/${fork.fork}`, { kind: 'fork', fork: fork.fork }]);
+  for (const row of data.assessments.filter((item) => item.mode === 'retrospective')) pages.push([`forks/${row.fork}/eips/${row.eip}`, { kind: 'assessment', fork: row.fork, eip: row.eip }]);
+  for (const eip of data.eips) pages.push([`eips/${eip.eip}`, { kind: 'eip', eip: eip.eip }]);
+  return pages.map(([path, props]) => ({ params: { path }, props }));
+}
+
+const props = Astro.props as any;
+const data = loadPublication();
+const study = {
+  question: {
+    title: 'Question and population',
+    lede: 'Can a proposal’s early specification predict later implementation and coordination burden?',
+    body: [
+      'The retrospective population contains 49 execution-only or cross-layer fork–EIP relationships from Shanghai through Amsterdam. Each relationship is assessed from a pinned proposal revision intended to approximate entry into fork development.',
+      'The Hegotá branch is a separate prospective snapshot of the 44 proposals listed as Proposed for Inclusion in EIP-8081 on 2026-08-26. It is comparable at the rubric level but has no observed outcome and never enters the retrospective association analysis.',
+    ],
+  },
+  workflow: {
+    title: 'Research workflow',
+    lede: 'Collection, historical ref selection, isolated scoring, and observed-history construction remain separate.',
+    body: [
+      'Task 01 records fork membership and source history. Tasks 03 and 04 select and review historical proposal horizons. Task 05 creates sealed one-EIP packages and runs isolated assessments. Task 07 defines observed-effort proxies before joining them to scores.',
+      'Every derived publication record points back to a repository-relative source path and SHA-256. The publication adapter reads research outputs but cannot modify them.',
+    ],
+  },
+  evidence: {
+    title: 'Evidence controls',
+    lede: 'The primary scores are designed to reduce observable hindsight channels.',
+    body: [
+      'Each assessor received one sealed proposal package, the pinned rubric, and explicitly admitted supporting documents. Network access, repository access, other assessments, implementations, tests, observed outcomes, and aggregate progress were excluded.',
+      'Isolation cannot erase latent model knowledge. The study therefore reports package provenance, exposure attestations, under-specification, confidence, and known recovery events instead of claiming perfect blindness.',
+    ],
+  },
+  rubric: {
+    title: 'Scoring rubric',
+    lede: 'Twenty-eight execution-layer criteria produce a primary score and Low, Medium, or High tier.',
+    body: [
+      'Scores below 12 are Low, 12 through 22 are Medium, and 23 or above are High. The criteria cover gas rules, execution and state behavior, testing surfaces, APIs, encodings, system contracts, opcodes, precompiles, transactions, activation, performance, security, under-specified behavior, and cross-EIP interactions.',
+      'The rubric estimates specification-implied execution-layer complexity. It does not estimate person-hours, cost, severity, importance, consensus-layer complexity, or probability of inclusion.',
+    ],
+  },
+  decisions: {
+    title: 'Alternatives and decisions',
+    lede: 'The study favors pinned evidence and explicit limitations over a larger but less controlled sample.',
+    body: [
+      'The research uses fork–EIP relationships rather than unique EIPs because one proposal can appear in more than one fork context. Consensus-only proposals remain visible but never receive a zero EL score.',
+      'Observed-effort metrics were defined score-blind. Correlations remain descriptive: they do not show that complexity caused delay, revisions, coordination, or engineering effort.',
+    ],
+  },
+};
+const titles = {
+  'fork-index': 'Forks', 'eip-index': 'EIPs', fork: 'Fork detail', assessment: 'Assessment detail', eip: 'EIP detail',
+  limitations: 'Limitations', reproduce: 'Reproduce', hegota: 'Hegotá prospective assessment', data: 'Data', result: 'Results', study: 'Study',
+};
+let title = titles[props.kind] ?? 'Research';
+if (props.kind === 'study') title = study[props.section].title;
+const fork = props.fork ? data.forks.find((item) => item.fork === props.fork) : null;
+const forkRows = props.fork ? data.assessments.filter((item) => item.fork === props.fork) : [];
+const assessment = props.kind === 'assessment' ? data.assessments.find((item) => item.fork === props.fork && item.eip === props.eip) : null;
+const eip = props.kind === 'eip' ? data.eips.find((item) => item.eip === props.eip) : null;
+if (fork && props.kind === 'fork') title = fork.name;
+if (assessment) title = `EIP-${assessment.eip}: ${assessment.title}`;
+if (eip) title = `EIP-${eip.eip}: ${eip.title}`;
+const resultTitles = { predicted: 'Predicted complexity', observed: 'Observed-effort proxies', association: 'Predicted versus observed', alignment: 'Human–automated alignment' };
+if (props.kind === 'result') title = resultTitles[props.result];
+const dataTitles = { catalog: 'Data catalog', canonical: 'Canonical research data', derived: 'Derived publication data', downloads: 'Downloads' };
+if (props.kind === 'data') title = dataTitles[props.section];
+const hegotaRows = data.assessments.filter((item) => item.fork === 'hegota');
+const correlations = [
+  ['Delivery lead time', 34, 0.56], ['Specification rework', 49, 0.70], ['Integration exposure', 49, 0.40],
+  ['Coordination surface', 49, 0.49], ['Emergent coupling', 49, 0.56], ['Observed-effort composite v0', 49, 0.58],
+];
+---
+<Layout title={title}>
+  {props.kind === 'study' && <>
+    <p class="eyebrow">Method before results</p><h1>{study[props.section].title}</h1><p class="lede">{study[props.section].lede}</p>
+    {study[props.section].body.map((paragraph) => <p>{paragraph}</p>)}
+    <div class="actions"><a href={basePath('study/workflow/')}>Workflow</a><a href={basePath('study/evidence-controls/')}>Evidence controls</a><a href={basePath('study/scoring-rubric/')}>Scoring rubric</a><a href={basePath('limitations/')}>Limitations</a></div>
+  </>}
+
+  {props.kind === 'fork-index' && <>
+    <p class="eyebrow">Cohorts</p><h1>Forks</h1><p class="lede">Five retrospective fork cohorts and one separate prospective Hegotá snapshot.</p>
+    <div class="grid">{data.forks.map((item) => <article class="card"><span class:list={["pill", item.mode === 'prospective' && 'prospective']}>{item.mode}</span><h2>{item.name}</h2><p><strong>{item.scored_count}</strong> scored · <strong>{item.not_applicable_count}</strong> N/A · score sum <strong>{item.score_sum}</strong></p><a href={basePath(item.fork === 'hegota' ? 'prospective/hegota/' : `forks/${item.fork}/`)}>View cohort →</a></article>)}</div>
+  </>}
+
+  {props.kind === 'fork' && <>
+    <p class="eyebrow">Retrospective fork cohort</p><h1>{fork.name}</h1><p class="lede">{fork.scored_count} execution-layer assessments with a score sum of {fork.score_sum}.</p>
+    {fork.fork === 'amsterdam' && <div class="caveat"><strong>Right-censored and potentially in-sample.</strong> Amsterdam’s observation window ends before its final outcome.</div>}
+    <h2>Development and evaluation horizon</h2><Chart spec={data.charts[`timeline-${fork.fork}`]} label={`Timeline and evaluation-cutoff chart for ${fork.name}`} description="Filled markers are inclusion-state transitions; the review lanes preserve the selected assessment ref and fork-level evaluation cutoff." />
+    <AssessmentTable rows={forkRows} caption={`${fork.name} complexity assessments`} />
+  </>}
+
+  {props.kind === 'assessment' && <>
+    <p class="eyebrow">Retrospective assessment</p><h1>EIP-{assessment.eip}: {assessment.title}</h1><p class="lede">{assessment.summary}</p>
+    <div class="grid"><div class="card"><span class="muted">Primary score</span><div class="stat">{assessment.score}</div></div><div class="card"><span class="muted">Tier</span><p><span class:list={["pill", assessment.tier]}>{assessment.tier}</span></p></div><div class="card"><span class="muted">Confidence</span><div class="stat">{assessment.confidence}</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">{assessment.under_specification ? 'Yes' : 'No'}</div></div></div>
+    <h2>Criterion scores</h2><ul class="criterion-grid">{assessment.criteria.map((criterion) => <li><span>{criterion.label}</span><strong>{criterion.score}</strong></li>)}</ul>
+    <h2>Uncertainty</h2><p>{assessment.under_specification_summary}</p>
+  </>}
+
+  {props.kind === 'eip-index' && <>
+    <p class="eyebrow">Cross-fork index</p><h1>EIPs</h1><p class="lede">{data.eips.length} unique proposals represented across 93 fork–EIP relationships.</p>
+    <div class="table-region" role="region" aria-label="Global EIP index" tabindex="0"><table><caption>Unique proposal index</caption><thead><tr><th scope="col">Proposal</th><th scope="col">Fork relationships</th></tr></thead><tbody>{data.eips.map((item) => <tr><td><a href={basePath(`eips/${item.eip}/`)}>EIP-{item.eip}: {item.title}</a></td><td>{item.relationships.map((rel) => rel.fork === 'hegota' ? 'Hegotá' : rel.fork).join(', ')}</td></tr>)}</tbody></table></div>
+  </>}
+
+  {props.kind === 'eip' && <>
+    <p class="eyebrow">Proposal across cohorts</p><h1>EIP-{eip.eip}: {eip.title}</h1>
+    <div class="grid">{eip.relationships.map((rel) => <article class="card"><span class:list={["pill", rel.mode === 'prospective' && 'prospective']}>{rel.mode}</span><h2>{rel.fork === 'hegota' ? 'Hegotá' : rel.fork}</h2><p>{rel.status === 'scored' ? <>Score <strong>{rel.score}</strong> · <span class:list={["pill", rel.tier]}>{rel.tier}</span></> : <span class="pill na">Not applicable</span>}</p></article>)}</div>
+  </>}
+
+  {props.kind === 'result' && props.result === 'predicted' && <>
+    <p class="eyebrow">Rubric output</p><h1>Predicted complexity</h1><p class="lede">All 49 retrospective assessments and the separate 44-entry Hegotá prospective snapshot, using the same EL rubric.</p>
+    <Chart spec={data.charts['fork-totals']} label="Historical fork score totals" description="Retrospective score sums only. They reflect proposal counts and splitting choices as well as assessed complexity." />
+    <AssessmentTable rows={data.assessments} caption="All fork–EIP complexity assessments" controls={true} />
+    <div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Download CSV</a></div>
+  </>}
+
+  {props.kind === 'result' && ['observed', 'association'].includes(props.result) && <>
+    <p class="eyebrow">Descriptive retrospective analysis</p><h1>{resultTitles[props.result]}</h1><p class="lede">Score-blind public-artifact proxies describe specification rework, integration exposure, coordination surface, emergent coupling, and delivery timing. They are not person-hours or causal effects.</p>
+    <div class="caveat">Hegotá is excluded because it has no observed outcome. Amsterdam is right-censored and potentially in-sample.</div>
+    <Chart spec={data.charts['predicted-observed']} label="Faceted scatter plots comparing predicted complexity with observed-effort proxies" description="Each point is one of the 49 retrospective fork–EIP relationships; outlined encoding identifies censored Amsterdam observations." />
+    <div class="table-region" role="region" aria-label="Rank correlations" tabindex="0"><table><caption>Overall Spearman rank correlations</caption><thead><tr><th scope="col">Metric</th><th scope="col" class="number">N</th><th scope="col" class="number">Spearman ρ</th></tr></thead><tbody>{correlations.map((row) => <tr><td>{row[0]}</td><td class="number">{row[1]}</td><td class="number">{Number(row[2]).toFixed(2)}</td></tr>)}</tbody></table></div>
+  </>}
+
+  {props.kind === 'result' && props.result === 'alignment' && <>
+    <p class="eyebrow">Calibration study</p><h1>Human–automated alignment</h1><p class="lede">Twelve reconstructable Amsterdam comparisons, of which only two meet the predeclared clean-input/template/total conditions.</p>
+    <Chart spec={data.charts['human-alignment']} label="Scatter plot of historical human and blinded automated scores" description="The 12-point comparison is descriptive; the clean subset is too small for substantive rank-correlation interpretation." />
+    <div class="caveat">All reconstructable comparisons: mean absolute error 5.33, signed automated-minus-human bias 2.83, Spearman 0.61, tier agreement 0.17. Confounds remain material.</div>
+    <a href={basePath('generated/charts/human-alignment.json')}>Download plotted values and Vega-Lite specification</a>
+  </>}
+
+  {props.kind === 'data' && <>
+    <p class="eyebrow">Provenance</p><h1>{dataTitles[props.section]}</h1>
+    {props.section === 'catalog' && <><p class="lede">Canonical YAML stays owned by the research tasks. The publication adapter emits sanitized projections, tables, chart specifications, and downloads.</p><div class="grid"><article class="card"><h2>Canonical</h2><p>Frozen task-owned inputs and outputs with validators and hashes.</p><a href={basePath('data/canonical/')}>Inspect ownership</a></article><article class="card"><h2>Derived</h2><p>Deterministic publication records and chart data.</p><a href={basePath('data/derived/')}>Inspect derivation</a></article><article class="card"><h2>Downloads</h2><p>Approved CSV, JSON, and chart specifications.</p><a href={basePath('data/downloads/')}>Open downloads</a></article></div></>}
+    {props.section === 'canonical' && <><p class="lede">Research tasks remain authoritative. Publication code reads them without editing or recursively copying their trees.</p><ul><li>Task 05: 49 validated retrospective assessments.</li><li>Task 07: score-blind observed metrics and prediction join.</li><li>Task 08: frozen 44-entry Hegotá snapshot, 37 canonical assessments, and 7 N/A dispositions.</li></ul></>}
+    {props.section === 'derived' && <><p class="lede">Every generated file is stable-sorted and included in a SHA-256 provenance manifest.</p><a class="button" href={basePath('generated/provenance.json')}>Open public provenance manifest</a></>}
+    {props.section === 'downloads' && <><p class="lede">These files contain sanitized publication fields, not raw EIP bodies, prompts, sessions, or assessor outputs.</p><div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Complexity assessments CSV</a><a class="button" href={basePath('generated/publication.json')}>Publication JSON</a><a href={basePath('generated/provenance.json')}>Provenance JSON</a></div></>}
+  </>}
+
+  {props.kind === 'limitations' && <>
+    <p class="eyebrow">Interpretation boundary</p><h1>Limitations</h1><p class="lede">The results are evidence about a research rubric, not a universal measure of protocol work.</p>
+    <ul><li>Complexity scores do not measure person-hours, cost, importance, risk, or causality.</li><li>Fork totals depend on cohort size and how proposals are split.</li><li>Historical ref selection approximates entry into development and can be imperfect.</li><li>Observed-effort proxies are derived from recorded public artifacts and omit private work.</li><li>Amsterdam is right-censored and potentially in-sample.</li><li>Hegotá is prospective, can change after the snapshot, and has no observed outcome.</li><li>Consensus-only work receives no EL score; zero would be misleading.</li><li>Isolation reduces observable hindsight but cannot erase latent model knowledge.</li></ul>
+  </>}
+
+  {props.kind === 'reproduce' && <>
+    <p class="eyebrow">Local reproduction</p><h1>Reproduce</h1><p class="lede">The site is a deterministic projection of committed research outputs.</p>
+    <ol><li>Use Node 22.22.1 and the locked Task 05 Python environment.</li><li>From <code>publication/site</code>, run <code>npm ci</code>.</li><li>Run <code>npm run data:check</code> to build the adapter output twice.</li><li>Run <code>npm run build</code> to create the static artifact.</li><li>Run <code>npm run preview -- --host 127.0.0.1 --port 4321</code>.</li></ol>
+    <p>The preview is rooted at <code>/retrospective-complexity-eval/</code>. Research validators and the full acquisition workflow remain documented in the repository’s top-level reproduction guide.</p>
+  </>}
+
+  {props.kind === 'hegota' && <>
+    <p class="eyebrow prospective-text">Prospective · frozen 2026-08-26 snapshot</p><h1>Hegotá PFI complexity assessment</h1><p class="lede">EL-rubric total: 776 across 37 scored PFI EIPs. Of 44 PFI entries, five are consensus-only and two were explicitly excluded; none received a numeric score or tier.</p>
+    <div class="grid"><div class="card"><span class="muted">Scored execution surfaces</span><div class="stat">37</div></div><div class="card"><span class="muted">Not applicable</span><div class="stat">7</div></div><div class="card"><span class="muted">Low / Medium / High</span><div class="stat">4 / 20 / 13</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">34 / 37</div></div></div>
+    <div class="notice"><strong>Common information cutoff:</strong> {data.hegota.information_cutoff_at}. The assessment covers execution-layer and execution-client-networking surfaces only. It does not predict final fork scope or include observed outcomes.</div>
+    <h2>Scored proposals</h2><Chart spec={data.charts['hegota-scores']} label="Ranked Hegotá prospective scores" description="Bars encode the 37 applicable execution-layer rubric scores. The seven N/A entries remain in the semantic table below." />
+    <AssessmentTable rows={hegotaRows} caption="Hegotá PFI snapshot: scored and not-applicable entries" rowAnchors={true} />
+    <h2>Caveats</h2><ul>{data.hegota.caveats.map((caveat) => <li>{caveat}</li>)}</ul>
+    <div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Download all assessments</a><a href={basePath('generated/publication.json')}>Publication JSON</a></div>
+  </>}
+</Layout>

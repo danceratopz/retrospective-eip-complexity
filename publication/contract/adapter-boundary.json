@@ -1,0 +1,380 @@
+{
+  "allowed_input_task_families": [
+    {
+      "allowed_record_classes": [
+        "fork_membership",
+        "fork_eip_relationship",
+        "global_eip_history",
+        "source_registry_metadata"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/01-fork-eip-history/outputs/forks",
+        "research/tasks/01-fork-eip-history/outputs/fork-eips",
+        "research/tasks/01-fork-eip-history/outputs/eips",
+        "research/tasks/01-fork-eip-history/outputs/sources",
+        "research/tasks/01-fork-eip-history/outputs/manifests"
+      ],
+      "task_id": "01-fork-eip-history"
+    },
+    {
+      "allowed_record_classes": [
+        "fork_timeline_input",
+        "timeline_plot_data",
+        "timeline_plot_manifest",
+        "vega_lite_specification"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/03-fork-development-timelines/inputs/forks",
+        "research/tasks/03-fork-development-timelines/inputs/sources",
+        "research/tasks/03-fork-development-timelines/outputs"
+      ],
+      "task_id": "03-fork-development-timelines"
+    },
+    {
+      "allowed_record_classes": [
+        "approved_assessment_ref",
+        "assessment_ref_plot_manifest",
+        "assessment_ref_vega_lite_specification"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/04-complexity-assessment-ref-selection/outputs/fork-eips",
+        "research/tasks/04-complexity-assessment-ref-selection/outputs/review",
+        "research/tasks/04-complexity-assessment-ref-selection/outputs/anchor-fallback-policy.yaml"
+      ],
+      "task_id": "04-complexity-assessment-ref-selection"
+    },
+    {
+      "allowed_record_classes": [
+        "proposed_fork_cutoff",
+        "proposed_aggregation_policy",
+        "cutoff_plot_manifest",
+        "cutoff_vega_lite_specification"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/04b-fork-evaluation-cutoffs/outputs/forks",
+        "research/tasks/04b-fork-evaluation-cutoffs/outputs/review",
+        "research/tasks/04b-fork-evaluation-cutoffs/outputs/aggregation-policy.yaml"
+      ],
+      "task_id": "04b-fork-evaluation-cutoffs"
+    },
+    {
+      "allowed_record_classes": [
+        "validated_retrospective_assessment"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips"
+      ],
+      "task_id": "05-retrospective-complexity-assignment"
+    },
+    {
+      "allowed_record_classes": [
+        "human_alignment_summary",
+        "human_alignment_comparison",
+        "human_alignment_freeze_manifest"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/05c-amsterdam-human-assessment-alignment/outputs/alignment-summary.md",
+        "research/tasks/05c-amsterdam-human-assessment-alignment/outputs/automated-freeze.yaml",
+        "research/tasks/05c-amsterdam-human-assessment-alignment/outputs/comparisons",
+        "research/tasks/05c-amsterdam-human-assessment-alignment/outputs/dataset-manifest.yaml"
+      ],
+      "task_id": "05c-amsterdam-human-assessment-alignment"
+    },
+    {
+      "allowed_record_classes": [
+        "observed_effort_metrics",
+        "observed_effort_composite",
+        "observed_effort_redundancy_summary",
+        "predicted_observed_comparison"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/07-observed-effort-metrics/outputs/observed-metrics.yaml",
+        "research/tasks/07-observed-effort-metrics/outputs/observed-metrics.csv",
+        "research/tasks/07-observed-effort-metrics/outputs/observed-effort-composite-v0.csv",
+        "research/tasks/07-observed-effort-metrics/outputs/redundancy",
+        "research/tasks/07-observed-effort-metrics/outputs/join"
+      ],
+      "task_id": "07-observed-effort-metrics"
+    },
+    {
+      "allowed_record_classes": [
+        "approved_cohort_disposition",
+        "frozen_assessment_manifest",
+        "validated_prospective_assessment",
+        "validated_prospective_summary"
+      ],
+      "exact_repository_relative_roots": [
+        "research/tasks/08-hegota-prospective-complexity-assessment/outputs/assessment-manifest.yaml",
+        "research/tasks/08-hegota-prospective-complexity-assessment/outputs/assessments/hegota-pfi-2026-08-26",
+        "research/tasks/08-hegota-prospective-complexity-assessment/outputs/cohort-review.yaml",
+        "research/tasks/08-hegota-prospective-complexity-assessment/outputs/summary.yaml",
+        "research/tasks/08-hegota-prospective-complexity-assessment/outputs/validation-report.yaml"
+      ],
+      "task_id": "08-hegota-prospective-complexity-assessment"
+    }
+  ],
+  "build_failure_conditions": [
+    "An input path is outside the explicit task-family allowlist.",
+    "An input or output record has an unknown schema version, record type, route family, label, maturity, or disposition.",
+    "Declared maturity conflicts across authoritative records.",
+    "A Task 04 record is not approved or a Task 04b value is emitted without the provisional label.",
+    "A public record references a blocked, excluded, or unresolved source disposition.",
+    "A forbidden key or value occurs in a candidate public record.",
+    "A source path is absolute, leaves the repository, lacks a SHA-256, or cannot be reproduced from the declared source commit.",
+    "A raw source body is requested without an affirmative public_body disposition.",
+    "A prospective record conflicts with the approved Task 08 snapshot, population, assessment freeze, validation result, or structural separation from Task 05 and Task 07.",
+    "Stable sorting or stable JSON serialization cannot be reproduced byte-for-byte."
+  ],
+  "canonical_and_derived_ownership": {
+    "canonical": "The originating research task owns frozen YAML records and approved research results. Publication code reads but never edits them.",
+    "derived": "The adapter owns reproducible sanitized projections, indexes, chart data, and summaries. Every derived record identifies its canonical inputs and hashes.",
+    "flow": [
+      "canonical_research",
+      "publication_adapter",
+      "vega_lite_visualization",
+      "astro_static_site"
+    ],
+    "one_way": true,
+    "research_writes_permitted": false
+  },
+  "direction": "one_way_read_only",
+  "forbidden_public_content": {
+    "forbidden_key_names": [
+      "access_token",
+      "api_key",
+      "assessor_raw_output",
+      "authorization",
+      "capsule",
+      "capsule_path",
+      "cookie",
+      "credential",
+      "credentials",
+      "environment",
+      "log",
+      "log_path",
+      "operational_files_read",
+      "password",
+      "prompt",
+      "prompt_path",
+      "raw_body",
+      "secret",
+      "session_id",
+      "session_id_source",
+      "source_body",
+      "token"
+    ],
+    "forbidden_key_patterns": [
+      "(?i)(^|_)(capsule|credential|log|password|prompt|secret|session|token)(_|$)",
+      "(?i)^prospective_.*score$"
+    ],
+    "forbidden_value_patterns": [
+      "(?:^|[^A-Za-z0-9_])/home/",
+      "(?:^|[^A-Za-z0-9_])/tmp(?:/|$)",
+      "file://",
+      "/mnt/workspace",
+      "assessment-run-[0-9a-f-]+",
+      "(?i)(?:api[_-]?key|access[_-]?token|password|secret)\\s*[:=]"
+    ],
+    "raw_body_rule": "A body or snapshot field is denied unless the source-disposition record is public_body and the record type explicitly allows that field. No initial output type allows raw bodies."
+  },
+  "maturity_enum": [
+    "approved",
+    "provisional",
+    "validated_unfrozen",
+    "empty_reserved"
+  ],
+  "output_record_types": [
+    {
+      "identity_fields": [
+        "id",
+        "route"
+      ],
+      "record_type": "study_metadata",
+      "route_families": [
+        "landing",
+        "study_question_population",
+        "study_workflow",
+        "study_evidence_controls",
+        "study_scoring_rubric",
+        "study_alternatives_decisions",
+        "limitations",
+        "reproduce"
+      ]
+    },
+    {
+      "identity_fields": [
+        "id",
+        "route",
+        "payload.fork_id"
+      ],
+      "record_type": "fork",
+      "route_families": [
+        "fork_index",
+        "fork_detail"
+      ]
+    },
+    {
+      "identity_fields": [
+        "id",
+        "route",
+        "payload.eip_number"
+      ],
+      "record_type": "global_eip",
+      "route_families": [
+        "global_eip_index",
+        "global_eip_detail"
+      ]
+    },
+    {
+      "identity_fields": [
+        "id",
+        "route",
+        "payload.fork_id",
+        "payload.eip_number",
+        "payload.assessment_ref"
+      ],
+      "record_type": "fork_eip_assessment",
+      "route_families": [
+        "fork_eip_assessment"
+      ]
+    },
+    {
+      "identity_fields": [
+        "id",
+        "route",
+        "payload.result_kind"
+      ],
+      "record_type": "result_summary",
+      "route_families": [
+        "result_predicted_complexity",
+        "result_observed_effort",
+        "result_predicted_vs_observed",
+        "result_human_alignment"
+      ]
+    },
+    {
+      "identity_fields": [
+        "id",
+        "payload.index_id"
+      ],
+      "non_page_role": "A sanitized index connects approved Vega-Lite specifications and data products to page records; it does not own a route.",
+      "record_type": "chart_data_index",
+      "route_families": []
+    },
+    {
+      "identity_fields": [
+        "id",
+        "route",
+        "payload.data_id"
+      ],
+      "record_type": "data_catalog_entry",
+      "route_families": [
+        "data_catalog",
+        "data_canonical",
+        "data_derived",
+        "data_downloads"
+      ]
+    },
+    {
+      "identity_fields": [
+        "id",
+        "route",
+        "payload.snapshot_id"
+      ],
+      "record_type": "prospective_cohort_summary",
+      "route_families": [
+        "prospective_hegota"
+      ]
+    },
+    {
+      "identity_fields": [
+        "id",
+        "payload.snapshot_id",
+        "payload.eip_number"
+      ],
+      "non_page_role": "A prospective assessment supplies one Hegotá table row and optional page anchor while remaining structurally separate from retrospective Task 05 records.",
+      "record_type": "prospective_eip_assessment",
+      "route_families": []
+    },
+    {
+      "identity_fields": [
+        "id",
+        "route",
+        "payload.prospective_area"
+      ],
+      "non_page_role": "Deprecated empty-state type retained only for schema compatibility; it does not own a route after the Task 08 gate opens.",
+      "record_type": "empty_prospective_status",
+      "route_families": []
+    }
+  ],
+  "prospective_gate": {
+    "allowed_record_type_now": "prospective_cohort_summary",
+    "assessment_count": 37,
+    "el_rubric_total": 776,
+    "not_applicable_count": 7,
+    "population_count": 44,
+    "reserved_route_family": "prospective_hegota",
+    "snapshot_id": "hegota-pfi-2026-08-26-ac450a4",
+    "validation_result": "pass"
+  },
+  "public_output_allowlist": {
+    "allowed_asset_classes": [
+      "authored_publication_prose",
+      "sanitized_schema_versioned_record",
+      "approved_vega_lite_specification",
+      "approved_chart_data",
+      "approved_static_download",
+      "locally_built_site_asset",
+      "open_source_notice",
+      "public_provenance_manifest"
+    ],
+    "allowed_record_types": [
+      "study_metadata",
+      "fork",
+      "global_eip",
+      "fork_eip_assessment",
+      "result_summary",
+      "chart_data_index",
+      "data_catalog_entry",
+      "empty_prospective_status",
+      "prospective_cohort_summary",
+      "prospective_eip_assessment"
+    ],
+    "deny_by_default": true,
+    "recursive_research_copy_permitted": false
+  },
+  "required_publication_record_fields": [
+    "schema_version",
+    "record_type",
+    "id",
+    "route",
+    "source_commit",
+    "source_records",
+    "canonical_or_derived",
+    "maturity",
+    "labels",
+    "limitations",
+    "provenance",
+    "public_download_disposition",
+    "payload"
+  ],
+  "schema_version": "1.1.0",
+  "serialization": {
+    "collection_order": "Sort records by record_type, then id; sort source records by path; sort labels lexicographically.",
+    "encoding": "UTF-8",
+    "indent": 2,
+    "keys": "sorted",
+    "trailing_newline": true,
+    "wall_clock_fields_permitted": false
+  },
+  "source_disposition_lookup": {
+    "blocked_dispositions": [
+      "blocked",
+      "excluded"
+    ],
+    "contract_path": "publication/contract/source-dispositions.json",
+    "public_body_requires_exact_disposition": "public_body",
+    "required_for_each_upstream_source": true,
+    "unknown_identifier_fails_build": true
+  }
+}

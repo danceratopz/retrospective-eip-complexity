@@ -1,0 +1,37 @@
+---
+import '../styles/global.css';
+import { basePath } from '../lib/data.js';
+
+const { title, description = 'A reproducible evaluation of EIP complexity and observed development history.' } = Astro.props;
+const nav = [
+  ['Study', 'study/question-and-population/'],
+  ['Forks', 'forks/'],
+  ['EIPs', 'eips/'],
+  ['Results', 'results/predicted-complexity/'],
+  ['Data', 'data/'],
+  ['Limitations', 'limitations/'],
+  ['Reproduce', 'reproduce/'],
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title} · Retrospective complexity evaluation</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header>
+      <div class="topbar">
+        <a class="brand" href={basePath()}>EIP complexity evaluation</a>
+        <nav aria-label="Primary navigation">
+          <ul>{nav.map(([label, href]) => <li><a href={basePath(href)}>{label}</a></li>)}</ul>
+        </nav>
+      </div>
+    </header>
+    <main id="content"><slot /></main>
+    <footer>Local review preview · Static, reproducible, and served without analytics or external assets.</footer>
+  </body>
+</html>

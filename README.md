@@ -14,6 +14,7 @@ The initial fork range is Shanghai/Shapella through Amsterdam/Glamsterdam. Execu
 - [REPRODUCING.md](REPRODUCING.md) describes the end-to-end research and review process.
 - [DATA.md](DATA.md) explains what is canonical, derived, generated, or deliberately excluded.
 - [research/README.md](research/README.md) describes the task-oriented directory structure.
+- [publication/CONTRACT.md](publication/CONTRACT.md) defines the sanitized local static-site boundary.
 - Every task has its own `TASK.md` contract, inputs, templates, outputs, and provenance rules.
 
 ## Workflow
@@ -54,6 +55,21 @@ Task 02 is independent supporting research and is not required to choose the Tas
 | Task 07 | Candidate metrics computed for all 49 rows (`observed-metrics-v0`); 5 metrics + composite selected via score-blind redundancy analysis; prediction join and interactive charts rendered |
 | Task 08 | Complete: 44-entry Hegotá PFI snapshot reviewed; 37 execution-layer assessments validated and frozen; 5 consensus-only entries and 2 owner exclusions left unscored |
 
+## Local static site
+
+The publication adapter and Astro site under `publication/` project the committed research outputs into a localhost-only review artifact. The site contains 49 retrospective assessments plus all 44 Hegotá PFI entries, with prospective data labelled and kept out of the Task 07 outcome analysis.
+
+```bash
+cd publication/site
+npm ci
+npm run check
+npm run build
+npm test
+npm run preview -- --host 127.0.0.1 --port 4321
+```
+
+Open `http://127.0.0.1:4321/retrospective-complexity-eval/` after the server starts.
+
 ## Reproducibility model
 
 The deterministic parts of the workflow—data joins, sealed package construction, validation, and rendering—are expected to reproduce byte-for-byte from unchanged inputs and locked dependencies.
@@ -62,4 +78,4 @@ Historical interpretation and human review cannot be guaranteed to produce ident
 
 ## Repository status
 
-This repository was created as a local research checkpoint. No remote is configured and nothing has been published. A license and a publication review of raw evidence and operational metadata are still required before public distribution.
+This repository was created as a local research checkpoint. No remote is configured and the static site is served only on localhost. A license and a publication review of raw evidence and operational metadata are still required before public distribution.

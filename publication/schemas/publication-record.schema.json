@@ -1,0 +1,855 @@
+{
+  "$defs": {
+    "assessment_ref": {
+      "additionalProperties": false,
+      "properties": {
+        "commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "git_blob_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "type": "string"
+        },
+        "information_cutoff_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/$defs/repository_relative_path"
+        }
+      },
+      "required": [
+        "commit",
+        "content_sha256",
+        "git_blob_sha",
+        "information_cutoff_at",
+        "path"
+      ],
+      "type": "object"
+    },
+    "chart_data_index_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "charts": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "chart_id": {
+                "$ref": "#/$defs/stable_id"
+              },
+              "data_path": {
+                "$ref": "#/$defs/repository_relative_path"
+              },
+              "spec_path": {
+                "$ref": "#/$defs/repository_relative_path"
+              }
+            },
+            "required": [
+              "chart_id",
+              "data_path",
+              "spec_path"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "index_id": {
+          "$ref": "#/$defs/stable_id"
+        }
+      },
+      "required": [
+        "charts",
+        "index_id"
+      ],
+      "type": "object"
+    },
+    "criterion": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "criterion_id": {
+          "$ref": "#/$defs/stable_id"
+        },
+        "evidence_summary": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "score": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "uncertainty_note": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "confidence",
+        "criterion_id",
+        "evidence_summary",
+        "rationale",
+        "score",
+        "uncertainty_note"
+      ],
+      "type": "object"
+    },
+    "data_catalog_entry_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "data_id": {
+          "$ref": "#/$defs/stable_id"
+        },
+        "download_allowed": {
+          "type": "boolean"
+        },
+        "format": {
+          "enum": [
+            "csv",
+            "json",
+            "markdown",
+            "pdf",
+            "svg",
+            "vega_lite_json",
+            "yaml"
+          ]
+        },
+        "source_paths": {
+          "items": {
+            "$ref": "#/$defs/repository_relative_path"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "data_id",
+        "download_allowed",
+        "format",
+        "source_paths",
+        "title"
+      ],
+      "type": "object"
+    },
+    "empty_prospective_status_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "freeze_manifest_received": {
+          "const": false
+        },
+        "message": {
+          "const": "No prospective assessment has been published."
+        },
+        "prospective_area": {
+          "const": "hegota"
+        }
+      },
+      "required": [
+        "freeze_manifest_received",
+        "message",
+        "prospective_area"
+      ],
+      "type": "object"
+    },
+    "fork_eip_assessment_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment_ref": {
+          "$ref": "#/$defs/assessment_ref"
+        },
+        "complexity_tier": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/criterion"
+          },
+          "maxItems": 28,
+          "minItems": 28,
+          "type": "array"
+        },
+        "eip_number": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "fork_id": {
+          "$ref": "#/$defs/stable_id"
+        },
+        "primary_score": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "under_specification": {
+          "additionalProperties": false,
+          "properties": {
+            "affected_criteria": {
+              "items": {
+                "$ref": "#/$defs/stable_id"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "plausible_total_maximum": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "plausible_total_minimum": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "present": {
+              "type": "boolean"
+            },
+            "summary": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "affected_criteria",
+            "plausible_total_maximum",
+            "plausible_total_minimum",
+            "present",
+            "summary"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "assessment_ref",
+        "complexity_tier",
+        "criteria",
+        "eip_number",
+        "fork_id",
+        "primary_score",
+        "title",
+        "under_specification"
+      ],
+      "type": "object"
+    },
+    "fork_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "execution_affecting_eip_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "fork_id": {
+          "$ref": "#/$defs/stable_id"
+        },
+        "relationship_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "display_name",
+        "execution_affecting_eip_count",
+        "fork_id",
+        "relationship_count"
+      ],
+      "type": "object"
+    },
+    "global_eip_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "eip_number": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "occurrences": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fork_id": {
+                "$ref": "#/$defs/stable_id"
+              },
+              "fork_route": {
+                "$ref": "#/$defs/route"
+              }
+            },
+            "required": [
+              "fork_id",
+              "fork_route"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "eip_number",
+        "occurrences",
+        "title"
+      ],
+      "type": "object"
+    },
+    "prospective_cohort_summary_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "el_rubric_total": {
+          "const": 776
+        },
+        "not_applicable_count": {
+          "const": 7
+        },
+        "population_count": {
+          "const": 44
+        },
+        "prospective_area": {
+          "const": "hegota"
+        },
+        "scored_count": {
+          "const": 37
+        },
+        "snapshot_id": {
+          "const": "hegota-pfi-2026-08-26-ac450a4"
+        }
+      },
+      "required": [
+        "el_rubric_total",
+        "not_applicable_count",
+        "population_count",
+        "prospective_area",
+        "scored_count",
+        "snapshot_id"
+      ],
+      "type": "object"
+    },
+    "prospective_eip_assessment_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "complexity_tier": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "eip_number": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "fork_id": {
+          "const": "hegota"
+        },
+        "layers": {
+          "items": {
+            "enum": [
+              "execution",
+              "consensus"
+            ]
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "primary_score": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rationale": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "snapshot_id": {
+          "const": "hegota-pfi-2026-08-26-ac450a4"
+        },
+        "status": {
+          "enum": [
+            "scored",
+            "not_applicable"
+          ]
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "under_specification": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "eip_number",
+        "fork_id",
+        "layers",
+        "snapshot_id",
+        "status",
+        "title"
+      ],
+      "type": "object"
+    },
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_contract": {
+          "const": "publication/contract/adapter-boundary.json"
+        },
+        "authoritative_owner": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "derivation": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_task_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "adapter_contract",
+        "authoritative_owner",
+        "derivation",
+        "source_task_ids"
+      ],
+      "type": "object"
+    },
+    "repository_relative_path": {
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+      "type": "string"
+    },
+    "result_summary_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "caveats": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "result_kind": {
+          "enum": [
+            "predicted_complexity",
+            "observed_effort",
+            "predicted_vs_observed",
+            "human_alignment"
+          ]
+        },
+        "sample_size": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "summary": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "caveats",
+        "result_kind",
+        "sample_size",
+        "summary"
+      ],
+      "type": "object"
+    },
+    "route": {
+      "pattern": "^/[^?#]*$",
+      "type": "string"
+    },
+    "source_record": {
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_identifiers": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "source_path": {
+          "$ref": "#/$defs/repository_relative_path"
+        }
+      },
+      "required": [
+        "sha256",
+        "source_identifiers",
+        "source_path"
+      ],
+      "type": "object"
+    },
+    "stable_id": {
+      "pattern": "^[a-z0-9][a-z0-9._/-]*$",
+      "type": "string"
+    },
+    "study_metadata_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "method_summary": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "population_summary": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "public_summary": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "research_question": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "method_summary",
+        "population_summary",
+        "public_summary",
+        "research_question"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://example.invalid/retrospective-complexity-eval/publication-record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "study_metadata"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/study_metadata_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "fork"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/fork_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "global_eip"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/global_eip_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "fork_eip_assessment"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/fork_eip_assessment_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "result_summary"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/result_summary_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "chart_data_index"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/chart_data_index_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "data_catalog_entry"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/data_catalog_entry_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "prospective_cohort_summary"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/prospective_cohort_summary_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "prospective_eip_assessment"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/prospective_eip_assessment_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "empty_prospective_status"
+          }
+        },
+        "required": [
+          "record_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/empty_prospective_status_payload"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "canonical_or_derived": {
+      "enum": [
+        "canonical",
+        "derived"
+      ]
+    },
+    "id": {
+      "$ref": "#/$defs/stable_id"
+    },
+    "labels": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "maturity": {
+      "enum": [
+        "approved",
+        "provisional",
+        "validated_unfrozen",
+        "empty_reserved"
+      ]
+    },
+    "payload": {
+      "type": "object"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "public_download_disposition": {
+      "enum": [
+        "public_metadata",
+        "public_body",
+        "reference_only",
+        "excluded",
+        "blocked"
+      ]
+    },
+    "record_type": {
+      "enum": [
+        "study_metadata",
+        "fork",
+        "global_eip",
+        "fork_eip_assessment",
+        "result_summary",
+        "chart_data_index",
+        "data_catalog_entry",
+        "empty_prospective_status",
+        "prospective_cohort_summary",
+        "prospective_eip_assessment"
+      ]
+    },
+    "route": {
+      "$ref": "#/$defs/route"
+    },
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "source_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "source_records": {
+      "items": {
+        "$ref": "#/$defs/source_record"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "record_type",
+    "id",
+    "route",
+    "source_commit",
+    "source_records",
+    "canonical_or_derived",
+    "maturity",
+    "labels",
+    "limitations",
+    "provenance",
+    "public_download_disposition",
+    "payload"
+  ],
+  "schema_version": "1.1.0",
+  "title": "Sanitized publication record",
+  "type": "object"
+}

@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Chart from '../components/Chart.astro';
+import { loadPublication, basePath } from '../lib/data.js';
+const data = loadPublication();
+const retrospective = data.forks.filter((fork) => fork.mode === 'retrospective');
+---
+<Layout title="Research overview">
+  <section class="hero">
+    <p class="eyebrow">Evaluation-first research publication</p>
+    <h1>How much complexity did an EIP imply before implementation?</h1>
+    <p class="lede">This study applies one execution-layer complexity rubric to pinned proposal snapshots, then compares the retrospective predictions with independently constructed public-artifact proxies for development history.</p>
+    <div class="actions">
+      <a class="button" href={basePath('study/question-and-population/')}>Read the method first</a>
+      <a href={basePath('results/predicted-complexity/')}>Explore assessments</a>
+    </div>
+  </section>
+  <section aria-labelledby="population-heading">
+    <h2 id="population-heading">Two deliberately separate study branches</h2>
+    <div class="grid">
+      <article class="card"><p class="eyebrow">Retrospective</p><div class="stat">49</div><h3>fork–EIP relationships</h3><p>Five historical or in-development fork cohorts assessed at pinned initial-development horizons.</p></article>
+      <article class="card"><p class="eyebrow prospective-text">Prospective</p><div class="stat">44</div><h3>Hegotá PFI entries</h3><p>One common 2026-08-26 snapshot: 37 scored execution surfaces and 7 explicit N/A dispositions.</p></article>
+      <article class="card"><p class="eyebrow">Observed history</p><div class="stat">5 + 1</div><h3>score-blind proxies</h3><p>Five selected observed-effort proxies plus one within-fork composite, used descriptively rather than causally.</p></article>
+    </div>
+  </section>
+  <section aria-labelledby="result-heading">
+    <h2 id="result-heading">Retrospective complexity by fork</h2>
+    <p>Score sums reflect both proposal complexity and the number and splitting of EIPs in each cohort. Amsterdam is right-censored and potentially in-sample.</p>
+    <Chart spec={data.charts['fork-totals']} label="Bar chart of retrospective score sums by fork" description="Hegotá is intentionally excluded from this retrospective aggregate and has its own prospective result page." />
+    <div class="table-region" role="region" aria-label="Retrospective fork totals" tabindex="0"><table><caption>Retrospective score sums</caption><thead><tr><th scope="col">Fork</th><th scope="col" class="number">EIPs</th><th scope="col" class="number">Score sum</th></tr></thead><tbody>{retrospective.map((fork) => <tr><td><a href={basePath(`forks/${fork.fork}/`)}>{fork.name}</a></td><td class="number">{fork.scored_count}</td><td class="number">{fork.score_sum}</td></tr>)}</tbody></table></div>
+  </section>
+  <section class="notice" aria-labelledby="hegota-heading">
+    <p class="eyebrow prospective-text">Prospective snapshot</p>
+    <h2 id="hegota-heading">Hegotá PFI assessment</h2>
+    <p><strong>EL-rubric total: 776 across 37 scored PFI EIPs.</strong> Five consensus-only proposals and two explicit owner exclusions have no numeric score or tier.</p>
+    <a href={basePath('prospective/hegota/')}>Open the Hegotá assessment →</a>
+  </section>
+</Layout>

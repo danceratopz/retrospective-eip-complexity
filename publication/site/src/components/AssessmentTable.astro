@@ -1,0 +1,56 @@
+---
+import { basePath } from '../lib/data.js';
+const { rows, caption = 'Complexity assessments', controls = false, rowAnchors = false } = Astro.props;
+---
+{controls && (
+  <div class="table-tools" data-table-controls>
+    <label>Search assessments <input type="search" data-table-search placeholder="EIP, title, or fork" /></label>
+    <label class="checkbox"><input type="checkbox" data-retrospective-only /> Retrospective only</label>
+    <span class="muted" data-result-count aria-live="polite">{rows.length} relationships</span>
+  </div>
+)}
+<div class="table-region" role="region" aria-label={caption} tabindex="0">
+  <table data-assessment-table>
+    <caption>{caption}</caption>
+    <thead><tr><th scope="col">Study</th><th scope="col">Proposal</th><th scope="col">Fork</th><th scope="col">Layers</th><th scope="col" class="number">Score</th><th scope="col">Tier/status</th><th scope="col">Confidence</th><th scope="col">Under-specified</th></tr></thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr id={rowAnchors ? `eip-${row.eip}` : undefined} data-mode={row.mode} data-search={`${row.eip} ${row.title} ${row.fork}`.toLowerCase()}>
+          <td><span class:list={["pill", row.mode === 'prospective' && 'prospective']}>{row.mode}</span></td>
+          <td><a href={basePath(row.assessment_route)}>EIP-{row.eip}: {row.title}</a>{row.rationale && <p class="muted">{row.rationale}</p>}</td>
+          <td>{row.fork === 'hegota' ? 'Hegotá' : row.fork}</td>
+          <td>{row.layers.join(', ')}</td>
+          <td class="number">{row.score ?? '—'}</td>
+          <td>{row.tier ? <span class:list={["pill", row.tier]}>{row.tier}</span> : <span class="pill na">N/A</span>}</td>
+          <td>{row.confidence ?? '—'}</td>
+          <td>{row.under_specification === null ? '—' : row.under_specification ? 'Yes' : 'No'}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+{controls && (
+  <script>
+    const controls = document.querySelector<HTMLElement>('[data-table-controls]');
+    const table = document.querySelector<HTMLTableElement>('[data-assessment-table]');
+    if (controls && table) {
+      const search = controls.querySelector<HTMLInputElement>('[data-table-search]');
+      const retrospectiveOnly = controls.querySelector<HTMLInputElement>('[data-retrospective-only]');
+      const count = controls.querySelector<HTMLElement>('[data-result-count]');
+      if (!search || !retrospectiveOnly || !count) throw new Error('Assessment table controls are incomplete');
+      const update = () => {
+        const query = search.value.trim().toLowerCase();
+        let visible = 0;
+        for (const row of table.tBodies[0].rows) {
+          const matchesSearch = !query || row.dataset.search.includes(query);
+          const matchesMode = !retrospectiveOnly.checked || row.dataset.mode === 'retrospective';
+          row.hidden = !(matchesSearch && matchesMode);
+          if (!row.hidden) visible += 1;
+        }
+        count.textContent = `${visible} relationships`;
+      };
+      search.addEventListener('input', update);
+      retrospectiveOnly.addEventListener('change', update);
+    }
+  </script>
+)}

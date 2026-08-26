@@ -196,6 +196,22 @@ diff -u /tmp/osaka-before.sha256 /tmp/osaka-after.sha256
 
 Repeat the same procedure for `research/tasks/04-complexity-assessment-ref-selection/outputs/review/<fork>` and `research/tasks/04b-fork-evaluation-cutoffs/outputs/review/<fork>` after running their respective `render_review.py` scripts.
 
+## Local publication artifact
+
+The publication adapter reads only the roots allowlisted in `publication/contract/adapter-boundary.json`. It emits sanitized generated files beneath the ignored site staging directory; it never edits the research tasks.
+
+```bash
+python3 publication/scripts/validate_contract.py
+cd publication/site
+npm ci
+npm run check
+npm run build
+npm test
+npm run preview -- --host 127.0.0.1 --port 4321
+```
+
+`npm run check` requires byte-identical adapter output across two consecutive generations. `npm test` checks the 93-record population, Hegotá score and N/A gates, generated-file hashes, static routes and links, base-path handling, forbidden public fields, semantic chart alternatives, and payload budgets. The resulting localhost URL is `http://127.0.0.1:4321/retrospective-complexity-eval/`.
+
 ## Viewing offline plots
 
 Open an HTML file directly, or serve an output directory on a trusted local network:

@@ -1,0 +1,24 @@
+---
+import { basePath } from '../lib/data.js';
+const { spec, label, description } = Astro.props;
+---
+<figure>
+  <div class="chart" data-vega-spec={basePath(spec)} role="img" aria-label={label}>
+    <p class="chart-status">Loading interactive chart…</p>
+  </div>
+  <figcaption class="muted">{description}</figcaption>
+</figure>
+<script>
+  import embed from 'vega-embed';
+  for (const element of document.querySelectorAll<HTMLElement>('[data-vega-spec]:not([data-rendered])')) {
+    element.setAttribute('data-rendered', 'true');
+    const status = element.querySelector('.chart-status');
+    fetch(element.dataset.vegaSpec)
+      .then((response) => {
+        if (!response.ok) throw new Error(`Chart request failed: ${response.status}`);
+        return response.json();
+      })
+      .then((spec) => embed(element, spec, { actions: false, renderer: 'svg' }))
+      .catch((error) => { if (status) status.textContent = `Chart unavailable: ${error.message}`; });
+  }
+</script>
