@@ -1,0 +1,747 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8205
+  title: Withdrawal credentials preregistration
+  layers:
+  - execution
+  - consensus
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer-only assessment of the draft EIP-8205 surface: one new
+    stateful EIP-7685 request predeploy, ordinary-call submission and fee-getter
+    paths, a mandatory end-of-block system call, fixed-width request production,
+    fork activation, and the resulting block-validity, performance, security,
+    and cross-EIP testing effects. Consensus-layer preregistration storage,
+    signature verification, expiry, and deposit enforcement are boundary context
+    only and are not independently scored.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8205/manifest.yaml
+    manifest_sha256: 177a0a62ef46bcbdacdfb1da1d840a3b224c43dac177a87e5df8a58b75f24c6e
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8205.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 6c78772098b5203ffbe95a77660d826798309250
+    content_sha256: c6259cbcdd486f0354f852d92d1355d34f0332a02b7faef11f84440542cae9f0
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8205.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8205.md
+    content_sha256: a818f2740fd4ce1deadecc476f5858d1a13196e3195bdd80b8bbb4937448b478
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:46:40+02:00'
+    session_id: assessment-run-ec2fb8a4-e845-42a7-ba2f-4dd6cc6d77c0
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-1559.md
+  - supporting/eip-4788.md
+  - supporting/eip-6110.md
+  - supporting/eip-7002.md
+  - supporting/eip-7251.md
+  - supporting/eip-7685.md
+  - supporting/eip-7732.md
+  - supporting/eip-7843.md
+  - supporting/eip-8282.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > System Call
+    summary: >-
+      The mandatory call has a dedicated 30,000,000 gas limit; assigned and
+      consumed gas are excluded from block-gas checks, and EIP-1559 burn
+      semantics do not apply.
+  - source: supporting/eip-7002.md
+    locator: Specification > Execution layer > Withdrawal Request Contract > System Call
+    summary: >-
+      The same dedicated, block-gas-excluded system-call accounting already
+      exists for withdrawal requests.
+  rationale: >-
+    The proposal extends the established system-call gas-accounting pattern to
+    one additional mandatory call. This updates where that existing mechanism
+    applies, without changing opcode gas schedules or ordinary transaction gas
+    accounting.
+  confidence: high
+  uncertainty_note: >-
+    Runtime bytecode is TBD, but the consensus-critical gas treatment of the
+    system call is explicit.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract
+    summary: >-
+      The execution change is a contract and post-block call; it does not alter
+      any opcode's internal state-access or gas-charge sequence.
+  rationale: >-
+    Contract SLOAD/SSTORE activity does not change where state is accessed inside
+    an opcode, and the proposal adds or modifies no opcode ordering rule.
+  confidence: high
+  uncertainty_note: >-
+    The missing contract bytecode affects implementation completeness, not the
+    specified absence of opcode-internal ordering changes.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Configuration > Execution layer
+    summary: >-
+      Configuration defines preregistration request fees and queue parameters,
+      with no blob-gas variable or rule.
+  rationale: >-
+    The request fee is an independent contract fee; no blob-gas accounting
+    mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: No blob-gas behavior is present in the sealed proposal.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > Add Preregistration Request
+    summary: >-
+      Queue writes use ordinary SSTORE pseudocode and define no StateGasCosts,
+      state-byte rate, state-gas budget, reservoir, or spill rule.
+  rationale: >-
+    Writing contract storage is not itself a change to the rubric's separate
+    state-gas accounting mechanism.
+  confidence: high
+  uncertainty_note: >-
+    Bytecode is missing, but the draft specifies no state-gas charging site or
+    budget interaction.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations > Fee overpayment
+    summary: The system contract does not refund excess request-fee payment.
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract
+    summary: No EVM gas-refund mechanism is specified on any contract path.
+  rationale: >-
+    The proposal neither creates nor changes an EVM gas refund; its explicit
+    no-refund rule concerns excess ETH request fees, not gas accounting.
+  confidence: high
+  uncertainty_note: No material uncertainty for this anchor.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      A new system contract and EIP-7685 request type make execution-layer block
+      structure and validation backward-incompatible at the fork.
+  - source: supporting/eip-7685.md
+    locator: Specification > Execution Layer > Block Header
+    summary: >-
+      Block requests are ordered by request type, hashed, and committed through
+      requests_hash; empty request data is excluded.
+  rationale: >-
+    Existing post-fork tests around EIP-7685 request construction, request
+    ordering, block validation, and fork allocations need a localized update.
+    Empty request data remains commitment-neutral, so the evidence does not show
+    broad reworking of unrelated execution tests.
+  confidence: medium
+  uncertainty_note: >-
+    The TBD address, type allocation, bytecode, and deployment prevent fixing the
+    exact subset of existing fork and request tests that changes.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: supporting/eip-7685.md
+    locator: Rationale > Removing empty requests in commitment
+    summary: >-
+      Empty request elements are excluded so the empty requests hash is stable
+      across forks.
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > System Call
+    summary: >-
+      Only dequeued preregistration records must newly appear in the existing
+      EIP-7685 requests list.
+  rationale: >-
+    Tests not exercising preregistration do not gain a new universally required
+    assertion: an empty result leaves the existing request commitment stable.
+  confidence: medium
+  uncertainty_note: >-
+    Launcher or framework conventions for exposing empty per-type results are
+    not specified, but no protocol-level new assertion is shown for every test.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration request operation
+    summary: >-
+      The new result is represented as an ordinary EIP-7685 request_type plus
+      opaque request_data.
+  - source: supporting/eip-7685.md
+    locator: Specification > Execution Layer > Requests
+    summary: >-
+      The existing generic request object already carries a type byte and opaque
+      byte array for proposal-specific formats.
+  rationale: >-
+    The sealed text requires a new request value and state transition, but it
+    identifies no new transition-tool field or interface mechanism beyond the
+    existing generic EIP-7685 request list.
+  confidence: medium
+  uncertainty_note: >-
+    Transition-tool details are not specified, so an implementation could need
+    interface work; the package does not establish a scoreable new field or
+    mechanism.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: Test vectors are TBD and no new framework abstraction is proposed.
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract
+    summary: >-
+      The specified behaviors are contract calls, storage changes, logs,
+      reverts, returned bytes, and block validity outcomes.
+  rationale: >-
+    Nothing in the package requires a new expectation type, modifier, or
+    framework-level helper rather than ordinary execution and block tests.
+  confidence: low
+  uncertainty_note: >-
+    Tests and the reference implementation are TBD, so later test design could
+    reveal a primitive need that is not evidenced in this snapshot.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > BLS verification on CL only
+    summary: >-
+      BLS verification is deliberately performed only by the consensus layer;
+      the execution system contract is only a rate-limited queue.
+  rationale: >-
+    Under the execution-layer-only scope, no cryptographic mechanism is added or
+    modified. Consensus-layer BLS verification is boundary context and is not
+    scored here.
+  confidence: high
+  uncertainty_note: No execution-layer cryptographic operation is specified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract
+    summary: >-
+      Dispatch depends on system versus non-system caller, calldata lengths 0,
+      176, or other, attached value, fee sufficiency, and empty/non-empty system
+      calldata.
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > System Call
+    summary: >-
+      Queue draining is capped at four, head/tail reset when empty, excess is
+      updated across the target boundary, and the inhibitor has activation,
+      disable, and re-enable behavior.
+  - source: eip.md
+    locator: Security Considerations > System call failure
+    summary: A failed system call makes the block invalid.
+  rationale: >-
+    Several independent boundary-prone mechanisms combine: dispatch and value
+    matrices, exact fee/excess arithmetic, queue empty/partial/capped states,
+    activation/inhibitor transitions, and fatal system-call outcomes. Fee growth
+    and persistent queue indices require an elevated set of boundary cases.
+  confidence: high
+  uncertainty_note: >-
+    Exact bytecode-level edge results remain unbaselineable until the runtime
+    bytecode is supplied.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility > Execution layer
+    summary: >-
+      The execution change is a new system contract and EIP-7685 request type,
+      not a new block RLP field or RLP validation rule.
+  - source: supporting/eip-7685.md
+    locator: Specification > Execution Layer > Requests
+    summary: Request payloads are opaque bytes within the existing request bus.
+  rationale: >-
+    Block validation changes, but the rubric specifically scores new block RLP
+    validation mechanisms requiring sync tests; the proposal introduces none.
+  confidence: medium
+  uncertainty_note: >-
+    Request replay during sync still needs ordinary block-validation coverage,
+    but it does not meet this row's RLP-specific anchor.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration request operation
+    summary: >-
+      The draft defines an EIP-7685 request object and no Engine API field,
+      endpoint, or communication mechanism.
+  - source: supporting/eip-7732.md
+    locator: Engine API
+    summary: EIP-7732 states that no Engine API changes are needed.
+  rationale: >-
+    No new Engine API field or endpoint is specified for preregistration; its
+    bytes use the existing execution-request carriage.
+  confidence: medium
+  uncertainty_note: >-
+    The draft does not explain transition-tool or Engine serialization in detail,
+    but absence of a specified new API surface limits this score to zero.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract
+    summary: >-
+      One new contract maintains fee, count, head, tail, and queue storage and
+      emits/dequeues preregistration requests.
+  - source: eip.md
+    locator: Backwards Compatibility > Execution layer
+    summary: >-
+      The execution layer deploys a new system contract and introduces a new
+      EIP-7685 request type.
+  rationale: >-
+    Exactly one new system contract is introduced, and it is both stateful and
+    the source of a new consensus-layer request action, matching score 2.
+  confidence: high
+  uncertainty_note: >-
+    Address, bytecode, and deployment transaction are TBD, but the contract's
+    stateful and request-triggering character is explicit.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility > Execution layer
+    summary: The execution change adds a new contract rather than modifying one.
+  - source: eip.md
+    locator: Security Considerations > Builder deposits
+    summary: >-
+      Builder requests use an independent request type and registry and are not
+      consumed or authorized by preregistration.
+  rationale: >-
+    No pre-existing system-contract code or state is changed, and the package
+    specifies independent behavior rather than an indirect behavioral change to
+    another predeploy.
+  confidence: high
+  uncertainty_note: >-
+    Coexistence on EIP-7685 is scored under cross-EIP interactions, not as a
+    modification of another system contract.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer
+    summary: The execution-layer feature is a contract and request type; no opcode is added.
+  - source: eip.md
+    locator: Rationale > Deposit process for staking protocols
+    summary: >-
+      SLOTNUM is consumed from EIP-7843 by an application flow rather than added
+      by EIP-8205.
+  rationale: No opcode is introduced by this proposal.
+  confidence: high
+  uncertainty_note: No material uncertainty for this anchor.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer
+    summary: No pre-existing opcode behavior or result is modified.
+  rationale: The system-contract mechanism uses existing EVM operations unchanged.
+  confidence: high
+  uncertainty_note: No material uncertainty for this anchor.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer
+    summary: A stateful predeploy contract, not a precompile, is introduced.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: No material uncertainty for this anchor.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer
+    summary: The proposal specifies no change to precompile logic or gas schedules.
+  rationale: No existing precompile is modified.
+  confidence: high
+  uncertainty_note: No material uncertainty for this anchor.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration request operation
+    summary: >-
+      A new block request encoding is defined as a type byte plus the flat
+      concatenation of fixed 176-byte pubkey, credentials, and signature records.
+  - source: supporting/eip-7685.md
+    locator: Specification > Execution Layer > Requests
+    summary: >-
+      Each proposal-specific request_data encoding is carried inside the block's
+      typed request object and committed by requests_hash.
+  rationale: >-
+    The proposal introduces a new fixed-width encoding at block/request-interface
+    level. This binary rubric row assigns 3 whenever such an encoding change is
+    introduced.
+  confidence: high
+  uncertainty_note: >-
+    The request-type value is TBD, but the record layout and block-interface
+    placement are explicit.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > Add Preregistration Request
+    summary: Preregistrations are submitted by ordinary calls to a contract.
+  - source: supporting/eip-7685.md
+    locator: Specification > Execution Layer > Requests
+    summary: An EIP-7685 request type is a block request object, not a transaction type.
+  rationale: The new request type does not introduce a transaction envelope type.
+  confidence: high
+  uncertainty_note: No material uncertainty for this anchor.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract
+    summary: >-
+      Invalid input lengths, insufficient fees, and value-bearing getters revert
+      through contract execution; no transaction validity or intrinsic-gas rule
+      changes.
+  rationale: >-
+    The proposal adds contract-level success and revert conditions but leaves the
+    validity rules and intrinsic gas of all transaction types unchanged.
+  confidence: high
+  uncertainty_note: No transaction-level validity change is specified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility > Execution layer
+    summary: The execution additions are a system contract and EIP-7685 request type.
+  - source: supporting/eip-7685.md
+    locator: Specification > Execution Layer > Block Header
+    summary: EIP-7685 already supplies the requests_hash header commitment.
+  rationale: >-
+    EIP-8205 adds data under an existing request commitment and does not add a new
+    block or header field of its own.
+  confidence: high
+  uncertainty_note: The TBD request-type allocation does not create a header field.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > System Call
+    summary: >-
+      Starting at FORK_BLOCK, every block performs the system call; the first call
+      changes EXCESS_INHIBITOR to zero and resets per-block state.
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > Fee calculation
+    summary: Requests revert while the inhibitor remains active before activation.
+  rationale: >-
+    Activation is not merely awareness of a new variable: the first mandatory
+    system call changes predeploy storage from the inhibitor state to the enabled
+    state. The rubric's binary state-modification anchor therefore scores 3.
+  confidence: high
+  uncertainty_note: >-
+    The deterministic deployment transaction and exact pre-fork allocation are
+    TBD, creating uncertainty about how the required inhibitor pre-state is
+    materialized, not about the specified activation write.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > System Call
+    summary: >-
+      Every block executes a 30,000,000-gas-budget system call that reads and
+      writes queue state and drains up to four 176-byte records.
+  - source: eip.md
+    locator: Security Considerations > DoS and state growth
+    summary: >-
+      Submissions can create sustained queue/state load; the fee reacts only in
+      the following block and serves as an economic rate limiter.
+  rationale: >-
+    Individual paths are benchmarkable, but end-to-end cost depends on ordinary
+    transaction submissions, persistent storage, queue backlog, fee-loop state,
+    and mandatory post-block execution. The drain cap limits the impact, fitting
+    a limited interaction with existing block-performance behavior.
+  confidence: medium
+  uncertainty_note: >-
+    Runtime bytecode is TBD, so exact gas, worst-case fake-exponential iteration,
+    and system-call headroom cannot be measured from the package.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations > DoS and state growth
+    summary: >-
+      Fee lag permits all same-block submissions to pay the old fee, while
+      persistent spam grows request state and raises subsequent fees.
+  - source: eip.md
+    locator: Security Considerations > System call failure
+    summary: Any system-call failure makes the block invalid.
+  - source: eip.md
+    locator: Security Considerations > Empty code failure
+    summary: Missing predeploy code makes the block invalid.
+  - source: eip.md
+    locator: Security Considerations > Fee overpayment
+    summary: Excess payment is retained rather than refunded.
+  rationale: >-
+    The execution mechanism touches a limited set of critical components: a
+    value-holding stateful queue, economic rate limiting, EIP-7685 block requests,
+    and fatal block-validation paths. These require targeted review and fuzzing,
+    but the package does not show a substantial alteration of several existing
+    execution security invariants.
+  confidence: medium
+  uncertainty_note: >-
+    Missing bytecode and deployment artifacts prevent code-level review, and the
+    execution-only scope excludes the larger consensus-layer deposit-enforcement
+    security analysis.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Configuration > Execution layer
+    summary: PREREGISTRATION_REQUEST_PREDEPLOY_ADDRESS and PREREGISTRATION_REQUEST_TYPE are TBD.
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > Bytecode
+    summary: Runtime bytecode is TBD.
+  - source: eip.md
+    locator: Specification > Execution layer > Preregistration Request Contract > Deployment
+    summary: The deterministic deployment transaction is TBD.
+  - source: eip.md
+    locator: Test Cases; Reference Implementation
+    summary: Both test vectors and the reference implementation are TBD.
+  rationale: >-
+    Exact type allocation, address, executable code, and deployment/pre-state are
+    localized but consensus-critical details that clients need before block and
+    fork tests can be baselined. The behavior is newly introduced rather than a
+    previously unobservable existing behavior, so score 3 is not reached.
+  confidence: high
+  uncertainty_note: >-
+    The pseudocode resolves most functional cases, but the missing artifacts are
+    material and cannot be repaired from memory under the snapshot rules.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 5
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification; Rationale; Security Considerations
+    summary: >-
+      The draft explicitly connects its fee, system-call, request-bus, deposit,
+      payload-timing, proof/deadline, and builder-separation behavior to EIPs
+      1559, 4788, 6110, 7002, 7251, 7685, 7732, 7843, and 8282.
+  - source: supporting/eip-7685.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The shared request bus fixes cross-type ordering and requests_hash
+      commitment rules for all request producers.
+  - source: supporting/eip-7002.md
+    locator: Specification > Execution layer > Withdrawal Request Contract
+    summary: >-
+      An existing fee-metered request predeploy shares the block request bus and
+      mandatory post-block system-call pattern.
+  - source: supporting/eip-7251.md
+    locator: Specification > Execution layer > Consolidation request contract
+    summary: >-
+      A second existing predeploy shares the request bus, queue, fee, and system
+      call pattern.
+  - source: supporting/eip-8282.md
+    locator: Specification > Request queue and system call; Changes to EIP-7732
+    summary: >-
+      Builder request types coexist on EIP-7685 and are specified as independent
+      from validator deposit routing.
+  rationale: >-
+    Coordinated cases are needed for EIP-7685 encoding/order/commitment; EIP-1559
+    gas-burn exclusion and fee-derived behavior; coexistence with EIP-7002 and
+    EIP-7251 request predeploys; EIP-6110 deposit request carriage; EIP-7732's
+    delayed execution-request context; EIP-4788 proof consumption; EIP-7843
+    deadline checks; and EIP-8282 request-type/builder independence. That is nine
+    identified interactions: base score 3, plus 2 for six additional EIPs beyond
+    the first three. Consensus-only state-transition costs are excluded, but the
+    execution request bus and application-facing proof/deadline boundaries remain
+    coordinated execution-layer test axes.
+  confidence: medium
+  uncertainty_note: >-
+    EIPs 4788 and 7843 are exercised by the specified staking-protocol workflow
+    rather than by the preregistration predeploy itself, while much of the 6110,
+    7732, and 8282 semantic interaction lies across the consensus boundary.
+  exceptional_score_justification: >-
+    This is the rubric's intentionally uncapped formula, not a discretionary
+    exceptional score: nine interacting EIPs yield 3 + floor((9 - 3) / 3) = 5.
+  interacting_eips:
+  - 1559
+  - 4788
+  - 6110
+  - 7002
+  - 7251
+  - 7685
+  - 7732
+  - 7843
+  - 8282
+  unidentified_interactions: []
+totals:
+  primary_score: 24
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The draft's execution pseudocode is substantial, but the predeploy address,
+    request-type allocation, runtime bytecode, deterministic deployment
+    transaction and pre-state, test vectors, and reference implementation are
+    absent. These gaps prevent exact cross-client baselining and make interface,
+    regression-test, performance, and security effort materially uncertain.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - added_system_contracts
+  - encoding_changes_rlp_ssz
+  - new_fork_activation_mechanism
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 20
+    maximum: 31
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - >-
+    What final predeploy address and EIP-7685 request-type byte are allocated,
+    and therefore where does this type sort relative to every active request type?
+  - >-
+    What exact runtime bytecode, deployment transaction, deployment timing, and
+    inhibitor-bearing pre-state implement the pseudocode at activation?
+  - >-
+    Does the existing generic transition-tool and execution-request interface
+    carry the new type without fields or primitives not described in the draft?
+  - >-
+    What executable vectors baseline dispatch, fee arithmetic, queue boundaries,
+    activation, system-call failure, and coexistence with other request types?
+notable_ambiguities:
+- >-
+  Request ordering is consensus-critical under EIP-7685, but EIP-8205 leaves its
+  request-type value TBD.
+- >-
+  Pseudocode defines intended contract behavior, while the consensus-critical
+  runtime bytecode and deterministic deployment transaction remain TBD.
+- >-
+  The proposal requires a first-call inhibitor reset at FORK_BLOCK but does not
+  provide the deployment artifact that establishes the required pre-fork code
+  and storage.
+- >-
+  Tests and reference implementation are both TBD, so no package evidence shows
+  that all execution edge cases or multi-request-type compositions are baselined.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md,
+    package/manifest.yaml, package/output-template.yaml, and the files listed in
+    manifest.yaml under assessment_source_files. No internet access, external
+    source, repository evidence, skill, later revision, implementation, test,
+    discussion, prior score, or aggregate assessment was accessed.

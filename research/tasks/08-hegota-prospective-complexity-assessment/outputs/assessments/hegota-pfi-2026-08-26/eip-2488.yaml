@@ -1,0 +1,521 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 2488
+  title: Deprecate the CALLCODE opcode
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the proposal to change CALLCODE (0xf2) at
+    FORK_BLOCK so that it always returns 0. The sealed package describes a
+    localized but breaking opcode deprecation, declares EIP-7 as a dependency,
+    and leaves detailed opcode effects, tests, implementation, and security
+    considerations unresolved.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-2488/manifest.yaml
+    manifest_sha256: 6453464f8c3c209af8dfa803acf03ca05bef66b448ad9f58921898c7a2e5432a
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-2488.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 5af41eb8bf07754d3213a370d91c104e93102472
+    content_sha256: e606d541a486a736c43cc9fbb2849bdcc1cab911bba54e0b891b3ccfb9d6ecd0
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-2488.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-2488.md
+    content_sha256: 743a4feefe3cd00f8460652a777a2810c7984d3b89e13183a3be8354d70b9516
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T13:44:04+02:00'
+    session_id: assessment-run-5cb9fbb8-a008-44fc-8763-fcf2a4c813a5
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: >-
+      The only stated post-fork rule is that CALLCODE always returns 0; the
+      specification states no gas-accounting rule.
+  rationale: >-
+    No gas-accounting change is specified, so the zero anchor applies. Whether
+    existing CALLCODE charging remains in force is a material specification gap
+    recorded separately.
+  confidence: medium
+  uncertainty_note: >-
+    The text does not say whether existing gas processing occurs before the
+    forced failure, so a later clarification could change this row.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: >-
+      The forced return value is specified without defining any state access or
+      the position of gas charging relative to an access.
+  rationale: >-
+    The proposal does not specify a change to state-access or gas-charge
+    ordering within CALLCODE, so the zero anchor applies on the sealed text.
+  confidence: low
+  uncertainty_note: >-
+    It is unresolved whether the deprecated instruction retains or bypasses any
+    pre-existing access path; that localized ambiguity could make this a
+    single-opcode ordering change.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The specification only changes the result of CALLCODE and mentions no blob gas.
+  rationale: No blob-gas accounting mechanism is introduced or updated.
+  confidence: high
+  uncertainty_note: No blob-gas behavior is within the proposal's stated scope.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The specification introduces no state write or state-gas charging rule.
+  rationale: No state-gas cost, charging site, budget, reservoir, or spill rule is changed.
+  confidence: high
+  uncertainty_note: >-
+    The separate ambiguity about CALLCODE execution gas does not establish any
+    change to state gas for writes.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The post-fork forced-failure rule introduces no refund mechanism.
+  rationale: No new EVM gas refund is specified.
+  confidence: high
+  uncertainty_note: The EIP contains no refund proposal or refund parameters.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: Post-fork CALLCODE executions must return failure rather than their prior result.
+  - source: eip.md
+    locator: '## Backwards Compatibility'
+    summary: The proposal explicitly identifies the change as breaking and potentially contract-breaking.
+  rationale: >-
+    Existing tests that exercise CALLCODE across the fork must be updated, but
+    the affected set is the narrow subset centered on one opcode, matching the
+    minor-subset anchor.
+  confidence: medium
+  uncertainty_note: >-
+    Test cases are TBA, so the package does not enumerate the actual regression
+    set or demonstrate broader effects.
+  exceptional_score_justification: 'Not applicable; score 1 is within the defined anchors.'
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The rule changes CALLCODE behavior but defines no new output that unrelated tests must assert.
+  rationale: >-
+    Tests unrelated to this EIP gain no additional invariant or mechanically
+    applied assertion.
+  confidence: high
+  uncertainty_note: Test cases are TBA, but no package evidence identifies a cross-suite assertion.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: Activation is expressed through block.number and no transition-tool field is introduced.
+  rationale: No transition-tool interface field or mechanism is specified.
+  confidence: high
+  uncertainty_note: FORK_BLOCK is not assigned a value, but that does not itself specify a new tool field.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The observable requirement is a post-fork zero failure result for one existing opcode.
+  - source: eip.md
+    locator: '## Test Cases'
+    summary: The test-cases section is TBA and requests no framework abstraction.
+  rationale: >-
+    The specified result and fork boundary can be exercised with ordinary
+    opcode-result tests; no new expectation, modifier, or helper is required by
+    the package.
+  confidence: medium
+  uncertainty_note: The absent test plan prevents confirmation, but it supplies no basis for a nonzero score.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Abstract'
+    summary: The proposal deprecates CALLCODE by making it return failure and introduces no cryptography.
+  rationale: No cryptographic mechanism or cryptographic functionality is added or modified.
+  confidence: high
+  uncertainty_note: Cryptography is outside the stated change.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The new behavior applies exactly when block.number is greater than or equal to FORK_BLOCK.
+  rationale: >-
+    The proposal introduces one explicit activation boundary at which the same
+    opcode changes from its prior behavior to forced failure.
+  confidence: high
+  uncertainty_note: >-
+    FORK_BLOCK has no concrete value in the EIP, but the before/at-boundary test
+    dimension is clear.
+  exceptional_score_justification: 'Not applicable; score 1 is within the defined anchors.'
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The specification changes an opcode result and introduces no block RLP validation rule.
+  rationale: No block encoding or RLP validation mechanism requiring sync testing is introduced.
+  confidence: high
+  uncertainty_note: The motivation mentions syncing clients, but proposes no change to block validation encoding.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The only specified change is internal EVM opcode behavior, with no API fields or endpoints.
+  rationale: No Engine API field, endpoint, or communication mechanism is introduced.
+  confidence: high
+  uncertainty_note: No Engine API surface appears in the proposal.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The proposal changes CALLCODE behavior and does not introduce contract code or state.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: The package identifies no system-contract deployment or system action.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The proposal names only CALLCODE and identifies no pre-existing system contract.
+  rationale: >-
+    No direct or package-grounded indirect modification of a system contract is
+    specified.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP warns generically about affected contracts but does not identify any
+    as system contracts, so no such interaction can be inferred.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Abstract'
+    summary: The proposal deprecates the existing CALLCODE opcode rather than allocating a new opcode.
+  rationale: No new opcode is introduced.
+  confidence: high
+  uncertainty_note: The only opcode number named, 0xf2, is identified as CALLCODE's existing instruction.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: '## Abstract'
+    summary: CALLCODE is explicitly deprecated by making it always return failure.
+  - source: eip.md
+    locator: '## Specification'
+    summary: After activation, CALLCODE (0xf2) always returns 0.
+  rationale: >-
+    A pre-existing opcode is deprecated and its non-gas behavior is modified,
+    which exactly matches the score-3 anchor.
+  confidence: high
+  uncertainty_note: Detailed secondary effects are underspecified, but the deprecation and result change are explicit.
+  exceptional_score_justification: 'Not applicable; score 3 is within the defined anchors.'
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The specification changes an opcode and introduces no precompile.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: Precompiles are outside the stated scope.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: No precompile logic or precompile gas schedule is mentioned.
+  rationale: No pre-existing precompile behavior or gas accounting is modified.
+  confidence: high
+  uncertainty_note: The proposal identifies only CALLCODE.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The opcode-result rule adds no transaction, block, or interface encoding.
+  rationale: No RLP, SSZ, or other transaction/block/interface encoding change is introduced.
+  confidence: high
+  uncertainty_note: Encoding is outside the proposal's stated scope.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The proposal changes CALLCODE execution and defines no transaction envelope.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: The EIP contains no transaction-type specification.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The change applies during opcode execution and states no transaction validity or intrinsic-gas rule.
+  rationale: Existing transaction validity and intrinsic gas calculation are not modified.
+  confidence: high
+  uncertainty_note: The execution result may change, but no transaction is declared invalid by this proposal.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The existing block.number is used as an activation condition; no block or header field is added.
+  rationale: No new block or block-header field is introduced.
+  confidence: high
+  uncertainty_note: FORK_BLOCK is a threshold placeholder, not a proposed header field.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: Activation gates CALLCODE behavior on block.number but specifies no state or internal-variable modification at activation.
+  rationale: >-
+    The fork changes opcode semantics without modifying state or an internal
+    variable at the activation block, so it does not meet the nonzero anchor.
+  confidence: high
+  uncertainty_note: No activation-time initialization or irregular transition is described.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: '## Motivation'
+    summary: The stated benefit is reducing implementation burden for certain clients, not adding a performance-sensitive mechanism.
+  - source: eip.md
+    locator: '## Specification'
+    summary: The new behavior is a fixed failure result for one opcode.
+  rationale: >-
+    No new mechanism requiring performance validation is introduced; the
+    specified path is a localized forced result.
+  confidence: medium
+  uncertainty_note: Implementation is TBA, but the package identifies no performance risk or benchmark requirement.
+  exceptional_score_justification: 'Not applicable; score 0 is within the defined anchors.'
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: '## Backwards Compatibility'
+    summary: The proposal is explicitly breaking and may break contracts; the expectation that no valuable contracts are affected remains a TODO to validate.
+  - source: eip.md
+    locator: '## Security Considerations'
+    summary: Security considerations are TBA.
+  - source: eip.md
+    locator: '## Rationale'
+    summary: Returning failure is chosen so a contract can detect the result and potentially recover.
+  rationale: >-
+    The modified opcode has a limited interaction surface but changes assumptions
+    for contracts that execute it, with acknowledged potential breakage and no
+    completed security analysis. That warrants targeted review rather than the
+    self-contained score-1 treatment.
+  confidence: medium
+  uncertainty_note: >-
+    The package neither validates affected-contract prevalence nor supplies
+    security considerations, so the practical reach of the risk is unknown.
+  exceptional_score_justification: 'Not applicable; score 2 is within the defined anchors.'
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: '## Specification'
+    summary: The specification fixes only the returned failure value and does not define gas charging, state-access behavior, or which other existing CALLCODE effects remain.
+  - source: eip.md
+    locator: '## Test Cases'
+    summary: Test cases are TBA.
+  - source: eip.md
+    locator: '## Implementation'
+    summary: Implementation is TBA.
+  rationale: >-
+    Constructible CALLCODE cases cannot be baselined from the text until clients
+    agree on the localized operational details surrounding the forced result.
+    The uncertainty concerns one opcode, so score 2 fits better than the broad or
+    newly observable score-3 condition.
+  confidence: high
+  uncertainty_note: >-
+    The assessment has no permitted evidence about implementations, devnets, or
+    discussion state; the score rests only on omissions visible in the snapshot.
+  exceptional_score_justification: 'Not applicable; score 2 is within the defined anchors.'
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: 'Front matter: requires'
+    summary: EIP-2488 declares EIP-7 as its sole required EIP.
+  - source: eip.md
+    locator: '## Motivation'
+    summary: The motivation says DELEGATECALL from EIP-7 rectified CALLCODE's intended design goal.
+  - source: supporting/eip-7.md
+    locator: '### Overview'
+    summary: EIP-7 defines DELEGATECALL as similar in idea to CALLCODE while changing sender and value propagation.
+  rationale: >-
+    There is one explicit, limited interaction with EIP-7. The proposal relies on
+    DELEGATECALL as the historical replacement context but does not modify its
+    specified behavior, so the interaction remains independently testable for
+    the most part.
+  confidence: high
+  uncertainty_note: No other EIP interaction is identified by the package.
+  exceptional_score_justification: 'Not applicable; score 1 is within the defined anchors.'
+  interacting_eips:
+  - 7
+  unidentified_interactions: []
+totals:
+  primary_score: 10
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: >-
+    The specification says only that post-fork CALLCODE always returns 0. It does
+    not determine whether existing gas processing or state access occurs before
+    that result, which other existing instruction effects remain, or a concrete
+    FORK_BLOCK value. Test cases, implementation, and security considerations
+    are also TBA.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 10
+    maximum: 12
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - Does CALLCODE retain its existing gas accounting before returning the forced failure value?
+  - Does CALLCODE perform any state access after activation, and where is gas charged relative to it?
+  - Which existing CALLCODE effects other than its returned result remain in force?
+  - What concrete activation block replaces FORK_BLOCK?
+notable_ambiguities:
+- >-
+  "Always returns 0" does not say whether the instruction follows any of its
+  existing execution path before producing that result.
+- >-
+  The backwards-compatibility claim about valuable contracts is explicitly
+  unvalidated, and security considerations are absent.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only the operational files and assessment source files
+    listed by the sealed package; no links were followed and no external or
+    post-snapshot information was used.

@@ -1,0 +1,652 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8131
+  title: Unified Transaction Content Floor
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer-only assessment of the Draft EIP-8131 snapshot. The proposal
+    replaces or extends the existing transaction content-floor calculation so
+    calldata, access-list entries, EIP-7702 authorization tuples, and EIP-4844
+    blob versioned hashes contribute at a nominal 64 gas per content byte.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8131/manifest.yaml
+    manifest_sha256: 07775e93db83566b8aadafbe410c80996e30e242b62a773405baf8293fbdbfd5
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8131.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 8710275f91d09d700cd16746748f9a4baef7c3d2
+    content_sha256: a961c863da669afa48c50ce5800b1b1af50933c723a50a3da7563a60da70c223
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8131.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8131.md
+    content_sha256: 54cbe1bd89b3c70e92a6cb7de39d105b3dd5a3d56cf64b84faf7c9349f4f19cf
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:28:56+02:00'
+    session_id: assessment-run-763e0dac-b6f9-4f93-a506-cfb0005bf910
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-1559.md
+  - supporting/eip-2028.md
+  - supporting/eip-2930.md
+  - supporting/eip-4844.md
+  - supporting/eip-7623.md
+  - supporting/eip-7702.md
+  - supporting/eip-7976.md
+  - supporting/eip-7981.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction floor; Specification > Charging
+    summary: >-
+      Defines a content-count-based tx_floor and uses it in transaction gas-limit
+      validity and gas-used maximum calculations.
+  - source: supporting/eip-7623.md
+    locator: Specification
+    summary: >-
+      Defines the pre-existing calldata floor and the max-shaped transaction gas
+      accounting that EIP-8131 says it preserves.
+  rationale: >-
+    EIP-8131 updates the existing transaction floor by adding content categories
+    and unifying the rate; it does not introduce a separate gas meter or replace
+    the max-based accounting shape.
+  confidence: medium
+  uncertainty_note: >-
+    The score treats the proposal as an update to the EIP-7623 family of floor
+    rules. The undefined scope of execution_gas_used is recorded separately as
+    material under-specification.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The normative changes calculate a transaction-level floor from decoded
+      transaction content and alter charging; no opcode execution path is changed.
+  rationale: >-
+    No state access, gas charge relative to an opcode state access, or recordable
+    state-access ordering is modified.
+  confidence: high
+  uncertainty_note: No opcode-level state-access behavior is specified in the sealed proposal.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction floor; Specification > Charging
+    summary: >-
+      Counts 32 execution-payload bytes per blob versioned hash only in tx_floor.
+  - source: supporting/eip-4844.md
+    locator: Specification > Gas accounting
+    summary: >-
+      Defines blob gas as an independent gas type priced through GAS_PER_BLOB and
+      excess_blob_gas; EIP-8131 does not modify those rules.
+  rationale: >-
+    Pricing blob versioned hashes in the ordinary transaction floor is not a
+    change to the independent blob-gas accounting mechanism.
+  confidence: high
+  uncertainty_note: >-
+    The sealed text never changes GAS_PER_BLOB, blob fees, blob-gas limits, or
+    excess-blob-gas calculation.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Specifies only transaction content-floor constants, a floor formula, and
+      transaction charging rules.
+  rationale: >-
+    No state-write gas cost, state-gas charging site, block state-gas budget,
+    reservoir, or spill path is introduced or modified.
+  confidence: high
+  uncertainty_note: No state-gas mechanism appears in the proposal.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Charging
+    summary: >-
+      Changes gas-limit validity and gasUsed via maximum operations without
+      defining any refund-counter addition or refund mechanism.
+  rationale: No new gas refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: The proposal contains no refund rule.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Reports changed floor binding and gas use across legacy, access-list,
+      EIP-1559, blob, and set-code transactions, concentrated in floor-bound
+      content-heavy cases.
+  - source: eip.md
+    locator: Specification > Charging
+    summary: >-
+      Existing transactions can become invalid at a prior gas limit or report a
+      different gasUsed when the new floor wins.
+  rationale: >-
+    Existing gas and transaction-validity vectors for several transaction types
+    require expected-value changes, but the affected category is localized to
+    floor-bound or near-floor content-heavy cases rather than a diverse majority
+    of execution tests.
+  confidence: medium
+  uncertainty_note: >-
+    The package quantifies transaction impact but contains no inventory of
+    pre-existing tests, so the exact affected-test count is not established.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction floor; Specification > Charging
+    summary: >-
+      Alters existing validity and gasUsed results but introduces no new receipt,
+      header, state, or other output that unrelated tests must additionally assert.
+  rationale: >-
+    Affected tests must revise gas expectations; they do not gain a separate new
+    invariant or assertion produced by the EIP.
+  confidence: high
+  uncertainty_note: No additional test-visible output is specified.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction floor
+    summary: >-
+      Computes the floor solely from transaction fields already present in the
+      affected transaction formats.
+  rationale: >-
+    No transition-tool input or output field, fork-block flag, or new interface
+    mechanism is specified.
+  confidence: high
+  uncertainty_note: >-
+    Tool implementation is outside the package, but the normative inputs require
+    no new block-level interface data.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Expresses cases using existing transaction forms, ordinary content counts,
+      and numeric gas-floor expectations.
+  rationale: >-
+    Existing transaction construction and gas/validity expectations suffice; no
+    new reusable expectation, modifier, or framework abstraction is required by
+    the sealed text.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not describe a concrete test framework, so this is based on
+    the proposal's required test inputs and outputs only.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Constants; Specification > Transaction floor
+    summary: >-
+      Counts authorization tuples and blob versioned hashes without changing how
+      either is created, signed, hashed, or verified.
+  rationale: No cryptographic mechanism or cryptographic functionality is introduced or modified.
+  confidence: high
+  uncertainty_note: Existing cryptographic fields are inputs only to integer counts.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction floor; Specification > Charging
+    summary: >-
+      Introduces zero-for-absent field handling, four independently countable
+      content categories, a max(intrinsic, tx_floor) validity boundary, and a
+      max(execution_gas_used, tx_floor) charging boundary.
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Gives separate examples for empty content, calldata, access lists,
+      authorization tuples, and blob versioned hashes.
+  rationale: >-
+    Multiple boundaries must be exercised across transaction types and mixtures
+    of four content categories. In particular, equality and either side of both
+    max operations create an elevated composition-by-threshold case matrix.
+  confidence: medium
+  uncertainty_note: >-
+    The undefined scope of execution_gas_used makes the exact gasUsed boundary
+    uncertain, but does not remove the multiple boundary dimensions.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Content-only, not full RLP; Specification
+    summary: >-
+      Explicitly avoids charging encoded envelope bytes and specifies no block or
+      transaction RLP structural validation change.
+  rationale: No new block RLP validation mechanism requiring sync-client testing is introduced.
+  confidence: high
+  uncertainty_note: Transaction validity changes are scored separately from RLP validation.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility; Security Considerations > Gas estimation
+    summary: >-
+      Calls for wallet and eth_estimateGas updates but specifies no Engine API
+      endpoint, field, or execution/consensus communication change.
+  rationale: No Engine API field, mechanism, or endpoint is introduced.
+  confidence: high
+  uncertainty_note: eth_estimateGas is an RPC concern, not an Engine API change under this anchor.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The complete normative mechanism consists of constants, a transaction-floor
+      formula, and transaction charging rules; no contract is introduced.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: No system-contract address, code, state, or action appears in the proposal.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Applies transaction-level floor and charging changes without referring to
+      existing system-contract code, state, or invocation behavior.
+  rationale: No direct or indirect modification to a pre-existing system contract is specified.
+  confidence: high
+  uncertainty_note: No system-contract interaction is present in the sealed proposal.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Defines no opcode number, stack behavior, execution semantics, or opcode gas.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: The change occurs before or around transaction execution, not as an EVM instruction.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Changes transaction-floor computation and charging only; no opcode result or
+      behavior is mentioned.
+  rationale: No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: Transaction gas accounting is covered by its own anchor.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile address, input, output, gas schedule, or execution logic is defined.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: Existing blob hashes are merely counted and do not invoke a precompile.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Contains no change to any precompile's logic or gas accounting.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: The proposal has no precompile execution surface.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Content-only, not full RLP
+    summary: >-
+      Deliberately prices selected content rather than encoded envelope and
+      signature bytes; it does not alter their encoding.
+  - source: eip.md
+    locator: Specification > Transaction floor
+    summary: Uses counts from existing decoded transaction fields without defining a new serialization.
+  rationale: No transaction, block, or interface encoding format is changed.
+  confidence: high
+  uncertainty_note: >-
+    The use of a worst-case RLP byte constant for authorizations is accounting,
+    not an RLP encoding change.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction floor; Backwards Compatibility
+    summary: >-
+      Applies one rule to already-existing legacy and types 1 through 4; no new
+      type identifier or payload format is defined.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: All affected transaction forms pre-exist in the sealed supporting documents.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Charging
+    summary: >-
+      Requires tx.gas to be at least the maximum of existing intrinsic gas and
+      the new unified content floor while stating that intrinsic gas itself is
+      unchanged.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Shows changed floor behavior across five existing transaction types and
+      mandates updated gas estimation.
+  rationale: >-
+    Existing transaction types gain a modified gas-limit validity condition that
+    affects floor-bound test cases. The arithmetic and available fields support
+    limited vector updates without a necessary redesign of test infrastructure.
+  confidence: medium
+  uncertainty_note: >-
+    Whether the EIP-7981 access-list surcharge remains in intrinsic gas is not
+    resolved by the sealed text and is recorded under under-specification.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Defines no block-body or header field and derives the floor entirely per transaction.
+  rationale: No new block or header field is introduced.
+  confidence: high
+  uncertainty_note: The block gas limit is used only in rationale arithmetic, not modified structurally.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: States only that a hard fork is required and specifies no activation-block transition.
+  rationale: >-
+    No state, internal variable, or similar value is modified specially at the
+    fork-activation block.
+  confidence: high
+  uncertainty_note: Activation scheduling is absent, but no special activation mechanism is needed by the rule.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Estimates aggregate network gas rising 3.56%, with large floor and binding
+      changes concentrated in set-code and blob-carrying transactions.
+  - source: eip.md
+    locator: Security Considerations > Block-size bound
+    summary: >-
+      Makes worst-case per-block attacker-controlled content and network payload
+      size a central claimed effect of the mechanism.
+  rationale: >-
+    Per-transaction arithmetic is simple, but the performance effect depends on
+    block composition, gas-limit use, and transaction-type mix, so it cannot be
+    fully benchmarked in isolation. The package indicates limited aggregate
+    impact alongside a material worst-case bandwidth change.
+  confidence: medium
+  uncertainty_note: >-
+    The sealed package supplies modeled/sample impacts but no implementation or
+    benchmark evidence, which is prohibited from supplementation.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations > Block-size bound
+    summary: >-
+      The security argument relies on every content byte being covered by the
+      floor to derive a hard maximum block-content bound.
+  - source: supporting/eip-7702.md
+    locator: Specification > Set code transaction; Specification > Behavior
+    summary: >-
+      Allows authorization chain_id values below 2**256 and charges every tuple,
+      including tuples that fail behavior checks.
+  - source: eip.md
+    locator: Rationale > Per-auth term is a constant
+    summary: >-
+      Claims 108 bytes is the maximum authorization RLP size while budgeting only
+      nine bytes for chain_id.
+  rationale: >-
+    The floor changes consensus-critical gas and validation across several
+    existing transaction components and is intended to enforce a bandwidth
+    security invariant. Targeted review and fuzzing are needed, particularly
+    because the authorization-size premise does not cover the linked EIP-7702
+    field bound.
+  confidence: medium
+  uncertainty_note: >-
+    The 108-gas-accounting constant is normative and deterministic, but the
+    package evidence does not support its claimed worst-case-byte rationale.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Charging
+    summary: >-
+      Sets tx.gasUsed to max(execution_gas_used, tx_floor) without defining
+      execution_gas_used, while separately saying intrinsic gas is unchanged.
+  - source: supporting/eip-7623.md
+    locator: Specification
+    summary: >-
+      Defines execution_gas_used as EVM execution gas after refund and includes
+      base, calldata, and creation costs separately in the prior gasUsed formula.
+  - source: eip.md
+    locator: Motivation; Specification > Charging
+    summary: >-
+      Says EIP-7981 is folded into the unified rule, yet also says intrinsic gas
+      is unchanged, leaving the existing flat access-list surcharge treatment
+      unresolved.
+  rationale: >-
+    Clients need localized agreement on which ordinary gas components are
+    included in execution_gas_used and whether the EIP-7981 surcharge remains in
+    intrinsic/normal gas before gasUsed and boundary vectors can be baselined.
+    The ambiguity concerns already-observable gas accounting, so it does not meet
+    the score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    No implementations, discussions, or later clarifications may be consulted;
+    assessment is limited to the internally incomplete snapshot text.
+  exceptional_score_justification: Not applicable; the score is within the defined anchors.
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 4
+  evidence:
+  - source: eip.md
+    locator: Front matter requires; Abstract; Motivation
+    summary: >-
+      Requires 2028, 4844, 7623, 7702, 7976, and 7981; replaces or extends the
+      floor treatment of calldata, access lists, authorization tuples, and blob
+      versioned hashes.
+  - source: eip.md
+    locator: Rationale > Content-only, not full RLP; Backwards Compatibility
+    summary: >-
+      Applies type-symmetric behavior to legacy, 2930, 1559, 4844, and 7702
+      transactions and explicitly relies on their existing content formats.
+  rationale: >-
+    Coordinated gas, validity, and boundary testing is required for 1559, 2028,
+    2930, 4844, 7623, 7702, 7976, and 7981. The proposal strongly combines or
+    modifies several of their mechanisms, supporting base score 3; eight
+    interacting EIPs contain at least one complete group of three beyond the
+    first three, adding 1 under the uncapped rule.
+  confidence: high
+  uncertainty_note: >-
+    Only package-grounded direct interactions are listed; transitive EIPs not
+    needed to test EIP-8131's specified surface are excluded.
+  exceptional_score_justification: >-
+    Score 4 is mechanically justified by the uncapped anchor: strong
+    interdependence merits 3, and the eight identified EIPs supply one +1 group
+    of three additional interactions beyond the first three.
+  interacting_eips:
+  - 1559
+  - 2028
+  - 2930
+  - 4844
+  - 7623
+  - 7702
+  - 7976
+  - 7981
+  unidentified_interactions: []
+totals:
+  primary_score: 18
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The charging rule does not define execution_gas_used, and its compact formula
+    does not state how ordinary intrinsic components are combined with the new
+    floor. In addition, saying that EIP-7981 is folded into the unified rule while
+    keeping intrinsic gas unchanged leaves unclear whether its flat access-list
+    data surcharge is retained, replaced, or double-counted. These are localized
+    gas-accounting and validity questions. Separately, the 108-byte authorization
+    constant is clear to implement but does not match the claimed maximum under
+    the linked EIP-7702 field bounds.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - new_or_modified_transaction_validity_mechanisms
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 17
+    maximum: 21
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - >-
+    Does execution_gas_used in tx.gasUsed include TX_BASE, standard calldata and
+    access-list intrinsic charges, creation charges, and EVM execution after
+    refund, or only the last of those components?
+  - >-
+    Is EIP-7981's access_list_data_cost retained in intrinsic/ordinary gas after
+    EIP-8131, or is it replaced by the access-list term in tx_floor?
+  - >-
+    How is AUTH_TUPLE_BYTES = 108 reconciled with EIP-7702 authorization chain_id
+    values below 2**256 and tuples that remain transaction content even when an
+    authorization fails its behavior checks?
+  - >-
+    What normative rule makes future variable-length transaction fields
+    automatically contribute to tx_floor when the formula enumerates only the
+    four current content categories?
+notable_ambiguities:
+- >-
+  The Backwards Compatibility section defines a binding floor by comparison with
+  intrinsic plus execution gas, but the normative Charging formula compares the
+  floor only with the undefined execution_gas_used term.
+- >-
+  EIP-8131 calls 108 bytes the worst-case EIP-7702 tuple RLP size using a nine-byte
+  chain_id, while EIP-7702 permits chain_id below 2**256 and continues past invalid
+  authorization tuples rather than invalidating the outer transaction.
+- >-
+  The proposal claims automatic pricing of future variable-length fields, but
+  supplies no generic content-byte definition or extension rule.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I used only PROMPT.md, ASSESSMENT-CONTRACT.md, package/manifest.yaml,
+    package/output-template.yaml, and every file listed under
+    assessment_source_files. I did not access the internet, follow visible URLs,
+    consult external or prohibited sources, use skills, or use latent knowledge
+    as scoring evidence.

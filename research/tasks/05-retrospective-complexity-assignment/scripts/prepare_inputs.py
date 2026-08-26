@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import os
 import re
 import subprocess
 from datetime import UTC, datetime
@@ -72,6 +73,7 @@ def run_git(repo: Path, *args: str) -> bytes:
     result = subprocess.run(
         ["git", "-C", str(repo), *args],
         check=False,
+        env={**os.environ, "GIT_NO_LAZY_FETCH": "1"},
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
@@ -206,10 +208,22 @@ def supporting_documents(
     eip_text: str,
     package_dir: Path,
     external_repos: dict[str, Path],
+    provenance_only_repositories: set[str] | None = None,
+    provenance_only_reason: str | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     records: list[dict[str, Any]] = []
     provenance_only_links: list[dict[str, Any]] = []
     supporting_dir = package_dir / "supporting"
+
+    excluded_repositories = (
+        PROVENANCE_ONLY_REPOSITORIES
+        if provenance_only_repositories is None
+        else provenance_only_repositories
+    )
+    excluded_reason = provenance_only_reason or (
+        "Task 04c excludes execution-spec and execution-spec-test "
+        "artifacts from primary Task 05 evidence."
+    )
 
     for number in sorted(required_eips(eip_text)):
         path = f"EIPS/eip-{number}.md"
@@ -244,7 +258,7 @@ def supporting_documents(
         seen_external.add(key)
         if repository == "ethereum/EIPs":
             continue
-        if repository in PROVENANCE_ONLY_REPOSITORIES:
+        if repository in excluded_repositories:
             provenance_only_links.append(
                 {
                     "repository": repository,
@@ -252,10 +266,7 @@ def supporting_documents(
                     "path": path,
                     "immutable_url": match.group(0),
                     "use": "provenance_only",
-                    "reason": (
-                        "Task 04c excludes execution-spec and execution-spec-test "
-                        "artifacts from primary Task 05 evidence."
-                    ),
+                    "reason": excluded_reason,
                 }
             )
             continue

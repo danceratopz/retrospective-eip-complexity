@@ -1,0 +1,633 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7645
+  title: Alias ORIGIN to SENDER
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the sealed EIP-7645 snapshot. The proposal
+    changes the existing ORIGIN opcode (0x32) to return the current execution
+    frame's SENDER/CALLER value in all contexts, while leaving transaction
+    structure, validation, and processing otherwise unchanged. The package's
+    supporting evidence is used only for the explicitly linked account-
+    abstraction interactions.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-7645/manifest.yaml
+    manifest_sha256: 3e7d36552c80cd3c57f9f6728e6c3819aa37bea3cb3338dc8e20b7b3705195fe
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7645.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 305bff3d36a5de20d5071f4c85ec9a4bcc6bc677
+    content_sha256: 57c2d8606b731a01ae2077f817032f31629a379fa8b403fe66e67a5fc6660647
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7645.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-7645.md
+    content_sha256: 42dd39840702ebdb97a0fb5fb5a781032b77e451cec59f16835635562e59552a
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T11:49:40Z'
+    session_id: assessment-run-6e051a7c-0a50-476b-bfb4-6669fe353736
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-3074.md
+  - supporting/eip-4337.md
+  - supporting/eip-7377.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Definition Change; EVM Implementation"
+    summary: >-
+      The only required opcode change is the value pushed by ORIGIN: the
+      current call's sender, as if SENDER were executed.
+  rationale: >-
+    The proposal changes an opcode result but specifies no gas cost, schedule,
+    charging site, or accounting mechanism change.
+  confidence: high
+  uncertainty_note: >-
+    The package supplies no gas schedule text for ORIGIN, but the normative
+    change is expressly limited to the pushed value.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — EVM Implementation"
+    summary: >-
+      ORIGIN is required only to push the current call's sender address, as if
+      SENDER had executed.
+  rationale: >-
+    No state access is introduced or moved, and no gas charge is repositioned
+    relative to a state access within the modified opcode.
+  confidence: high
+  uncertainty_note: >-
+    No state-access pseudocode is provided, but the specified operation has no
+    state-access step to order.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Transaction Validation"
+    summary: >-
+      Transactions remain validated as before, with no processing change
+      beyond the specified EVM opcode behavior.
+  rationale: >-
+    The proposal neither introduces nor modifies blob gas accounting.
+  confidence: high
+  uncertainty_note: >-
+    Blob gas is not discussed; the stated transaction-processing scope excludes
+    such a change.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Definition Change; Transaction Validation"
+    summary: >-
+      The proposal changes only ORIGIN's returned value and leaves transaction
+      processing otherwise unchanged.
+  rationale: >-
+    No state write, state-gas charging site, state-gas rate, budget, reservoir,
+    or spill behavior is changed.
+  confidence: high
+  uncertainty_note: >-
+    State gas is not mentioned, consistently with the proposal's value-only
+    opcode change.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — EVM Implementation"
+    summary: >-
+      The EVM change is solely to substitute the current sender value for the
+      original transaction initiator value returned by ORIGIN.
+  rationale: No refund mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: >-
+    Refunds are not discussed, and none is implied by the specified stack-value
+    substitution.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: "Test Cases"
+    summary: >-
+      Tests must compare ORIGIN and SENDER for CALL, STATICCALL, DELEGATECALL,
+      and CALLCODE in direct and multi-hop executions at each frame.
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: >-
+      Contracts relying on the distinction between ORIGIN and SENDER for logic
+      or security are stated to be affected.
+  rationale: >-
+    Existing ORIGIN expected-result tests in nested call contexts must be
+    updated, but this is a localized subset centered on one opcode rather than
+    a broad reworking of unrelated test categories.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no inventory of pre-existing vectors, so the size of
+    the affected subset cannot be established precisely.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Test Cases"
+    summary: >-
+      The ORIGIN-equals-SENDER assertions are prescribed for direct and
+      multi-hop call tests of this feature.
+  rationale: >-
+    The package does not require tests unrelated to EIP-7645 to assert a new
+    block-wide or transaction-wide artifact; the equality is the behavior under
+    test in feature-specific cases.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not describe the existing test suite, but it specifies no
+    new invariant output that every pre-existing test must gain.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Transaction Validation"
+    summary: >-
+      Transaction structure and processing logic remain unchanged beyond the
+      internal EVM opcode behavior.
+  rationale: >-
+    No transition-tool field or interface mechanism is required by the
+    proposal.
+  confidence: high
+  uncertainty_note: >-
+    Transition tooling is not discussed, but the normative inputs and outputs
+    do not change.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Test Cases"
+    summary: >-
+      Required cases consist of ordinary call-family executions and comparisons
+      of the values produced by two existing opcodes.
+  rationale: >-
+    The described tests require no new expectation type, modifier, helper, or
+    framework-level abstraction.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not document a specific framework, so this conclusion is
+    limited to the primitives demanded by the EIP text.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Definition Change"
+    summary: >-
+      The feature aliases the return value of one existing environmental opcode
+      to another existing environmental opcode.
+  rationale: No cryptographic primitive or cryptographic behavior is introduced or modified.
+  confidence: high
+  uncertainty_note: >-
+    None; the complete specification contains no cryptographic operation.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Test Cases"
+    summary: >-
+      The test matrix explicitly spans CALL, STATICCALL, DELEGATECALL, and
+      CALLCODE, both direct and multi-hop, with equality checked at each frame.
+  - source: eip.md
+    locator: "Specification — Definition Change"
+    summary: The alias is required in all execution contexts.
+  rationale: >-
+    Multiple call-context boundaries must be covered because sender propagation
+    differs across the four call mechanisms and across nested frames. The EIP
+    identifies these cases directly, and none is shown to need an elevated case
+    count beyond that bounded matrix.
+  confidence: high
+  uncertainty_note: >-
+    Creation and other less common execution contexts are covered normatively by
+    "all contexts" but are not enumerated in the supplied test cases.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Transaction Validation"
+    summary: >-
+      Transactions retain their existing structure and processing logic outside
+      the opcode behavior.
+  rationale: No block RLP validation or syncing mechanism is introduced.
+  confidence: high
+  uncertainty_note: >-
+    Block synchronization is not discussed because no block encoding or
+    validation surface changes.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — EVM Implementation; Transaction Validation"
+    summary: >-
+      The complete normative change is internal EVM opcode behavior, with
+      transaction structure and processing otherwise unchanged.
+  rationale: No Engine API field, endpoint, or communication mechanism is introduced.
+  confidence: high
+  uncertainty_note: >-
+    The Engine API is not named, and the specified change requires no new
+    consensus-to-execution input.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: >-
+      The specification requires only a behavioral alteration to ORIGIN in all
+      EVM clients.
+  rationale: No system contract is created.
+  confidence: high
+  uncertainty_note: >-
+    None; the proposal's complete mechanism is an opcode alias.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: >-
+      No system contract code, state, or action is identified; only ORIGIN's EVM
+      return value is changed.
+  rationale: >-
+    The package provides no direct modification or package-grounded indirect
+    effect on a pre-existing system contract.
+  confidence: medium
+  uncertainty_note: >-
+    Arbitrary contracts that execute ORIGIN can be affected, but no such system
+    contract is identified in the sealed evidence and none is inferred.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Definition Change"
+    summary: >-
+      The proposal alters the already identified ORIGIN opcode at 0x32 and
+      references the existing SENDER/CALLER opcode at 0x33.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None; both opcodes are presented as existing instructions.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification — Definition Change; EVM Implementation"
+    summary: >-
+      ORIGIN (0x32) must cease returning the original transaction initiator and
+      instead push the current call's sender, as if SENDER/CALLER executed.
+  rationale: >-
+    A pre-existing opcode's non-gas behavior and observable result are directly
+    modified, which maps to the row's score-3 anchor.
+  confidence: high
+  uncertainty_note: None; this is the proposal's explicit normative change.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: The specified mechanism is an opcode behavior change only.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: None; no precompile surface appears in the specification.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: The specified mechanism modifies ORIGIN and no precompile logic or gas.
+  rationale: No existing precompile is modified.
+  confidence: high
+  uncertainty_note: None; no precompile is identified by the proposal.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Transaction Validation"
+    summary: >-
+      Transaction structure remains unchanged, with no processing change beyond
+      the EVM opcode behavior.
+  rationale: No transaction, block, or interface encoding changes are introduced.
+  confidence: high
+  uncertainty_note: >-
+    Encoding formats are not discussed because the proposal changes no encoded
+    object.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Transaction Validation"
+    summary: Transactions must retain their prior structure and validation.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: None; unchanged transaction structure is explicit.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Transaction Validation"
+    summary: >-
+      Transactions must be validated as before; transaction structure and
+      processing logic do not change beyond the opcode behavior.
+  rationale: >-
+    Existing transaction validity rules and intrinsic gas calculation are
+    expressly unchanged.
+  confidence: high
+  uncertainty_note: None; the absence of a validity change is normative.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: The complete change is confined to ORIGIN's EVM stack result.
+  rationale: No block or header field is introduced.
+  confidence: high
+  uncertainty_note: None; no block-level data is required by the mechanism.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: >-
+      The proposal specifies a runtime opcode-result change and no fork-block
+      state transition or mutation of a pre-existing internal variable.
+  rationale: >-
+    Ordinary activation of the new opcode rule does not add the state or
+    internal-variable modification required by this anchor.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP does not name an activation block, but it also specifies no special
+    activation-block action.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — EVM Implementation"
+    summary: >-
+      ORIGIN substitutes one already available execution-context address for
+      another when pushing a single stack value.
+  rationale: >-
+    The package identifies no new mechanism requiring performance validation or
+    interaction with existing performance behavior.
+  confidence: medium
+  uncertainty_note: >-
+    No benchmarks are supplied, but the normative operation remains a single
+    environmental-value push.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: >-
+      Contracts relying on the ORIGIN/SENDER distinction for logic or security
+      are explicitly stated to be affected.
+  - source: eip.md
+    locator: "Security Considerations"
+    summary: >-
+      The EIP aims to remove ORIGIN-specific vulnerabilities but acknowledges
+      possible negative effects on existing ORIGIN misuse and says no clear
+      example had yet been identified.
+  - source: supporting/eip-3074.md
+    locator: "Rationale — Allowing tx.origin as Signer; Security Considerations — Allowing tx.origin as Signer"
+    summary: >-
+      Package evidence identifies nested msg.sender-equals-tx.origin behavior as
+      capable of breaking atomic-sandwich protections and reentrancy guards.
+  rationale: >-
+    Taken together, the sealed evidence shows that making ORIGIN equal CALLER in
+    all call frames substantially changes a security-critical identity invariant
+    across multiple call mechanisms and ORIGIN-dependent authorization patterns.
+    Incorrect implementation or incomplete compatibility analysis therefore
+    warrants extensive security review and fuzzing.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP supplies no affected-contract inventory and concedes that a clear
+    negative legacy example had not been identified, so practical prevalence is
+    unresolved even though the altered invariant is explicit.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification — Definition Change; EVM Implementation"
+    summary: >-
+      In all execution contexts, ORIGIN must return exactly the value SENDER/
+      CALLER would return in the current call.
+  - source: eip.md
+    locator: "Test Cases"
+    summary: >-
+      Direct and multi-hop expected behavior is stated as equality at the target
+      and at each frame for all four listed call-family instructions.
+  rationale: >-
+    The as-if-SENDER rule determines the observable result for constructible
+    execution contexts without requiring clients to select a new value or
+    precedence rule.
+  confidence: medium
+  uncertainty_note: >-
+    The package has no implementation, devnet, or open-question record, and the
+    EIP is marked Stagnant; however, no specific unresolved consensus behavior
+    appears in the normative text.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Motivation"
+    summary: >-
+      The proposal explicitly identifies EIPs 3074, 4337, and 7377 as account-
+      abstraction efforts whose handling of ORIGIN is affected.
+  - source: supporting/eip-3074.md
+    locator: "Rationale — Allowing tx.origin as Signer"
+    summary: >-
+      EIP-3074 permits authorized to equal tx.origin and analyzes the resulting
+      nested msg.sender-equals-tx.origin invariant and compatibility risks.
+  - source: supporting/eip-4337.md
+    locator: "Entire packaged file"
+    summary: >-
+      The packaged EIP-4337 document contains only moved-file metadata, while
+      EIP-7645 itself supplies the bundler/ORIGIN interaction description.
+  - source: supporting/eip-7377.md
+    locator: "Specification — Processing — Transaction Execution; Rationale — Manipulating transaction origin"
+    summary: >-
+      EIP-7377 deliberately assigns a derived transaction origin so
+      caller-equals-origin checks keep their intended role, directly intersecting
+      EIP-7645's ORIGIN alias.
+  rationale: >-
+    Three identified account-abstraction proposals require coordinated
+    consideration and interaction cases, but the interaction is localized to
+    the ORIGIN/CALLER identity axis rather than a broad redesign of each
+    proposal's other mechanisms.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP refers more broadly to all or most account-abstraction proposals,
+    but names only three; the packaged EIP-4337 body is unavailable because the
+    snapshot file only records that it moved.
+  exceptional_score_justification: "Not applicable; the score is not 4."
+  interacting_eips:
+  - 3074
+  - 4337
+  - 7377
+  unidentified_interactions:
+  - >-
+    Other account-abstraction proposals encompassed by eip.md's statement that
+    ORIGIN affects all or most such proposals; no additional EIP numbers are
+    supplied in the package.
+totals:
+  primary_score: 11
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: >-
+    The normative opcode result is precise, but the package does not inventory
+    affected pre-existing tests or deployed security patterns, contains
+    inconsistent backwards-compatibility statements, provides no implementation
+    or devnet/open-question evidence, and does not identify the additional
+    account-abstraction proposals covered by its broad interaction claim.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 9
+    maximum: 14
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - >-
+    Which pre-existing execution test vectors exercise ORIGIN in nested call
+    contexts and therefore require changed expected results?
+  - >-
+    Which existing contract authorization, sandwich-protection, or reentrancy
+    patterns materially rely on ORIGIN differing from SENDER?
+  - >-
+    Have clients or devnets exposed any constructible case not resolved by the
+    as-if-SENDER rule? The sealed package provides no such process evidence.
+  - >-
+    Which additional account-abstraction EIPs are included in the phrase "all or
+    most account abstraction proposals," and how many require coordinated cases?
+notable_ambiguities:
+- >-
+  Backwards Compatibility first says the change is not fully backwards
+  compatible and affects contracts relying on the ORIGIN/SENDER distinction,
+  then ends with "No backward compatibility issues found."
+- >-
+  Security Considerations acknowledges possible harm to existing ORIGIN use but
+  states that a clear negative example had not yet been identified, leaving the
+  affected security population unquantified.
+- >-
+  The EIP's broad reference to all or most account-abstraction proposals exceeds
+  the three proposals identified by number in the sealed evidence.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed package sources and operational files permitted by
+    PROMPT.md and ASSESSMENT-CONTRACT.md, did not access the internet or any
+    external or prohibited information source, and did not use post-snapshot
+    information or latent knowledge as scoring evidence.

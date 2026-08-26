@@ -1,0 +1,438 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7923
+  title: Linear, Page-Based Memory Costing
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: 'Draft execution-layer assessment of EIP-7923 at the sealed Hegota PFI snapshot: replacement of quadratic EVM memory expansion pricing with per-message-call page charging, 32-bit addressing, and a transaction-global 64 MiB allocated-page limit.'
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-7923/manifest.yaml
+    manifest_sha256: 41d29152abdb5fa671b4c90a421db564a3786a13107f9b7e90d195430f0dad3d
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7923.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 474d96e62f5962ce6098f83dda4cd3b4a6106c98
+    content_sha256: 38077cfd67bac06d3ccf95979440d99d8eb9218da855a68a097bfb8084677844
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7923.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-7923.md
+    content_sha256: 39cb426cc4e418c6944cd246fc94de5b47b424f193a0a38221fe6ce74c3cfed2
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:12:07+02:00'
+    session_id: assessment-run-004ca6c3-39bb-49bf-acc1-fa0c7a73685f
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-150.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Specification, memory costing algorithm (lines 41-54)'
+    summary: 'Untouched pages cost 100 gas when first touched in a message call, page 0 is free, and the existing linear and quadratic expansion terms are removed.'
+  rationale: 'This is a new page-history-based EVM gas mechanism that replaces the existing expansion mechanism for all memory instructions, necessarily changing existing gas expectations and tests.'
+  confidence: high
+  uncertainty_note: 'The exact instruction coverage and touch ordering are underspecified, but the replacement of the existing gas mechanism is explicit and fixes this anchor at 3.'
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract and Specification (lines 13-15, 39-59)'
+    summary: 'The proposal changes volatile EVM memory costing and limits; it introduces no state access or gas ordering relative to a state access.'
+  rationale: 'Page touches concern EVM memory, not chain state, so no state-access ordering within an opcode is changed.'
+  confidence: high
+  uncertainty_note: 'No package evidence identifies a state-accessing operation in scope.'
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'The complete normative change is limited to EVM memory page pricing, address width, and an allocated-memory limit.'
+  rationale: 'No blob gas rule is introduced or modified.'
+  confidence: high
+  uncertainty_note: 'No blob mechanism appears in the package evidence.'
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'The proposal meters transient EVM memory pages and does not charge state writes or alter a state-gas budget or spill path.'
+  rationale: 'EVM memory allocation gas is execution gas, not the rubric-defined gas for writing state.'
+  confidence: high
+  uncertainty_note: 'No state-gas facility is mentioned in the sealed proposal.'
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification, memory costing algorithm (lines 49-59)'
+    summary: 'The algorithm only charges gas and raises exceptional halts; it defines no refund.'
+  rationale: 'No new gas-refund mechanism is introduced.'
+  confidence: high
+  uncertainty_note: 'No refund behavior is stated or implied by page deallocation.'
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Specification, memory costing algorithm (lines 49-59)'
+    summary: 'Every memory instruction moves from high-water linear/quadratic expansion pricing to first-touch page pricing, with new exceptional-halt limits.'
+  - source: eip.md
+    locator: 'Backwards Compatibility and Security Considerations (lines 89-91, 328-338)'
+    summary: 'Some contracts that formerly ran out of gas may complete, and the proposal explicitly raises contract-compatibility and memory-DoS questions.'
+  rationale: 'Gas and outcome vectors across the broad, diverse class of existing memory-using opcode and nested-call tests must be reworked, rather than only a narrow contrived category.'
+  confidence: medium
+  uncertainty_note: 'The Test Cases section is empty, so the package does not quantify the affected corpus or enumerate all memory instructions.'
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 49-59)'
+    summary: 'The transaction-global page ceiling changes execution behavior but the EIP specifies no new result or artifact that unrelated tests must additionally assert.'
+  rationale: 'Existing gas and outcome tests may need changed expectations, which belongs to the prior anchor; they do not gain a separate universal assertion.'
+  confidence: medium
+  uncertainty_note: 'The empty Test Cases section provides no explicit assertion plan, but no externally assertable invariant is specified.'
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification and Reference Implementation (lines 39-59, 313-325)'
+    summary: 'The only new counter shown is internal transaction-context state; no transition-tool input or output field is defined.'
+  rationale: 'The execution change can be derived from ordinary transaction execution without a new transition-tool interface field or mechanism.'
+  confidence: high
+  uncertainty_note: 'No transition-tool interface is discussed in the package.'
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Test Cases (lines 93-94) and Specification (lines 49-59)'
+    summary: 'No test cases or new expectation, modifier, or helper primitive are specified; observable gas use and exceptional halts are ordinary execution outcomes.'
+  rationale: 'The sealed proposal does not establish a need for a new test-framework abstraction beyond constructing calls and checking gas or halt results.'
+  confidence: medium
+  uncertainty_note: 'Because the Test Cases section is empty, framework needs are not demonstrated; this score does not assume unprovided infrastructure.'
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract and Specification (lines 13-15, 39-59)'
+    summary: 'The feature consists of memory address, page-accounting, gas, and limit rules and introduces no cryptographic operation.'
+  rationale: 'No cryptography mechanism is added or modified.'
+  confidence: high
+  uncertainty_note: 'The rationale uses keccak256 only as a benchmark calibration reference, not as a cryptographic protocol change.'
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 41-59)'
+    summary: 'Consensus boundaries include free page 0, 4096-byte page crossings, repeated first touches, 32-bit addresses, and the 16384-page transaction limit.'
+  - source: eip.md
+    locator: 'Reference Implementation, memory extension and write paths (lines 136-159, 242-312)'
+    summary: 'The example handles zero sizes, computes inclusive end pages, tracks per-call pages, and contains a separate end-address check, exposing several boundary paths.'
+  rationale: 'Multiple boundary-prone mechanisms interact across zero-length accesses, cross-page ranges, maximum addresses, gas exhaustion, and nested calls; at least the transaction-global cap and page-touch matrix require elevated case counts.'
+  confidence: high
+  uncertainty_note: 'The normative text does not settle several off-by-one, lifetime, and failure-order cases, increasing rather than removing the boundary burden.'
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'No block RLP field or block-validation encoding rule is introduced; the change occurs during EVM execution.'
+  rationale: 'There is no new RLP validation mechanism requiring client syncing tests.'
+  confidence: high
+  uncertainty_note: 'No block serialization change appears in the package.'
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'The proposal defines no Engine API endpoint, field, or communication mechanism.'
+  rationale: 'No Engine API change is introduced.'
+  confidence: high
+  uncertainty_note: 'Engine API behavior is outside the stated proposal surface.'
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'The memory rules are implemented in EVM execution and do not deploy or designate a contract.'
+  rationale: 'No system contract is added.'
+  confidence: high
+  uncertainty_note: 'No contract address, code, state, or system action is specified.'
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification and Reference Implementation (lines 39-59, 95-325)'
+    summary: 'All described changes are to generic computation, memory, and transaction-context logic; no pre-existing system contract is identified or modified.'
+  rationale: 'The package provides no grounded direct or indirect system-contract modification to score.'
+  confidence: medium
+  uncertainty_note: 'The package contains no system-contract inventory; prohibited external knowledge was not used to infer an interaction.'
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 49-59)'
+    summary: 'The proposal applies new rules to existing memory instructions and retains MSIZE semantics; it allocates no new opcode.'
+  rationale: 'No opcode is added.'
+  confidence: high
+  uncertainty_note: 'No opcode number or new instruction semantics are present.'
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Specification, address and transaction limits (lines 55-59)'
+    summary: 'Existing memory operations now exceptionally halt for out-of-range addresses or when transaction-wide allocated pages exceed 16384; these are behavior changes beyond gas repricing.'
+  rationale: 'At least one pre-existing memory-using opcode gains new non-gas exceptional-halt behavior, meeting the rubric binary score of 3.'
+  confidence: high
+  uncertainty_note: 'The exact affected instruction set and boundary convention are underspecified, but the existence of modified behavior is explicit.'
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'No precompile address, input contract, or gas schedule is introduced.'
+  rationale: 'No precompile is added.'
+  confidence: high
+  uncertainty_note: 'The proposal contains no precompile mechanism.'
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 49-59)'
+    summary: 'Generic EVM memory charging changes, but no pre-existing precompile logic or precompile gas schedule is modified.'
+  rationale: 'Call-site memory expansion is not a modification to a precompile itself under this anchor.'
+  confidence: high
+  uncertainty_note: 'No precompile is named in the sealed evidence.'
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'The proposal changes runtime memory accounting without altering transaction, block, or interface encoding.'
+  rationale: 'No RLP, SSZ, or other interface-level encoding change is introduced.'
+  confidence: high
+  uncertainty_note: 'No encoding format appears in the normative change.'
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Front matter and Specification (lines 1-10, 39-59)'
+    summary: 'This Core EVM memory proposal defines no transaction envelope or transaction type.'
+  rationale: 'No new transaction type is introduced.'
+  confidence: high
+  uncertainty_note: 'No transaction-type identifier or fields are specified.'
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 49-59)'
+    summary: 'The new limits produce exceptional halts during EVM execution; they do not change transaction validity or intrinsic gas calculation.'
+  rationale: 'Runtime memory failure is distinct from transaction admission validity under this anchor.'
+  confidence: high
+  uncertainty_note: 'No transaction validation rule is stated.'
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification (lines 39-59)'
+    summary: 'All new values are constants or per-execution accounting; no block or header field is defined.'
+  rationale: 'No new block or block-header field is introduced.'
+  confidence: high
+  uncertainty_note: 'The proposal does not alter block structure.'
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification and Reference Implementation, transaction context (lines 39-59, 313-325)'
+    summary: 'The proposal has no activation-block state transition; the example merely initializes a new per-transaction page counter to zero.'
+  rationale: 'No existing state or internal variable is modified specially at the activation block, and initialization of a new variable is excluded by the rubric.'
+  confidence: high
+  uncertainty_note: 'Fork-choice or activation plumbing is expressly absent from the reference implementation.'
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Motivation, implementation approaches, and Rationale (lines 17-37, 61-87)'
+    summary: 'The proposal replaces contiguous growth with sparse pages or a 4 GiB virtual mapping, tracks page sets, cites allocation/cache/TLB benchmarks, and permits up to 64 MiB across active calls.'
+  - source: eip.md
+    locator: 'Security Considerations (lines 328-338)'
+    summary: 'The EIP explicitly requires maximum-memory analysis and evaluates recursive calls allocating memory across the call stack.'
+  rationale: 'Core memory behavior, OS allocation strategy, page tracking, and nested-call resource limits have substantial and complex interactions with existing execution performance that cannot be validated by isolated microbenchmarks alone.'
+  confidence: high
+  uncertainty_note: 'Only selected microbenchmarks and a rough maximum-memory comparison are supplied; no end-to-end workload results are in the package.'
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Security Considerations (lines 328-338)'
+    summary: 'The proposal identifies compatibility changes for contracts that used to run out of gas and asks whether the new model enables client memory-based denial of service.'
+  - source: eip.md
+    locator: 'Specification (lines 49-59)'
+    summary: 'Security-sensitive controls span per-call page pricing, a 32-bit address cap, and a transaction-global page limit.'
+  rationale: 'Gas metering, memory allocation, exceptional halts, and nested message calls are critical interacting components; incorrect implementation could enable resource exhaustion or consensus-divergent execution and warrants extensive review and fuzzing.'
+  confidence: high
+  uncertainty_note: 'The EIP provides only a coarse maximum-memory comparison and does not resolve the detailed limit semantics needed for a complete security analysis.'
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Specification and empty Test Cases section (lines 49-59, 93-94)'
+    summary: 'The normative text uses "page touched" and "pages allocated in a transaction" without defining exact touch ranges, lifetime/counting, failure ordering, or boundary cases, and supplies no tests.'
+  - source: eip.md
+    locator: 'Reference Implementation (lines 136-159, 185-200, 242-312)'
+    summary: 'The example makes particular choices about zero size, inclusive end pages, restoring child page counts, and an end-address comparison that are not all stated normatively and includes an incomplete allocated-pages assertion.'
+  rationale: 'Exact per-page touch history was not previously a consensus-visible gas dimension, but now determines charges and halts. The unresolved definitions therefore make previously unobservable details consensus-critical and require re-baselining as the draft is clarified.'
+  confidence: high
+  uncertainty_note: 'The package prohibits discussion-thread, implementation, devnet, and later-revision evidence, so the score is based solely on the material gaps visible in the sealed Draft text.'
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'Motivation (line 22) and Rationale (lines 78-82)'
+    summary: 'The proposal explicitly frames total memory through recursive message calls under EIP-150 gas forwarding and makes the new memory limit transaction-global rather than call-local.'
+  - source: supporting/eip-150.md
+    locator: 'Specification, all-but-one-64th call gas rule'
+    summary: 'EIP-150 computes forwarded call gas after subtracting call cost and memory expansion, directly coupling the replaced memory charge to nested-call gas availability.'
+  rationale: 'EIP-7923 modifies the memory-expansion term used around EIP-150 call gas forwarding and adds a limit spanning nested calls, requiring coordinated but limited cross-EIP gas and call-depth tests.'
+  confidence: high
+  uncertainty_note: 'EIP-150 is the only numbered interaction established by the package; no other EIPs are inferred.'
+  exceptional_score_justification: null
+  interacting_eips:
+  - 150
+  unidentified_interactions: []
+totals:
+  primary_score: 23
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: 'The Draft does not normatively define what each memory instruction touches, whether the transaction-global count is cumulative or the simultaneously live allocation restored after child calls, whether free page 0 counts toward the cap, or the precise address/size and failure-order rules. The example selects some behaviors but is internally incomplete and does not consistently specify all bounds.'
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 21
+    maximum: 23
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - 'For every affected instruction, which source and destination byte ranges count as touching a page, especially for zero length, range overflow, and multi-range copy operations?'
+  - 'Does the 16384-page transaction limit count cumulative first allocations or pages simultaneously live across the active message-call stack, and exactly when are child pages released on success or revert?'
+  - 'Does free page 0 count toward the transaction limit, and is it considered already touched for MSIZE or only for charging?'
+  - 'Is the 32-bit rule applied to the start operand, every byte in the accessed range, or the exclusive end, and what exception takes precedence over page gas charging or the global limit?'
+notable_ambiguities:
+- 'The phrase "maximum byte touched ... rounded up by 32" for MSIZE can be read as inclusive-byte or exclusive-end accounting, although the example uses ceil32(start + size).'
+- 'The example restores transaction_context.num_pages after a child computation, a lifetime rule absent from the normative transaction-global limit text.'
+- 'The example checks start_position + size >= 2**32 only in the write path, which does not cleanly match the normative allowance of addresses through 2**32 - 1.'
+- 'The normative phrase "all memory instructions" gives examples but no exhaustive list or per-instruction touched ranges.'
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Assessment uses only PROMPT.md, ASSESSMENT-CONTRACT.md, package/manifest.yaml, package/output-template.yaml, and the three allowlisted assessment source files; no link was opened and no prohibited information source was accessed.'

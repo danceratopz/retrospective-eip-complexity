@@ -1,0 +1,642 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8368
+  title: CPSB Recalibration for New Gas Limit
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the Draft placeholder proposal to replace the
+    CPSB value defined by EIP-8037 for a new, still-undetermined reference block
+    gas limit. The snapshot explicitly leaves the reference limit, CPSB value,
+    rationale, and security analysis unresolved while leaving EIP-8037's other
+    parameters, mechanisms, and semantics unchanged.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8368/manifest.yaml
+    manifest_sha256: a1142a8dd96f15e199c120accad48df9e4f855aec4cba25082f67474f3a8f45a
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8368.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 7be62939881cce209a1a3948511ed9c65b433a37
+    content_sha256: 5092c19d1dff03b1dc647ffff28653bf02eb224f4ad15ff9b42100b69d49b9c7
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8368.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8368.md
+    content_sha256: 78dd2022d89be10d88182bdcd119818db670347952a6866d3df4f2679d236ec1
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T15:07:29+02:00'
+    session_id: assessment-run-cd50c73c-5517-46b0-a601-6aaa22f5e874
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-8037.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The proposal changes only CPSB, the unit cost per new state byte, and says
+      every other EIP-8037 parameter, mechanism, and semantic remains unchanged.
+  - source: supporting/eip-8037.md
+    locator: Specification / Multidimensional metering for state creation costs
+    summary: >-
+      EIP-8037 assigns state-creation costs using CPSB to the separate state-gas
+      dimension, while other operation costs remain execution-gas.
+  rationale: >-
+    The targeted parameter is a state-gas cost, not an EVM execution-gas
+    accounting rule; no execution-gas accounting mechanism is changed.
+  confidence: high
+  uncertainty_note: >-
+    The CPSB amount is missing, but its absence does not move the change into the
+    execution-gas accounting dimension.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      The proposal expressly leaves all EIP-8037 mechanisms and semantics
+      unchanged and changes only the CPSB value.
+  - source: supporting/eip-8037.md
+    locator: Specification / Pre-state and post-state gas validation
+    summary: >-
+      EIP-8037 already defines when state-gas is computed and deducted for
+      state-accessing opcodes.
+  rationale: >-
+    Replacing a multiplier does not move any state access or gas charge relative
+    to an access, and EIP-8368 specifies no ordering change.
+  confidence: high
+  uncertainty_note: >-
+    The replacement value is TBD, but no ordering question is left open.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The proposal is limited to recalibrating the cost per state byte and
+      contains no blob-gas provision.
+  rationale: No blob-gas accounting rule or value is changed.
+  confidence: high
+  uncertainty_note: >-
+    Nothing in the stated placeholder scope suggests a blob-gas change.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      EIP-8368 will replace the CPSB value using the EIP-8037 methodology for a
+      new reference block gas limit, but the new value is TBD.
+  - source: supporting/eip-8037.md
+    locator: Specification / New parameters; Parameter changes
+    summary: >-
+      EIP-8037 defines CPSB as 1530 and multiplies it by state-byte rates for
+      storage, accounts, authorization data, and deployed code.
+  rationale: >-
+    This is precisely an adjustment to an existing state-gas cost parameter; it
+    introduces neither a charging site nor a new state-gas mechanism.
+  confidence: high
+  uncertainty_note: >-
+    The direction and amount of the adjustment cannot be tested until CPSB and
+    the reference block gas limit are supplied.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      Only CPSB changes; all EIP-8037 mechanisms and semantics remain unchanged.
+  - source: supporting/eip-8037.md
+    locator: Specification / Transaction-level gas accounting (reservoir model)
+    summary: >-
+      EIP-8037 already defines its state-gas refill behavior, including LIFO
+      restoration when state creation is undone.
+  rationale: >-
+    A new EVM gas-refund mechanism is not introduced. Existing state-gas refill
+    amounts may scale with CPSB, but their mechanism is unchanged.
+  confidence: high
+  uncertainty_note: >-
+    The exact scaled refill amounts are unknown because CPSB is TBD.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      Existing CPSB-based behavior receives a new numerical value while all
+      mechanisms and semantics remain fixed.
+  - source: supporting/eip-8037.md
+    locator: Specification / Parameter changes
+    summary: >-
+      CPSB appears in existing expected state-gas costs for CREATE, CREATE2,
+      CALL, SELFDESTRUCT, SSTORE, and EOA delegation.
+  rationale: >-
+    A localized subset of pre-existing gas tests must rebaseline CPSB-derived
+    expected costs and out-of-gas points, but their test logic need not be
+    redesigned.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not quantify the replacement value or identify a test
+    corpus, so the exact affected-test count cannot be established.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      The proposal changes a pre-existing parameter and explicitly preserves all
+      other mechanisms and semantics.
+  rationale: >-
+    Affected tests need different expected numbers, not an additional invariant
+    or newly produced object to assert.
+  confidence: high
+  uncertainty_note: >-
+    The absent CPSB value blocks numerical expectations but does not describe a
+    new assertion.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The only declared change is the existing CPSB protocol parameter; no
+      transition-tool field or interface is specified.
+  rationale: >-
+    The proposal requires no new transition-tool field or interface mechanism.
+  confidence: high
+  uncertainty_note: >-
+    Tooling details are not discussed, but the stated scope supplies no
+    interface payload that would require a new field.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      EIP-8368 is an existing-parameter recalibration with no new protocol
+      mechanism or output type.
+  rationale: >-
+    Existing gas-expectation and boundary-test primitives suffice for a
+    numerical cost update.
+  confidence: high
+  uncertainty_note: >-
+    No testing section is supplied, but no proposed behavior calls for a new
+    framework abstraction.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The scope is solely a state-byte gas-cost recalibration and contains no
+      cryptographic mechanism.
+  rationale: No cryptographic functionality is added or modified.
+  confidence: high
+  uncertainty_note: >-
+    The missing parameter and rationale do not create a cryptography question.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The replacement CPSB value, which determines the amount charged per state
+      byte, remains TBD.
+  - source: supporting/eip-8037.md
+    locator: Specification / Parameter changes; Transaction-level gas accounting (reservoir model)
+    summary: >-
+      CPSB-derived charges draw from the state reservoir and then gas_left, so
+      their numerical value sets exact sufficiency and out-of-gas boundaries.
+  rationale: >-
+    The recalibration shifts the existing exact-gas boundary for CPSB-sensitive
+    state creation. This is one boundary-prone parameter change, not multiple new
+    mechanisms.
+  confidence: medium
+  uncertainty_note: >-
+    Exact below-at-above boundary vectors cannot be derived until CPSB is fixed.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The proposal changes only CPSB and introduces no block RLP validation
+      mechanism.
+  rationale: No block-encoding validation or syncing rule is changed.
+  confidence: high
+  uncertainty_note: >-
+    No syncing surface is present in the declared scope.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The proposal contains no Engine API field, endpoint, or communication
+      mechanism and preserves EIP-8037 mechanisms.
+  rationale: No Engine API change is introduced.
+  confidence: high
+  uncertainty_note: >-
+    The placeholder omits the parameter value, not an Engine API design.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      EIP-8368 only recalibrates CPSB and does not introduce a contract or system
+      action.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: >-
+    No added-contract surface appears in the proposal.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      CPSB changes while EIP-8037's mechanisms and semantics remain unchanged.
+  - source: supporting/eip-8037.md
+    locator: Specification / System contracts and system transactions
+    summary: >-
+      EIP-8037 derives the system-call gas limit and state-gas reservoir
+      allocation from CPSB for existing per-block system calls.
+  rationale: >-
+    Changing CPSB indirectly changes the derived gas allowance for existing
+    system-contract calls, but it changes no system-contract code or state and
+    leaves the call mechanism intact.
+  confidence: medium
+  uncertainty_note: >-
+    The evaluated system-call allowance cannot be calculated until CPSB is
+    supplied, and EIP-8368 does not enumerate this derived consequence.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The proposal declares only a CPSB value update and no new opcode.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: >-
+    The placeholder has no opcode-allocation question.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      EIP-8368 preserves all EIP-8037 mechanisms and semantics other than the
+      CPSB parameter value.
+  - source: supporting/eip-8037.md
+    locator: Specification / Parameter changes
+    summary: >-
+      Several existing opcodes use CPSB-derived gas costs, but the target
+      proposal changes only that gas parameter.
+  rationale: >-
+    The rubric excludes gas-only changes from modified-opcode behavior, and no
+    opcode result or non-gas behavior changes.
+  confidence: high
+  uncertainty_note: >-
+    The unknown gas value affects opcode cost expectations, not this row's
+    behavior criterion.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      A CPSB parameter update is the entire declared change; no precompile is
+      introduced.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: >-
+    No precompile surface is present.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      Only the state-byte cost parameter changes and all other EIP-8037
+      mechanisms and semantics remain fixed.
+  rationale: No precompile behavior or gas schedule is modified.
+  confidence: high
+  uncertainty_note: >-
+    The missing CPSB value does not affect any stated precompile schedule.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The proposal changes a gas parameter and specifies no transaction, block,
+      or interface encoding change.
+  rationale: No RLP, SSZ, or other interface encoding is changed.
+  confidence: high
+  uncertainty_note: >-
+    Encoding is outside the declared scope.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      EIP-8368 contains only a CPSB recalibration and defines no transaction
+      envelope or type.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: >-
+    The placeholder does not leave a transaction-type design open.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      EIP-8368 states that all EIP-8037 mechanisms and semantics other than CPSB
+      remain unchanged.
+  - source: supporting/eip-8037.md
+    locator: Specification / Transaction validation
+    summary: >-
+      EIP-8037 places state-dependent charges at runtime and defines intrinsic
+      gas as entirely execution-gas; CPSB is not a new validity-rule input.
+  rationale: >-
+    The recalibration changes runtime state-gas amounts, not transaction validity
+    rules or intrinsic-gas calculation.
+  confidence: high
+  uncertainty_note: >-
+    Transactions may reach different runtime gas boundaries once CPSB is known,
+    but that is not a validity-mechanism change.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      No block or header field is introduced by the CPSB value update.
+  rationale: The existing block/header structure is unchanged.
+  confidence: high
+  uncertainty_note: >-
+    The unresolved numerical parameter does not imply a new field.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Backwards Compatibility
+    summary: >-
+      The proposal describes a parameter update and inherited compatibility
+      considerations, but no activation-block state transition or special
+      internal-variable mutation.
+  rationale: >-
+    Ordinary activation of a revised protocol constant is not a new
+    fork-activation mechanism; no fork-block-only modification is specified.
+  confidence: medium
+  uncertainty_note: >-
+    The placeholder does not specify activation details, so this assessment is
+    limited to the absence of any special mechanism in the snapshot.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation; Specification; Rationale
+    summary: >-
+      CPSB must be recalibrated because a higher block gas limit changes expected
+      state growth, but the reference limit, value, and rationale are TBD.
+  - source: supporting/eip-8037.md
+    locator: Rationale / Deriving the cost per state byte (CPSB)
+    summary: >-
+      CPSB is derived from the reference gas limit, annual block count, average
+      state-gas utilization, and a target annual state-growth rate.
+  rationale: >-
+    The value cannot be validated in isolation from block utilization and
+    resulting state growth, and it modifies existing resource-growth behavior.
+    The change is nevertheless localized to one established parameter rather
+    than a new interacting mechanism.
+  confidence: low
+  uncertainty_note: >-
+    With no reference limit, CPSB, derivation, or rationale, the magnitude and
+    benchmark impact cannot be determined and could support a different score.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation; Security Considerations
+    summary: >-
+      The proposal aims to keep state growth on target as the block limit rises,
+      while its security section is only 'Needs discussion.'
+  - source: supporting/eip-8037.md
+    locator: Security Considerations
+    summary: >-
+      EIP-8037 identifies usability effects from state-creation pricing and
+      resource-allocation concerns associated with its state-gas model.
+  rationale: >-
+    Miscalibrating the common state-byte price can alter the resource assumptions
+    across several state-creation paths and warrants targeted security and
+    economic review, but EIP-8368 adds no new mechanism requiring an extensive
+    multi-component redesign.
+  confidence: low
+  uncertainty_note: >-
+    The target proposal supplies no security analysis and no value, so neither
+    the direction nor materiality of its risks can be bounded from the package.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification; Rationale; Security Considerations
+    summary: >-
+      The proposal calls itself a placeholder and leaves the new reference block
+      gas limit, CPSB value, rationale, and security discussion unresolved.
+  rationale: >-
+    Clients cannot baseline CPSB-derived gas results until the exact value is
+    agreed. The missing decision is localized to an already observable gas
+    parameter, so it does not meet the score-3 condition of making previously
+    unobservable behavior consensus-critical.
+  confidence: high
+  uncertainty_note: >-
+    The central consensus value is explicitly absent; the package gives no basis
+    for choosing it.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter 'requires'; Abstract; Backwards Compatibility
+    summary: >-
+      EIP-8368 requires EIP-8037, modifies the CPSB parameter introduced there,
+      and inherits its backwards-compatibility considerations.
+  - source: supporting/eip-8037.md
+    locator: Specification / New parameters; Parameter changes
+    summary: >-
+      EIP-8037 defines CPSB and applies it throughout its state-creation gas
+      schedule.
+  rationale: >-
+    EIP-8368 directly modifies EIP-8037's defining parameter, requiring
+    coordinated expected-value testing, but the interaction is limited to that
+    one parameter and one identified EIP.
+  confidence: high
+  uncertainty_note: >-
+    The replacement value is missing, but the dependency and interaction scope
+    are explicit.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 8037
+  unidentified_interactions: []
+totals:
+  primary_score: 12
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    EIP-8368 is explicitly a placeholder. It does not provide the new reference
+    block gas limit, the re-derived CPSB integer, the calculation and rationale
+    supporting that integer, or substantive security analysis. These omissions
+    prevent exact gas vectors and quantitative performance or risk validation;
+    they do not evidence any mechanism beyond the stated CPSB adjustment.
+  affected_criteria:
+  - state_gas_accounting_changes
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - modified_system_contracts
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 8
+    maximum: 15
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - What new reference block gas limit replaces the 150M reference?
+  - What exact integer CPSB value results, including the intended rounding rule?
+  - What derivation and empirical assumptions justify the selected value?
+  - What security and economic effects follow from the selected magnitude?
+  - >-
+    Which CPSB-derived expected values, including the system-call gas allowance,
+    are intended to be explicitly rebaselined?
+notable_ambiguities:
+- >-
+  The statement that all other parameters are unaffected is clear about formulas
+  and semantics, but the proposal does not enumerate derived numerical values
+  that necessarily change when CPSB changes.
+- >-
+  'The same methodology as EIP-8037' does not state how an approximate derived
+  ratio is converted into the final integer CPSB.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only EIP-8368's execution-layer surface using the sealed package
+    sources and operational instructions, did not follow visible links or use
+    prohibited external or post-snapshot information, and did not use latent
+    knowledge to fill specification gaps.

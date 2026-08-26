@@ -1,0 +1,764 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8250
+  title: Keyed Nonces for Frame Transactions
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the sealed Draft EIP-8250 delta to EIP-8141.
+    The assessed surface comprises the frame-transaction payload and signature
+    hash, keyed-nonce validity and protocol-managed state, payment-scoped
+    APPROVE gas and persistence semantics, transaction introspection, fork
+    activation, and execution-client mempool dependency handling.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8250/manifest.yaml
+    manifest_sha256: 87a1bb807195e11db286cb83ec76c0edd2ab93bc925360ec5f3598084cd1bdd9
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8250.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: b824d302c2c03881791bf4645cba15c578cbfa6d
+    content_sha256: 23249d7f78b3f697b64719c6ac6b7deb605030a31f454368b61196732469e3cb
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8250.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8250.md
+    content_sha256: 2c621d557b9401e71d05e65d151332c15366a232128167e00561081a0a182dc4
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:48:00+02:00'
+    session_id: assessment-run-3ad83def-2009-4ba3-8234-b2a4fb2873bc
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: /root
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2200.md
+  - supporting/eip-2929.md
+  - supporting/eip-4337.md
+  - supporting/eip-7623.md
+  - supporting/eip-8141.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Nonce consumption, steps 1-5"
+    summary: >-
+      A payment-scoped APPROVE reads every keyed slot, counts first uses,
+      charges KEYED_NONCE_FIRST_USE_GAS per zero-valued slot, and makes the
+      charge part of frame and transaction gas accounting.
+  - source: eip.md
+    locator: "Specification > Transaction payload"
+    summary: >-
+      RLP encodings of nonce_keys and nonce_seq are newly included in both
+      standard gas-limit and calldata-token calculations inherited from the
+      frame transaction.
+  rationale: >-
+    This introduces a dynamic first-use execution-gas mechanism inside
+    APPROVE and integrates it with existing frame gas-used, settlement, and
+    unpaid-gas-refund calculations. Existing frame-transaction gas cases are
+    affected, matching score 3.
+  confidence: high
+  uncertainty_note: >-
+    The surcharge and its accounting destinations are explicit; the sealed
+    package contains no executable test inventory with which to count affected
+    vectors.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: "Specification > Nonce consumption, paragraphs before and after steps 1-5"
+    summary: >-
+      APPROVE first performs all pre-existing exceptional checks and ordinary
+      costs, then keyed reads, then the conditional surcharge, then nonce
+      writes, and only then commits the remaining approval effects atomically.
+  rationale: >-
+    The state-access and gas-charge order of one opcode, APPROVE, changes.
+    Testing is multiplicative across legacy versus keyed domains, first versus
+    subsequent use, key count, payment scope, gas boundaries, and
+    success/revert/atomic-batch paths, but the rubric's score-1 anchor is the
+    exact structural match because only one opcode's ordering changes.
+  confidence: high
+  uncertainty_note: >-
+    The intra-APPROVE order is explicit. The separate question of recording
+    these protocol accesses in a block-level access list is not specified and
+    is recorded under under-specification rather than changing this score.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload"
+    summary: >-
+      The delta states that no payload field other than the nonce replacement
+      changes and adds nonce bytes only to standard/calldata-token accounting.
+  - source: supporting/eip-8141.md
+    locator: "Specification > Frame Transaction > Blob handling"
+    summary: >-
+      The base frame transaction already defines optional blob handling and
+      blob-gas accounting.
+  rationale: >-
+    EIP-8250 neither adds nor modifies a blob-gas mechanism; its added bytes
+    are execution-calldata priced. Score 0 applies.
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Nonce consumption, final two paragraphs"
+    summary: >-
+      The first-use surcharge is deducted from the executing frame's gas and
+      keyed writes are protocol bookkeeping explicitly excluded from ordinary
+      SSTORE pricing.
+  - source: supporting/eip-8141.md
+    locator: "Specification > Frame Transaction > Gas Accounting"
+    summary: >-
+      The base proposal separately defines state gas as the durable-state
+      dimension with per-frame state budgets and specific charge points.
+  rationale: >-
+    Although keyed slots create persistent state, EIP-8250 prices that growth
+    with execution gas and does not adjust StateGasCosts, a STATE_BYTES rate,
+    a state-gas charge site, or the block state-gas budget. Under this anchor's
+    narrow definition, the score is 0.
+  confidence: high
+  uncertainty_note: >-
+    This score follows the rubric's distinction between a state-growth
+    surcharge paid in execution gas and the named state-gas mechanism.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Nonce consumption"
+    summary: >-
+      The surcharge is included in EIP-8141's existing unpaid-gas refund
+      calculation; no refund counter, eligibility rule, or refund amount is
+      introduced for keyed nonces.
+  rationale: >-
+    Referencing an existing settlement refund does not create a new EVM gas
+    refund mechanism. Score 0 applies.
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload; Stateful validity; Nonce consumption; Transaction introspection"
+    summary: >-
+      The delta changes every post-fork frame transaction's nonce fields and
+      signing payload, replaces its stateful nonce check and payment-approval
+      nonce effect, and changes transaction introspection.
+  - source: eip.md
+    locator: "Specification > Activation; Mempool"
+    summary: >-
+      It also invalidates pre-fork frame transactions at the boundary and
+      changes frame-transaction identity, dependencies, and revalidation.
+  rationale: >-
+    Existing EIP-8141 tests require broad reworking across encoding,
+    signature hashes, validity, gas boundaries, APPROVE/revert behavior,
+    activation, and mempool behavior. These are diverse test categories, so
+    score 3 applies.
+  confidence: high
+  uncertainty_note: >-
+    The breadth follows directly from the delta, though the package includes
+    no pre-existing test catalog for a mechanical case count.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > Activation"
+    summary: >-
+      The first post-fork block must initialize NONCE_MANAGER with fixed code,
+      at least nonce 1, empty storage, and balance-preservation rules before
+      any transaction executes.
+  rationale: >-
+    A broad category of fork-transition and post-activation state assertions
+    gains a mechanical invariant for the NONCE_MANAGER account even when a
+    test does not send a keyed-nonce transaction. The text does not establish
+    that literally every test vector and every pre-fork vector must be
+    re-derived, so score 2 rather than 3 applies.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not describe how the test corpus supplies or asserts
+    fork-initialized system state.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload"
+    summary: >-
+      The existing nonce input is replaced by the two distinct transaction
+      fields nonce_keys and nonce_seq.
+  - source: eip.md
+    locator: "Specification > Activation"
+    summary: >-
+      NONCE_MANAGER initialization occurs only when the current timestamp is
+      post-fork and the parent timestamp is pre-fork, before transaction
+      execution, and must be reversible across reorgs.
+  rationale: >-
+    A transition tool must represent multiple new transaction fields and must
+    support a fork-boundary-only pre-transaction state transition whose
+    selection depends on both current and parent timestamps. This matches the
+    score-3 combination of multiple fields and a new mechanism.
+  confidence: medium
+  uncertainty_note: >-
+    No transition-tool interface is included, so the exact field names and
+    whether existing environment inputs already expose parent timestamp are
+    not package-evidenced.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload; Nonce state"
+    summary: >-
+      Tests must construct a bounded list of nonce keys plus a sequence and
+      inspect protocol-managed keyed storage derived from sender and key.
+  rationale: >-
+    Existing transaction and state fixtures need minor extension for the two
+    fields, key-list constraints, and derived storage slots. The package does
+    not demonstrate a need for a new permanent expectation or modifier
+    abstraction, so score 1 applies.
+  confidence: medium
+  uncertainty_note: >-
+    The sealed package contains no test-framework design or tests; the score
+    is limited to the minimum extension directly required by the specified
+    data model.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Nonce state; Transaction introspection"
+    summary: >-
+      The proposal uses keccak256 for storage-slot derivation and for a
+      canonical hash of the nonce-key set, while retaining EIP-8141's signature
+      procedure after substituting the nonce fields.
+  rationale: >-
+    Use of an existing hash function and a changed signed message does not
+    introduce or modify a cryptographic mechanism. Score 0 applies.
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload, decoder rejection list"
+    summary: >-
+      Boundaries include one to sixteen keys, canonical integer encodings,
+      256- and 64-bit limits, strict ordering, and the singleton-only zero key.
+  - source: eip.md
+    locator: "Specification > Stateful validity; Nonce consumption; Activation"
+    summary: >-
+      Additional boundaries include overlapping sets in block order, sequence
+      exhaustion, first-use gas thresholds, legacy nonce changes during a
+      transaction, rollback persistence, and the exact fork boundary.
+  rationale: >-
+    Multiple boundary-prone mechanisms require an elevated combinatorial set
+    of cases, especially up to sixteen shared-sequence keys crossed with
+    first/subsequent use, overlap, gas-left thresholds, approval scopes, and
+    rollback outcomes. Score 3 applies.
+  confidence: high
+  uncertainty_note: >-
+    The boundaries are explicit; the exact case count depends on the test
+    framework, which is outside the sealed package.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload"
+    summary: >-
+      At the fork, FRAME_TX_TYPE changes RLP schema and gains list shape,
+      canonicality, range, strict-ordering, and zero-key decoding checks.
+  - source: eip.md
+    locator: "Specification > Activation"
+    summary: >-
+      Decoders must select the old or new frame payload rules based on the
+      activation timestamp.
+  rationale: >-
+    Sync validation must implement multiple related RLP checks and a
+    timestamp-dependent schema for an existing transaction type. This is more
+    than one simple validation but remains a localized payload change, matching
+    score 2.
+  confidence: high
+  uncertainty_note: >-
+    The payload's fee-field layout conflicts with sealed EIP-8141 and is
+    recorded as under-specification; either resolution still requires these
+    keyed-field validation mechanisms.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification (complete execution-layer delta)"
+    summary: >-
+      The proposal specifies transaction, state transition, introspection,
+      activation, and mempool behavior but no Engine API field, endpoint, or
+      communication mechanism.
+  rationale: "No Engine API change is introduced, so score 0 applies."
+  confidence: high
+  uncertainty_note: "No Engine API surface is present in the allowlisted proposal."
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > Constants; Nonce state; Activation"
+    summary: >-
+      A new NONCE_MANAGER account with reverting runtime code is installed at
+      activation, and its persistent storage holds every non-zero keyed nonce
+      sequence.
+  rationale: >-
+    This is one new stateful system contract, which is the explicit score-2
+    anchor.
+  confidence: high
+  uncertainty_note: >-
+    Its address remains subject to network-specific emptiness checks before
+    fork-configuration finalization, but the contract's stateful role is clear.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Activation"
+    summary: >-
+      The only system-contract action defined is initialization of the new
+      NONCE_MANAGER; the proposal defines no change to existing system-contract
+      code or state.
+  rationale: >-
+    Modifying EIP-8141 opcode and transaction behavior is not a modification
+    of a pre-existing system contract. Score 0 applies.
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Nonce consumption; Transaction introspection"
+    summary: >-
+      The proposal changes the existing EIP-8141 APPROVE and TXPARAM
+      instructions but assigns no new opcode number.
+  rationale: "No new opcode is introduced, so score 0 applies."
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Nonce consumption"
+    summary: >-
+      Payment-scoped APPROVE replaces the legacy account-nonce increment with
+      keyed reads, conditional gas, keyed or legacy consumption, and approval
+      effects that survive later rollback.
+  - source: eip.md
+    locator: "Specification > Transaction introspection"
+    summary: >-
+      TXPARAM(0x01) changes meaning to nonce_seq and additional parameter
+      results are assigned.
+  rationale: >-
+    At least APPROVE and TXPARAM have behavioral, non-gas result changes, so
+    the rubric's binary score 3 applies.
+  confidence: high
+  uncertainty_note: >-
+    TXPARAM(0x0C) conflicts with its sealed EIP-8141 assignment; that localized
+    conflict is recorded under under-specification but does not change the
+    fact that opcode behavior is modified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Constants; Nonce state"
+    summary: >-
+      NONCE_MANAGER is specified as a stateful system contract with runtime
+      bytecode and storage, not as a precompile; no precompile is added.
+  rationale: "No new precompile is introduced, so score 0 applies."
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification (complete execution-layer delta)"
+    summary: >-
+      No precompile behavior or gas schedule is modified anywhere in the
+      proposal.
+  rationale: "No existing precompile is modified, so score 0 applies."
+  confidence: high
+  uncertainty_note: "No precompile surface is present in the allowlisted proposal."
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload"
+    summary: >-
+      FRAME_TX_TYPE replaces one RLP nonce field with consecutive nonce_keys
+      and nonce_seq fields, requires canonical integer encodings, and changes
+      the signing payload accordingly.
+  rationale: >-
+    An encoding change at transaction level is introduced, which maps directly
+    to the rubric's binary score 3.
+  confidence: high
+  uncertainty_note: >-
+    The exact surrounding fee-field nesting conflicts with sealed EIP-8141;
+    both readings still constitute the scored transaction-level encoding
+    change.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Abstract; Specification > Transaction payload"
+    summary: >-
+      The proposal is explicitly a delta that changes the existing EIP-8141
+      FRAME_TX_TYPE payload rather than assigning another transaction type.
+  rationale: "No new transaction type is introduced, so score 0 applies."
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload, decoder rejection list"
+    summary: >-
+      Static validity gains schema, non-empty/bounded-list, canonicality,
+      integer-range, strict-order, and zero-key constraints.
+  - source: eip.md
+    locator: "Specification > Stateful validity"
+    summary: >-
+      Stateful validity replaces one sender-nonce equality with equality
+      against every selected key's current sequence at the transaction's
+      actual position in block execution order.
+  - source: eip.md
+    locator: "Specification > Transaction payload, gas pricing definitions"
+    summary: >-
+      The new nonce encodings also change intrinsic/floor quantities used by
+      transaction gas-limit validity.
+  rationale: >-
+    Existing frame-transaction validity tests require extensive redesign for
+    list encoding, multiple state domains, overlap and ordering, sequence
+    exhaustion, and changed intrinsic calculations. Score 3 applies.
+  confidence: high
+  uncertainty_note: >-
+    The validity rules themselves are detailed; only the surrounding payload
+    layout conflict is unresolved separately.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification (complete execution-layer delta)"
+    summary: >-
+      Keyed nonce state is committed through the existing execution stateRoot;
+      no new block or header field is defined.
+  - source: eip.md
+    locator: "Rationale, paragraph beginning 'Keyed-nonce state lives'"
+    summary: >-
+      The system-contract storage choice is expressly intended to retain the
+      existing execution state commitment.
+  rationale: "No block or header field is introduced, so score 0 applies."
+  confidence: high
+  uncertainty_note: "No material uncertainty in the sealed text."
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Activation"
+    summary: >-
+      Before transactions in the first post-fork block, clients create or
+      modify NONCE_MANAGER code and nonce while preserving balance according
+      to pre-existing-account conditions, and must undo this on reorg.
+  rationale: >-
+    The activation block performs an irregular state/account transition, which
+    is the rubric's binary score-3 condition.
+  confidence: high
+  uncertainty_note: >-
+    FORK_TIMESTAMP and the final network-safe address are configuration TBDs,
+    but the activation mechanism and transition cases are specified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > Stateful validity; Nonce consumption; Mempool"
+    summary: >-
+      A transaction can require reads and writes for up to sixteen derived
+      storage slots, and pending transactions must be indexed and revalidated
+      when any selected sequence changes.
+  - source: eip.md
+    locator: "Security Considerations, paragraph beginning 'Each consumed'"
+    summary: >-
+      Every first-used sender/key pair occupies a persistent slot; growth is
+      bounded by a 20,000-gas surcharge per new key.
+  rationale: >-
+    State-database work, multi-key validity, persistent growth, and mempool
+    dependency tracking interact with existing execution and propagation
+    paths, so isolated microbenchmarks do not cover the full impact. The
+    sixteen-key bound and gas-based growth bound keep the impact limited,
+    matching score 2 rather than 3.
+  confidence: medium
+  uncertainty_note: >-
+    The package supplies bounds but no benchmark targets, client data
+    structures, or measured workloads.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Security Considerations"
+    summary: >-
+      The proposal identifies authorization binding of the full key set,
+      CREATE-address sensitivity to the legacy nonce, persistence through
+      rollback, cancellation/replacement changes, permanent state growth, and
+      sequence exhaustion.
+  - source: eip.md
+    locator: "Specification > Nonce consumption; Mempool"
+    summary: >-
+      Replay state is committed during payment approval outside frame and
+      atomic-batch journals, while the public mempool gains multi-key
+      dependency and revalidation rules.
+  rationale: >-
+    Replay protection and authorization are critical invariants, and the new
+    mechanism crosses transaction validity, opcode approval, state journaling,
+    contract creation semantics, fee payment, and mempool replacement. These
+    multiple critical interactions require extensive review and fuzzing, so
+    score 3 applies.
+  confidence: high
+  uncertainty_note: >-
+    The proposal documents the risk classes, but the sealed package contains
+    no implementations, tests, or review outcomes, as required by the source
+    restrictions.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction payload, displayed post-replacement payload"
+    summary: >-
+      EIP-8250 displays fee values as three top-level payload fields while
+      stating that only nonce is replaced and no other field changes.
+  - source: supporting/eip-8141.md
+    locator: "Specification > Frame Transaction > Payload Encoding"
+    summary: >-
+      The sealed base payload instead contains one nested fees list, so the
+      exact post-fork RLP schema cannot satisfy both texts.
+  - source: eip.md
+    locator: "Specification > Transaction introspection, TXPARAM table"
+    summary: >-
+      EIP-8250 assigns 0x0C to the pre-state legacy sender nonce and calls its
+      new indices non-conflicting.
+  - source: supporting/eip-8141.md
+    locator: "Specification > Introspection > TXPARAM Instruction (0xb0), table"
+    summary: >-
+      The sealed base already assigns 0x0C to current-frame state_gas_left,
+      creating a second direct result conflict.
+  rationale: >-
+    Clients need agreement on the localized payload layout and TXPARAM(0x0C)
+    result before authoritative vectors can be baselined. These are concrete,
+    localized conflicts rather than a newly observable class of previously
+    unspecified behavior, matching score 2.
+  confidence: high
+  uncertainty_note: >-
+    The conflicts are explicit in the sealed sources. The package contains no
+    admissible amendment or precedence rule that resolves them.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Front matter 'requires'; Specification > Transaction payload; Nonce consumption"
+    summary: >-
+      EIP-8250 requires 7623 and 8141, changes EIP-8141 payload, validity,
+      APPROVE, introspection, and mempool behavior, and integrates nonce bytes
+      with calldata-floor accounting.
+  - source: eip.md
+    locator: "Specification > Nonce consumption, final paragraph"
+    summary: >-
+      Protocol keyed reads/writes are expressly excluded from EIP-2929 access
+      warming and EIP-2200 SSTORE pricing.
+  - source: supporting/eip-2200.md
+    locator: "Specification"
+    summary: >-
+      EIP-2200 defines the ordinary SSTORE charging and refund machinery from
+      which keyed protocol writes are excluded.
+  - source: supporting/eip-2929.md
+    locator: "Specification > Storage read changes; SSTORE changes"
+    summary: >-
+      EIP-2929 defines transaction access sets and warm/cold storage behavior
+      that keyed protocol accesses must not affect.
+  - source: supporting/eip-7623.md
+    locator: "Specification"
+    summary: >-
+      EIP-7623 defines calldata-token floor pricing with which the new nonce
+      encodings interact through the EIP-8141 accounting delta.
+  - source: supporting/eip-8141.md
+    locator: "Specification > APPROVE Instruction; Introspection; Mempool"
+    summary: >-
+      EIP-8141 supplies the existing mechanisms that EIP-8250 directly
+      replaces or extends.
+  rationale: >-
+    Coordinated cases are required for EIPs 8141, 7623, 2929, and 2200: the
+    frame-transaction delta is deep, calldata-floor behavior must include the
+    new bytes, and ordinary SSTORE and warm/cold mechanisms must remain
+    unaffected by protocol bookkeeping. Four interacting EIPs do not trigger
+    the rubric's first +1 increment, which begins after six total interactions;
+    the strong multi-EIP dependency therefore scores 3.
+  confidence: high
+  uncertainty_note: >-
+    The EIP-4337 comparison is rationale-only and does not establish a protocol
+    dependency requiring coordinated execution-layer vectors, so it is not
+    counted.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 2200
+  - 2929
+  - 7623
+  - 8141
+  unidentified_interactions:
+  - >-
+    Legacy account-nonce changes caused by account deployment and CREATE or
+    CREATE2 inside a frame interact with legacy-domain consumption and
+    TXPARAM(0x0C); the package gives no EIP number for this interaction.
+totals:
+  primary_score: 42
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The sealed EIP-8250 delta conflicts with its sealed EIP-8141 base in two
+    consensus-visible places: the surrounding RLP fee-field layout and the
+    result assigned to TXPARAM(0x0C). The delta also does not state whether its
+    protocol-managed keyed reads and writes are recordable in the rubric's
+    block-level access list; it only excludes them from EIP-2929 transaction
+    access sets. These issues require a package-authoritative resolution, but
+    either resolution leaves the scored mechanisms and High tier unchanged.
+  affected_criteria:
+  - state_access_ordering_within_opcode_execution
+  - transition_tool_interface_changes
+  - block_syncing_changes
+  - modified_opcodes
+  - encoding_changes_rlp_ssz
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 42
+    maximum: 42
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - >-
+    Does the post-fork RLP payload retain EIP-8141's nested fees list, or use
+    the three top-level fee fields displayed by EIP-8250?
+  - >-
+    Does TXPARAM(0x0C) return the pre-state legacy sender nonce or the current
+    frame's state_gas_left, and what index retains the displaced value?
+  - >-
+    Are protocol-managed NONCE_MANAGER reads and writes included in any
+    block-level access-list recording, independently of their explicit
+    exclusion from EIP-2929 warming sets?
+notable_ambiguities:
+- >-
+  FORK_TIMESTAMP is TBD and NONCE_MANAGER must be reselected if code or storage
+  exists on any intended activation network; these are deployment parameters,
+  not additional scored behavior gaps.
+- >-
+  The public mempool keeps one pending frame transaction per sender even though
+  transaction identity becomes (sender, nonce_keys, nonce_seq); the text
+  presents multi-pending keyed-aware policy only as a future possibility.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only EIP-8250's execution-layer surface using the sealed files
+    listed in package/manifest.yaml, did not follow visible URLs or use
+    external or post-snapshot information, and mechanically summed the 28
+    rubric anchors in their prescribed order.

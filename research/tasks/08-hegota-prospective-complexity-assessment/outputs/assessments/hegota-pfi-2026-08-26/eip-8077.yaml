@@ -1,0 +1,469 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8077
+  title: eth/XX - announce transactions with nonce
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Draft execution-layer networking proposal that extends the eth protocol's
+    NewPooledTransactionHashes announcement with transaction source and nonce.
+    This assessment covers only execution-client peer-to-peer encoding and message
+    handling; the snapshot expressly makes no EVM consensus or hard-fork change.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8077/manifest.yaml
+    manifest_sha256: 0e44e3d93f6a4a4d8de4edf415e4bc0c6efb853270452ea52bcb67e34e355ee1
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8077.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: a1f03e910d91e3c174ee31a4baeadf95c9ac2714
+    content_sha256: fdbb52add5a5ff565826aa8e0af1210d28dad4fb1bd942337874cef41127a53a
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8077.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8077.md
+    content_sha256: 7b5e1fb5040dea973eadd664d05666fe87f14a8a5100b799574cb78f32984d31
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:16:44+02:00'
+    session_id: assessment-run-056ec149-e25d-448d-93ca-c484717a8b69
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex-root-agent
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7642.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The proposal expressly states that it does not change EVM consensus rules.
+  rationale: The wire-protocol announcement extension introduces no EVM gas-accounting rule.
+  confidence: high
+  uncertainty_note: No EVM gas surface is described anywhere in the proposal.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > NewPooledTransactionHashes message changes
+    summary: The only normative data change is to an eth peer-to-peer message.
+  rationale: No opcode execution or ordering of state access relative to gas charging changes.
+  confidence: high
+  uncertainty_note: The proposal has no opcode-execution surface.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The proposal states that EVM consensus rules are unchanged and no hard fork is required.
+  rationale: The announcement metadata does not alter blob-gas accounting.
+  confidence: high
+  uncertainty_note: Blob transactions are discussed only as a propagation-design alternative, not as a gas change.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > NewPooledTransactionHashes message changes
+    summary: The specification adds source and nonce arrays to a networking message.
+  rationale: No state-write charge, state-gas budget, reservoir, or spill rule changes.
+  confidence: high
+  uncertainty_note: The proposal's use of current chain state for filtering is non-normative and does not alter state gas.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The proposal expressly leaves EVM consensus rules unchanged.
+  rationale: No EVM refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: There is no gas-refund behavior in the execution-client networking change.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > NewPooledTransactionHashes message changes
+    summary: The existing 0x08 message gains two parallel arrays in the new eth protocol version.
+  - source: eip.md
+    locator: Security Considerations
+    summary: A mismatch between any announced tuple field and a fetched transaction becomes a protocol violation.
+  rationale: >-
+    Message-specific encoding and invalid-announcement tests need a version-aware expected shape and
+    mismatch cases, but the impact is confined to a minor subset of eth protocol tests.
+  confidence: medium
+  uncertainty_note: The package contains no test inventory, so the exact number of pre-existing message tests is unknown.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Older clients and the previous protocol version remain usable while the new version is rolled out.
+  rationale: Tests unrelated to the new announcement version are not required to assert a new fork-wide output.
+  confidence: high
+  uncertainty_note: New message-specific assertions belong to this EIP's tests, not to every pre-existing test.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The specification is limited to the eth NewPooledTransactionHashes message and its handling.
+  rationale: No state-transition-tool field or mechanism is added.
+  confidence: high
+  uncertainty_note: The proposal requires no hard fork and describes no block transition input.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > NewPooledTransactionHashes message changes
+    summary: The added values use fixed-byte, scalar, and list forms in the existing message notation.
+  - source: supporting/eip-7642.md
+    locator: Specification
+    summary: The eth/69 baseline already specifies peer messages with fixed-byte, scalar, and list encodings.
+  rationale: Existing wire-message encoding and assertion primitives suffice; no new reusable test abstraction is required by the text.
+  confidence: medium
+  uncertainty_note: The package gives no test-framework implementation, but the specification introduces no novel expectation type.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: A received transaction's existing hash verification exposes a metadata mismatch after fetching.
+  rationale: Source and nonce are announced metadata; the proposal introduces or modifies no cryptographic mechanism.
+  confidence: high
+  uncertainty_note: An alternative involving a signed RBF version is explicitly not the proposed design.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > NewPooledTransactionHashes message changes
+    summary: Each announcement is represented by five positionally associated arrays, including fixed-size source and variable-size nonce values.
+  - source: eip.md
+    locator: Security Considerations
+    summary: Source and nonce remain unverifiable until fetch, and any tuple mismatch must be treated as a protocol violation.
+  rationale: >-
+    Multiple edge-prone mechanisms are present: cardinality and positional correlation across five arrays,
+    value-size boundaries, and deferred match-versus-mismatch verification across the full tuple. Malformed
+    cardinalities and per-field mismatch combinations produce an elevated case matrix.
+  confidence: medium
+  uncertainty_note: The text does not define malformed-list handling, so the exact boundary matrix cannot yet be baselined.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The changed message announces pooled transaction metadata, not blocks or receipts.
+  rationale: No block RLP validation or client block-sync mechanism is modified.
+  confidence: high
+  uncertainty_note: Transaction fetching from the mempool is distinct from the rubric's block-syncing surface.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The proposal extends a devp2p eth protocol message.
+  rationale: No Engine API endpoint, field, or communication mechanism is introduced.
+  confidence: high
+  uncertainty_note: The execution-layer surface is peer-to-peer networking only.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The proposal makes no EVM consensus change and needs no hard fork.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: No contract code, address, state, or system action appears in the specification.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Normative changes are confined to an eth networking message and its handling.
+  rationale: No pre-existing system contract is directly or indirectly modified.
+  confidence: high
+  uncertainty_note: The proposed scheduling improvements are mempool behaviors, not system-contract effects.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The proposal expressly leaves EVM consensus rules unchanged.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: No EVM instruction is specified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The proposal expressly leaves EVM consensus rules unchanged.
+  rationale: No existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: The specification has no opcode surface.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The sole specified data change is to NewPooledTransactionHashes.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: No precompile address, input, output, or gas rule is described.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: EVM consensus rules remain unchanged.
+  rationale: No existing precompile logic or gas accounting is modified.
+  confidence: high
+  uncertainty_note: The proposal is isolated to peer announcement encoding and handling.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > NewPooledTransactionHashes message changes
+    summary: The 0x08 interface encoding changes from three components in eth/69 to five components in eth/XX by adding source and nonce arrays.
+  rationale: The rubric's binary high anchor applies because an interface-level wire encoding is changed.
+  confidence: high
+  uncertainty_note: The numeric eth/XX version is unset, but the specified interface encoding change itself is explicit.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > NewPooledTransactionHashes message changes
+    summary: Existing transaction announcements gain metadata while retaining the existing transaction-type vector.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: The proposal applies to announcements and explicitly does not restrict itself to one existing transaction category.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: A metadata mismatch is a peer-protocol violation discovered after the transaction hash is verified.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: EVM consensus rules remain unchanged.
+  rationale: Announcement validity and peer handling change, but transaction validity rules and intrinsic gas do not.
+  confidence: high
+  uncertainty_note: The protocol-violation rule must not be conflated with consensus transaction validity.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Source and nonce are added to a pooled-transaction announcement message.
+  rationale: No block or block-header field is introduced.
+  confidence: high
+  uncertainty_note: The message's transaction metadata is not block data.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The change rolls out through a new wire-protocol version and does not require a hard fork.
+  rationale: No state or internal variable is modified at a fork-activation block.
+  confidence: high
+  uncertainty_note: Protocol-version negotiation replaces any fork-block activation surface.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Rationale > Overhead
+    summary: The proposal calls the added B_20 and variable-size field overhead significant and leaves quantitative details TBD.
+  - source: eip.md
+    locator: Rationale > Alternatives
+    summary: Bandwidth depends on peer fanout, announcement redundancy, push-versus-pull selection, and optional detailed-announcement strategies.
+  - source: eip.md
+    locator: Specification > Changes to message handling
+    summary: Implementations may revisit eager-push versus announcement selection because announcements become larger.
+  rationale: >-
+    End-to-end benefit and cost cannot be fully benchmarked in isolation: every detailed announcement is larger,
+    while traffic and fetching outcomes interact with peer fanout, redundant announcements, scheduling, and the
+    push/announcement threshold. The text itself characterizes the overhead as significant.
+  confidence: medium
+  uncertainty_note: Quantitative overhead is explicitly TBD and receiver scheduling and sender thresholds are not mandated.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: Recipients cannot verify source and nonce until fetching the transaction, must not trust them, and may treat a mismatch as a peer protocol violation.
+  - source: eip.md
+    locator: Specification > Changes to message handling
+    summary: Receivers may use the unverified metadata for transaction-fetch scheduling decisions.
+  rationale: >-
+    The new unverified metadata crosses into fetch scheduling and peer-violation handling, altering assumptions
+    in a limited set of networking components and warranting targeted malformed-message and mismatch review.
+  confidence: medium
+  uncertainty_note: The text says the protocol is not compromised, but it does not mandate the exact peer response or scheduling safeguards.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Specification > NewPooledTransactionHashes message changes
+    summary: The proposal remains Draft, names the new protocol eth/XX, and specifies five parallel vectors without malformed-cardinality rules.
+  - source: eip.md
+    locator: Security Considerations
+    summary: A tuple mismatch is called a protocol violation, but the resulting required peer behavior is not specified.
+  rationale: >-
+    Localized wire-test answers remain unsettled: the concrete protocol version, acceptance or rejection of
+    unequal parallel-list lengths, and mandatory handling of invalid tuples must be agreed before common
+    positive and negative vectors can be baselined.
+  confidence: medium
+  uncertainty_note: Positional correspondence and rejection of malformed inputs have an apparent intent, but the snapshot does not state the testable rules.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Front matter and Specification > NewPooledTransactionHashes message changes
+    summary: EIP-8077 requires EIP-7642 and defines its new message shape relative to the eth/69 baseline.
+  - source: supporting/eip-7642.md
+    locator: Backwards Compatibility
+    summary: EIP-7642 establishes eth/69 as a versioned eth protocol that can coexist with eth/68.
+  rationale: EIP-8077 has one limited dependency on the eth/69 protocol baseline and remains independently testable for most announcement behavior.
+  confidence: high
+  uncertainty_note: No additional direct EIP interaction is established by the sealed package.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7642
+  unidentified_interactions: []
+totals:
+  primary_score: 15
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    Material localized details are missing for malformed parallel-list validation, assignment of the concrete
+    eth protocol version, quantitative announcement overhead, and mandatory handling of false metadata.
+  affected_criteria:
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 11
+    maximum: 15
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - Must all five announcement arrays have identical lengths, and what exact action follows a cardinality mismatch?
+  - What concrete eth protocol version replaces eth/XX, and what positive and negative negotiation vectors apply?
+  - What announcement-size, peer-fanout, and push-versus-announcement parameters bound the stated significant overhead?
+  - Is disconnecting or otherwise penalizing a peer mandatory for a false source or nonce, or is the response implementation-defined?
+notable_ambiguities:
+- The positional relationship among five arrays is implied by indexed notation but no malformed-length behavior is stated.
+- The source and nonce are explicitly unverified until fetch, while receiver scheduling based on them is intentionally left to implementations.
+- The overhead section contains a TBD and alternatives leave peer fanout and announcement strategy open.
+- The phrase "can be treated as a node that violated the protocol" does not define a mandatory peer-management action.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only EIP-8077's execution-layer surface using the sealed package sources and rubric,
+    did not access prohibited information, and did not use unstated external knowledge as evidence.

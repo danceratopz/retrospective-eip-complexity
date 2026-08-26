@@ -25,6 +25,7 @@ from validate_output import package_paths, validate
 
 TASK_ROOT = Path(__file__).resolve().parents[1]
 TASK_CONTRACT = TASK_ROOT / "TASK.md"
+CONTRACT_CAPSULE_NAME = "TASK.md"
 CAPSULE_PARENT = Path("/tmp/retrospective-complexity-assessment-runs")
 LOCK_PARENT = Path("/tmp/retrospective-complexity-assessment-locks")
 ISOLATION_METHOD = "bubblewrap_one_eip_capsule_v1"
@@ -109,7 +110,7 @@ def stage_capsule(fork_id: str, number: int) -> tuple[Path, str, Path]:
             dir=CAPSULE_PARENT,
         )
     )
-    shutil.copy2(TASK_CONTRACT, capsule / "TASK.md")
+    shutil.copy2(TASK_CONTRACT, capsule / CONTRACT_CAPSULE_NAME)
     shutil.copy2(prompt_path, capsule / "PROMPT.md")
     shutil.copytree(package, capsule / "package")
 
@@ -262,23 +263,23 @@ def codex_command(
 
 
 def verify_isolation(capsule: Path, runtime: Path) -> None:
-    code = """
+    code = f"""
 from pathlib import Path
 
 required = [
-    Path('/mnt/workspace/TASK.md'),
+    Path('/mnt/workspace/{CONTRACT_CAPSULE_NAME}'),
     Path('/mnt/workspace/PROMPT.md'),
     Path('/mnt/workspace/package/manifest.yaml'),
 ]
 for path in required:
-    assert path.is_file(), f'missing capsule input: {path}'
+    assert path.is_file(), f'missing capsule input: {{path}}'
 for path in (
     Path('/home/dtopz/code'),
     Path('/home/dtopz/.agents'),
     Path('/home/dtopz/.codex/history.jsonl'),
     Path('/tmp/retrospective-complexity-assessment-runs'),
 ):
-    assert not path.exists(), f'forbidden host path is visible: {path}'
+    assert not path.exists(), f'forbidden host path is visible: {{path}}'
 package_dirs = [path for path in Path('/mnt/workspace/package').iterdir() if path.is_dir()]
 assert all(path.name == 'supporting' for path in package_dirs)
 print('filesystem isolation verified: one EIP capsule visible; host home and prior runs hidden')

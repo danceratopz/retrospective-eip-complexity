@@ -1,0 +1,693 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8372
+  title: Normalized state gas limit
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Draft execution-layer assessment of EIP-8372 as sealed in the Hegotá PFI
+    snapshot. The proposal modifies EIP-8037 by selecting a new cost per state
+    byte, scaling the raw block state-gas limit, and normalizing raw state-gas
+    usage before comparing it with execution-gas usage for the existing header
+    gas_used value. Transaction formats, block-header fields, the transaction
+    reservoir, transaction-level accounting, and receipt semantics remain
+    unchanged.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8372/manifest.yaml
+    manifest_sha256: c5b14af2ae2a3d99c3eca3e1be5f282048a2fab51366d19b88b15728ca157c13
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8372.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: d5bd301b8036a5a9ca6bf5b65f723815c9f3c74e
+    content_sha256: db7eae2b26e156041353154d196c5d6373f4b176e42ca4f76129d9f7603a5515
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8372.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8372.md
+    content_sha256: 8ec2c5b20089d151a8869d77fdb3e66864ae307faae2f613722e6fdb4822f8cc
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T15:07:41+02:00'
+    session_id: assessment-run-29ecd8a1-01ea-476f-b300-221a0d5847b4
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7999.md
+  - supporting/eip-8037.md
+  - supporting/eip-8075.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Block-level gas accounting
+    summary: >-
+      Replaces EIP-8037's block-level gas_used calculation with the maximum of
+      execution gas and normalized raw state gas, with two associated validity
+      checks.
+  rationale: >-
+    An existing gas-accounting mechanism is updated at block level. The change
+    does not introduce another EVM transaction gas pool or replace the inherited
+    reservoir mechanism, so the score matches an update rather than a new
+    general EVM gas mechanism.
+  confidence: high
+  uncertainty_note: >-
+    This row treats the block-level gas_used rule as EVM gas accounting while
+    leaving the state-specific budget and normalization impact to the dedicated
+    state-gas row.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      States that the EIP-8037 reservoir model and transaction-level gas
+      accounting remain unchanged; the stated changes concern post-activation
+      constants, block limits, and normalized block accounting.
+  - source: supporting/eip-8037.md
+    locator: Specification > Pre-state and post-state gas validation
+    summary: >-
+      The inherited proposal defines where opcode-level state gas is charged;
+      EIP-8372 supplies no replacement for those ordering rules.
+  rationale: >-
+    No opcode's state access, gas-charge position relative to access, or
+    definition of a recordable access is changed.
+  confidence: high
+  uncertainty_note: >-
+    The new pre-transaction state-gas availability arithmetic does not move an
+    access or charge within opcode execution.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      Defines the proposal solely as scaling and normalizing EIP-8037 state gas
+      and explicitly introduces no transaction or block-header fields.
+  rationale: >-
+    No blob-gas counter, price, target, limit, or accounting rule is modified.
+  confidence: high
+  uncertainty_note: >-
+    Blob accounting is outside the mechanisms specified by this proposal.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction validation
+    summary: >-
+      Scales the raw state-gas block limit relative to block_gas_limit and uses
+      that scaled budget to compute state_gas_available.
+  - source: eip.md
+    locator: Specification > Block-level gas accounting
+    summary: >-
+      Normalizes raw block state-gas usage before the max comparison while
+      retaining the raw state-gas counter and enforcing both raw and normalized
+      limits.
+  rationale: >-
+    The block-level state-gas budget is modified and a normalization is added.
+    This is the rubric's score-2 case. The transaction reservoir and its spill
+    path into execution gas are expressly retained, so score 3 is not warranted.
+  confidence: high
+  uncertainty_note: >-
+    The exact numeric budget is unavailable because CPSB and
+    STATE_GAS_LIMIT_SCALE are still TBD, but the kind of mechanism is clear.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Says transaction-level gas accounting, the EIP-8037 reservoir model, and
+      receipt semantics remain unchanged.
+  rationale: >-
+    The proposal adds no refund or refill mechanism and does not modify the
+    inherited refund rules.
+  confidence: high
+  uncertainty_note: >-
+    Normalization is applied to block state-gas usage after inherited
+    transaction accounting; it is not a gas refund.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Warns that non-implementing clients may disagree on transaction inclusion,
+      block validity, or header gas_used and requires builders, clients, and
+      estimators to adopt the new rules.
+  - source: eip.md
+    locator: Specification > Transaction validation; Specification > Block-level gas accounting
+    summary: >-
+      Changes both the state-gas availability calculation and expected
+      block-level gas_used/validity outcomes.
+  rationale: >-
+    A considerable but focused category of pre-existing EIP-8037 state-gas and
+    block-validation tests must be reworked for the scaled budget and normalized
+    gas_used. The impact is not a major, diverse rewrite across unrelated test
+    categories.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test inventory, so the breadth is inferred only from
+    the specified consensus surfaces and backwards-compatibility statement.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Block-level gas accounting
+    summary: >-
+      Adds no output field; instead it changes how the existing gas_used value
+      and existing state-gas limit validation are computed.
+  rationale: >-
+    Existing affected tests must change expected values and validity outcomes,
+    rather than mechanically add an assertion for a newly produced artifact to
+    otherwise unchanged tests.
+  confidence: medium
+  uncertainty_note: >-
+    Implementations may expose intermediate normalized values for convenience,
+    but the sealed proposal does not require tests to assert such an output.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Backwards Compatibility
+    summary: >-
+      Introduces no transaction or header fields and retains transaction-level
+      accounting and receipt semantics.
+  rationale: >-
+    The transition behavior changes, but the proposal specifies no new field or
+    mechanism that must cross the transition-tool interface.
+  confidence: medium
+  uncertainty_note: >-
+    Fork configuration must carry the selected constants in an implementation,
+    but the package does not specify that as a transition-tool interface field.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Expresses the complete change as integer arithmetic over existing block
+      environment/output counters and existing gas_used.
+  rationale: >-
+    Ordinary transaction, block, gas-used, and validity expectations suffice;
+    no new expectation type, modifier, or reusable framework primitive is
+    required by the text.
+  confidence: medium
+  uncertainty_note: >-
+    The package provides no framework implementation, so this conclusion is
+    limited to the specified inputs and outputs.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The normative changes consist only of positive integer parameters,
+      multiplication, division, subtraction, comparison, and max operations.
+  rationale: >-
+    No cryptographic primitive, algorithm, proof, signature, hash, or associated
+    validation behavior is introduced or modified.
+  confidence: high
+  uncertainty_note: >-
+    The calibration method is economic arithmetic, not cryptography.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction validation; Specification > Block-level gas accounting
+    summary: >-
+      Uses floor division in both the scaled raw limit and inverse
+      normalization, combines equality limits for raw and normalized counters,
+      and selects the maximum of execution and normalized state gas.
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      Notes that proportional scaling preserves maximum state-byte capacity only
+      approximately because of integer rounding.
+  rationale: >-
+    Tests need multiple boundary families: floor-division remainders, exact-limit
+    and one-over-limit raw state gas, exact normalized block limit, and the
+    execution/state max crossover. Their interaction requires an elevated set of
+    cases rather than isolated single boundaries.
+  confidence: high
+  uncertainty_note: >-
+    Exact remainder locations cannot be instantiated until the two TBD constants
+    are selected.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Block-level gas accounting
+    summary: >-
+      Explicitly adds no block-header field and changes the validity semantics of
+      the existing gas_used field without changing its encoding.
+  rationale: >-
+    No new block RLP validation or encoding mechanism is introduced, so the
+    rubric's syncing-specific anchor is not triggered.
+  confidence: high
+  uncertainty_note: >-
+    Historical/block execution validation changes are scored elsewhere; they are
+    not RLP changes.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      States that no new transaction or block-header fields are introduced, and
+      the specification contains no Engine API directive or communication rule.
+  rationale: >-
+    No Engine API endpoint, field, or communication mechanism is added or
+    modified.
+  confidence: high
+  uncertainty_note: >-
+    Builder behavior must reflect the new validity rules, but no Engine API
+    transport change is specified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The normative scope is limited to parameters, state-gas availability, and
+      block gas accounting, with no contract deployment or system action.
+  rationale: >-
+    No system contract is introduced.
+  confidence: high
+  uncertainty_note: >-
+    Existing system-call implications of changing CPSB are considered under the
+    modified-system-contract row.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Parameters
+    summary: >-
+      Replaces EIP-8037's CPSB with a new, currently TBD value.
+  - source: supporting/eip-8037.md
+    locator: Specification > System contracts and system transactions
+    summary: >-
+      Defines every inherited system call's gas limit and state-gas reservoir
+      allocation using CPSB while leaving system calls outside block gas
+      counters.
+  rationale: >-
+    No system contract code or state is changed, but the CPSB update indirectly
+    changes the gas allowance/reservoir formula for existing system calls. This
+    is a minor indirect effect.
+  confidence: medium
+  uncertainty_note: >-
+    The magnitude is unknown until CPSB is selected, and EIP-8372 does not
+    separately discuss system-call calibration.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Specifies only parameter and block/transaction accounting formula changes;
+      no opcode table entry or instruction is added.
+  rationale: >-
+    No opcode is introduced.
+  confidence: high
+  uncertainty_note: >-
+    The proposal reuses state-gas production defined by EIP-8037.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Retains the EIP-8037 reservoir and transaction-level gas accounting and
+      describes the incompatibility as gas cost, inclusion, and block accounting
+      changes.
+  rationale: >-
+    No opcode result or non-gas behavior is changed. Any effect of the new CPSB
+    on state-creating opcodes is a gas change, which this anchor explicitly
+    excludes.
+  confidence: high
+  uncertainty_note: >-
+    Opcode-level state-gas sites remain those inherited from EIP-8037.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Contains no precompile address, input/output definition, or precompile gas
+      rule.
+  rationale: >-
+    No precompile is introduced.
+  confidence: high
+  uncertainty_note: >-
+    None within the sealed proposal scope.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      Limits all normative changes to state-gas parameters and block accounting,
+      without identifying any precompile behavior or schedule.
+  rationale: >-
+    No existing precompile logic or gas schedule is modified.
+  confidence: high
+  uncertainty_note: >-
+    The general block gas accounting applies to transactions that may call
+    precompiles, but it does not modify a precompile.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Backwards Compatibility
+    summary: >-
+      Explicitly introduces no transaction or block-header fields and retains
+      transaction formats and receipt semantics.
+  rationale: >-
+    No transaction, block, header, receipt, or interface encoding is changed.
+  confidence: high
+  uncertainty_note: >-
+    The meaning of existing header gas_used changes, not its encoding.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Backwards Compatibility
+    summary: >-
+      Explicitly adds no transaction field and says transaction formats remain
+      unchanged.
+  rationale: >-
+    No transaction type is introduced.
+  confidence: high
+  uncertainty_note: >-
+    All existing transaction types are processed under the inherited EIP-8037
+    transaction model.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Transaction validation
+    summary: >-
+      Changes state_gas_available for transaction inclusion from the ordinary
+      block gas limit to a separately scaled raw state-gas limit.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      States that non-implementing clients may disagree on transaction inclusion
+      after activation.
+  rationale: >-
+    Existing transaction types receive a changed inclusion-validity check that
+    affects existing state-gas cases. Updates are limited to expected arithmetic
+    and boundary cases and require no transaction format or testing-infrastructure
+    redesign, matching score 2.
+  confidence: high
+  uncertainty_note: >-
+    This score treats the proposal's explicitly named pre-inclusion transaction
+    validation as a validity mechanism; intrinsic gas itself is unchanged.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Block-level gas accounting
+    summary: >-
+      Explicitly says no new block-header field is introduced and continues to
+      use the existing gas_used field.
+  rationale: >-
+    No block or header field is added.
+  confidence: high
+  uncertainty_note: >-
+    Raw and normalized state-gas values remain internal accounting values.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation; Rationale > Calibration methodology
+    summary: >-
+      Describes a one-time pre-activation selection of fixed constants that
+      remain fixed after activation, rather than an activation-block state or
+      internal-variable transition.
+  rationale: >-
+    Activation selects protocol constants and begins applying new rules; it does
+    not modify state or an existing internal variable at the activation block.
+  confidence: high
+  uncertainty_note: >-
+    The constants are still TBD, but initializing or selecting constants is not
+    the modification scored by this anchor.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation
+    summary: >-
+      Intends to let state gas and execution gas both approach their targets by
+      changing which resource becomes the block bottleneck.
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      Requires stress-testing selected parameters across plausible demand
+      elasticities and notes only approximate capacity invariance under rounding.
+  rationale: >-
+    The arithmetic itself is isolated, but its workload impact depends on mixed
+    block execution/state demand and therefore cannot be fully benchmarked in
+    isolation. The existing benchmark impact is limited by proportional CPSB and
+    state-limit scaling intended to preserve maximum byte capacity.
+  confidence: medium
+  uncertainty_note: >-
+    Missing parameter values prevent quantifying whether the selected calibration
+    is contractionary or expansionary in raw state gas and realized mixed-block
+    load.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Identifies consensus disagreement risks in transaction inclusion, block
+      validity, and header gas_used if the rule is not implemented consistently.
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      Identifies parameter miscalibration as the primary risk, able to move the
+      system between utilization failure modes and correctable only by another
+      hardfork.
+  rationale: >-
+    The mechanism touches a limited set of critical accounting and validation
+    components and changes their invariants, requiring targeted review, boundary
+    testing, and fuzzing. It does not introduce the broad multi-component
+    security redesign required for score 3.
+  confidence: high
+  uncertainty_note: >-
+    Risk magnitude cannot be fully assessed while both calibrated constants are
+    TBD.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Parameters
+    summary: >-
+      Leaves both consensus constants CPSB and STATE_GAS_LIMIT_SCALE as TBD while
+      only fixing the denominator and requiring positive integers.
+  - source: eip.md
+    locator: Specification > Transaction validation; Specification > Block-level gas accounting
+    summary: >-
+      Uses the missing constants in every new availability, normalization, and
+      validity formula.
+  rationale: >-
+    Clients cannot baseline concrete consensus vectors until the two localized
+    parameters are agreed. The formulas otherwise determine behavior, so this is
+    localized agreement rather than newly observable unspecified semantics
+    requiring repeated broad re-baselining.
+  confidence: high
+  uncertainty_note: >-
+    The package contains no final values or normative constraint tying the two
+    selected constants beyond positivity; the proportional relation appears in
+    rationale/calibration methodology.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter; Abstract
+    summary: >-
+      Formally requires EIP-8037 and directly modifies its state-gas limit and
+      block-level gas accounting.
+  - source: eip.md
+    locator: Rationale > Calibration methodology
+    summary: >-
+      Describes EIP-8075 as a dynamic analogue and EIP-7999 as a longer-term
+      direction, rather than making either part of this proposal's fixed rules.
+  - source: supporting/eip-8037.md
+    locator: Specification > Multidimensional metering for state creation costs; Specification > Block-level gas accounting
+    summary: >-
+      Supplies the two-dimensional reservoir and raw block counters whose limits
+      and final max computation EIP-8372 changes.
+  rationale: >-
+    EIP-8372 depends on and modifies EIP-8037, so coordinated state-gas and block
+    accounting tests are required. The interaction is deep but limited to one
+    directly required EIP. EIPs 7999 and 8075 are contextual alternatives or
+    analogues in the sealed text and are not counted as co-implemented
+    interactions.
+  confidence: high
+  uncertainty_note: >-
+    The assessment counts EIP-8037 as the direct interaction and does not
+    separately multiply all of EIP-8037's inherited dependencies, whose rules
+    EIP-8372 says remain unchanged.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 8037
+  unidentified_interactions: []
+totals:
+  primary_score: 19
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The state-gas price and raw-limit scale are both normative consensus inputs
+    to every changed formula but remain TBD. The algorithms are specified, so
+    the gap is localized, yet concrete validity vectors, rounding boundaries,
+    workload magnitude, and calibration risk cannot be finalized. The rationale
+    gives a proportional selection formula, but the normative parameter section
+    requires only that both values be positive integers.
+  affected_criteria:
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 18
+    maximum: 21
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - What final positive integer value is selected for CPSB?
+  - What final positive integer value is selected for STATE_GAS_LIMIT_SCALE?
+  - >-
+    Are the selected constants normatively required to preserve the proportional
+    CPSB-to-limit-scale relation described in the calibration rationale?
+  - >-
+    What exact rounding-boundary vectors result from the final constants, and
+    what mixed execution/state workloads are used to stress-test the calibration?
+notable_ambiguities:
+- >-
+  The normative parameter table leaves CPSB and STATE_GAS_LIMIT_SCALE TBD; a
+  client cannot compute state_gas_available, normalized state gas, or gas_used
+  for concrete post-activation blocks without them.
+- >-
+  The calibration rationale defines STATE_GAS_LIMIT_SCALE from CPSB and a
+  baseline, but the normative specification states only that the two parameters
+  are positive integers and does not state the proportional relation as a
+  constraint.
+- >-
+  Integer division is fully specified, but the exact raw-limit and inverse-
+  normalization rounding discontinuities depend on the missing scale.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I attest that this assessment used only the operational files and sealed
+    assessment sources authorized by PROMPT.md and ASSESSMENT-CONTRACT.md; no
+    internet access, external source, repository evidence, post-snapshot
+    information, prior assessment, implementation, test, or skill was consulted.

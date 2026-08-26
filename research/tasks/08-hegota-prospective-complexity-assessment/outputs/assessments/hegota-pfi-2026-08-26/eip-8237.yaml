@@ -1,0 +1,561 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8237
+  title: Independent CL/EL Sync
+  layers:
+  - execution
+  - consensus
+assessment:
+  snapshot_scope_summary: Execution-layer-only assessment of draft EIP-8237 at the sealed Hegota PFI snapshot.
+    The scored surface adds a consensus-critical partial_header_hash to ExecutionPayload and the execution
+    block header, requires independent EL computation and validation of that value, and requires a new
+    Engine API lookup method; consensus-layer range-sync behavior is treated only as boundary context.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8237/manifest.yaml
+    manifest_sha256: b9d7a0ec417701601c3fb6d3ecadac161a4b731276d69d61b989a8c792fb976a
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8237.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: c0dc69ed3d9b7bdd009e1cfd9bea62fa48bc2f0c
+    content_sha256: 192437824e82227014f4675cee81b4b24bcca7027406c321e6142838f22542af
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8237.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8237.md
+    content_sha256: eb913272de632f8581204db1748cebba06cfb500902b9b4c58b44c9ee4fb2ff7
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:44:01+02:00'
+    session_id: assessment-run-66d53629-82b8-4b13-b718-6731062f7237
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: /root
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7732.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+  assessor_raw_output:
+    path: outputs/raw/hegota-pfi-2026-08-26/eip-8237.yaml
+    content_sha256: f0ae9853845af8e59ced9fd6f57f49703802f02addb587044d698f48c856c8bb
+  postprocessing:
+  - id: task08_structural_output_normalization_v1
+    applied_at: '2026-08-26T12:48:13.566794Z'
+    semantic_scores_changed: false
+    changes:
+    - quoted 138 unsafe plain YAML free-text scalars
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: The EL rule introduced is equality validation of partial_header_hash; no EVM gas rule is
+      added or changed.
+  rationale: The proposal changes block-level commitment validation, not EVM gas accounting.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: Verification computes a block-level hash from header, withdrawals, slot, and request data
+      and does not alter opcode execution.
+  rationale: No opcode state access or gas-charge ordering is modified.
+  confidence: high
+  uncertainty_note: No opcode-level behavior is specified by this EIP.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > ExecutionPayload
+    summary: Existing blob_gas_used and excess_blob_gas fields are shown unchanged while only partial_header_hash
+      is added.
+  rationale: The proposal introduces no blob gas accounting rule.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: The new operation is block commitment hashing and comparison, with no state-gas cost, budget,
+      reservoir, or spill rule.
+  rationale: No state-writing gas mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer
+    summary: The complete EL specification adds payload/header commitment fields, validation, and an API
+      lookup, but no refund behavior.
+  rationale: There is no new EVM gas-refund mechanism.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Modified Containers
+    summary: Every post-activation ExecutionPayload and execution header gains partial_header_hash, which
+      is covered by block_hash.
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: EL block validation must independently recompute the new commitment and reject a mismatch.
+  rationale: This is a new validation rule on every post-activation execution block. Existing payload/header
+    construction, block-hash, valid-block, invalid-block, and sync patterns must be reworked to populate
+    the field and satisfy or intentionally violate the commitment, making the affected test surface broad
+    rather than a contrived subset.
+  confidence: high
+  uncertainty_note: The package does not enumerate test suites, but the mandatory field and validation
+    apply uniformly to post-activation execution blocks.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: Each EL-validated block must satisfy block.partial_header_hash == expected over the specified
+      block and request fields.
+  rationale: Tests unrelated to EIP-8237 but constructing a post-activation execution block gain the same
+    mechanically applied commitment invariant. The evidence does not require re-deriving pre-fork vectors,
+    so the score remains below 3.
+  confidence: high
+  uncertainty_note: Whether individual harnesses expose this as an explicit assertion or implicit block-validity
+    check is not specified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > ExecutionPayload
+    summary: A single new partial_header_hash field is added to ExecutionPayload.
+  rationale: A transition tool processing the fork's payload shape needs one new input/output field.
+  confidence: medium
+  uncertainty_note: The package does not define a transition-tool schema separately from ExecutionPayload.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Accumulator Definition
+    summary: The proposal defines the expected value using SHA256, concatenation, and raw serialization
+      without requiring a novel expectation or modifier abstraction.
+  rationale: The sealed proposal establishes test cases and data generation needs, but does not require
+    a new framework-level primitive beyond ordinary hash calculation and equality checks.
+  confidence: medium
+  uncertainty_note: No test-framework design is included in the package; absent such evidence, no framework
+    primitive is scored.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale > SHA256 Instead of Hash Tree Root
+    summary: The new commitment explicitly uses plain SHA256, selected as a primitive both layers already
+      have.
+  rationale: One well-known cryptographic hash mechanism is newly used for the consensus-critical accumulator.
+  confidence: high
+  uncertainty_note: No novel cryptographic primitive or construction beyond the specified SHA256 commitment
+    is evidenced.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Accumulator Definition
+    summary: The hash preimage combines fixed-width values with variable lists of withdrawals and execution
+      requests using raw concatenated serialization.
+  - source: eip.md
+    locator: Execution Engine API
+    summary: After long range sync, divergence can occur at an unknown block and the new per-block lookup
+      is intended to locate it.
+  - source: eip.md
+    locator: Rationale > Accumulator Pattern
+    summary: The commitment chains across sequential blocks and permits deferred verification of an entire
+      range.
+  rationale: Tests must cover empty and populated variable lists, serialization boundaries, correct and
+    incorrect field components, parent-linked accumulator continuity, and divergence at different positions
+    in a synced range. The variable-list and chain-position dimensions create an elevated case count.
+  confidence: high
+  uncertainty_note: Exact list serialization and divergence-search behavior are under-specified, increasing
+    uncertainty about the final boundary matrix but not eliminating it.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation
+    summary: Independent CL/EL range sync and deferred cross-layer verification are the proposal's stated
+      synchronization purpose.
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > Header
+    summary: The execution block header gains partial_header_hash and block_hash covers it.
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: Synced execution blocks must pass a multi-field accumulator validation.
+  rationale: The new header member and its consensus-critical multi-input validation form a single complex
+    block-validation change that execution-client sync tests must exercise.
+  confidence: medium
+  uncertainty_note: The EIP does not explicitly spell out the header's RLP position or sync importer behavior,
+    so complexity between simple and complex validation remains plausible.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Execution Engine API
+    summary: The Execution Engine requires a new method that returns the accumulator for a supplied block_hash.
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > ExecutionPayload
+    summary: ExecutionPayload gains the partial_header_hash field.
+  rationale: A new Engine API endpoint is explicitly required, meeting score 2; the package specifies
+    only one new payload field, so the score-3 combination of multiple fields plus a new endpoint is not
+    established.
+  confidence: high
+  uncertainty_note: The new method's name, request/response schema, versioning, error behavior, and historical-availability
+    requirements are unspecified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer
+    summary: The EL changes consist of container/header fields, accumulator validation, and an Engine
+      API method; no system contract is introduced.
+  rationale: No new system contract exists in the sealed proposal.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer
+    summary: No pre-existing system contract code, state, call, or indirect behavior is modified by the
+      specified EL mechanism.
+  rationale: The proposal has no specified system-contract interaction.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer
+    summary: The EL specification introduces no EVM instruction.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer
+    summary: The block-level accumulator changes do not alter or deprecate any existing opcode behavior.
+  rationale: No pre-existing opcode is modified.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > SHA256 Instead of Hash Tree Root
+    summary: SHA256 is used by client validation as an existing primitive; the EIP does not add an EVM
+      precompile.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > SHA256 Instead of Hash Tree Root
+    summary: The proposal selects SHA256 for client-side commitment calculation and specifies no precompile
+      logic or gas-schedule modification.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Modified Containers
+    summary: partial_header_hash is added to both ExecutionPayload and the execution block Header and
+      is covered by block_hash.
+  - source: eip.md
+    locator: Accumulator Definition
+    summary: Consensus-critical raw byte serialization is prescribed for uint64 values and list elements
+      in the SHA256 preimage.
+  rationale: A new field changes the encoded execution block header and payload/interface shape, satisfying
+    the rubric's binary encoding-change anchor.
+  confidence: high
+  uncertainty_note: Exact field placement and complete raw serialization of composite list entries are
+    not fully specified, but an encoding change is unambiguous.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > ExecutionPayload
+    summary: The existing transactions list is shown unchanged; the added value is a payload/header field.
+  rationale: The proposal adds no transaction type.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: The new validity assertion applies to the block's partial_header_hash, not to transaction
+      validity or intrinsic gas.
+  rationale: Existing transaction validity rules and intrinsic-gas calculation are unchanged.
+  confidence: high
+  uncertainty_note: No material uncertainty in the sealed execution-layer text.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > Header
+    summary: The EIP explicitly adds partial_header_hash to the execution layer block header and states
+      that block_hash covers it.
+  rationale: The rubric assigns 3 whenever a new block or header field is introduced.
+  confidence: high
+  uncertainty_note: Field placement is under-specified, but introduction of the field is explicit.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The container changes require hard-fork activation, but no activation-block state mutation
+      or pre-existing internal-variable modification is specified.
+  rationale: Requiring a hard fork is not itself the special activation mechanism scored by this row.
+  confidence: medium
+  uncertainty_note: The EIP gives no activation procedure; no scored mutation may be inferred from that
+    absence.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: EL validation adds one SHA256 computation over several fixed fields and the withdrawals and
+      execution-requests lists for each block.
+  - source: eip.md
+    locator: Execution Engine API
+    summary: The engine must support accumulator retrieval by block hash during divergence diagnosis after
+      long range sync.
+  rationale: The per-block hash calculation and keyed lookup are new performance-sensitive operations,
+    but their core costs can be benchmarked in isolation and the package does not establish substantial
+    impact on existing EL benchmarks.
+  confidence: medium
+  uncertainty_note: Historical retention and repeated lookup/search behavior are unspecified; a less isolated
+    storage design could raise the score to 2.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > Header
+    summary: The new commitment becomes part of the execution block hash.
+  - source: eip.md
+    locator: Execution Layer > Execution Layer Verification
+    summary: EL consensus validity depends on independently recomputing and matching the commitment across
+      header fields, withdrawals, slot number, and execution requests.
+  - source: eip.md
+    locator: Security Considerations
+    summary: The commitment is the cryptographic guarantee intended to detect inconsistency after deferred
+      cross-layer verification.
+  rationale: Incorrect encoding, accumulation, request derivation, or validation can split EL block validity
+    and undermine deferred inconsistency detection. The mechanism touches multiple critical components—header
+    hashing, block validation, withdrawals, execution requests, and Engine API coordination—requiring
+    broad security review and adversarial testing even though the EIP claims no new trust assumption.
+  confidence: high
+  uncertainty_note: The consensus-layer sync process itself is outside the scored surface; the score reflects
+    only failure modes of the EL commitment and its cross-layer boundary.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Accumulator Definition
+    summary: The new consensus-critical hash uses "raw bytes serialization" and concatenation, but composite
+      execution-request encoding and complete domain/framing rules are not defined.
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > Header
+    summary: A header field is required without a concrete field-order or fork-aware encoding rule.
+  - source: eip.md
+    locator: Execution Engine API
+    summary: A new method is required without a method name, version, schemas, error cases, or historical-availability
+      semantics.
+  rationale: The exact bytes feeding a newly observable consensus-critical hash are not fully determined
+    for constructible composite-list cases. Clients must agree on those bytes and revise baselines when
+    the draft is completed; the missing API and header details add localized coordination needs but are
+    not scored again as separate unspecified mechanisms.
+  confidence: high
+  uncertainty_note: No implementation, devnet, discussion, or amendment evidence is available or permitted;
+    the score is based solely on the draft text's unresolved consensus-visible encoding.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter > requires
+    summary: EIP-8237 explicitly requires EIP-7732.
+  - source: eip.md
+    locator: Abstract
+    summary: It replaces the EIP-7732 ExecutionPayloadBid execution_requests_root design and adds the
+      cross-layer commitment to the payload.
+  - source: eip.md
+    locator: Execution Layer > Modified Containers > ExecutionPayload
+    summary: The new hash is added alongside EIP-7843 slot_number, which is also an explicit input to
+      compute_partial_header_hash.
+  - source: supporting/eip-7732.md
+    locator: Specification > Execution Layer
+    summary: EIP-7732 itself specified no EL changes, so EIP-8237 supplies a new EL surface tied to its
+      payload separation design.
+  rationale: EIP-8237 depends on and modifies the EIP-7732 payload-separation commitment and directly
+    consumes the EIP-7843 slot_number in the new EL commitment; these require coordinated testing but
+    remain limited to the commitment and payload/header boundary.
+  confidence: high
+  uncertainty_note: The package names no originating EIP for withdrawals or the ExecutionRequests type,
+    so those package-grounded mechanism interactions are not assigned invented EIP numbers.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7732
+  - 7843
+  unidentified_interactions:
+  - Execution-requests mechanism whose values become inputs to the new EL-validated commitment.
+  - Withdrawals mechanism whose list becomes an input to the new EL-validated commitment.
+totals:
+  primary_score: 29
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: Material details are absent for the consensus-critical raw serialization of composite withdrawal/request
+    data, the execution-header field ordering and fork-aware encoding, and the new Engine API method's
+    concrete protocol and historical lookup semantics. These are recorded chiefly under the unspecified-behavior
+    anchor rather than multiplied across unrelated rows.
+  affected_criteria:
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - encoding_changes_rlp_ssz
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 25
+    maximum: 31
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - What is the complete, unambiguous byte encoding and framing for withdrawals and each ExecutionRequests
+    component in the SHA256 preimage?
+  - Where exactly is partial_header_hash placed in the execution header encoding, and how is the parent-to-activation-block
+    boundary handled?
+  - What are the new Engine API method's name, version, request/response types, error semantics, and historical
+    data-availability requirements?
+  - Is divergence localization a caller-driven sequence of per-block lookups, and what history must an
+    EL retain to support it?
+notable_ambiguities:
+- The function is described as an accumulator that chains across blocks, while its explicit inputs contain
+  parent_hash rather than a separately named prior accumulator; the intended indirect chain depends on
+  parent_hash covering the prior header field.
+- '"Raw bytes serialization" is precise for uint64 but incomplete for the composite list contents and
+  does not state explicit framing or domain separation.'
+- The required Engine API method is described only by purpose, not as a testable wire contract.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: I assessed only EIP-8237's execution-layer surface using the sealed package sources and
+    rubric, did not access prohibited external or post-snapshot information, and did not use latent knowledge
+    to fill specification gaps.

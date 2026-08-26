@@ -1,0 +1,565 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 4758
+  title: Deactivate SELFDESTRUCT
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the sealed EIP-4758 snapshot. The proposal
+    renames and changes the existing SELFDESTRUCT opcode to SENDALL so that it
+    transfers the account's ETH without deleting code or storage or changing
+    the nonce, and it removes SELFDESTRUCT-related refunds.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-4758/manifest.yaml
+    manifest_sha256: 70563ec2b7179c26972429bf066aad930b72d249bc676077b10a43d080d5d733
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-4758.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: df7433a9a0f56d5629e9ec2219623540590487ef
+    content_sha256: 8e4973a1ea21de41953a6ff56ba17f2e45067559963e8f9ab5aeb3b624ea5def
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-4758.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-4758.md
+    content_sha256: 82f540f7541fb1a9ee0112c1601c5ccf5eaef4c9f90d047bf79372c5fdb73a16
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26'
+    session_id: assessment-run-cb9af560-b8a1-41b3-9354-df5c4c63512f
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: OpenAI Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-20.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, bullet 2
+    summary: All refunds related to SELFDESTRUCT are removed.
+  rationale: >-
+    Removing an existing opcode refund updates the existing EVM gas-accounting
+    rules, but the proposal introduces no new gas-accounting mechanism.
+  confidence: high
+  uncertainty_note: >-
+    The text does not specify the opcode's remaining charge schedule, so this
+    score is limited to the explicit refund-rule change.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullet 1
+    summary: >-
+      SENDALL immediately moves all ETH to the target and no longer destroys
+      code or storage or alters the nonce.
+  rationale: >-
+    The proposal changes which state effects the opcode produces, but it does
+    not state a change to the relative ordering of a state access and a gas
+    charge inside opcode execution.
+  confidence: medium
+  uncertainty_note: >-
+    The word "immediately" does not define the detailed access sequence or gas
+    boundaries; that omission is recorded as under-specification rather than
+    scored as an ordering change.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      The specified changes concern SELFDESTRUCT state effects, ETH transfer,
+      and refunds; no blob-gas rule is specified.
+  rationale: No blob gas accounting mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: No blob-related behavior appears in the proposal.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullet 1
+    summary: >-
+      The opcode ceases to delete code or storage or alter the nonce and only
+      moves the account's ETH.
+  rationale: >-
+    Changing the opcode's state result is not itself a change to a state-gas
+    cost, rate, charging site, budget, reservoir, or spill mechanism.
+  confidence: high
+  uncertainty_note: The proposal specifies no state-gas accounting rules.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullet 2
+    summary: Existing SELFDESTRUCT-related refunds are removed.
+  rationale: The proposal removes refunds and introduces no new refund mechanism.
+  confidence: high
+  uncertainty_note: None material for whether a new refund is introduced.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      Existing SELFDESTRUCT results and refunds change: code, storage, and nonce
+      persist while ETH is transferred.
+  - source: eip.md
+    locator: Backwards Compatibility, paragraph 2
+    summary: >-
+      The proposal says few applications are affected and identifies same-address
+      recreation with CREATE2 as the breaking use.
+  rationale: >-
+    Pre-existing tests that exercise SELFDESTRUCT results, refunds, or
+    same-address recreation need reworking, but the package characterizes the
+    affected application set as small and ties it to a narrow opcode-focused
+    subset.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test inventory, so the exact size of the affected
+    subset cannot be established.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      The proposal changes the behavior and refund of one existing opcode but
+      specifies no fork-wide output or assertion.
+  rationale: >-
+    Tests of the changed opcode need different expectations, but tests unrelated
+    to this proposal do not gain an additional invariant to assert.
+  confidence: high
+  uncertainty_note: No package evidence identifies a new assertion on unrelated tests.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      The entire specified surface is an opcode behavior change and refund
+      removal; no transition-tool input or output field is defined.
+  rationale: No transition-tool interface modification is required by the text.
+  confidence: high
+  uncertainty_note: >-
+    The package contains no transition-tool design, but the proposal exposes no
+    new data that such an interface must carry.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      The specified outcomes are ordinary account balance, code, storage, nonce,
+      and gas-refund observations.
+  rationale: >-
+    The proposal does not require a new expectation type, modifier, helper, or
+    other test-framework abstraction.
+  confidence: medium
+  uncertainty_note: >-
+    No framework evidence is available in the package; the score rests on the
+    absence of a novel observable data type in the specification.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: The proposal specifies an ETH transfer and removal of destructive effects and refunds.
+  rationale: No cryptographic mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: None; cryptography is outside the stated change.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification, bullet 1
+    summary: >-
+      SENDALL transfers the account's entire ETH balance to a target while
+      retaining code, storage, and nonce.
+  - source: eip.md
+    locator: Security Considerations, items 1-2
+    summary: >-
+      The proposal identifies token-balance burning and CREATE2 same-address
+      redeployment, including lifecycle and upgrade uses, as broken patterns.
+  rationale: >-
+    Whole-balance transfer with retained account state and the identified token,
+    recreation, lifecycle, and upgrade patterns create multiple boundary-prone
+    cases. The package does not establish that any one mechanism requires the
+    elevated case count needed for score 3.
+  confidence: medium
+  uncertainty_note: >-
+    Self-target, zero-balance, target-account, repeated-call, and execution-halting
+    semantics are not expressly resolved by the short specification.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: No block RLP field or block-validation encoding rule is specified.
+  rationale: The proposal introduces no block RLP validation mechanism.
+  confidence: high
+  uncertainty_note: None; the specified change is confined to opcode execution and refunds.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: No Engine API endpoint, field, or communication mechanism is specified.
+  rationale: The proposal requires no Engine API change on the evidence provided.
+  confidence: high
+  uncertainty_note: None; no cross-layer API surface appears in the proposal.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: The proposal changes an opcode and adds no contract or contract address.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: None; no system contract is part of the specified mechanism.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, paragraph 2
+    summary: >-
+      The proposal describes affected applications generally and identifies
+      CREATE2 recreation, but names no pre-existing system contract.
+  rationale: >-
+    No direct modification or package-grounded indirect effect on a pre-existing
+    system contract is identified.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not inventory system-contract use of SELFDESTRUCT, so no
+    such interaction can be inferred.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: SELFDESTRUCT is renamed to SENDALL and its functionality is replaced.
+  rationale: >-
+    Renaming and redefining the existing opcode is a modification, not the
+    introduction of an additional opcode.
+  confidence: high
+  uncertainty_note: >-
+    The text does not state an opcode byte, but consistently frames SENDALL as a
+    rename of SELFDESTRUCT rather than an addition.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification, bullet 1
+    summary: >-
+      SELFDESTRUCT is renamed to SENDALL and no longer destroys code or storage
+      or alters the nonce; it only moves all ETH to the target.
+  rationale: >-
+    The existing opcode's non-gas behavior is directly modified, which maps to
+    the rubric's only nonzero score for this anchor.
+  confidence: high
+  uncertainty_note: None material to the fact that existing opcode behavior changes.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: No precompile or precompile address is introduced.
+  rationale: The proposal adds no precompile.
+  confidence: high
+  uncertainty_note: None; the proposal changes an opcode only.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: No precompile logic or gas schedule is mentioned.
+  rationale: No existing precompile behavior or gas accounting is modified.
+  confidence: high
+  uncertainty_note: None; precompiles are outside the stated scope.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      The proposal defines no transaction, block, or interface encoding change.
+  rationale: No RLP, SSZ, or other encoding change is introduced.
+  confidence: high
+  uncertainty_note: None; the specified behavior does not alter encoded data.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: No transaction type is introduced; the change applies during opcode execution.
+  rationale: The proposal adds no transaction type.
+  confidence: high
+  uncertainty_note: None; transaction envelopes are outside the specified change.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      The proposal changes an executed opcode's result and refund, not transaction
+      validity or intrinsic gas calculation.
+  rationale: No transaction validity mechanism or intrinsic gas rule changes.
+  confidence: high
+  uncertainty_note: None; consensus-rule modification alone does not imply transaction validity changes.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: No block or header field is introduced.
+  rationale: The proposal adds no block or block-header field.
+  confidence: high
+  uncertainty_note: None; the proposal has no block-format surface.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility, paragraph 1
+    summary: The proposal requires a hard fork because it modifies consensus rules.
+  - source: eip.md
+    locator: Specification, bullets 1-2
+    summary: >-
+      No activation-block state mutation or modification of an internal variable
+      is specified.
+  rationale: >-
+    Requiring fork activation is not itself a new activation mechanism under the
+    anchor; no activation-block mutation is defined.
+  confidence: high
+  uncertainty_note: None; the text specifies no one-time activation action.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation, paragraph 1
+    summary: >-
+      SELFDESTRUCT is described as requiring large account-state changes because
+      it removes code and storage.
+  - source: eip.md
+    locator: Specification, bullet 1
+    summary: >-
+      The replacement avoids code and storage deletion and nonce alteration,
+      retaining only the ETH transfer.
+  rationale: >-
+    The proposal removes the large destructive state operation and introduces no
+    new mechanism that the package says requires performance validation.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no benchmarks, but it identifies no new performance-sensitive
+    path beyond the narrowed balance-transfer behavior.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, items 1-2
+    summary: >-
+      The proposal breaks SELFDESTRUCT-based non-ETH token burning and
+      CREATE2-based lifecycle and upgrade patterns, including a pattern intended
+      to prevent later withdrawals.
+  - source: eip.md
+    locator: Backwards Compatibility, paragraph 2
+    summary: Same-address contract recreation after SELFDESTRUCT no longer works.
+  rationale: >-
+    The changed opcode affects multiple security-relevant components and
+    assumptions: account persistence, token balances, CREATE2 recreation,
+    withdrawal gating, and upgrade patterns. Incorrect handling therefore calls
+    for extensive review across critical account-lifecycle behavior.
+  confidence: high
+  uncertainty_note: >-
+    The package states that few applications are affected but gives no deployment
+    inventory; this limits prevalence estimates, not the depth of the identified
+    security interactions.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The replacement is described as sending all Ether in the account to the caller.
+  - source: eip.md
+    locator: Specification, bullet 1
+    summary: >-
+      The normative bullet instead says all ETH moves to the target and does not
+      define halting or detailed target-account edge semantics.
+  rationale: >-
+    Test-constructible questions require localized agreement, including the
+    caller-versus-target wording and whether renamed SENDALL retains terminating
+    behavior. The core effect is defined, so the uncertainty is localized rather
+    than a newly exposed fork-wide behavior.
+  confidence: medium
+  uncertainty_note: >-
+    The package provides no implementation, devnet, or discussion evidence and
+    the EIP status is Stagnant, so resolution of these questions cannot be inferred.
+  exceptional_score_justification: Not applicable; score is below 4.
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, item 1
+    summary: The proposal explicitly identifies EIP-20 token balances as affected by deactivation.
+  - source: eip.md
+    locator: Backwards Compatibility, paragraph 2; Security Considerations, item 2
+    summary: >-
+      Same-address recreation and upgrade patterns using CREATE2 after
+      SELFDESTRUCT are explicitly broken.
+  - source: supporting/eip-20.md
+    locator: Frontmatter and body
+    summary: >-
+      The allowlisted supporting document identifies EIP 20 but states that its
+      specification was moved, so it supplies no additional interaction detail.
+  rationale: >-
+    EIP-20 token-state behavior and CREATE2-based address lifecycle behavior need
+    coordinated consideration, but the package describes a limited interaction
+    surface centered on SELFDESTRUCT-dependent patterns.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not provide a numbered EIP for CREATE2, and the supporting
+    EIP-20 file contains no substantive token specification.
+  exceptional_score_justification: Not applicable; score is below 4.
+  interacting_eips:
+  - 20
+  unidentified_interactions:
+  - CREATE2-based same-address recreation
+totals:
+  primary_score: 14
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The proposal clearly removes destructive account effects and refunds, but it
+    does not fully specify SENDALL's execution semantics. In particular, the
+    beneficiary wording differs between the Abstract and Specification, and
+    halting, detailed access sequencing, and target-account edge cases are not
+    stated. These are recorded once here rather than reused as independent
+    complexity mechanisms.
+  affected_criteria:
+  - state_access_ordering_within_opcode_execution
+  - edge_boundary_conditions
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 12
+    maximum: 17
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - Is the beneficiary the opcode target, as the Specification states, or the caller, as the Abstract states?
+  - Does SENDALL retain SELFDESTRUCT's execution-halting behavior after the rename?
+  - What are the exact balance and account-touch semantics when the target is self, empty, or newly created?
+  - At what execution point do the balance accesses and transfer occur relative to gas charging and exceptional execution?
+notable_ambiguities:
+- The Abstract says funds go to the caller, while the Specification says they go to the target.
+- The word "immediately" does not define a complete execution or state-access sequence.
+- The opcode's post-rename halting behavior and unchanged base gas treatment are not expressly stated.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md,
+    package/manifest.yaml, package/output-template.yaml, and the three
+    assessment source files allowlisted in the manifest. No prohibited source
+    was accessed and no external information was used as evidence.

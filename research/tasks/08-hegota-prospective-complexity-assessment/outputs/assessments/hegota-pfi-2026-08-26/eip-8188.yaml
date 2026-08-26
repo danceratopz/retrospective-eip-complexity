@@ -1,0 +1,635 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8188
+  title: Last-Written Block for Accounts and Slots
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer-only assessment of Draft EIP-8188 at the sealed Hegotá PFI
+    snapshot. The proposal adds consensus last-written-block metadata to account
+    and storage-slot state encodings, updates it on state mutation with lazy
+    legacy compatibility, and directly interacts with EIPs 214, 6780, and 8037.
+    No implementation, test, devnet, discussion-thread, or post-snapshot evidence
+    is included.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8188/manifest.yaml
+    manifest_sha256: 73e2befa2f102f708468463b6982237906b99e696915a4aa5fddeb9b53c5fcd2
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8188.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 34da619b6f806f5a422bfef6ef73caf029aa3dcc
+    content_sha256: dc2306ba2877472dc2f5d85ae4024adc8127a02a0388130f656afa6e815e807f
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8188.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8188.md
+    content_sha256: e8f43cfeee1db64ab245c2a3e6fb23a7136011ad23a9c8dc2b092b03b4a2829c
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:39:11+02:00'
+    session_id: assessment-run-8c9be50e-9569-4bb8-af29-62f249efb8c3
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-214.md
+  - supporting/eip-6780.md
+  - supporting/eip-8037.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The proposal expressly says that the metadata introduces no gas changes.
+  - source: eip.md
+    locator: Motivation
+    summary: Gas pricing based on the metadata is left to a separate proposal.
+  rationale: >-
+    EIP-8188 introduces no execution-gas accounting rule. Its state-gas parameter
+    interaction is assessed only in the dedicated state-gas anchor.
+  confidence: high
+  uncertainty_note: >-
+    The EIP-8037 parameter recommendation creates a scope tension, but it concerns
+    state-gas rates rather than a separate EVM execution-gas rule.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Update Rule
+    summary: >-
+      The text defines when metadata changes alongside mutations but does not move
+      an existing state access or gas charge within any opcode.
+  rationale: >-
+    The proposal changes the state written by existing operations, not the ordering
+    of a pre-existing state access or gas charge inside opcode execution.
+  confidence: medium
+  uncertainty_note: >-
+    The precise implementation sequence of the metadata write is not stated, but
+    the rubric scores specified changes to access or charging order, and none is
+    introduced here.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      The scope is account and storage-slot metadata and the text expressly says
+      that it introduces no gas changes.
+  rationale: No blob-gas mechanism or blob-gas rate is added or modified.
+  confidence: high
+  uncertainty_note: No blob behavior appears anywhere in the proposal specification.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale / Relation with state creation cost (EIP-8037)
+    summary: >-
+      The proposal says STATE_BYTES_PER_NEW_ACCOUNT should rise from 120 to 125
+      and STATE_BYTES_PER_STORAGE_SET should rise from 64 to 70.
+  - source: supporting/eip-8037.md
+    locator: Specification / New parameters
+    summary: >-
+      EIP-8037 defines the existing 120-byte account and 64-byte storage-slot
+      state-gas rates that EIP-8188 proposes adjusting.
+  rationale: >-
+    The stated SHOULD adjustments change two existing STATE_BYTES_PER_* rates,
+    which matches score 1; no new charging site, budget, reservoir, or spill rule
+    is introduced by EIP-8188 itself.
+  confidence: medium
+  uncertainty_note: >-
+    The Abstract says there are no gas changes and pricing is separate, while the
+    Rationale normatively says the EIP-8037 rates SHOULD increase. Whether those
+    adjustments are part of EIP-8188 is materially ambiguous.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Reverts
+    summary: >-
+      Rolled-back metadata is restored like ordinary state; no gas credit or refund
+      rule is defined.
+  rationale: State journaling on revert is not a gas-refund mechanism.
+  confidence: high
+  uncertainty_note: The proposal explicitly disclaims gas changes.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Update Rule
+    summary: >-
+      Storage changes, deletion, creation, balance transfers, nonce increments,
+      account creation, SELFDESTRUCT, reads, and reverts all receive metadata rules.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Post-fork writes change trie-leaf encodings and state-root computation while
+      untouched legacy entries retain their prior encoding.
+  rationale: >-
+    A major and diverse set of existing execution tests must be reworked or
+    re-derived because common account and storage mutations now produce different
+    consensus state and roots, with fork, legacy, revert, and SELFDESTRUCT variants.
+  confidence: high
+  uncertainty_note: >-
+    The sealed package contains no test inventory, so the exact number of affected
+    vectors cannot be counted; the specified mutation surface is nevertheless broad.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Encoding Changes
+    summary: >-
+      Accounts and storage slots gain a consensus last_written_block value that is
+      incorporated into their RLP and therefore into trie hashing.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Legacy entries default to zero and migrate only on a post-fork mutation; no
+      tree transition occurs at activation.
+  rationale: >-
+    A broad category of otherwise unrelated post-fork state-transition tests gains
+    a mechanical metadata or resulting-state-root assertion. Score 3 is not used
+    because untouched pre-fork state remains valid and is not globally re-derived.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not describe the test harness or whether it asserts the field
+    directly, through post-state objects, or only through the state root.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Encoding Changes
+    summary: >-
+      The state model adds metadata to both account objects and individual storage
+      slots, with distinct legacy and post-fork representations.
+  rationale: >-
+    A transition interface must be able to convey or emit the new account-level and
+    slot-level metadata, amounting to multiple new fields or an equivalent state
+    representation mechanism.
+  confidence: medium
+  uncertainty_note: >-
+    EIP-8188 specifies consensus RLP but no transition-tool schema, so the exact
+    number and placement of interface fields are not determined by the package.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Encoding Changes
+    summary: >-
+      Tests need to represent and compare last_written_block on accounts and slots,
+      including legacy entries that imply zero.
+  rationale: >-
+    Existing account and storage expectation structures need at least a minor
+    extension for the new metadata, but the package does not establish a new
+    reusable expectation or modifier abstraction.
+  confidence: low
+  uncertainty_note: >-
+    No test-framework design is present in the sealed sources; existing primitives
+    could require either only fields or a new metadata-aware expectation.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The complete mechanism consists of RLP state metadata and mutation rules; no
+      cryptographic primitive or cryptographic functionality is added or changed.
+  rationale: Trie hashing reflects changed bytes, but the cryptographic mechanism itself is unchanged.
+  confidence: high
+  uncertainty_note: No cryptographic testing surface is specified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Update Rule
+    summary: >-
+      The rules distinguish changed, deleted, no-op, and new slots; repeated writes;
+      balance and nonce changes; reads; frame reverts; and multiple SELFDESTRUCT cases.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Post-fork execution permits a persistent mixture of legacy entries defaulting
+      to zero and newly encoded entries after their first mutation.
+  rationale: >-
+    Multiple boundary-prone mechanisms form an elevated cross-product: mutation
+    kind, legacy versus new encoding, same-block repetition, success versus revert,
+    and SELFDESTRUCT creation and beneficiary branches.
+  confidence: high
+  uncertainty_note: >-
+    Some account-mutation cases are not exhaustively enumerated, increasing the
+    boundary surface recorded under under-specification.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      The RLP changes apply to account and storage trie leaves and state-root
+      computation; the proposal introduces no block-RLP validation mechanism.
+  rationale: The anchor is limited to block RLP validation, which EIP-8188 does not modify.
+  confidence: high
+  uncertainty_note: State synchronization may need mixed leaf decoding, but that is outside this anchor's block-RLP scope.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The specification changes only execution state encoding and mutation metadata;
+      it defines no Engine API field, endpoint, or communication rule.
+  rationale: No Engine API change is introduced.
+  confidence: high
+  uncertainty_note: None within the sealed proposal scope.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The proposal adds state metadata and no contract deployment or system address.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: None within the sealed proposal scope.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Storage slot rules
+    summary: Every qualifying SSTORE changes both slot metadata and containing-account metadata.
+  - source: supporting/eip-8037.md
+    locator: Specification / System contracts and system transactions
+    summary: Existing system-call paths can write new storage slots through stateful system contracts.
+  rationale: >-
+    EIP-8188 does not change system-contract code, but stateful system contracts are
+    indirectly subject to the new metadata and state-root effects when they write.
+    The EIP requires no irregular activation transition.
+  confidence: low
+  uncertainty_note: >-
+    EIP-8188 does not enumerate affected system contracts or special system-call
+    semantics, so the extent of this indirect effect is not fixed in the package.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The update rules attach metadata to existing state operations and define no opcode number or new instruction.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Storage slot rules
+    summary: Existing SSTORE executions now update slot and account metadata for value changes, deletion, and creation.
+  - source: eip.md
+    locator: Specification / Account rules
+    summary: Existing value-transfer, creation, and SELFDESTRUCT paths now produce additional consensus state effects.
+  rationale: >-
+    At least SSTORE and SELFDESTRUCT, plus value-bearing call and creation paths,
+    have modified non-gas state behavior. The rubric permits only 0 or 3 for this anchor.
+  confidence: high
+  uncertainty_note: >-
+    The exact exhaustive opcode set is not stated, but one modified existing opcode
+    is sufficient for the permitted score of 3.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile address, input contract, or gas schedule is introduced.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Account rules
+    summary: >-
+      The proposal changes generic account metadata on balance mutation but defines
+      no change to any precompile's logic or gas accounting.
+  rationale: Generic surrounding state-transition effects do not modify precompile logic or gas schedules.
+  confidence: high
+  uncertainty_note: A value transfer to an address is governed by generic account rules, not by a precompile modification in this anchor.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Encoding Changes
+    summary: >-
+      RLP changes are confined to account and storage-slot trie-leaf values, not
+      transaction, block, or interface encoding.
+  rationale: >-
+    Despite the substantial state RLP change, this rubric anchor is expressly
+    limited to transaction, block, and interface encoding, none of which changes.
+  confidence: high
+  uncertainty_note: >-
+    State-leaf encoding complexity is captured by affected tests, invariants,
+    transition representation, edge cases, and performance rather than this narrow anchor.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The proposal defines no transaction envelope or transaction type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The proposal adds state metadata and expressly introduces no gas changes.
+  - source: eip.md
+    locator: Specification
+    summary: No transaction-validity or intrinsic-gas rule is defined.
+  rationale: >-
+    State output changes do not alter transaction envelope validity or intrinsic-gas
+    calculation. EIP-8037's own validity mechanisms are not changes introduced by EIP-8188.
+  confidence: high
+  uncertainty_note: The possible EIP-8037 byte-rate adjustment is a state-gas issue, not a transaction-validity rule.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Block Update Rule
+    summary: Existing block_number supplies metadata values; no new block or header field is defined.
+  rationale: The proposal consumes an existing block number and adds no header field.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      No tree transition occurs; legacy entries remain encoded as before and adopt
+      the new encoding only upon their first post-fork mutation.
+  rationale: No state or existing internal value is modified at the activation block itself.
+  confidence: high
+  uncertainty_note: Implementations must activate new mutation rules, but initialization of a semantic field and lazy decoding are not an activation-block modification under this anchor.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Rationale / How does extra metadata affect the state size?
+    summary: >-
+      The proposal estimates roughly 10.8 GB of raw overhead once all current state
+      has been rewritten and says impact must be benchmarked across clients.
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      Every written account or slot grows, increasing data touched by writes and the
+      size of state witnesses and proofs.
+  rationale: >-
+    The mechanism affects pervasive existing write, trie-hashing, database, witness,
+    and proof behavior and cannot be fully validated in isolation; its substantial
+    cross-client storage and commit-path impact warrants score 3.
+  confidence: high
+  uncertainty_note: Client tiering optimizations are optional and unspecified, so only the mandatory metadata overhead and write-path effects are scored.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      Added bytes increase state-resource usage and witness sizes; without matching
+      EIP-8037 byte rates, new accounts and slots would be underpriced.
+  - source: eip.md
+    locator: Specification / Reads and Reverts
+    summary: >-
+      Consensus correctness requires reads not to mutate metadata and reverted
+      frames to restore it exactly with accompanying state.
+  rationale: >-
+    The metadata interacts with critical state-root, journaling, and state-pricing
+    components, slightly altering their invariants and requiring targeted review and
+    fuzzing. The text bounds DoS exposure by existing write rules, so score 3 is not used.
+  confidence: medium
+  uncertainty_note: >-
+    The security consequence of the ambiguous EIP-8037 parameter adjustment and
+    omitted mutation cases cannot be fully resolved from the package.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Front matter and Abstract
+    summary: >-
+      The proposal is Draft and makes previously unrecorded write-age information
+      consensus metadata that changes the state root.
+  - source: eip.md
+    locator: Specification / Account rules
+    summary: >-
+      The enumerated account updates cover balance, nonce, storage, creation, and
+      SELFDESTRUCT but do not state an exhaustive rule for every account-field mutation.
+  - source: supporting/eip-8037.md
+    locator: Specification / Parameter changes
+    summary: >-
+      The required EIP-8037 package text includes existing-account EOA delegation
+      writes, a mutation class not resolved by EIP-8188's account-rule list.
+  rationale: >-
+    Previously unobservable write timing becomes consensus-critical, while testable
+    cases such as unlisted account-field mutations and no-net balance transfers are
+    not fully reconciled with the general mutation rule. Different readings produce
+    different leaf encodings and state roots, requiring cross-client agreement.
+  confidence: medium
+  uncertainty_note: >-
+    The allowed package contains no implementation, devnet, test, or discussion
+    evidence with which to determine whether these Draft gaps already have a shared
+    resolution.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter and Rationale / Relation with state creation cost (EIP-8037)
+    summary: >-
+      EIP-8188 requires EIP-8037 and proposes coordinated changes to two of its
+      per-byte state-creation parameters.
+  - source: eip.md
+    locator: Specification / Account rules / SELFDESTRUCT
+    summary: SELFDESTRUCT metadata behavior is explicitly branched according to EIP-6780.
+  - source: eip.md
+    locator: Rationale / Why do reads not update the block?
+    summary: Read behavior is designed to preserve EIP-214 STATICCALL state immutability.
+  rationale: >-
+    EIPs 8037, 6780, and 214 require coordinated consideration for pricing, deletion
+    and balance branches, and static-call invariants, but the interactions remain
+    limited enough for mostly focused testing. Exactly three identified EIPs add no
+    uncapped-row quantity bonus.
+  confidence: high
+  uncertainty_note: >-
+    The proposal also anticipates an unnumbered future state-tiering pricing EIP;
+    its design and test interaction cannot be assessed from this snapshot.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 214
+  - 6780
+  - 8037
+  unidentified_interactions:
+  - A separate, unnumbered state-tiering gas-pricing proposal is expected to consume the last-written-block metadata.
+totals:
+  primary_score: 26
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    Material gaps remain around whether EIP-8188 itself changes EIP-8037 state-gas
+    rates, the exhaustive set of account mutations that update metadata, ordinary
+    no-net balance transfers, mixed-encoding canonicalization, and the concrete
+    transition-tool and test-framework representation. These gaps can change several
+    anchor scores but do not erase the broad mandatory state-root impact.
+  affected_criteria:
+  - state_gas_accounting_changes
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - modified_system_contracts
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  plausible_total_range:
+    minimum: 22
+    maximum: 29
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - >-
+    Are the EIP-8037 parameter changes normative changes in EIP-8188, despite the
+    statements that this proposal introduces no gas changes and leaves pricing separate?
+  - >-
+    Must every mutation of an existing account field update last_written_block,
+    including the EOA-delegation code write described by EIP-8037, or only the
+    account-rule cases explicitly enumerated in EIP-8188?
+  - >-
+    Does an ordinary nonzero value transfer from an address to itself update account
+    metadata even though there is no net balance change, and how does that align with
+    the explicit SELFDESTRUCT self-beneficiary exception?
+  - >-
+    What canonical transition-tool and test-fixture representation distinguishes
+    legacy implied-zero metadata from explicitly encoded zero metadata?
+  - >-
+    Do stateful system-call paths require any special metadata, rollback, or fixture
+    handling beyond the generic account and storage rules?
+notable_ambiguities:
+- >-
+  The Abstract's no-gas-change scope conflicts with the normative SHOULD and concrete
+  EIP-8037 STATE_BYTES_PER_* replacements in the Rationale.
+- >-
+  The general rule says metadata changes when state is mutated, but the account-rule
+  enumeration omits some account-field mutation classes visible in the required
+  supporting EIP and does not fully reconcile all no-net balance cases.
+- >-
+  The rubric's encoding anchor covers only transaction, block, and interface encoding;
+  EIP-8188's major account and storage trie-leaf RLP change therefore scores zero on
+  that anchor and is represented in other anchors.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed package files listed in sources_consulted, did not
+    access the internet or prohibited sources, did not follow visible URLs, and did
+    not use post-snapshot information as evidence.

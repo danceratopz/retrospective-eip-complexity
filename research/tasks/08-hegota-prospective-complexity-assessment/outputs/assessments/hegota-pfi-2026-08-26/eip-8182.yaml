@@ -1,0 +1,635 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8182
+  title: Private ETH and ERC-20 Transfers
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer-only assessment of the sealed EIP-8182 snapshot: the
+    fork-installed shielded-pool system contract, its state and call paths,
+    the Groth16/Poseidon2 pool-proof and auth-policy mechanisms, ETH/ERC-20
+    asset movement, and activation behavior. Wallet, mempool, note-delivery,
+    and network-anonymity infrastructure identified as out of scope by the EIP
+    is excluded.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8182/manifest.yaml
+    manifest_sha256: e11c0038a60f606e47ed03c5fe2a2eb4548c5b8fa4f30cd8b2fb8d7a8ef25cdc
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8182.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 44856f004aa63ff2b115b96d76149f21fb2f842c
+    content_sha256: 5fcacb0f71bec7f46b37edacc7060a2a0c03dc4538caa809453460ee2d0e809e
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8182.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8182.md
+    content_sha256: 6646443999779659766b757bc2ace85a904a018dd4ce83e68ef7c7436b36824b
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:36:00+02:00'
+    session_id: assessment-run-9f9d1b38-818a-49b3-ad6e-08abc3bfbd3b
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-20.md
+  - supporting/eip-4844.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Section 5, System Contract'
+    summary: >-
+      The EIP limits its protocol change to installing a system contract and
+      specifies ordinary contract execution without a new EVM gas-accounting
+      rule.
+  rationale: >-
+    Contract calls and proof verification consume existing EVM gas, but no gas
+    schedule or accounting mechanism is created or changed.
+  confidence: high
+  uncertainty_note: >-
+    Exact system-contract bytecode is pending, but that does not by itself
+    specify a change to EVM gas accounting.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Backwards Compatibility'
+    summary: >-
+      The EIP introduces no opcode and says it does not modify existing
+      contract semantics.
+  rationale: >-
+    No opcode's state-access position or gas-charge ordering is changed.
+  confidence: high
+  uncertainty_note: >-
+    The system contract performs state accesses as ordinary contract code;
+    none is an opcode-ordering rule.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Section 5, System Contract'
+    summary: >-
+      The specified change is a shielded-pool system contract and contains no
+      blob-gas rule.
+  rationale: No blob gas accounting is introduced or modified.
+  confidence: high
+  uncertainty_note: >-
+    EIP-4844 is cited only as an analogy for a setup ceremony, not as an
+    accounting dependency.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Sections 5.2 and 5.4, State and Execution'
+    summary: >-
+      The pool writes contract storage for trees, nullifiers, replay IDs, and
+      policies, but the EIP specifies no state-gas budget, rate, charging site,
+      or spill rule.
+  rationale: >-
+    New ordinary storage writes are not a change to the rubric's state-gas
+    accounting mechanism.
+  confidence: high
+  uncertainty_note: >-
+    Storage volume is considered under performance and security, not counted
+    again as state-gas accounting.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Sections 5.4.1 and 5.4.2, transact and deposit'
+    summary: >-
+      The execution procedures define validation, storage, proof checks, and
+      transfers without any gas-refund behavior.
+  rationale: No new EVM gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: No refund-related specification gap is visible.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Backwards Compatibility'
+    summary: >-
+      Apart from the new system-contract installation, the EIP disclaims other
+      protocol changes and says existing contracts and ERC-20 interfaces retain
+      their semantics.
+  rationale: >-
+    The snapshot provides no rule requiring pre-existing tests to be reworked;
+    feature and activation tests are new EIP-specific coverage.
+  confidence: medium
+  uncertainty_note: >-
+    A contrived pre-existing test that assumes the fixed system address is
+    empty could be affected, but the package gives no evidence of such a test
+    population.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Test Cases; Backwards Compatibility'
+    summary: >-
+      The listed assertions concern EIP-8182 calls and state, while the EIP
+      states that existing contract semantics are unchanged.
+  rationale: >-
+    Tests unrelated to EIP-8182 are not specified to gain a new assertion.
+  confidence: high
+  uncertainty_note: >-
+    Fork-activation allocation tests are about this EIP and therefore do not
+    constitute a new invariant on unrelated tests.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Section 5.1, Deployment and Upgrade Model'
+    summary: >-
+      Clients install a fixed-address account at the activation fork, but the
+      EIP defines no new transition-tool input or output field.
+  rationale: >-
+    Activation-block behavior changes, but no transition-tool interface field
+    or interface mechanism is specified.
+  confidence: medium
+  uncertainty_note: >-
+    A transition tool must distinguish activation from later blocks; the
+    package does not establish that this requires an interface extension rather
+    than existing fork selection.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Test Cases'
+    summary: >-
+      Required cases are expressed as calls, proofs, input ranges, state
+      transitions, reverts, and boundary checks; the EIP does not require a new
+      expectation or modifier abstraction.
+  rationale: >-
+    The sealed text does not demonstrate that existing test primitives are
+    insufficient, even though EIP-specific proof fixtures and helpers will be
+    substantial.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test-framework inventory, so framework-specific
+    helper needs cannot be established from the snapshot.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Sections 3.3-3.4, Poseidon Hash and Merkle Tree Constructions'
+    summary: >-
+      The EIP fixes a custom length-tagged Poseidon2 BN254 sponge and three
+      Merkle-tree constructions with domain-separated commitment formulas.
+  - source: eip.md
+    locator: 'Sections 4, 5.5, and 8.1, split proofs and verification'
+    summary: >-
+      A fork-managed Groth16 proof, permissionless auth proofs, embedded
+      verification key, and two-value cross-proof coupling jointly enforce the
+      spend relation.
+  rationale: >-
+    Multiple mechanisms are introduced, including a custom Poseidon2 sponge
+    construction and a compound Groth16/auth-proof protocol with commitments,
+    nullifiers, and Merkle membership. At least the composed relation and
+    cross-proof binding are proposal-specific and demand dedicated vectors and
+    adversarial testing.
+  confidence: high
+  uncertainty_note: >-
+    The referenced Poseidon parameter/vector assets and finalized verification
+    key are not available as scoring evidence, limiting artifact-level review
+    without reducing the evident mechanism count.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Sections 5.2.1, 5.4, 8.2, 8.5, 8.10; Test Cases'
+    summary: >-
+      The EIP defines block- and count-based root-history edges, two tree
+      capacity boundaries, field/address/amount ranges, proof encodings,
+      transfer/withdrawal branches, real/phantom inputs, real/dummy outputs,
+      expiry, replay, rotation, and output-lock combinations.
+  rationale: >-
+    There are many independent boundary-prone mechanisms, and root aging,
+    replay/expiry, output locking, token-call return shapes, and real/phantom or
+    dummy combinations each require elevated case matrices.
+  confidence: high
+  uncertainty_note: >-
+    Exact circuit and bytecode artifacts may reveal further edges; score 3
+    already matches the highest defined non-exceptional anchor.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Sections 5.1 and 5.4'
+    summary: >-
+      The execution-layer change is an installed account and contract-call
+      behavior; no block RLP validation rule is introduced.
+  rationale: No new block-RLP syncing validation mechanism is specified.
+  confidence: high
+  uncertainty_note: >-
+    Syncing must reproduce the fork state transition, but that is distinct from
+    this anchor's block-RLP validation mechanism.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Section 5, System Contract'
+    summary: >-
+      The EIP specifies a system-contract interface and no Engine API field,
+      endpoint, or communication mechanism.
+  rationale: No Engine API change is introduced.
+  confidence: high
+  uncertainty_note: No Engine API ambiguity is visible in the sealed text.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'Sections 1 and 5.1-5.3, system-contract definition and state'
+    summary: >-
+      One shielded-pool system contract is installed at a protocol-defined
+      address and maintains commitment trees, histories, nullifiers, replay
+      IDs, identity entries, and an auth-policy registry.
+  rationale: >-
+    The proposal adds a single stateful system contract, exactly matching score
+    2.
+  confidence: high
+  uncertainty_note: >-
+    Its exact bytecode is pending, but its count and statefulness are explicit.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Section 5.1, Deployment and Upgrade Model'
+    summary: >-
+      The EIP installs a new account and describes only possible future
+      hard-fork replacement of that account's code.
+  rationale: No pre-existing system contract is modified by this proposal.
+  confidence: high
+  uncertainty_note: >-
+    A future replacement is not part of the assessed activation change.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The EIP explicitly states that it introduces no new opcode.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: No ambiguity is present.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Backwards Compatibility'
+    summary: >-
+      The proposal confines the protocol change to the system contract and does
+      not change existing contract semantics.
+  rationale: No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: No ambiguity is present.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Rationale, Groth16 BN254 Pool Proof System'
+    summary: >-
+      The EIP explicitly adds no precompile; its verifier uses existing
+      ECADD/ECMUL/ECPAIRING calls.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: >-
+    Use of existing precompiles is an integration dependency, not an added
+    precompile.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Sections 5.5 and Rationale, Groth16 BN254 Pool Proof System'
+    summary: >-
+      Existing elliptic-curve precompiles are called by the verifier, with no
+      behavioral or gas-schedule modification specified.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: No modification is implied by ordinary calls to them.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Sections 5.3 and 5.5'
+    summary: >-
+      The EIP defines Solidity ABI calls and a pool-proof byte string but no
+      transaction, block, RLP/SSZ, or protocol-interface encoding transition.
+  rationale: >-
+    Contract calldata and proof payload formats do not change the rubric's
+    transaction/block/interface encodings.
+  confidence: high
+  uncertainty_note: No Engine API or block encoding is specified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The EIP explicitly states that it introduces no transaction type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: No ambiguity is present.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Section 5.4, Execution'
+    summary: >-
+      The proposal adds revert conditions inside calls to the pool contract but
+      no validity or intrinsic-gas rule for existing transaction types.
+  rationale: >-
+    Contract-level call validation is not a transaction validity mechanism
+    under this anchor.
+  confidence: high
+  uncertainty_note: No transaction-envelope change is specified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Abstract; Section 5, System Contract'
+    summary: >-
+      All new persistent data resides in the system contract; no block or
+      header field is defined.
+  rationale: No new block or header field is introduced.
+  confidence: high
+  uncertainty_note: No ambiguity is present.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Section 5.1, Deployment and Upgrade Model'
+    summary: >-
+      At activation, clients must install a system-contract account with exact
+      code at the fixed shielded-pool address, and its storage persists across
+      later fork replacements.
+  rationale: >-
+    Installing code and an account as part of the activation state transition
+    is a fork-block state modification, matching the score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    The exact bytecode is not yet pinned, but the required activation-time state
+    modification is unambiguous.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'Sections 5.2, 5.4, and 5.5; Security Considerations, State Growth'
+    summary: >-
+      Each spend combines Groth16 verification over 19 public inputs,
+      auth-verifier staticcall, multiple state-set writes, three tree
+      insertions, payload hashing, and optional external asset transfer; pool
+      state is append-only and not safely prunable.
+  - source: eip.md
+    locator: 'Rationale, Groth16 BN254 Pool Proof System'
+    summary: >-
+      Verification gas is dominated by 19 scalar multiplications and a final
+      pairing.
+  rationale: >-
+    Core proof and tree operations can be benchmarked directly, but cumulative
+    state growth, arbitrary auth-verifier code, ERC-20 behavior, payload sizes,
+    and root-history throughput prevent complete isolation. The EIP adds a new
+    path rather than broadly changing existing execution benchmarks, fitting
+    score 2.
+  confidence: medium
+  uncertainty_note: >-
+    Final bytecode, verification key, and concrete circuit artifacts are
+    pending, so exact execution cost and benchmark coverage are not baselinable.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'Section 4, Architecture; Security Considerations'
+    summary: >-
+      The pool circuit is the all-funds security boundary; the design also
+      relies on a trusted setup, custom commitments/nullifiers, root histories,
+      replay protection, user-selected auth verifiers, and exact asset-transfer
+      handling.
+  - source: eip.md
+    locator: 'Sections 5.4 and 8, execution and circuit requirements'
+    summary: >-
+      Security-critical checks span proof canonicality, field/address ranges,
+      nullifier and intent uniqueness, cross-proof binding, value conservation,
+      token consistency, authorization, external calls, and reentrancy.
+  rationale: >-
+    The mechanism touches multiple critical components and custody invariants;
+    an implementation error can compromise pool funds or authorization while
+    other errors can cause replay, lockout, leakage, or denial of service. It
+    requires extensive security review and fuzzing.
+  confidence: high
+  uncertainty_note: >-
+    Risk is scoped to the execution-layer pool and its users as the EIP states;
+    consensus-layer and out-of-scope network privacy are not scored.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'Section 5.1 and 5.5, deployment and pool-proof verification'
+    summary: >-
+      The exact system-contract bytecode and embedded verification key are not
+      pinned; bytecode is to be finalized after a future trusted-setup ceremony.
+  - source: eip.md
+    locator: 'Sections 3.3 and 8, Poseidon assets and circuit requirements'
+    summary: >-
+      Hash constants/vectors are delegated to referenced assets, while the pool
+      circuit is specified as requirements rather than a sealed circuit/VK
+      artifact in this package.
+  rationale: >-
+    Clients need coordinated agreement on the exact activation code,
+    verification key, and circuit-derived artifacts before bytecode- and
+    proof-level vectors can be baselined. The gaps are material but localized to
+    the new pool artifact, fitting score 2 rather than re-baselining a newly
+    observable pre-existing behavior.
+  confidence: medium
+  uncertainty_note: >-
+    The prose fixes many observable cases and provides extensive test
+    requirements, so the remaining uncertainty is narrower than the overall
+    feature surface but blocks an authoritative artifact-level baseline.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'Front matter requires; Sections 5.4.1-5.4.2, ERC-20 call semantics'
+    summary: >-
+      EIP-8182 explicitly requires EIP-20 and defines deposit/withdrawal
+      integration through balanceOf, transferFrom, and transfer, including
+      strict return-data and balance-delta handling.
+  - source: supporting/eip-20.md
+    locator: 'Front matter and body'
+    summary: >-
+      The sealed supporting snapshot identifies EIP-20 as the ERC dependency
+      but contains only a move notice and no additional normative interface
+      text.
+  rationale: >-
+    The pool depends on EIP-20 behavior and needs coordinated token-path tests,
+    including nonstandard return shapes and explicitly incompatible fee or
+    rebasing behavior, but the interaction is confined to asset ingress and
+    egress. EIP-4844 is only a trusted-setup analogy in the EIP text and does not
+    require coordinated EIP-4844 test cases.
+  confidence: high
+  uncertainty_note: >-
+    The EIP-20 support file lacks its normative body, but EIP-8182 itself states
+    the integration behavior needed for this complexity classification.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 20
+  unidentified_interactions: []
+totals:
+  primary_score: 20
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The activation artifact is not reproducible from the sealed evidence: the
+    exact system-contract bytecode and Groth16 verification key await a trusted
+    setup, the exact pool-circuit artifact is not included, and the referenced
+    Poseidon parameter/vector assets are outside the assessment source list.
+    This chiefly limits cryptographic vectors, performance baselines, and final
+    cross-client artifact agreement without changing the clearly specified
+    count of protocol surfaces.
+  affected_criteria:
+  - cryptography
+  - performance_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 19
+    maximum: 22
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - >-
+    What exact system-contract bytecode and initial account state will all
+    clients install at activation?
+  - >-
+    What finalized Groth16 circuit artifact, verification key, and trusted-setup
+    transcript determine the embedded verifier?
+  - >-
+    Do the referenced Poseidon2 constants and vectors fully determine and test
+    every sponge and Merkle-tree context described by the prose?
+  - >-
+    What measured execution and state-growth costs follow from the finalized
+    bytecode, proof verifier, auth-verifier calls, and allowed payload sizes?
+notable_ambiguities:
+- >-
+  Same-block auth-policy roots are intentionally not retained after later
+  same-block mutations, so transaction ordering determines whether an
+  intermediate root remains usable; the EIP recommends waiting a block but does
+  not make that wallet behavior mandatory.
+- >-
+  ERC-20 compatibility is deliberately narrower than the nominal interface:
+  fee-on-transfer and rebasing behavior can fail or under-deliver, and the
+  supporting EIP-20 snapshot contains no normative body for comparison.
+- >-
+  Auth verifier proof formats and verification-key derivation are delegated to
+  companion standards, while the pool contract accepts any user-registered
+  verifier satisfying only the staticcall envelope.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only the sealed package sources and authorized
+    operational files, did not access the internet or post-snapshot information,
+    and did not use prohibited skills or external evidence.

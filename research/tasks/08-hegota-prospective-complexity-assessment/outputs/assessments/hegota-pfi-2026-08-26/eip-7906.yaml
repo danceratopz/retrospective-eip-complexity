@@ -1,0 +1,490 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7906
+  title: Transaction Assertions via State Diff Opcode
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: "Draft execution-layer proposal adding a POST_TX frame mode to EIP-8141 and three EVM opcodes—TXTRACE, TXDIFF, and EVENTDATACOPY—to expose transaction-local state differences and events to assertion contracts. The assessment covers only behavior and evidence sealed in this package."
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-7906/manifest.yaml
+    manifest_sha256: 9f75828367223213c99e9c9c8dfc384523c825119cc751dab194c6baed33ee11
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7906.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 799d721e74024629d7de1017532fc16352250b3d
+    content_sha256: 0a621cf6154e4b6baf050c197c7f33f893f48db42f75a8f440c7c333a414dc64
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7906.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-7906.md
+    content_sha256: 4eb5398a6bb2782218bb6711c613cde62c64b60d61862796c28f767ee8bbab1d
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:07:38+02:00'
+    session_id: assessment-run-4e072310-9aa6-4417-8f93-80adccc823f0
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex-root
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-1559.md
+  - supporting/eip-2929.md
+  - supporting/eip-4844.md
+  - supporting/eip-7702.md
+  - supporting/eip-7928.md
+  - supporting/eip-8141.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction Diff Lookup Opcode > Gas Cost"
+    summary: "TXDIFF params 0x00–0x05 use EIP-2929 cold/warm costs and add the queried address or slot to the shared access list after the call."
+  - source: eip.md
+    locator: "Specification > Results Ordering > EVENTDATACOPY opcode"
+    summary: "EVENTDATACOPY uses CALLDATACOPY-style fixed, copying, and memory-expansion charges."
+  rationale: "The proposal adds several opcode-specific gas rules, including dynamic memory/copy charging and state-dependent cold/warm charging. TXDIFF also changes shared warmness, so it can change the gas charged by later existing operations; this reaches score 3."
+  confidence: medium
+  uncertainty_note: "TXTRACE_GAS_COST and the constants-table EVENTDATACOPY_GAS_COST remain TBD, and no opcode-wide charge/error ordering is fully specified."
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction Diff Lookup Opcode > Gas Cost"
+    summary: "For TXDIFF params 0x00–0x05, cost depends on pre-call warmness; the address or slot is added to EIP-2929 access lists after the call and recorded in the EIP-7928 BAL where active."
+  - source: supporting/eip-7928.md
+    locator: "Specification > Gas Validation Before State Access"
+    summary: "BAL inclusion is consensus-critical at gas boundaries: pre-state validation must pass before the target is accessed and recorded."
+  rationale: "TXDIFF is a new state-accessing operation whose gas validation, live-state read, warmness update, and BAL recording position must be fixed. This matches the score-2 anchor for a new state-accessing operation whose ordering must be settled."
+  confidence: medium
+  uncertainty_note: "The draft says the access-list addition occurs after the call but does not define ordering for invalid params, reserved operands, failed reads, or insufficient gas."
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction Trace Opcode"
+    summary: "For blob transactions, gas_pre_charge reports the existing blob-fee component as blob_count × GAS_PER_BLOB × blob_base_fee."
+  - source: supporting/eip-4844.md
+    locator: "Specification > Gas accounting"
+    summary: "EIP-4844 already defines blob gas, GAS_PER_BLOB, and blob fee calculation."
+  rationale: "EIP-7906 exposes an already-computed blob fee through TXTRACE but does not alter blob-gas charging, limits, base-fee calculation, or refund behavior."
+  confidence: high
+  uncertainty_note: "The exposed gas_pre_charge value is underspecified in other respects, but the package contains no blob-gas accounting change."
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "POST_TX executes as STATICCALL and disallows state manipulation, including the APPROVE exception."
+  - source: eip.md
+    locator: "Specification > Transaction Diff Lookup Opcode > Gas Cost"
+    summary: "The new opcode costs are EIP-2929 execution-gas access charges or a flat TXTRACE cost, not state-gas charges."
+  rationale: "The proposal observes state differences but introduces no state write, state-gas charging site, state budget change, or spill/reservoir rule."
+  confidence: high
+  uncertainty_note: "This is limited to EIP-7906; the underlying EIP-8141 transaction already has a separate state-gas model."
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Rationale > Gas Pre-Charge Parameter"
+    summary: "The text describes the ordinary refund of unused prepaid gas as provisional fee settlement; it does not define a new refund mechanism."
+  rationale: "No new EVM gas-refund counter rule or refund mechanism is introduced."
+  confidence: high
+  uncertainty_note: "The exact fee view visible during POST_TX is ambiguous, but that does not itself add a refund mechanism."
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "The proposal amends EIP-8141 mode validity, frame ordering, caller/static behavior, atomic-batch rollback, transaction validity, gas payment, and failure receipt behavior."
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "All three opcodes are restricted to EIP-8141 POST_TX frames and halt exceptionally in legacy, EIP-1559, and other frame modes."
+  rationale: "A considerable but specialized category of pre-existing frame-transaction and opcode-context tests must be reworked for a fourth mode, a trailing-suffix rule, and failure semantics that override atomic batches. The affected category is contrived to EIP-8141/frame execution, fitting score 2."
+  confidence: medium
+  uncertainty_note: "The sealed package contains no test inventory, so the size of the pre-existing EIP-8141 test subset is inferred only from the normative amendments."
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The new opcodes occupy unused slots, are unavailable outside POST_TX, and make no changes to existing opcodes, transaction types, or precompiles."
+  rationale: "The proposal changes targeted frame-transaction logic, but it does not add a mechanically required output that unrelated pre-existing tests must additionally assert."
+  confidence: medium
+  uncertainty_note: "EIP-8141-specific tests are reworked under the preceding anchor; no package evidence requires a new assertion across unrelated tests."
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: supporting/eip-8141.md
+    locator: "Specification > Frame Transaction > Payload Encoding"
+    summary: "The existing frame payload already carries a numeric mode field inside each frame."
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "EIP-7906 admits one additional value in that existing mode field; it does not define a new external transition-tool field."
+  rationale: "The package supports an extension of an existing encoded field's accepted values, not a new transition-tool interface field or mechanism."
+  confidence: medium
+  uncertainty_note: "No transition-tool design is included in the sealed evidence; the score reflects only explicit interface changes in the proposal."
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode; Transaction Trace Opcode; Transaction Diff Lookup Opcode; EVENTDATACOPY opcode"
+    summary: "The proposal's cases are expressible as frame transactions plus EVM bytecode invoking numeric opcode parameters and checking execution outcomes."
+  rationale: "The sealed specification does not establish a need for a new reusable expectation, modifier, or framework-level abstraction beyond existing transaction/frame construction and EVM execution assertions."
+  confidence: low
+  uncertainty_note: "The package contains no test-framework design or tests, so a minor helper extension may prove useful even though none is demonstrated as required."
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Abstract; Specification > Transaction Trace Opcode"
+    summary: "The feature exposes transaction outcomes, state differences, and event data; it defines no cryptographic primitive or verification rule."
+  rationale: "No cryptographic mechanism is added or modified."
+  confidence: high
+  uncertainty_note: "Code hashes are returned as state data, but computing or validating a new cryptographic construction is outside this proposal."
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction Trace Opcode; Transaction Diff Lookup Opcode > Params; Reserved Inputs"
+    summary: "The opcodes expose many parameter domains, must-be-zero operands, indexed tables, 0–4 event topics, local-to-global remapping, bit flags, and exceptional-halt cases."
+  - source: eip.md
+    locator: "Specification > Results Ordering > EVENTDATACOPY opcode"
+    summary: "Copy behavior adds event-index and data-range boundaries plus memory expansion and variable-length data."
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "POST_TX adds suffix boundaries, multiple-frame composition, STATICCALL violations, ordinary reverts, exceptional halts, atomic-batch override, validation-prefix persistence, and failed-receipt outcomes."
+  rationale: "Multiple independent boundary-prone mechanisms require an elevated matrix: params and indices, empty/restored/deployed state, event topic/data limits, warm/cold accesses, POST_TX placement, failure kind, and rollback scope. This meets score 3."
+  confidence: high
+  uncertainty_note: "Several boundary outcomes are themselves unspecified, increasing coordination risk but not counted again as extra edge mechanisms."
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The proposal lists opcode and frame-execution changes and states that existing transaction types are unchanged; it defines no block RLP validation change."
+  rationale: "No block RLP validation mechanism requiring sync testing is introduced."
+  confidence: high
+  uncertainty_note: "EIP-7928 BAL recording is an interaction of state accesses, not a block-sync format change made by EIP-7906."
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: "The normative changes are confined to EIP-8141 frame processing and EVM opcodes; no Engine API field, version, or endpoint is defined."
+  rationale: "No Engine API change is introduced by this proposal."
+  confidence: high
+  uncertainty_note: "EIP-7928 has Engine API changes, but EIP-7906 only records compatible accesses into its BAL and does not modify that interface."
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Rationale > The POST_TX Frame Mode Requirement"
+    summary: "Assertion providers execute their own assertion logic in ordinary POST_TX frames; no protocol-installed contract or fixed system address is specified."
+  rationale: "The assertion contracts are user-selected contracts, not new system contracts."
+  confidence: high
+  uncertainty_note: "The EIP recommends immutable assertion targets but does not mandate deployment of a system contract."
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "POST_TX targets are dispatched as EIP-8141 frames and the proposal does not alter code or state of any named system contract."
+  rationale: "No pre-existing system contract is directly or indirectly modified by a specified transition."
+  confidence: high
+  uncertainty_note: "Ordinary contracts may opt into assertions, but that application behavior is not a system-contract modification."
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Transaction Trace Opcode; Transaction Diff Lookup Opcode; EVENTDATACOPY opcode"
+    summary: "The proposal introduces TXTRACE, TXDIFF, and EVENTDATACOPY. They have multi-operand parameter spaces, dynamic cold/warm or memory/copy gas, indexed state/event data, and exceptional-halt branches."
+  rationale: "Three opcodes are added and all have complex mechanics or dynamic gas/data behavior; this directly matches score 3."
+  confidence: high
+  uncertainty_note: "The opcode byte values and complete stack/error definitions are missing, but the number and complexity class of the proposed opcodes are clear."
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The proposal explicitly states that no changes are made to existing opcodes."
+  rationale: "No pre-existing opcode behavior is modified or deprecated."
+  confidence: high
+  uncertainty_note: "Sharing EIP-2929 warmth with TXDIFF affects later gas, scored under gas and access ordering rather than as a result change to an existing opcode."
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The proposal explicitly states that no changes are made to precompiles."
+  rationale: "No precompile is added."
+  confidence: high
+  uncertainty_note: "None material in the sealed package."
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The proposal explicitly states that no changes are made to precompiles."
+  rationale: "No pre-existing precompile logic or gas schedule is modified."
+  confidence: high
+  uncertainty_note: "None material in the sealed package."
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: supporting/eip-8141.md
+    locator: "Specification > Frame Transaction > Payload Encoding"
+    summary: "EIP-8141 already RLP-encodes mode inside each frame."
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "EIP-7906 extends the accepted numeric domain from mode < 3 to mode < 4 without changing the RLP shape or encoding."
+  rationale: "Adding a semantic value to an existing scalar field is a validity change, not an RLP/SSZ encoding change under this anchor."
+  confidence: medium
+  uncertainty_note: "The statement that a failed frame transaction generates a status=0 receipt is ambiguous against EIP-8141, but no replacement receipt encoding is specified."
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode; Backwards Compatibility"
+    summary: "The proposal amends the existing EIP-8141 frame transaction and explicitly states that it introduces no new transaction type."
+  rationale: "No new transaction envelope or transaction-type byte is introduced."
+  confidence: high
+  uncertainty_note: "The feature has a hard dependency on the separate EIP-8141 transaction type."
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "Mode 3 becomes valid, POST_TX frames must be a contiguous suffix, violations invalidate the transaction, and POST_TX failure reverts execution while leaving the transaction valid with a failed outcome."
+  - source: supporting/eip-8141.md
+    locator: "Specification > Frame Transaction > Constraints; Behavior"
+    summary: "The parent proposal previously requires mode < 3, treats VERIFY failure as transaction-invalid, and defines atomic-batch rollback and payer approval."
+  rationale: "The proposal modifies validity and failure classification for an existing transaction type. Updates are substantial but localized to frame mode validation and POST_TX execution, with no demonstrated test-infrastructure redesign, fitting score 2."
+  confidence: high
+  uncertainty_note: "The exact execution-body rollback boundary and failed-receipt representation are not fully reconciled with EIP-8141."
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification"
+    summary: "The proposal defines frame and opcode behavior only and introduces no block or header field."
+  rationale: "No new block or block-header field is introduced."
+  confidence: high
+  uncertainty_note: "BAL recording uses the field already proposed by EIP-7928; EIP-7906 does not add another one."
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode; Backwards Compatibility"
+    summary: "The behavior applies wherever EIP-7906 is active, but no activation-block state transition or modification of an existing internal variable is defined."
+  rationale: "Ordinary fork gating of opcodes and validity rules is not a new activation mechanism under the rubric."
+  confidence: high
+  uncertainty_note: "Opcode byte assignments remain unspecified, but no activation-time state mutation is proposed."
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > State Difference Semantics; Results Ordering"
+    summary: "Clients must expose transaction-prestate versus current values, collapse repeated writes, maintain per-address views, enumerate events, and deterministically sort address and slot changes."
+  - source: eip.md
+    locator: "Security Considerations > Assertion Gas Exhaustion"
+    summary: "The proposal states that a transaction can produce about 42,600 events and that full enumeration requires significant gas; unrelated events may be attacker-controlled."
+  rationale: "Transaction-wide diff capture and canonical enumeration cannot be validated only as an isolated opcode microbenchmark; they interact with state journaling, reverts, logs, access lists, and worst-case transaction contents. The stated event scale and attacker-controlled padding create substantial benchmark impact, reaching score 3."
+  confidence: medium
+  uncertainty_note: "The package gives no client data-structure design or benchmarks, and the flat TXTRACE gas cost is TBD, so the exact overhead is unknown."
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Security Considerations > Insufficiently Restrictive Assertions; Enforcing POST_TX Frame Inclusion"
+    summary: "Incomplete assertions can create a false sense of safety; wallets must require the intended POST_TX frame and an immutable assertion target to avoid bypass or same-transaction upgrade attacks."
+  - source: eip.md
+    locator: "Security Considerations > Assertion Gas Exhaustion; The POST_TX Frame Mode Not Reverting Validation Prefix"
+    summary: "Attacker-controlled enumeration can exhaust assertion gas, and POST_TX failure preserves the validation prefix and gas payment, leaving deploy-frame side effects outside rollback."
+  rationale: "The mechanism spans critical transaction validity, rollback, gas payment, wallet authorization, contract immutability, and adversarial resource exhaustion. Incorrect implementation or integration could compromise users or create DoS behavior, requiring extensive review and fuzzing; score 3."
+  confidence: high
+  uncertainty_note: "Some risks depend on wallet/assertion construction, but the protocol's rollback and gas-exhaustion surfaces are independently security-critical."
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Constants"
+    summary: "TXTRACE_GAS_COST and EVENTDATACOPY_GAS_COST are TBD, and the proposal supplies no opcode byte constants for TXTRACE, TXDIFF, or EVENTDATACOPY."
+  - source: eip.md
+    locator: "Specification > Transaction Trace Opcode; Reserved Inputs; EVENTDATACOPY opcode"
+    summary: "TXTRACE's general invalid-param/index behavior and several charge/access/error orderings are not defined, while EVENTDATACOPY defines only selected out-of-bounds cases."
+  - source: eip.md
+    locator: "Specification > The POST_TX Frame Mode"
+    summary: "The text says a POST_TX failure yields a receipt with status=0 and reverts the execution body up to the validation prefix."
+  - source: supporting/eip-8141.md
+    locator: "Specification > Frame Transaction > Receipt Encoding"
+    summary: "EIP-8141 defines per-frame statuses and explicitly carries no transaction-level status, leaving the EIP-7906 failed-receipt statement unreconciled."
+  rationale: "Previously internal transaction-prestate/current-state, event, access, fee, and rollback details become directly observable and consensus-critical. Multiple constructible cases lack determined outcomes or constants, and the receipt/rollback text is not fully reconciled with the required frame transaction; this meets score 3."
+  confidence: high
+  uncertainty_note: "The score is based solely on visible Draft/TBD and normative gaps; prohibited implementation, devnet, discussion-thread, or later-revision evidence was not consulted."
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 4
+  evidence:
+  - source: eip.md
+    locator: "Front matter requires; Specification > The POST_TX Frame Mode; Backwards Compatibility"
+    summary: "The proposal requires EIPs 2929 and 8141, directly amends EIP-8141 frame semantics, and restricts all new opcodes to the new EIP-8141 mode."
+  - source: eip.md
+    locator: "Specification > Transaction Diff Lookup Opcode > Gas Cost"
+    summary: "TXDIFF uses EIP-2929 warmth and, where active, must record accesses in the EIP-7928 block-level access list."
+  - source: eip.md
+    locator: "Specification > Transaction Trace Opcode > State Difference Semantics; Rationale > Gas Pre-Charge Parameter"
+    summary: "Deployment enumeration excludes EIP-7702 designators; gas_pre_charge covers EIP-4844 blob fees and identifies the EIP-8141 payer; EIP-1559 and legacy contexts reject the opcodes."
+  rationale: "Six identified EIPs create coordinated test axes: EIP-8141 frame validity/rollback/payment, EIP-2929 warm/cold access, EIP-7928 BAL recording, EIP-4844 blob pre-charge, EIP-7702 deployment classification, and EIP-1559 context/fee behavior. Strong interdependence gives base score 3, plus one point for the three interactions beyond the first three, for score 4."
+  confidence: high
+  uncertainty_note: "The interaction list includes only EIPs explicitly grounded in the sealed package and requiring distinct cases; no external or latent interaction was added."
+  exceptional_score_justification: "Score 4 is warranted by the rubric's uncapped formula: six package-grounded interacting EIPs are three beyond the first three, adding +1 to the base score of 3. The interactions span separate consensus-sensitive dimensions rather than repeated references to one mechanism."
+  interacting_eips:
+  - 1559
+  - 2929
+  - 4844
+  - 7702
+  - 7928
+  - 8141
+  unidentified_interactions: []
+totals:
+  primary_score: 28
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: "Material consensus details remain open: opcode byte assignments and stack/error behavior are incomplete; two gas constants are TBD; state-access and exceptional-halt ordering is not comprehensive; and POST_TX rollback/receipt semantics are not fully reconciled with EIP-8141. These gaps make constructible state-diff and failure cases impossible to baseline authoritatively from the snapshot alone."
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - patterns_affecting_pre_existing_tests
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - added_opcodes
+  - new_or_modified_transaction_validity_mechanisms
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 24
+    maximum: 30
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - "Which opcode byte is assigned to each of TXTRACE, TXDIFF, and EVENTDATACOPY, and what are the exact stack pop/push conventions for TXTRACE and TXDIFF?"
+  - "What final values replace TXTRACE_GAS_COST and EVENTDATACOPY_GAS_COST, and is EVENTDATACOPY_GAS_COST the fixed base in addition to copying and memory expansion?"
+  - "For every opcode, when are gas charged, live state read, EIP-2929 warmth updated, and EIP-7928 access recorded relative to invalid params, reserved operands, out-of-range indices, and insufficient gas?"
+  - "What happens for undefined TXTRACE/TXDIFF params and for out-of-range TXTRACE indices other than the event-topic cases explicitly called out?"
+  - "Exactly which frames and effects constitute the validation prefix and execution body when a POST_TX frame fails, especially for frames after payer approval but before the POST_TX suffix?"
+  - "How is a failed POST_TX outcome represented in the EIP-8141 per-frame receipt format, which has no transaction-level status?"
+  - "Which fee-settlement, reverted-call, restored-write, and log states are included in each trace table at the moment an assertion executes?"
+notable_ambiguities:
+- "EIP-7906 says POST_TX failure generates a receipt with status = 0, while required EIP-8141 defines only per-frame statuses and explicitly no transaction-level status."
+- "The constants table leaves EVENTDATACOPY_GAS_COST TBD, while the later opcode section says its fixed cost is 3 plus copying and memory expansion."
+- "The phrase 'execution body ... up to the validation prefix' does not precisely partition all possible EIP-8141 frames around payer approval."
+- "TXTRACE enumerates events and net state changes but does not comprehensively state treatment of reverted subcalls, restored writes, fee settlement, and intermediate POST_TX-frame observations."
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: "Assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md, package/manifest.yaml, package/output-template.yaml, and the assessment_source_files listed in the sealed manifest. No internet, link following, external source, repository state, skill, implementation, test, or post-snapshot information was accessed."

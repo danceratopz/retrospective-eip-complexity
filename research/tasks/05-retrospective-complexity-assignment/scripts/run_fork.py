@@ -20,6 +20,7 @@ import yaml
 TASK_ROOT = Path(__file__).resolve().parents[1]
 RUN_ISOLATED = TASK_ROOT / "scripts" / "run_isolated.py"
 RUNS_ROOT = TASK_ROOT / "runs"
+RUN_TASK_ID = "05-retrospective-complexity-assignment-fork-run"
 
 
 class OrchestrationError(RuntimeError):
@@ -144,7 +145,7 @@ def main() -> int:
     manifest_path = run_dir / "manifest.yaml"
     manifest: dict[str, Any] = {
         "schema_version": 1,
-        "task_id": "05-retrospective-complexity-assignment-fork-run",
+        "task_id": RUN_TASK_ID,
         "fork_id": args.fork,
         "started_at": now(),
         "finished_at": None,

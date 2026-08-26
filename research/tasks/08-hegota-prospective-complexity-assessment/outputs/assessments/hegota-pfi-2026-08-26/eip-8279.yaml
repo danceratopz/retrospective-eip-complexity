@@ -1,0 +1,656 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8279
+  title: Block Access List Byte Floor
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the Draft EIP-8279 snapshot. The proposal
+    extends the EIP-8131 transaction-content floor with per-transaction runtime
+    metering of EIP-7928 BAL bytes, a static per-authorization BAL term, an
+    SSTORE value-byte subtraction, runtime floor OOG checks, and a final
+    max(execution_gas_used, floor_gas_used) charge. System calls and withdrawals
+    remain outside the per-transaction floor and are left to EIP-7928's
+    block-level item buffer.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8279/manifest.yaml
+    manifest_sha256: 3b705f1b98f65d103a34097c7381ad920b7b95d28122fee345d7883622d28945
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8279.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 43a44216d4d2daed998542b506b14ae5f368f557
+    content_sha256: 90d09fbcdaddf1c892bd9e47d08ff4616aea7b9d0737377a9ee9bb4171272745
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8279.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8279.md
+    content_sha256: 3efce245f8438c87c29eb4b0217bfe3d4604ae8085c4203e57841b43855255b0
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:57:29+02:00'
+    session_id: assessment-run-2952a980-8c77-48d1-b1cc-754624c12cfa
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2935.md
+  - supporting/eip-3529.md
+  - supporting/eip-4788.md
+  - supporting/eip-4844.md
+  - supporting/eip-7002.md
+  - supporting/eip-7251.md
+  - supporting/eip-7623.md
+  - supporting/eip-7702.md
+  - supporting/eip-7928.md
+  - supporting/eip-7976.md
+  - supporting/eip-7981.md
+  - supporting/eip-8131.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: >-
+      Introduces per-transaction bal_data_bytes and floor_gas_used counters,
+      extends the floor at runtime, and raises OutOfGasError when the new floor
+      exceeds tx.gas.
+  - source: eip.md
+    locator: Specification > Final charge
+    summary: Sets tx.gasUsed to the maximum of execution gas and the runtime floor.
+  rationale: >-
+    A new runtime gas-floor mechanism changes the existing EIP-7623/EIP-8131
+    charging shape, transaction OOG behavior, and final gas used across existing
+    state-accessing operations, so existing gas tests are affected.
+  confidence: high
+  uncertainty_note: >-
+    The SSTORE subtraction's revert handling is under-specified separately; it
+    does not change that a broad new runtime gas mechanism exists.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: >-
+      Requires meter_bal_data before the matching BAL insertion or state
+      mutation, with OOG aborting the operation before an unpaid BAL byte exists.
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: >-
+      Applies this placement rule to cold account and storage access, SSTORE,
+      value-bearing CALL and SELFDESTRUCT, and CREATE/CREATE2 nonce, balance, and
+      code changes.
+  rationale: >-
+    The new consensus-visible floor check is inserted before BAL growth or state
+    mutation for a whole class of state-accessing operations. Its OOG boundary
+    therefore changes whether an access or change occurs across many opcodes.
+  confidence: high
+  uncertainty_note: >-
+    Exact placement relative to every existing gas deduction is not enumerated,
+    increasing implementation uncertainty without reducing the anchored breadth.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Static floor seed
+    summary: >-
+      Reuses EIP-8131 tx_floor as the static seed and adds BAL bytes per
+      authorization; it specifies no blob-gas budget, price, or fee update.
+  rationale: >-
+    Blob versioned hashes are already part of the inherited static transaction
+    floor, but EIP-8279 makes no change to blob gas accounting itself.
+  confidence: high
+  uncertainty_note: No blob-gas mechanism is described in the proposal.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Counter, not a reservation
+    summary: >-
+      States that execution gas accounting is untouched and the counters only
+      determine the transaction floor and final retained gas.
+  rationale: >-
+    The proposal changes the ordinary transaction gas floor, not StateGasCosts,
+    per-state-byte write rates, a block state-gas budget, or its spill path.
+  confidence: high
+  uncertainty_note: No state-gas construct defined by this anchor appears in the package.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: >-
+      Subtracts 32 bytes from bal_data_bytes when SSTORE returns a slot to its
+      pre-transaction value and recomputes floor_gas_used.
+  - source: eip.md
+    locator: Rationale > Meter before; refund only when bytes leave the BAL
+    summary: >-
+      Defines the subtraction by EIP-7928's no-op-write rule and explicitly
+      distinguishes it from the EIP-3529 SSTORE gas refund.
+  rationale: >-
+    This is a new state-dependent reduction of charged floor gas. It is narrower
+    than the global refund counter but affects SSTORE/floor test outcomes and
+    requires per-slot original/current-value tracking, satisfying score 2.
+  confidence: medium
+  uncertainty_note: >-
+    The package conflicts on whether a subtraction made inside a later-reverted
+    frame is retained or undone; that material gap is recorded below.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: >-
+      Changes floor/OOG behavior for account and storage access, SSTORE state
+      transitions, calls, selfdestructs, and contract creation/deployment.
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Requires cases for the calldata-plus-SLOAD boundary, cold SSTORE, net-zero
+      and repeated writes, and reverted value-bearing calls.
+  rationale: >-
+    Existing gas-boundary and state-transition tests across diverse opcode,
+    revert, creation, delegation, and transaction-content categories require
+    reworking for the runtime floor and its new OOG points.
+  confidence: high
+  uncertainty_note: >-
+    The package provides no existing suite inventory, but the normative trigger
+    table establishes broad impact independent of suite organization.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: >-
+      Declares both new counters internal and per-transaction, not signed,
+      encoded, gossiped, or persisted.
+  rationale: >-
+    The proposal changes expected execution and gas outcomes, which is counted
+    as test rework above, but introduces no new persisted artifact that unrelated
+    pre-existing tests must additionally assert.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not describe harness-wide assertion policy; an internal
+    counter alone does not establish a new assertion for every existing test.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: >-
+      Limits the added values to internal execution-environment counters and
+      explicitly excludes signed, encoded, gossiped, and persisted fields.
+  rationale: >-
+    No new transition-tool input or output field, and no interface mechanism, is
+    specified.
+  confidence: high
+  uncertainty_note: >-
+    Tool implementations must calculate the rule internally, but the package
+    does not require an interface change.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Expresses tests as ordinary transactions and expected gas, metered-byte,
+      BAL, and success/revert outcomes.
+  rationale: >-
+    The specified cases do not establish a need for a new expectation type,
+    modifier, or permanent framework primitive.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test-framework design, so only the absence of a
+    demonstrated new primitive can be scored.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Constants
+    summary: Defines only byte sizes and a per-byte gas rate for arithmetic metering.
+  rationale: The proposal introduces or modifies no cryptographic mechanism.
+  confidence: high
+  uncertainty_note: No cryptographic operation is in the proposal's scope.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: >-
+      Conditions metering on cold/warm access, zero/non-zero value, distinct
+      accounts, CREATE collision/success/endowment, deployed-code length, and
+      first/return/repeated SSTORE transitions.
+  - source: eip.md
+    locator: Security Considerations > Reverts
+    summary: >-
+      Gives different persistence rules for accessed keys and for balance,
+      nonce, code, and storage-value changes across reverted frames.
+  rationale: >-
+    Multiple mechanisms have elevated boundary matrices: equality around
+    tx.gas, static versus execution domination, access warmth, value and account
+    identity, SSTORE history, nested reverts, creation paths, and code length.
+  confidence: high
+  uncertainty_note: >-
+    One nested-revert/SSTORE boundary is unresolved and is recorded as
+    under-specification; the remaining specified conditions already meet score 3.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: >-
+      Says the counters are not RLP-encoded, gossiped, or persisted and adds no
+      block encoding rule.
+  rationale: No block RLP validation mechanism requiring client syncing is introduced.
+  confidence: high
+  uncertainty_note: >-
+    EIP-7928 supplies the underlying BAL transport, but EIP-8279 does not modify
+    that encoding surface.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: >-
+      Explicitly makes the two added counters internal and non-persisted; no
+      Engine API field, version, endpoint, or communication mechanism is defined.
+  rationale: The proposal requires no Engine API change beyond its EIP-7928 baseline.
+  confidence: high
+  uncertainty_note: No Engine API section or new payload field appears in EIP-8279.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > System transactions and withdrawals
+    summary: >-
+      Refers only to existing EIP-2935, EIP-4788, EIP-7002, and EIP-7251 system
+      contract calls and excludes them from the per-transaction floor.
+  rationale: No new system contract is introduced.
+  confidence: high
+  uncertainty_note: Existing system contracts are boundary cases, not additions.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > System transactions and withdrawals
+    summary: >-
+      Leaves existing system-contract calls outside the new floor and continues
+      to absorb their BAL bytes through EIP-7928's block-level buffer.
+  rationale: >-
+    The exclusion does not change any existing system contract's code, state
+    transition, or call behavior, directly or indirectly.
+  confidence: high
+  uncertainty_note: Their BAL-size interaction is counted under cross-EIP interactions.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: Applies metering to an enumerated set of existing EVM operations.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: The metering hook is internal client logic, not an instruction.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Counter, not a reservation
+    summary: >-
+      States that the mechanism does not deduct execution gas and that execution
+      gas accounting is untouched; it only updates and checks the floor.
+  rationale: >-
+    Existing operations acquire gas-floor hooks, but their non-gas results are
+    not modified; this anchor explicitly excludes gas changes.
+  confidence: high
+  uncertainty_note: OOG reachability is scored under gas and ordering anchors.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: Enumerates only existing opcode-triggered BAL contributions.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: Precompile creation is outside the specified mechanism.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: Contains no precompile logic or precompile gas-schedule change.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: Calls to accounts are covered generically; no precompile-specific change is stated.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: >-
+      Explicitly says neither counter is part of the signed transaction,
+      RLP-encoded, gossiped, or persisted.
+  rationale: No transaction, block, or interface encoding changes are introduced.
+  confidence: high
+  uncertainty_note: The EIP-7928 BAL encoding is an inherited input, not changed here.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: Explicitly states that no new transaction field or type is introduced.
+  rationale: No transaction type is added.
+  confidence: high
+  uncertainty_note: Existing transaction types receive the floor rule.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Static floor seed
+    summary: Adds 51 BAL bytes per EIP-7702 authorization to the static floor.
+  - source: eip.md
+    locator: Specification > Final charge
+    summary: >-
+      Continues to require tx.gas at least max(intrinsic, static_floor), with the
+      newly enlarged static floor, while runtime metering can fail execution.
+  rationale: >-
+    The existing floor-validity rule is materially extended for authorization
+    transactions and floor-dominated combinations. Existing cases need limited
+    expected-validity updates, but no new transaction format or testing
+    infrastructure is required.
+  confidence: medium
+  uncertainty_note: >-
+    Runtime floor OOG is execution failure rather than upfront transaction
+    invalidity; this score is based on the explicit static-floor validity change.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Data meter and floor accumulator
+    summary: Makes the new values internal and non-persisted, with no block field.
+  rationale: No block or header field is introduced by EIP-8279.
+  confidence: high
+  uncertainty_note: EIP-7928's BAL commitment is baseline behavior, not a new field here.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Static floor seed
+    summary: Initializes per-transaction counters at the start of each execution.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Requires a hard fork but specifies no activation-block state mutation.
+  rationale: >-
+    Per-transaction initialization is not a fork-activation state or internal-
+    variable modification under this anchor.
+  confidence: high
+  uncertainty_note: The package gives no special activation-block procedure.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: >-
+      Adds counter updates and conditional per-slot tracking to every listed BAL-
+      producing runtime operation, including variable-length deployed code.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      Requires tracing gas estimation to meter runtime BAL bytes for cold
+      accesses, value-bearing calls, and deployments.
+  rationale: >-
+    The overhead is integrated with broad existing execution and BAL collection,
+    so it cannot be fully benchmarked in isolation, but the package shows simple
+    arithmetic/counter work and does not establish substantial benchmark impact.
+  confidence: medium
+  uncertainty_note: No implementation benchmark of the metering overhead is packaged.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations > Block-size bound
+    summary: >-
+      Security depends on every transaction-contributed block byte being covered
+      by floor_gas_used so the summed block bytes remain bounded by gas/64.
+  - source: eip.md
+    locator: Rationale > Per-auth coverage is static
+    summary: >-
+      Moves authorization BAL coverage to validation because runtime OOG during
+      set_delegation would escape the EVM handler and could crash block processing.
+  rationale: >-
+    Correctness spans consensus-critical gas, BAL accounting, opcode execution,
+    revert semantics, authorization preprocessing, and block-size DoS bounds.
+    Undercounting or inconsistent OOG placement can break the bound or split
+    clients, requiring extensive review and fuzzing.
+  confidence: high
+  uncertainty_note: >-
+    The unresolved nested-revert subtraction creates a concrete risk, but score
+    3 is also supported by the otherwise specified multi-component invariant.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations > Reverts
+    summary: >-
+      Says neither bal_data_bytes nor the floor is rewound for discarded entries
+      and says storage-value bytes charged in later-reverted frames remain charged.
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: >-
+      Requires an immediate 32-byte subtraction whenever SSTORE returns a slot to
+      its pre-transaction value.
+  - source: eip.md
+    locator: Rationale > Meter before; refund only when bytes leave the BAL
+    summary: >-
+      Describes the subtraction as firing only on an explicit return to the
+      pre-transaction value on the committed path, without specifying deferral or
+      journal restoration when the containing frame later reverts.
+  rationale: >-
+    A constructible nested-frame sequence can charge a parent write, subtract in
+    a child that restores the pre-transaction value, then revert the child so the
+    parent write remains in the BAL. The text does not determine whether the
+    subtraction must be undone, deferred, or retained. Agreement is required,
+    but the gap is localized to SSTORE value-byte accounting across reverts.
+  confidence: high
+  uncertainty_note: >-
+    The package contains no rule resolving this conflict; no external or later
+    information was used.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 6
+  evidence:
+  - source: eip.md
+    locator: Front matter > requires
+    summary: Explicitly requires EIPs 7623, 7702, 7928, 7976, 7981, and 8131.
+  - source: eip.md
+    locator: Specification > System transactions and withdrawals
+    summary: >-
+      Excludes EIP-2935, EIP-4788, EIP-7002, and EIP-7251 system calls and
+      withdrawals from the per-transaction floor while relying on EIP-7928's buffer.
+  - source: eip.md
+    locator: Specification > Runtime data metering
+    summary: >-
+      Keys SSTORE byte subtraction to EIP-7928 BAL semantics rather than the
+      EIP-3529 gas refund.
+  - source: eip.md
+    locator: Motivation
+    summary: >-
+      Inherits EIP-8131 coverage of EIP-4844 blob hashes and EIP-7702
+      authorizations while closing the runtime EIP-7928 BAL gap.
+  - source: supporting/eip-7928.md
+    locator: Specification > Edge Cases (Normative) > EIP-4895
+    summary: Identifies protocol withdrawals as EIP-4895 balance changes in the BAL.
+  rationale: >-
+    The floor and its test matrix strongly depend on or coordinate with EIPs
+    2935, 3529, 4788, 4844, 4895, 7002, 7251, 7623, 7702, 7928, 7976, 7981,
+    and 8131. The base score is 3; ten interactions beyond the first three yield
+    three complete additional groups of three, adding 3 for a total of 6.
+  confidence: high
+  uncertainty_note: >-
+    Only interactions identified in the sealed package are counted; indirect
+    protocol ancestry is not expanded further.
+  exceptional_score_justification: >-
+    The rubric makes this row uncapped. Thirteen package-grounded interacting
+    EIPs produce base 3 plus three increments for the nine complete additional-
+    interaction positions beyond the first three; the remaining one does not
+    form another group of three.
+  interacting_eips:
+  - 2935
+  - 3529
+  - 4788
+  - 4844
+  - 4895
+  - 7002
+  - 7251
+  - 7623
+  - 7702
+  - 7928
+  - 7976
+  - 7981
+  - 8131
+  unidentified_interactions: []
+totals:
+  primary_score: 29
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The SSTORE value-byte subtraction is not fully specified across nested call
+    reverts. The text requires an immediate subtraction when a slot returns to
+    its pre-transaction value, says counter changes are not rewound for reverted
+    frames, and also limits the subtraction to the committed path. If a parent
+    writes O to X and a child restores X to O but later reverts, the surviving
+    BAL contains X while a retained child subtraction would omit its 32 value
+    bytes and violate the stated upper-bound invariant.
+  affected_criteria:
+  - new_evm_gas_refund
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 29
+    maximum: 30
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - >-
+    When an SSTORE subtraction occurs in a child frame that later reverts while
+    an earlier parent-frame write remains live, must the 32-byte subtraction be
+    journaled and undone, deferred until frame commit, or retained?
+notable_ambiguities:
+- >-
+  The trigger table requires metering before BAL insertion or state mutation but
+  does not enumerate each hook's exact position relative to all existing gas
+  deductions and state reads; this matters at floor-OOG boundaries.
+- >-
+  The phrase "on the committed path" is not backed by a specified mechanism for
+  identifying commitment at the time an SSTORE returns to the pre-transaction value.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md,
+    package/manifest.yaml, package/output-template.yaml, and every file listed in
+    manifest.yaml under assessment_source_files. No internet access, external
+    source, prohibited skill, post-snapshot information, repository evidence,
+    implementation, test suite, or prior assessment was consulted.

@@ -1,0 +1,445 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8116
+  title: Replace cumulative receipt fields
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Draft execution-layer proposal in the sealed Hegota snapshot that changes every
+    post-activation on-chain receipt from cumulativeGasUsed semantics to per-transaction
+    gasUsed semantics and changes JSON-RPC logIndex from block-relative to receipt-relative.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8116/manifest.yaml
+    manifest_sha256: 484711670e09508a0ffdb6a8f8bdf5fa791fb9a67b32019b3c2196a9fcf3323b
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8116.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: c1f453382a4fef890e5a097bace777299fa16343
+    content_sha256: 587ad8509b9df4473a75366a7361bb191b87941726f45cde79ff85ef7559fea5
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8116.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8116.md
+    content_sha256: 7e2a9afe880176e1725a91de4e456407202f429edef3a26947daddab037c1300
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T12:23:01Z'
+    session_id: assessment-run-c5415361-7943-4998-82b8-6cbeadb9146c
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The proposal changes which already-computed gas quantity is stored in receipts; it specifies no EVM gas charging rule.
+  rationale: Receipt representation changes do not update or introduce an EVM gas-accounting mechanism.
+  confidence: high
+  uncertainty_note: The sealed specification contains no gas schedule, gas charge, or metering change.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The complete specification is limited to receipt construction and JSON-RPC log indexing, with no opcode execution or state-access ordering rule.
+  rationale: No opcode's state-access position or gas-charge ordering is changed.
+  confidence: high
+  uncertainty_note: No state-accessing operation or opcode path is described in the sealed proposal.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The only gas-related change is storing individual transaction gasUsed rather than its cumulative receipt value.
+  rationale: The proposal introduces no blob-gas accounting rule or mechanism.
+  confidence: high
+  uncertainty_note: Blob gas is not mentioned anywhere in the sealed EIP.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Receipt value semantics and RPC log indexing are changed; state writes, state-gas rates, budgets, reservoirs, and spill behavior are not specified.
+  rationale: No state-gas cost or state-gas charging mechanism changes.
+  confidence: high
+  uncertainty_note: The sealed EIP contains no state-gas provisions.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The receipt records per-transaction gasUsed, but no refund calculation or refund mechanism is introduced.
+  rationale: Changing the reported gas quantity does not create an EVM gas-refund mechanism.
+  confidence: high
+  uncertainty_note: Refunds are not mentioned in the sealed proposal.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: All receipts emitted after activation must contain individual transaction gasUsed rather than cumulativeGasUsed.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Applications using verified gasUsed or cumulativeGasUsed values must adapt to the new on-chain semantics.
+  rationale: Every post-activation receipt changes its consensus value, so the broad set of existing vectors that commits to or verifies receipts must be re-derived rather than only a contrived corner category.
+  confidence: medium
+  uncertainty_note: The EIP has no testing section or inventory of the existing corpus, so the exact number and categories of affected vectors are not package-evidenced.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: An existing cumulative receipt value is replaced by an individual value; the proposal does not add a separate receipt property or assertion.
+  rationale: Existing receipt expectations require changed values, scored as test rework above, but tests do not gain an additional invariant to assert.
+  confidence: medium
+  uncertainty_note: The sealed EIP does not describe test assertions, but its specified operation is replacement rather than addition.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The EIP specifies on-chain receipt construction and JSON-RPC logIndex semantics but does not specify a transition-tool field or mechanism.
+  rationale: No transition-tool interface modification can be established from the sealed package.
+  confidence: low
+  uncertainty_note: The draft does not state whether or how a transition tool exposes the replaced receipt field; this is recorded as material under-specification.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The change supplies deterministic per-transaction receipt and per-receipt log-index outputs without specifying any new test expectation type, modifier, or helper.
+  rationale: Value-level receipt and RPC expectations do not, on the sealed evidence, require a new framework abstraction.
+  confidence: medium
+  uncertainty_note: The EIP contains no testing section, so this score is limited to the absence of any package-specified primitive requirement.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Receipt gas values and log indices are the only modified mechanisms; no cryptographic construction or function is introduced.
+  rationale: No cryptography-related testing is required by the proposal.
+  confidence: high
+  uncertainty_note: No cryptographic mechanism is mentioned in the sealed EIP.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: Receipt gas changes from a block-running sum to an individual transaction value at activation.
+  - source: eip.md
+    locator: Specification > JSON-RPC API
+    summary: Each logIndex changes from a block-level sequence to its position within the individual receipt.
+  rationale: >-
+    Two boundary-prone mechanisms require coverage: gas values across first and later
+    receipts and log indices resetting across receipts, including receipts with differing
+    log counts; neither demands an elevated combinatorial case set on the package evidence.
+  confidence: medium
+  uncertainty_note: Exact boundary vectors are not enumerated, and the precise RPC method scope is not specified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The proposal changes receipt value semantics and an RPC index but defines no block RLP validation mechanism.
+  rationale: No new RLP validation mechanism requiring client syncing is introduced.
+  confidence: medium
+  uncertainty_note: Receipt schema details are sparse, but the EIP does not state any block RLP validation change.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > JSON-RPC API
+    summary: The only API change named is JSON-RPC logs.logIndex semantics; no Engine API endpoint, field, or communication mechanism is specified.
+  rationale: A JSON-RPC semantic change is not evidence of an Engine API change.
+  confidence: high
+  uncertainty_note: The Engine API is not mentioned in the sealed proposal.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The specification contains only receipt construction and JSON-RPC changes and introduces no contract.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: No contract address, code, state, or system action is described.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Neither receipt gas semantics nor receipt-relative RPC log indexing specifies a direct or indirect system-contract modification.
+  rationale: No pre-existing system contract code, state, or behavior is modified.
+  confidence: high
+  uncertainty_note: System contracts are not mentioned in the sealed EIP.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The complete specification adds no EVM instruction and is confined to receipts and JSON-RPC output.
+  rationale: No opcode is introduced.
+  confidence: high
+  uncertainty_note: Opcodes are not mentioned in the sealed proposal.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The proposal changes post-execution receipt data, not the result or behavior of any opcode.
+  rationale: No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: No opcode-level change is present in the sealed EIP.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile address, input, output, gas rule, or execution behavior is introduced.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: Precompiles are not mentioned in the sealed proposal.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The receipt and RPC changes do not specify any precompile logic or gas-accounting modification.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: No precompile-related behavior is present in the sealed EIP.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The specified change is the meaning of the gas quantity tracked in receipts; no RLP, SSZ, JSON, field type, or serialization-format change is defined.
+  rationale: Changed receipt contents alone do not establish the rubric's transaction, block, or interface encoding-format change.
+  confidence: low
+  uncertainty_note: The draft does not explicitly say whether the existing receipt slot is reinterpreted or the receipt schema is replaced; this material ambiguity is recorded separately.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The proposal changes on-chain receipt data for transactions and does not define a transaction envelope or type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: Transaction types are not mentioned in the sealed EIP.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The rule applies when constructing receipts after transaction execution and specifies no transaction admission, validity, or intrinsic-gas rule.
+  rationale: Receipt output semantics do not modify transaction validity mechanisms.
+  confidence: high
+  uncertainty_note: No validity predicate or intrinsic gas calculation is included in the sealed proposal.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The EIP changes receipt contents and JSON-RPC log indices but does not add a block or header field.
+  rationale: No new block or block-header field is introduced.
+  confidence: high
+  uncertainty_note: Block and header schemas are not modified in the sealed text.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The new receipt semantics apply after activation, but no state, internal variable, migration, or activation-block action is specified.
+  rationale: A fork-conditional rule without an activation-block mutation is not a new activation mechanism under this anchor.
+  confidence: high
+  uncertainty_note: The activation point is not supplied, but no activation-block mutation is proposed.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Motivation
+    summary: Cumulative receipt fields are identified as inefficient for individual gas verification and as limiting parallelism because receipt contents are stateful across transactions.
+  - source: eip.md
+    locator: Rationale
+    summary: Stateful cumulative gas and log-index components are replaced with per-transaction equivalents.
+  rationale: The intended benefit depends on block-level receipt verification and parallel construction behavior, so it is not fully measurable as an isolated scalar operation, while the affected surface remains limited to receipt production and consumption.
+  confidence: medium
+  uncertainty_note: The EIP supplies no performance targets, workload model, or benchmark plan, so the magnitude of the limited impact is not quantified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: A deterministic receipt value changes for all post-activation receipts, but the mechanism is localized to selecting the individual transaction gas value.
+  - source: eip.md
+    locator: Security Considerations
+    summary: The EIP states that there are no security considerations.
+  rationale: Correctness matters for consensus receipt construction, but the new rule is self-contained, directly testable, and does not specify a changed security invariant or interaction with multiple critical mechanisms.
+  confidence: medium
+  uncertainty_note: The one-word security section provides no analysis of misimplementation or application risks.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Receipt construction
+    summary: The draft states the new gas semantics but does not define the precise receipt field/schema, serialization treatment, or transition-interface representation.
+  - source: eip.md
+    locator: Specification > JSON-RPC API
+    summary: The RPC rule changes logIndex within logs but does not enumerate affected methods or fully specify compatibility behavior of receipt gas fields.
+  rationale: Clients need localized agreement on the exact receipt representation and RPC surface before consensus and API vectors can be baselined; the change does not make a previously unobservable execution behavior consensus-critical, so score 3 does not apply.
+  confidence: medium
+  uncertainty_note: The intended semantic direction is clear, but several representation and interface details remain unresolved in the sealed draft.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The receipt and JSON-RPC rules cite no numbered EIP and state no dependency on, modification of, or conflict with another proposal.
+  rationale: No package-grounded cross-EIP interaction can be identified without importing prohibited external knowledge.
+  confidence: medium
+  uncertainty_note: Existing receipt and RPC mechanisms are affected, but the sealed package does not attribute either mechanism to an interacting EIP.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions: []
+totals:
+  primary_score: 10
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: >-
+    The proposal clearly changes receipt gas and RPC log-index semantics, but it does
+    not normatively define the resulting receipt schema/serialization, transition-tool
+    representation, or the complete affected JSON-RPC surface. This is treated as one
+    representation-and-interface gap rather than repeated across unrelated anchors.
+  affected_criteria:
+  - transition_tool_interface_changes
+  - encoding_changes_rlp_ssz
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 9
+    maximum: 14
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - Is the existing cumulativeGasUsed receipt position and integer encoding retained with new semantics, or is a new receipt field/schema introduced?
+  - Must a transition tool rename, replace, or add any receipt output field, and what is its fork-aware interface behavior?
+  - Which JSON-RPC methods and gas fields, beyond logs.logIndex, retain old names or acquire changed semantics?
+notable_ambiguities:
+- The singular normative on-chain rule does not spell out how the title's plural "receipt fields" maps to a serialized receipt schema.
+- The backward-compatibility discussion names both gasUsed and cumulativeGasUsed without normatively specifying their post-activation JSON-RPC exposure.
+- The logIndex rule says "within logs" but does not enumerate the RPC responses to which the new receipt-relative index applies.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only eip.md and rubric.md as scoring evidence and only the
+    operational files listed in operational_files_read. No internet access, external
+    source, repository evidence, skill, prior assessment, or post-snapshot information
+    was consulted.

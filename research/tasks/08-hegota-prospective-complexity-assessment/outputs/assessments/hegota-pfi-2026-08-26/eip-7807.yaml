@@ -1,0 +1,527 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7807
+  title: SSZ execution blocks
+  layers:
+  - execution
+  - consensus
+assessment:
+  snapshot_scope_summary: >-
+    Prospective complexity assessment of EIP-7807 at the sealed Hegota snapshot,
+    limited to its execution-layer effects: SSZ execution-block and header
+    representation, block-hash computation, retained nested encodings, execution
+    interfaces, JSON-RPC, devp2p, and the BLOCKHASH opcode. Consensus-layer-only
+    behavior is excluded except where the EIP defines an execution-layer boundary.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-7807/manifest.yaml
+    manifest_sha256: d549fcb8194464a648387df05bf0a2a1959254b575fc1e5134cdfb5b962de588
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7807.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 3f2dc991ac65153842fd9b894c04ba590d58d3e6
+    content_sha256: bc279f875c28fa1b1ee26a21312533dac2d3cca2a8f682725e2485b5bd275562
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7807.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-7807.md
+    content_sha256: 916eb411193c3c96cf6e2a28383fde9da95cc5ae4ae07752ddb493cbfc3eafeb
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T11:57:24Z'
+    session_id: assessment-run-93a02d03-5b7b-4a91-8ed8-830ec16572c9
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2718.md
+  - supporting/eip-7495.md
+  - supporting/eip-7773.md
+  - supporting/eip-7916.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Gas amounts
+    summary: Gas values are regrouped into SSZ containers, with no rule changing how execution gas is charged.
+  rationale: The proposal changes representation of gas amounts and fees, not EVM gas accounting.
+  confidence: high
+  uncertainty_note: No gas-charging rule is specified anywhere in the proposal.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block hash computation
+    summary: The only opcode-specific change is the value of the block hash used by BLOCKHASH; no state access or gas-charge ordering is defined.
+  rationale: No opcode state-access path or relative gas-charge position changes.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Gas amounts
+    summary: Blob gas and blob fees are fields in SSZ containers, but their accounting rules are not modified.
+  rationale: Encoding blob-related values does not introduce or update blob gas accounting.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Gas amounts
+    summary: The specified gas structures contain regular and blob dimensions only and define no state-gas cost, budget, reservoir, or spill rule.
+  rationale: No state gas accounting mechanism or charging site is introduced.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Gas amounts
+    summary: The proposal only represents gas amounts and fees and specifies no refund behavior.
+  rationale: No EVM gas-refund mechanism is introduced or changed.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block
+    summary: New blocks use a normalized SSZ payload and an SSZ-summary header while retaining typed-envelope and selected RLP-encoded elements.
+  - source: eip.md
+    locator: Specification > Execution block hash computation
+    summary: The SSZ hash-tree root becomes the block hash for opcode, JSON-RPC, devp2p, and consensus references.
+  rationale: >-
+    Existing block, header, receipt-root, block-hash, RPC, opcode, and synchronization
+    expectations span diverse test categories and must be reworked for the new
+    representation and hash, meeting the major-subset anchor.
+  confidence: high
+  uncertainty_note: Exact test inventories are unavailable by package policy, but the specification explicitly changes all listed execution-block contexts.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block; Execution block hash computation; JSON-RPC
+    summary: Existing block representation, hash, and logsBloom expectations change, but the EIP does not require tests unrelated to it to assert an additional product.
+  rationale: The proposal changes existing expected values and encodings rather than adding a separate assertion to otherwise unchanged tests.
+  confidence: medium
+  uncertainty_note: Test-suite assertion structure is not present in the package; this score distinguishes changed expectations from the anchor's additional-invariant requirement.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification (all subsections)
+    summary: The specification defines execution-block, hashing, consensus-payload, and JSON-RPC behavior but no transition-tool field or transport contract.
+  rationale: No transition-tool interface modification can be assigned from the sealed proposal text.
+  confidence: low
+  uncertainty_note: A transition tool may need representation support, but its required fields and mechanism are materially unspecified and cannot be inferred.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block
+    summary: Tests must construct and hash a ProgressiveContainer payload, ProgressiveLists, ProgressiveByteLists, and an SSZ-summary header.
+  - source: supporting/eip-7495.md
+    locator: Specification > ProgressiveContainer(active_fields) > Merkleization
+    summary: Progressive containers add active-field-aware progressive Merkleization.
+  - source: supporting/eip-7916.md
+    locator: Specification > Progressive Merkle tree; ProgressiveList[type] and ProgressiveBitlist
+    summary: Progressive list types add a recursive Merkle-tree shape and length-mixed roots.
+  rationale: >-
+    Generic construction, serialization, summary, and hash-tree-root support for the
+    new permanent block format and its reusable progressive SSZ types is a
+    framework-level primitive, not merely EIP-specific test code.
+  confidence: medium
+  uncertainty_note: The package excludes the actual test framework, so the amount of pre-existing SSZ support cannot be observed.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: The new SSZ block hash is SHA256-based and shares a namespace with existing keccak256-based block hashes.
+  rationale: A well-known hash mechanism is newly used for execution block identity, fitting the single well-known cryptographic-mechanism anchor.
+  confidence: high
+  uncertainty_note: The package asserts no significant collision risk but does not remove the need for cross-context hash-vector testing.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block
+    summary: The payload combines fixed and variable fields, multiple progressive lists, retained typed/RLP elements, and a derived summary header.
+  - source: supporting/eip-7916.md
+    locator: Specification > Progressive Merkle tree
+    summary: Progressive roots change shape at recursively increasing chunk thresholds and define a distinct empty-list root.
+  - source: supporting/eip-7495.md
+    locator: Specification > ProgressiveContainer(active_fields)
+    summary: Progressive containers constrain active-field configurations and mix those bits into their Merkle roots.
+  rationale: >-
+    Empty and non-empty lists, recursive subtree growth thresholds, variable-offset
+    serialization, active-field roots, summary-versus-payload equivalence, and mixed
+    nested encodings create multiple boundaries; progressive-tree thresholds require
+    an elevated vector set.
+  confidence: high
+  uncertainty_note: Context-specific size bounds for unbounded progressive lists are not supplied by EIP-7807.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Execution block; Execution block hash computation
+    summary: The block and its per-block tries migrate from RLP/Merkle-Patricia representation to SSZ, and devp2p uses the new block hash.
+  rationale: Replacing the block-level RLP/header validation path with SSZ and a new hash is a single complex synchronization-validation migration.
+  confidence: medium
+  uncertainty_note: The devp2p message encoding, validation sequence, fork negotiation, and invalid-block rules are not specified, preventing a supported score for multiple mechanisms.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale > Engine API
+    summary: The shared SSZ hash lets the Engine API drop the redundant block_hash field and adopt binary ForkDigest-context encoding.
+  rationale: >-
+    The package identifies one Engine API field modification (removing block_hash)
+    and a transport-encoding change, but no new endpoint or set of new fields; the
+    closest supported interface-impact anchor is 1.
+  confidence: low
+  uncertainty_note: This behavior is stated in rationale rather than a normative endpoint/version specification, so the exact Engine API change is materially under-specified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification (all subsections)
+    summary: The proposal defines block data, hashing, and external representations and introduces no system contract.
+  rationale: No system contract or system action is added.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The identified compatibility impact concerns contracts that parse the previous header format, not changes to any system contract's code or state.
+  rationale: Consumer incompatibility does not directly or indirectly modify a pre-existing system contract.
+  confidence: high
+  uncertainty_note: No particular system contract is identified in the package.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block hash computation
+    summary: The proposal refers to the existing BLOCKHASH opcode and defines no new opcode.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block hash computation
+    summary: BLOCKHASH uses ExecutionPayload.hash_tree_root() as the execution block hash.
+  rationale: The observable result of the pre-existing BLOCKHASH opcode changes from the prior block-hash computation, meeting the rubric's binary score-3 condition.
+  confidence: high
+  uncertainty_note: Historical and fork-boundary BLOCKHASH cases are not explicitly resolved.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification (all subsections)
+    summary: No precompile address, input, output, behavior, or gas schedule is introduced.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification (all subsections)
+    summary: No existing precompile logic or gas accounting is mentioned or changed.
+  rationale: No precompile is modified.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Execution block
+    summary: Execution blocks and per-block tries migrate from Merkle-Patricia/RLP to normalized SSZ, with an SSZ-summary header and selected RLP elements retained inside the payload.
+  - source: eip.md
+    locator: Motivation > Optimized engine API; Rationale > Engine API
+    summary: The proposal targets binary SSZ encoding for Engine API exchange in place of textual JSON.
+  rationale: A block-level RLP-to-SSZ encoding migration directly satisfies the rubric's binary score-3 condition.
+  confidence: high
+  uncertainty_note: The exact Engine API wire specification is absent, but the normative execution-block encoding change alone determines this score.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block
+    summary: Transaction elements retain their existing EIP-2718 typed-envelope representation.
+  - source: supporting/eip-2718.md
+    locator: Specification > Transactions
+    summary: EIP-2718 defines the existing typed or legacy transaction envelope carried unchanged by EIP-7807.
+  rationale: The block container changes, but no new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Execution block
+    summary: Individual transactions are unaffected and retain their existing typed-envelope representation.
+  rationale: No transaction validity rule or intrinsic gas calculation changes.
+  confidence: high
+  uncertainty_note: None material within the package scope.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block
+    summary: A new 18-field SSZ ExecutionPayload includes block_access_list and slot_number and derives the header as an SSZ summary.
+  rationale: The proposal introduces a new block/header field representation and explicitly includes fields in the new execution block, satisfying the binary score-3 anchor.
+  confidence: high
+  uncertainty_note: The package does not distinguish which individual field semantics originate in dependencies versus this migration; the new SSZ block/header definition is explicit regardless.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification (all subsections)
+    summary: The proposal defines the post-activation representation but specifies no state mutation or modification of an internal variable at the activation block.
+  rationale: A format transition alone does not meet this anchor's state/internal-variable modification condition.
+  confidence: medium
+  uncertainty_note: The activation point and handling of pre-fork history are not specified, but no activation-block mutation can be inferred.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation > Optimized engine API; Execution block hash computation
+    summary: The EIP claims roughly 50 percent smaller Engine API exchange and significantly improved encoding/parsing while changing block hashing across opcode, RPC, devp2p, and consensus references.
+  - source: supporting/eip-7916.md
+    locator: Motivation; Rationale > Why a recursive structure?
+    summary: Progressive Merkleization changes hash work and tree growth as list sizes increase.
+  rationale: >-
+    Whole-block serialization, parsing, Merkleization, networking, and hash lookup
+    behavior interact with existing block-processing paths and cannot be fully
+    benchmark-isolated; the proposal itself makes substantial performance claims.
+  confidence: high
+  uncertainty_note: No context-specific maximum list sizes or benchmark parameters are supplied.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block hash computation; Security Considerations
+    summary: A SHA256-based SSZ root becomes block identity across BLOCKHASH, JSON-RPC, devp2p, and consensus references while sharing a namespace with keccak256 hashes.
+  - source: eip.md
+    locator: Specification > Execution block
+    summary: Receipt and request commitments and the derived header depend on correct SSZ list/container roots while selected inner elements retain other encodings.
+  rationale: >-
+    Incorrect encoding, Merkleization, or hash-context handling can split consensus
+    across block validation and cross-layer references and can expose inconsistent
+    results through critical opcode, networking, and API surfaces, requiring broad
+    review and fuzzing.
+  confidence: high
+  uncertainty_note: The EIP dismisses significant cross-algorithm collision risk, but implementation-consistency risk across the listed critical components remains.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution block hash computation; Rationale > Engine API
+    summary: The hash is mandated in all contexts, but fork-boundary/history behavior and the proposed binary Engine API version, framing, and endpoint mappings are not defined.
+  - source: eip.md
+    locator: Specification > Execution block; JSON-RPC
+    summary: The payload and logsBloom response are defined, while devp2p wire encoding and complete JSON-RPC field derivation are absent.
+  rationale: >-
+    Constructible fork-boundary, historical BLOCKHASH, synchronization, and interface
+    cases need localized cross-client agreement before vectors can be baselined; the
+    gaps are material but do not establish the anchor-3 condition of newly observable
+    previously unspecified execution behavior.
+  confidence: medium
+  uncertainty_note: Implementations, devnets, discussions, and post-snapshot clarifications are prohibited, so only the Draft text's visible gaps are assessed.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 4
+  evidence:
+  - source: eip.md
+    locator: Front matter requires; Specification > Execution block; Rationale > Forward compatibility
+    summary: EIP-7807 requires EIPs 7495, 7773, and 7916 and retains EIP-2718 typed transaction and receipt envelopes inside the SSZ block.
+  - source: supporting/eip-7495.md
+    locator: Specification > ProgressiveContainer(active_fields)
+    summary: EIP-7495 supplies the forward-compatible container and depends on EIP-7916 progressive Merkleization.
+  - source: supporting/eip-7773.md
+    locator: Specification
+    summary: EIP-7773 is the required hard-fork meta proposal and identifies EIP-7843 SLOTNUM and EIP-7928 Block-Level Access Lists, whose outputs correspond to slot_number and block_access_list fields in EIP-7807.
+  - source: supporting/eip-7916.md
+    locator: Specification > ProgressiveList[type] and ProgressiveBitlist
+    summary: EIP-7916 supplies the unbounded progressive list and byte-list types used repeatedly by the new payload.
+  rationale: >-
+    The block format has strong coordinated dependencies on three required EIPs and
+    embeds EIP-2718 envelopes, EIP-7843 slot data, and EIP-7928 block access lists, so
+    cross-EIP vectors must cover container/list roots, fork composition, and preserved
+    or produced field bytes. Six identified interactions produce base score 3 plus
+    the rubric's first +1 for three interacting EIPs beyond the first three.
+  confidence: high
+  uncertainty_note: Several package-grounded structures have no EIP number in the sealed evidence and are recorded separately rather than guessed.
+  exceptional_score_justification: >-
+    Six identified EIPs each contribute a coordinated test axis: the score-3 strong
+    interdependency anchor plus the mandatory +1 for three additional EIPs beyond
+    the first three yields 4.
+  interacting_eips:
+  - 2718
+  - 7495
+  - 7773
+  - 7916
+  - 7843
+  - 7928
+  unidentified_interactions:
+  - Consensus ExecutionPayload and ExecutionPayloadEnvelope replacement at the execution-layer boundary
+  - Consensus ExecutionRequests root equivalence
+totals:
+  primary_score: 34
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The Draft fixes the core SSZ payload and hash rule but does not normatively define
+    transition-tool representation, Engine API endpoint/version/framing changes,
+    devp2p wire and invalid-input handling, context-specific bounds for progressive
+    lists, or historical and activation-boundary hash behavior. These are recorded as
+    distinct gaps and are not used to inflate unrelated anchors.
+  affected_criteria:
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - block_syncing_changes
+  - engine_api_changes
+  - edge_boundary_conditions
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 32
+    maximum: 39
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - What exact transition-tool fields or encoding carry the new payload, header summary, receipts, and resulting block hash?
+  - Which Engine API methods and versions use binary ForkDigest-context encoding, how are messages framed, and is block_hash removal normative?
+  - How are SSZ blocks negotiated, encoded, and rejected in devp2p synchronization across the activation boundary?
+  - What execution-layer bounds apply to each ProgressiveList and ProgressiveByteList before allocation, decoding, and Merkleization?
+  - How must BLOCKHASH and external block-hash lookups treat pre-activation blocks when executed or queried after activation?
+notable_ambiguities:
+- >-
+  The statement that the Engine API can drop block_hash and adopt binary encoding is
+  rationale, not a normative endpoint specification; score 1 reflects one identified
+  field modification while keeping confidence low.
+- >-
+  The execution payload includes block_access_list and slot_number, but the package
+  does not allocate their semantic origin among EIP-7807 and its fork/dependency
+  context; the block/header-field anchor scores the explicit resulting definition.
+- >-
+  Transactions and receipts retain EIP-2718 envelopes while withdrawals and the block
+  access list retain RLP, so SSZ validation must preserve and commit to nested bytes
+  without treating those inner objects as migrated SSZ values.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md,
+    package/manifest.yaml, package/output-template.yaml, and the six files listed in
+    manifest.yaml under assessment_source_files. No link was followed and no
+    prohibited source or post-snapshot information was consulted.

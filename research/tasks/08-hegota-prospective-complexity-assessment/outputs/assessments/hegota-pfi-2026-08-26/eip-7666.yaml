@@ -1,0 +1,533 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7666
+  title: EVM-ify the identity precompile
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the Draft EIP-7666 snapshot. The proposal removes
+    identity-precompile treatment at address 0x04 on the activation block and installs
+    fixed stateless EVM bytecode there, preserving calldata echo functionality while
+    changing gas behavior. Only eip.md, rubric.md, and supporting/eip-3855.md were used
+    as scoring evidence.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-7666/manifest.yaml
+    manifest_sha256: d96dd64af8bbec18030c6e7c0e43b6a1e2b68a4aab850990112f88d3c7a3d8b1
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7666.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 6b0b4a6d131d9a24ef90b455739dde0c46f524a3
+    content_sha256: ea392f32efc0ae218c2f37d75577976a067f6a846caeb228fb76fa2ae3c2227b
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7666.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-7666.md
+    content_sha256: 46417ee565a8c24a07a93ccedf0e16199c0551e8cc35412cc4a8dcad503cc124
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T13:50:28+02:00'
+    session_id: assessment-run-c59434ed-fe6b-446c-a4ac-115805ac2e6e
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-3855.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification; Backwards Compatibility
+    summary: >-
+      The identity address stops using precompile handling and instead executes fixed
+      EVM code; the proposal explicitly says the resulting gas costs are slightly different.
+  rationale: >-
+    Existing identity-precompile metering is replaced by ordinary opcode, copy, and
+    memory-expansion metering. This updates an existing gas-accounting path without
+    introducing a new gas-accounting mechanism.
+  confidence: high
+  uncertainty_note: >-
+    The text does not enumerate the exact gas deltas, but the fixed bytecode determines
+    the post-activation execution path under existing EVM rules.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The change installs code at the activation boundary and removes precompile treatment;
+      it specifies no reordering of state access or gas charging inside any opcode.
+  rationale: >-
+    No opcode's internal state-access or gas-charge ordering is changed. The activation
+    write is a block-boundary transition and is outside this anchor.
+  confidence: high
+  uncertainty_note: >-
+    Calls to 0x04 take a different callee execution path, but the package does not change
+    the within-opcode ordering measured by this anchor.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The specification is limited to address 0x04 code and precompile treatment.
+  rationale: No blob-gas rule or mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: No blob-related behavior appears anywhere in the proposal.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The proposal mandates a one-time code assignment at activation but defines no
+      StateGasCosts, state-byte rate, state-gas budget, reservoir, or spill rule.
+  rationale: >-
+    The irregular activation state change does not introduce a state-gas charging site
+    or alter state-gas accounting; its complexity is scored under fork activation.
+  confidence: high
+  uncertainty_note: >-
+    The EIP does not discuss charging the protocol-directed activation write, so no
+    state-gas mechanism can be scored from the sealed text.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification; Backwards Compatibility
+    summary: The only stated gas effect is a different execution cost for identity behavior.
+  rationale: No gas-refund mechanism is added or modified.
+  confidence: high
+  uncertainty_note: The proposal contains no refund behavior.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification; Backwards Compatibility
+    summary: >-
+      Identity calls change from precompile execution to EVM bytecode and have slightly
+      different gas costs beginning at one fork boundary.
+  rationale: >-
+    A minor, localized subset of existing tests covering identity-precompile calls,
+    their gas thresholds, or the activation boundary must be reworked. No diverse or
+    major test category is changed by the package evidence.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test inventory, so the size classification follows only the
+    proposal's single-address scope.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      At activation, address 0x04 must contain the specified bytecode and must cease to
+      be treated as a precompile from that block onward.
+  rationale: >-
+    Activation-spanning post-state tests form a broad category that mechanically gains
+    an assertion about code at 0x04. The text does not support the stronger claim that
+    every fork test gains a dedicated assertion or that pre-fork vectors are re-derived.
+  confidence: medium
+  uncertainty_note: >-
+    The exact breadth depends on how existing tests represent fork-transition post-state,
+    which is not described in the package.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The specification keys the state change to the activation block but adds no input,
+      output, field, or communication mechanism for transition tools.
+  rationale: No transition-tool interface modification is specified or required by the text.
+  confidence: medium
+  uncertainty_note: >-
+    A tool must apply the rule at the activation block, but any implementation-specific
+    plumbing cannot be inferred as a new interface field from this package.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification; Rationale
+    summary: >-
+      The behavior is expressed as fixed code installation plus ordinary EVM calldata
+      copying and return operations.
+  rationale: >-
+    The package provides no requirement for a new expectation type, modifier, helper,
+    or other test-framework abstraction.
+  confidence: medium
+  uncertainty_note: >-
+    Fork-transition tests may need ordinary setup, but the sealed evidence does not show
+    that existing primitives are insufficient.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale
+    summary: The replacement code only copies calldata to memory and returns it.
+  rationale: No cryptographic mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: No cryptographic operation appears in the specified bytecode.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification; Rationale; Backwards Compatibility
+    summary: >-
+      Behavior changes exactly at the activation block, while the replacement handles
+      variable-length calldata through copy and memory operations with different gas costs.
+  rationale: >-
+    Testing has at least two boundary-prone dimensions: before/at/after activation and
+    calldata/memory/gas thresholds for equivalent output versus out-of-gas behavior.
+    Neither is shown to require an elevated case count.
+  confidence: high
+  uncertainty_note: >-
+    The EIP gives no explicit boundary test matrix, so only boundaries directly implied
+    by the activation rule and bytecode are counted.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The block format and RLP validation are not changed.
+  rationale: No block-RLP validation mechanism is introduced.
+  confidence: high
+  uncertainty_note: The activation state transition is not a block-encoding change.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The proposal defines no Engine API endpoint, field, or message change.
+  rationale: No Engine API field or communication mechanism is introduced.
+  confidence: high
+  uncertainty_note: No Engine API surface is present in the package evidence.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification; Rationale
+    summary: >-
+      The protocol installs fixed EVM code at address 0x04; that code only echoes calldata
+      and contains no state-writing or system-action instruction.
+  rationale: >-
+    One stateless protocol-installed contract is introduced, and it triggers no new
+    system action.
+  confidence: high
+  uncertainty_note: >-
+    The contract occupies a former precompile address, but after activation it is ordinary
+    EVM code and fits the rubric's non-stateful system-contract anchor.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The proposal replaces a precompile with newly installed code and identifies no
+      pre-existing system contract whose code, state, or behavior is changed.
+  rationale: >-
+    No pre-existing system contract is modified; the precompile change is scored in its
+    dedicated anchor and the replacement contract in the added-contract anchor.
+  confidence: high
+  uncertainty_note: The package does not classify the identity precompile as a system contract.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale
+    summary: The replacement bytecode is composed entirely of named existing opcodes.
+  rationale: No opcode is introduced by EIP-7666.
+  confidence: high
+  uncertainty_note: >-
+    PUSH0 is a dependency defined by EIP-3855, not an opcode newly introduced by this proposal.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification; Rationale
+    summary: The proposal changes precompile classification and installs code, not opcode results.
+  rationale: No pre-existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: >-
+    Different gas and callee execution at address 0x04 do not constitute a specified
+    result change to an opcode under this anchor.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: The proposal removes identity-precompile treatment and adds no precompile.
+  rationale: No new precompile is introduced.
+  confidence: high
+  uncertainty_note: The replacement is explicitly EVM code, not another precompile.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification; Backwards Compatibility
+    summary: >-
+      Identity at 0x04 ceases to be treated as a precompile and its equivalent output is
+      supplied by EVM code with slightly different gas costs.
+  rationale: >-
+    One pre-existing precompile has its behavior modified through removal of precompile
+    handling and replacement by contract execution. It is the simple identity operation,
+    so the complex-single-precompile score does not apply.
+  confidence: high
+  uncertainty_note: >-
+    Functional output is intended to remain equal, but execution classification and gas
+    behavior change unambiguously.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction, block, or interface encoding is changed.
+  rationale: The proposal introduces no RLP, SSZ, or other interface-level encoding change.
+  confidence: high
+  uncertainty_note: The literal EVM bytecode value is contract code, not an interface encoding.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The specification introduces no transaction envelope or type.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: Transactions may call 0x04, but their type is unchanged.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification; Backwards Compatibility
+    summary: >-
+      The change affects execution and gas consumed at one called address, not transaction
+      validity rules or intrinsic-gas calculation.
+  rationale: No transaction validity mechanism or intrinsic gas rule is changed.
+  confidence: high
+  uncertainty_note: Runtime out-of-gas outcomes are covered by EVM gas behavior, not validity.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The activation rule adds no block-body or header field.
+  rationale: No new block or block-header field is introduced.
+  confidence: high
+  uncertainty_note: Activation at a block boundary does not itself add a field.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      At the start of the activation block, clients must set address 0x04 code to the
+      specified seven-byte EVM program and stop treating the address as a precompile.
+  rationale: >-
+    The proposal explicitly mandates a state modification at the fork-activation block,
+    exactly matching the score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    Precompile classification also changes at the same boundary, but score 3 is already
+    the permitted non-exceptional maximum.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Motivation; Specification; Rationale
+    summary: >-
+      Native identity-precompile handling is replaced by a short EVM program that performs
+      calldata copying and memory return at a single address.
+  rationale: >-
+    The replacement execution path warrants isolated benchmarking across input sizes,
+    but it is self-contained and does not alter general EVM performance behavior.
+  confidence: medium
+  uncertainty_note: >-
+    The package gives no benchmark results or usage profile that would support a broader
+    impact score.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification; Security Considerations
+    summary: >-
+      A precompile is replaced by fixed stateless code; the EIP says no functionality is
+      made cheaper or newly introduced and identifies no security concern.
+  rationale: >-
+    Correct code installation, precompile deactivation, and output equivalence are
+    consensus-sensitive, but the mechanism is self-contained, isolatable, and does not
+    state a change to existing security invariants.
+  confidence: medium
+  uncertainty_note: >-
+    The package assertion of no security concern is not implementation evidence, so a
+    minimal self-contained review burden remains.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification; Rationale
+    summary: >-
+      The address, exact bytecode, activation timing, post-activation classification,
+      and intended calldata-return behavior are all stated explicitly.
+  rationale: >-
+    For the specified execution-layer surface, constructible outcomes follow from the
+    exact code and existing EVM execution semantics; no unresolved consensus choice is
+    exposed by the sealed text.
+  confidence: medium
+  uncertainty_note: >-
+    External implementation, devnet, and discussion status are prohibited and unavailable;
+    confidence is therefore limited to the textual completeness of the snapshot.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Front matter `requires`; Rationale
+    summary: The proposal requires EIP-3855 because its fixed bytecode uses PUSH0.
+  - source: supporting/eip-3855.md
+    locator: Specification
+    summary: EIP-3855 defines PUSH0 at opcode 0x5f with a cost of 2 gas.
+  rationale: >-
+    EIP-7666 has one narrow dependency on EIP-3855 for execution of the embedded PUSH0
+    instructions. The interaction is limited and most replacement behavior can be tested
+    independently, so coordinated testing is non-critical.
+  confidence: high
+  uncertainty_note: >-
+    EIP-5656 appears only as motivation and is neither required nor used by the specified
+    replacement bytecode, so it is not counted as an interacting EIP.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 3855
+  unidentified_interactions: []
+totals:
+  primary_score: 15
+  complexity_tier: medium
+under_specification:
+  present: false
+  summary: >-
+    No material execution-layer under-specification is identified in the sealed proposal.
+    The exact activation, address, code bytes, and removal of precompile treatment define
+    the state transition and subsequent execution path.
+  affected_criteria: []
+  plausible_total_range:
+    minimum: 15
+    maximum: 15
+  plausible_tiers:
+  - medium
+  unresolved_questions: []
+notable_ambiguities:
+- >-
+  The package does not describe the test inventory or transition-tool plumbing, limiting
+  confidence in test-breadth and interface scores without creating a textual consensus gap.
+- >-
+  The normative instruction to set code does not separately enumerate unchanged account
+  fields; the assessment reads it as a code-only update and does not multiply that ordinary
+  reading across state-gas or system-contract anchors.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I used only PROMPT.md, ASSESSMENT-CONTRACT.md, package/manifest.yaml,
+    package/output-template.yaml, and the three assessment_source_files listed by the
+    manifest. I did not access the internet, follow URLs, inspect any repository or other
+    package, use skills, or consult post-snapshot or prohibited information.

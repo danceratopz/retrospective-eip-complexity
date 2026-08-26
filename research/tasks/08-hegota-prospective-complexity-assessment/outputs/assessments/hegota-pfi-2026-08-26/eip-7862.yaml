@@ -1,0 +1,606 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7862
+  title: Delayed State Root
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer-only assessment of the sealed EIP-7862 draft. The proposal
+    changes the semantics of the existing EL header state_root to commit to the
+    parent post-state, tracks the next root internally, and initializes that
+    internal value at activation. EIP-7732 and EIP-7928 are considered only for
+    their stated interactions; no consensus-layer complexity or linked-EIP
+    implementation complexity is attributed to EIP-7862.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-7862/manifest.yaml
+    manifest_sha256: 0e65e27f10a40109bafe646bb60522261b5fdeb90de694b25142ee04f4e848a9
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7862.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 771e60beb3251184761a71e4734d6a793731c928
+    content_sha256: 2f044dc1c00ae5558aa3c17367da056acf0f76701f492ae63e77fb0b9b293cdc
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7862.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-7862.md
+    content_sha256: 2b740b9d9e4b76fb3f0fc95f46d805f5cc06e40216a3692b9b316aad2d9ac19d
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:09:19+02:00'
+    session_id: assessment-run-0fc64b6d-5a65-41fc-b040-494292685287
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7732.md
+  - supporting/eip-7928.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > State Transition
+    summary: >-
+      The transition applies the body as before and changes only when the
+      resulting state root is stored; it specifies no EVM gas calculation.
+  rationale: >-
+    Deferring the header commitment does not change execution-gas prices or
+    introduce a gas-accounting mechanism.
+  confidence: high
+  uncertainty_note: No gas behavior is specified anywhere in the proposal's change surface.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > BAL Synergy
+    summary: >-
+      BAL data is described only as an optional input for parallel state-root
+      computation after execution; no opcode execution path is changed.
+  rationale: >-
+    The proposal changes block-level root timing, not where an opcode accesses
+    state or where gas is charged relative to that access.
+  confidence: high
+  uncertainty_note: >-
+    State-access ordering rules in the linked EIP-7928 are not changes introduced
+    by EIP-7862 and are therefore excluded.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header
+    summary: >-
+      The existing blob_gas_used and excess_blob_gas fields are shown unchanged;
+      only state_root receives new semantics.
+  rationale: No blob-gas accounting rule is added or modified.
+  confidence: high
+  uncertainty_note: None; blob-gas fields are outside the specified change.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > State Transition
+    summary: >-
+      The only post-body addition is computing and storing the root for the next
+      block; no state-gas budget, rate, charging site, or spill path is defined.
+  rationale: State-root computation timing is not a state-gas charging change.
+  confidence: high
+  uncertainty_note: None; the proposal contains no state-gas mechanism.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > State Transition
+    summary: The transaction/body application remains unchanged and no refund rule is introduced.
+  rationale: The proposal introduces no EVM gas-refund mechanism.
+  confidence: high
+  uncertainty_note: None; refunds are not part of the specified change.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      Every block header changes from committing to its own post-state to
+      committing to the preceding block's post-state.
+  - source: eip.md
+    locator: Specification > Header Validation; State Transition
+    summary: >-
+      Header validation compares state_root with a carried prior root, while the
+      current post-state root is computed for the next block.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      The change requires a hard fork and unmodified clients reject delayed-root
+      blocks.
+  rationale: >-
+    Existing post-fork block tests across transaction contents and block
+    sequences must re-derive a consensus-critical header expectation and its
+    validation timing. This is a major, diverse regression surface rather than a
+    contrived category.
+  confidence: high
+  uncertainty_note: >-
+    The package provides no test inventory, so the exact number of rewritten
+    vectors is unknown, but the rule applies to every post-activation block.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header
+    summary: >-
+      No field is added; the already-existing state_root field receives different
+      semantics.
+  rationale: >-
+    Tests must change an existing state-root expectation, scored above as test
+    rework, but do not gain a separate new artifact or assertion.
+  confidence: high
+  uncertainty_note: >-
+    Internal last_computed_state_root bookkeeping need not be exposed as an
+    additional test invariant.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > BlockChain; State Transition; Fork Activation
+    summary: >-
+      The prior root is represented as internal BlockChain state, is initialized
+      from the current State at activation, and is updated from the resulting
+      State after each block.
+  rationale: >-
+    The proposal requires transition logic changes but evidences no new external
+    transition-tool field: the delayed header value and current State provide the
+    values needed by the specified transition.
+  confidence: medium
+  uncertainty_note: >-
+    No transition-tool contract is included in the package, so this score is
+    limited to the absence of a required external interface change in the EIP.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header Validation; State Transition; Fork Activation
+    summary: >-
+      The behavior can be exercised using block sequences, existing header fields,
+      state roots, and fork activation.
+  rationale: >-
+    Nothing in the sealed specification requires a new expectation type,
+    modifier, or permanent framework abstraction beyond constructing sequential
+    blocks with chosen header roots.
+  confidence: medium
+  uncertainty_note: >-
+    The package contains no test-framework description; implementation-specific
+    convenience helpers are not treated as required primitives.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header; State Transition
+    summary: >-
+      The proposal reuses the existing Root type and state_root computation and
+      changes only which block's result is placed in the header.
+  rationale: No new or modified cryptographic mechanism is introduced.
+  confidence: high
+  uncertainty_note: None; reuse of an existing state-root function is not new cryptography.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Fork Activation
+    summary: >-
+      Activation block F must contain the post-state root of F-1, and the steady
+      delayed rule applies from F+1 onward.
+  - source: eip.md
+    locator: Security Considerations > Reorganization Handling
+    summary: >-
+      A reorganization requires recomputing last_computed_state_root for every
+      block on the new canonical chain.
+  - source: eip.md
+    locator: Specification > Header Validation
+    summary: Headers with number below 1 are explicitly invalid under the specified validation.
+  rationale: >-
+    Activation/first-successor behavior and branch changes are multiple boundary
+    mechanisms. Reorg tests require an elevated matrix over branch depth,
+    activation position, and valid versus stale delayed roots.
+  confidence: high
+  uncertainty_note: >-
+    The exact reorg test matrix is not enumerated, but per-block recomputation on
+    the replacement branch is normative.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Header Validation
+    summary: >-
+      A single validation rule checks the existing header state_root against the
+      carried root from the preceding state transition.
+  - source: eip.md
+    locator: Security Considerations > Reorganization Handling
+    summary: Syncing across a branch change must recompute the carried root on the new chain.
+  rationale: >-
+    This is one simple new validation mechanism for a header field that syncing
+    clients process; it does not add or alter RLP fields.
+  confidence: medium
+  uncertainty_note: >-
+    The package specifies validation semantics but no dedicated sync protocol or
+    sync-test procedure.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header
+    summary: The proposal expressly adds no header field and only changes state_root semantics.
+  - source: supporting/eip-7732.md
+    locator: Specification > Engine API
+    summary: The linked ePBS proposal states that no Engine API changes are needed.
+  rationale: >-
+    EIP-7862 introduces no Engine API field, endpoint, or communication mechanism.
+    A semantic change to an existing EL header value does not meet this anchor's
+    field/endpoint thresholds.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP does not separately describe propagation of the changed existing
+    state_root semantics through Engine API methods.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The complete change surface consists of header semantics, chain bookkeeping,
+      validation, transition timing, and activation; no contract is introduced.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None; system contracts do not appear in the proposal's mechanism.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > State Transition
+    summary: The body application and other validations remain unchanged.
+  rationale: >-
+    No existing system-contract code, state, or behavior is directly or
+    indirectly modified by deferring the header root.
+  confidence: high
+  uncertainty_note: >-
+    System-contract details in linked EIP-7928 describe that proposal and are not
+    attributed to EIP-7862.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No opcode is defined in any part of the specified change.
+  rationale: The proposal adds no opcode.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > State Transition
+    summary: Transaction/body execution is retained and only state-root validation timing changes.
+  rationale: No existing opcode result or behavior is modified.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is introduced in the specified mechanism.
+  rationale: The proposal adds no precompile.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile logic or gas schedule appears in the change surface.
+  rationale: The proposal modifies no precompile.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header
+    summary: No field is added; the existing state_root field retains its Root type.
+  rationale: >-
+    Changing the meaning of an existing same-typed field is not an RLP, SSZ,
+    transaction, block, or interface encoding change.
+  confidence: high
+  uncertainty_note: >-
+    The block_access_list_hash shown in the header belongs to linked EIP-7928 and
+    is not introduced by EIP-7862.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > State Transition
+    summary: Existing transactions are passed unchanged to apply_body.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > State Transition
+    summary: >-
+      Transactions and withdrawals are applied through the existing body path;
+      the new validation applies to the block header root.
+  rationale: >-
+    No transaction validity rule or intrinsic-gas calculation is changed.
+  confidence: high
+  uncertainty_note: None; block-header validity is scored separately.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header
+    summary: The specification explicitly states that no new fields are added.
+  rationale: The existing state_root field is reinterpreted; no block or header field is new.
+  confidence: high
+  uncertainty_note: None; the proposal is explicit.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Fork Activation
+    summary: >-
+      Activation initializes the newly introduced internal
+      last_computed_state_root from the current State.
+  rationale: >-
+    The only activation action is initialization of a new internal variable,
+    which the rubric expressly excludes from a score on this anchor; no protocol
+    state is modified.
+  confidence: high
+  uncertainty_note: >-
+    Activation-boundary test complexity is captured under Edge/boundary
+    conditions, not duplicated here.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Motivation
+    summary: >-
+      State-root computation is identified as a significant production
+      bottleneck, and the proposal moves it out of the attestation critical path.
+  - source: eip.md
+    locator: Rationale > BAL Synergy
+    summary: >-
+      The intended path uses the preceding block's BAL for parallel proof
+      generation and may let builders construct without fully executing the
+      preceding block.
+  - source: eip.md
+    locator: Security Considerations > Pre-state Availability
+    summary: >-
+      Clients must retain the pre-state until its root is committed in the next
+      block.
+  rationale: >-
+    The feature changes timing and retention in the existing block-production and
+    validation pipeline and has complex interaction with BAL-assisted root
+    computation. Its impact cannot be validated fully in isolation and directly
+    targets a substantial existing performance bottleneck.
+  confidence: high
+  uncertainty_note: >-
+    The package gives qualitative claims but no benchmark results; the score is
+    for breadth and coupling of required performance validation, not claimed gain.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Header Validation
+    summary: >-
+      Validators may attest without waiting for current state-root computation,
+      while header validity instead checks the carried preceding-state root.
+  - source: eip.md
+    locator: Security Considerations > Reorganization Handling; Pre-state Availability
+    summary: >-
+      Correctness depends on recomputing the carried root on a new canonical
+      branch and retaining the prior state through the delayed commitment.
+  - source: eip.md
+    locator: Rationale > Light Client Impact
+    summary: State proofs acquire one slot of additional latency.
+  rationale: >-
+    A core state-commitment invariant is changed across header validation, state
+    transition bookkeeping, reorg handling, retained state, and proof consumers.
+    These include critical components and require extensive branch, invalid-root,
+    and delayed-commitment review and fuzzing.
+  confidence: high
+  uncertainty_note: >-
+    The EIP states that the light-client security model is unchanged, but that
+    claim does not remove implementation risk from the altered commitment timing.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Header Validation; State Transition; Fork Activation
+    summary: >-
+      The compared value, update point, activation value, and F/F+1 header roots
+      are all specified normatively or in executable pseudocode.
+  - source: eip.md
+    locator: Security Considerations > Reorganization Handling
+    summary: >-
+      The required carried-root outcome on a new canonical branch is specified as
+      per-block recomputation.
+  rationale: >-
+    The sealed text determines the consensus result for the constructible delayed
+    root, activation, and reorg cases it introduces; no previously unobservable
+    choice is left for clients to baseline.
+  confidence: medium
+  uncertainty_note: >-
+    Prohibited implementation, devnet, and discussion evidence is unavailable by
+    design; operational algorithms are not treated as consensus ambiguity where
+    the required root value is deterministic.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale > ePBS Compatibility
+    summary: >-
+      EIP-7732's ExecutionPayloadEnvelope has a distinct CL state_root; EIP-7862
+      changes only the EL header state_root and says CL verification is unaffected.
+  - source: supporting/eip-7732.md
+    locator: Specification > Execution Layer; Engine API
+    summary: The linked ePBS proposal specifies no EL or Engine API changes.
+  - source: eip.md
+    locator: Rationale > BAL Synergy
+    summary: >-
+      EIP-7928 BAL data can parallelize computation of the root to be included in
+      the following block.
+  - source: supporting/eip-7928.md
+    locator: Abstract; Specification > State Transition Function
+    summary: >-
+      The linked BAL proposal supplies state accesses and post-transaction diffs
+      and validates them against block execution.
+  rationale: >-
+    The proposal has two explicit but bounded interactions: a field-semantics
+    boundary with 7732 and optional performance synergy with 7928. Neither linked
+    proposal is modified, and delayed-root correctness remains mostly testable on
+    its own.
+  confidence: high
+  uncertainty_note: >-
+    Coordinated tests should distinguish the EL and CL fields and compare
+    BAL-derived roots with the next header, but linked-EIP complexity is excluded.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7732
+  - 7928
+  unidentified_interactions: []
+totals:
+  primary_score: 14
+  complexity_tier: medium
+under_specification:
+  present: false
+  summary: >-
+    No material consensus under-specification was identified in the sealed
+    execution-layer proposal. Tool and framework integration details are absent,
+    but the delayed root values and state-transition timing are sufficiently
+    determined and those omissions do not change the score.
+  affected_criteria: []
+  plausible_total_range:
+    minimum: 14
+    maximum: 14
+  plausible_tiers:
+  - medium
+  unresolved_questions: []
+notable_ambiguities:
+- >-
+  The package does not define transition-tool or test-framework adaptations; the
+  corresponding scores therefore reflect protocol necessity, not a particular
+  implementation's convenience interface.
+- >-
+  EIP-7732's CL state_root and EIP-7862's EL header state_root share a name but
+  are explicitly separate; only the EL field is assessed here.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I consulted only the operational files and sealed assessment sources listed
+    in this package, did not attempt internet access, and used no prohibited or
+    post-snapshot information.

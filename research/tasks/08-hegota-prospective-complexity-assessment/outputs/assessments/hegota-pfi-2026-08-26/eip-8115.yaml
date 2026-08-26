@@ -1,0 +1,466 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8115
+  title: Batch priority fees at end of block
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: "Execution-layer assessment of the sealed Draft EIP-8115 proposal, limited to delaying and batching EIP-1559 priority-fee credits after all block transactions and before EIP-4895 withdrawals."
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8115/manifest.yaml
+    manifest_sha256: 8fb91fa9937760733b2fcb652ea54d041a0d3a28019d78a27acc59c22e6aab4d
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8115.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: d4ea93f317983caff8e9030a8b1f83930c5a6346
+    content_sha256: 55ab16f6b3f9778ea5ce777dbbc67a95d627cda00c78f1de4922f36da79d4e23
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8115.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8115.md
+    content_sha256: cbdac6f808324503c9c34cea1ac3189a00f3463211663cd23c2268027c44c8cc
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:22:47+02:00'
+    session_id: assessment-run-23560a96-35f9-4ef5-badb-cceeb4425c26
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-1559.md
+  - supporting/eip-4895.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "Per-transaction EIP-1559 priority-fee credits are replaced by one accumulated credit after transaction processing."
+  - source: supporting/eip-1559.md
+    locator: "Specification > reference implementation, World.validate_block transaction loop"
+    summary: "The existing mechanism credits block.author with gas_used multiplied by priority_fee_per_gas after each transaction."
+  rationale: "The proposal updates an existing gas-linked fee-accounting mechanism's settlement timing. It introduces no new gas meter and does not change gas consumed, effective gas price, or the sender's gas charge, so the existing-mechanism score of 1 applies."
+  confidence: high
+  uncertainty_note: "The EIP gives no pseudocode, but the changed existing credit point is explicit and no gas-cost change is specified."
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The credit is moved from transaction completion to a block-level point after all transactions."
+  rationale: "The changed balance write occurs at transaction/block processing boundaries, not inside any opcode, and no opcode gas charge is reordered relative to an opcode state access."
+  confidence: high
+  uncertainty_note: "The draft does not provide execution pseudocode, but its specified boundary is outside opcode execution."
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The sole normative change concerns EIP-1559 priority-fee credit timing."
+  rationale: "No blob gas mechanism or blob fee accounting is introduced or modified."
+  confidence: high
+  uncertainty_note: "No blob-related behavior appears in the sealed proposal."
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The proposal changes when a balance credit is applied, without defining a state-gas cost, budget, reservoir, or spill rule."
+  rationale: "A balance update is reordered, but the rubric's state-gas mechanisms for charging state writes are not changed."
+  confidence: high
+  uncertainty_note: "The proposal is silent on state gas because it specifies no state-gas accounting change."
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: supporting/eip-1559.md
+    locator: "Specification > reference implementation, World.validate_block transaction loop"
+    summary: "Unused-gas refunds are paid to the signer before the existing priority-fee credit to the block author."
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "Only the priority-fee credit timing is changed."
+  rationale: "No refund is added or modified; the proposal batches the recipient's fee credit after transaction-level gas use and refunds have been determined."
+  confidence: high
+  uncertainty_note: "The EIP does not restate refund behavior, so the assessment treats the narrowly stated credit-timing change as exhaustive."
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The fee recipient can no longer spend priority fees in the same block, and block-builder infrastructure and MEV liquidity may need updates."
+  - source: eip.md
+    locator: "Rationale"
+    summary: "A transaction can no longer become eligible after incremental priority-fee credits."
+  rationale: "Existing multi-transaction tests in which the fee recipient spends fees credited by an earlier transaction must be reworked. Most tests retain the same end-of-block aggregate credit, making the affected set a narrow subset rather than a broad category."
+  confidence: medium
+  uncertainty_note: "The package provides no test inventory, and ambiguity about which fee-bearing transaction forms are batched makes the exact affected subset uncertain."
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The proposal changes an internal state-transition ordering and adds no new block output or commitment."
+  rationale: "Tests specifically exercising batching need balance assertions, but unrelated pre-existing tests do not gain a new produced field or invariant to assert in addition to their existing post-state checks."
+  confidence: medium
+  uncertainty_note: "The package does not describe the test harness; this score distinguishes changed expected state in the narrow affected tests from a new assertion required in every unrelated test."
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The rule uses the existing block transactions, fee recipient, priority fees, and withdrawals ordering, with no new input or output field."
+  rationale: "The batching accumulator is internal to block processing; the sealed proposal requires no transition-tool interface field or mechanism."
+  confidence: medium
+  uncertainty_note: "No transition-tool design is included, but nothing in the normative rule requires additional external data."
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The behavior is a balance transition over an ordered list of ordinary block transactions followed by withdrawals."
+  rationale: "Multi-transaction blocks and post-state balance checks can express the specified behavior; no new expectation type, modifier, or reusable framework abstraction is required by the text."
+  confidence: medium
+  uncertainty_note: "The package contains no test-framework inventory, so confidence is limited to what the proposal itself demands."
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The normative rule only sums and credits priority fees at a different processing point."
+  rationale: "No cryptographic primitive, algorithm, proof, signature rule, or commitment is introduced or modified."
+  confidence: high
+  uncertainty_note: "No cryptography-related behavior appears in the sealed proposal."
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "Fees are accumulated across all transactions and credited at the exact boundary after transactions but before withdrawals."
+  - source: supporting/eip-1559.md
+    locator: "Specification > reference implementation, normalize_transaction and World.validate_block transaction loop"
+    summary: "Legacy, type-1, and type-2 transactions normalize to fee values; the credited amount depends on the priority-fee cap and actual gas used after refund."
+  - source: eip.md
+    locator: "Rationale and Backwards Compatibility"
+    summary: "Fee-recipient solvency during the block changes because incremental credits can no longer make its later transaction eligible."
+  rationale: "Testing must cover accumulation and the new end-of-transactions boundary across transaction count/order, zero and nonzero effective tips, actual gas use/refund outcomes, the fee recipient's role and balance threshold, and the specified withdrawal boundary. These interacting dimensions create multiple boundary-prone behaviors, including a solvency matrix requiring an elevated case count."
+  confidence: medium
+  uncertainty_note: "The exact matrix is uncertain because the draft does not define the included transaction forms, accumulator arithmetic, or zero-credit account behavior."
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The proposal changes state-processing order and defines no block RLP field or validation rule."
+  rationale: "No new block RLP validation mechanism requiring client syncing is introduced."
+  confidence: high
+  uncertainty_note: "The normative section contains no serialization change."
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "All data used by the rule already belongs to transaction, fee-recipient, and withdrawal processing; no Engine API directive or field is specified."
+  rationale: "The proposal introduces neither an Engine API field nor a new communication mechanism or endpoint."
+  confidence: high
+  uncertainty_note: "No Engine API surface appears in the sealed proposal."
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The fee credit is a protocol balance update and no contract address or code is defined."
+  rationale: "No system contract is introduced."
+  confidence: high
+  uncertainty_note: "No system-contract mechanism appears in the proposal."
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The change targets priority-fee settlement to the block fee recipient and names no system contract."
+  rationale: "No existing system-contract code, state, or system-contract-specific behavior is directly or indirectly modified by the specified rule."
+  confidence: high
+  uncertainty_note: "The sealed sources identify no system contract interaction."
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The normative change is performed by block processing rather than an EVM instruction."
+  rationale: "No opcode is introduced."
+  confidence: high
+  uncertainty_note: "No opcode allocation or semantics appear in the proposal."
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The proposal delays recipient credit without changing any instruction result."
+  - source: supporting/eip-1559.md
+    locator: "Specification, GASPRICE requirement"
+    summary: "EIP-1559 defines GASPRICE as effective_gas_price; EIP-8115 does not alter that requirement."
+  rationale: "No pre-existing opcode's non-gas behavior is modified or deprecated."
+  confidence: high
+  uncertainty_note: "The draft does not restate GASPRICE, but its narrowly scoped rule does not change the transaction's effective gas price."
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The proposal specifies only protocol-level fee accumulation and crediting."
+  rationale: "No precompile is introduced."
+  confidence: high
+  uncertainty_note: "No precompile address, input, output, or gas rule appears in the proposal."
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The normative change does not refer to precompile execution or charging."
+  rationale: "No existing precompile logic or gas schedule is modified."
+  confidence: high
+  uncertainty_note: "No precompile interaction appears in the sealed sources."
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The proposal adds an execution-order rule and no transaction, block, or interface encoding."
+  rationale: "No RLP, SSZ, transaction, block, or interface-level encoding is changed."
+  confidence: high
+  uncertainty_note: "The normative section defines no serialized object or field."
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Abstract and Specification > Priority fee processing"
+    summary: "The EIP changes processing of priority fees from existing fee-market transactions and defines no transaction envelope."
+  rationale: "No new transaction type is introduced."
+  confidence: high
+  uncertainty_note: "Which existing fee-bearing transaction forms are covered is ambiguous, but none is newly created."
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Rationale"
+    summary: "A transaction can no longer start underfunded and become eligible after incremental priority-fee credits."
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The fee recipient can spend the fees only in the next block, changing block-builder liquidity requirements."
+  - source: supporting/eip-1559.md
+    locator: "Specification > reference implementation, World.validate_block transaction loop"
+    summary: "Transaction processing checks the signer's balance before executing and currently credits the block author after each transaction."
+  rationale: "Delaying credits changes the validity outcome for a later transaction sent by the fee recipient when its pre-block balance is insufficient but earlier priority fees previously made it solvent. This affects existing cases but is localized and needs limited vector updates rather than test-infrastructure redesign."
+  confidence: high
+  uncertainty_note: "The draft states the intended solvency effect but does not give exact validation pseudocode or define the scope across existing transaction forms."
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The accumulator and final balance credit are processing behavior; no block or header field is defined."
+  rationale: "No new block-body or block-header field is introduced."
+  confidence: high
+  uncertainty_note: "No block schema change appears in the proposal."
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "The EIP specifies a changed processing rule but no one-time state migration or existing internal-variable modification at activation."
+  rationale: "Applying the new rule does not require a state modification or irregular internal-variable update at the activation block; a per-block accumulator would be initialization, not modification of existing state."
+  confidence: medium
+  uncertainty_note: "The Draft contains no explicit activation clause, but it also prescribes no activation-block transition that meets this anchor."
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: "Motivation, items 1 and 3"
+    summary: "Per-transaction writes to the fee-recipient balance limit parallelization and create hundreds of micropayments."
+  - source: eip.md
+    locator: "Rationale"
+    summary: "Batched crediting is intended to improve parallel transaction execution."
+  rationale: "The mechanism's purpose is to remove a block-wide shared balance write from every transaction. Its parallel-execution effect cannot be validated in isolation from block workloads and is intended to substantially change existing execution performance behavior, warranting broad workload benchmarking."
+  confidence: medium
+  uncertainty_note: "The package gives no quantitative target, workload model, or benchmark result, so the size and consistency of the performance effect remain uncertain."
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Specification > Priority fee processing"
+    summary: "Clients must compute a block-wide fee sum and apply exactly one balance credit at a consensus-critical point before withdrawals."
+  - source: eip.md
+    locator: "Backwards Compatibility"
+    summary: "The timing change removes same-block spendability and changes liquidity requirements for block builders and MEV use cases."
+  - source: eip.md
+    locator: "Security Considerations"
+    summary: "The proposal asserts that there is no security impact but supplies no supporting analysis."
+  rationale: "Incorrect accumulation, omission, duplication, or ordering would alter ETH balances or transaction solvency. The change is limited to fee settlement, transaction balance checks, and the withdrawal boundary, so targeted review and fuzzing are appropriate rather than an extensive multi-component security program."
+  confidence: medium
+  uncertainty_note: "The EIP's security section is conclusory, and missing arithmetic and transaction-scope details prevent high confidence."
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Abstract and Specification > Priority fee processing"
+    summary: "The text says EIP-1559 priority fees from fee-market transactions are summed but gives no algorithm, numeric domain, or explicit enumeration of covered transaction forms."
+  - source: supporting/eip-1559.md
+    locator: "Specification > reference implementation, normalize_transaction and World.validate_block transaction loop"
+    summary: "The supporting EIP normalizes legacy, type-1, and type-2 transactions to priority-fee fields and calculates the per-transaction credit from actual gas used."
+  rationale: "Clients need localized agreement on which existing transactions contribute, the exact accumulated amount and arithmetic, and zero-credit/account-state behavior before boundary vectors can be baselined. The newly changed intermediate fee-recipient balance was already observable to later transactions, so the score-3 condition for previously unobservable behavior is not met."
+  confidence: medium
+  uncertainty_note: "Prohibited implementation, devnet, and discussion evidence is unavailable by contract; this score reflects only the material gaps in the sealed Draft text."
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: "Front matter, requires; Specification > Priority fee processing"
+    summary: "EIP-8115 requires EIPs 1559 and 4895, modifies EIP-1559 priority-fee settlement, and fixes the batch credit before EIP-4895 withdrawals."
+  - source: supporting/eip-4895.md
+    locator: "Specification > State transition"
+    summary: "Withdrawals are processed after user-level transactions as unconditional balance increases."
+  rationale: "The proposal directly modifies 1559 fee processing and requires coordinated ordering tests with 4895 withdrawals. These two dependencies require coordinated consideration but remain limited to balance-update sequencing, matching score 2."
+  confidence: high
+  uncertainty_note: "The Motivation mentions unnumbered ETH balance-log proposals, but the package does not identify a normative dependency or an EIP number for them."
+  exceptional_score_justification: null
+  interacting_eips:
+  - 1559
+  - 4895
+  unidentified_interactions:
+  - "Unnumbered proposals to emit logs on ETH transfers mentioned in the Motivation"
+totals:
+  primary_score: 16
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: "The one-paragraph normative rule fixes the principal processing boundary but omits a precise accumulation algorithm, covered transaction forms, arithmetic and zero-credit semantics, and activation detail. Those gaps materially affect boundary, regression, validity, performance, security, and consensus-baselining estimates."
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - new_or_modified_transaction_validity_mechanisms
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 11
+    maximum: 17
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - "Does the batch include priority-fee amounts produced by legacy and type-1 transactions normalized under EIP-1559, or only type-2 fee-market transactions?"
+  - "Is each contribution exactly actual gas used multiplied by the capped priority fee per gas, including reverted executions and transaction gas refunds?"
+  - "What numeric domain and overflow behavior apply to the block-wide accumulator and the final beneficiary balance addition?"
+  - "What state effect is required when the total credit is zero or the fee-recipient account does not otherwise exist?"
+  - "What exact validity handling is required when a fee-recipient transaction would have been solvent only after an earlier incremental credit?"
+  - "How and at what fork boundary is the new processing rule activated?"
+notable_ambiguities:
+- "The Abstract says fee-market transactions, while the normative sentence says EIP-1559 priority fees; the included existing transaction forms are not enumerated."
+- "Summed up does not specify accumulator width, overflow handling, or whether zero-valued credit operations affect account state."
+- "The required position before EIP-4895 withdrawals is explicit, but no executable state-transition pseudocode defines all fee contribution and failure cases."
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: "This assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md, package/manifest.yaml, package/output-template.yaml, and the four assessment_source_files listed in the sealed manifest. No internet access, external source, prohibited skill, repository evidence, post-snapshot information, implementation, test, devnet, prior score, or human assessment was consulted."

@@ -1,0 +1,588 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8025
+  title: Optional Execution Proofs
+  layers:
+  - execution
+  - consensus
+assessment:
+  snapshot_scope_summary: >-
+    Assessment of the execution-layer surface only: the stateless execution guest,
+    witness construction, schema-prefixed SSZ input/output, payload-request binding,
+    and proof-generation/verification implications. Consensus-layer gossip, req/resp,
+    discovery, beacon-state processing, and fork-choice behavior are boundary context
+    and are not scored as execution-layer complexity.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8025/manifest.yaml
+    manifest_sha256: 7a23aeef145353d3e05e0e189d4062477626bee57d7e6c8a09c9bebaf082cfcc
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8025.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 6287bacd18648daa53c955f5d4674b045b364128
+    content_sha256: d6131d778d8903a30c2c0e432b6fae70d25aa8f77a6fb65812237946da4c94b2
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8025.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8025.md
+    content_sha256: bb4cfda093e3ee612d223068f8578f4743aa3ff7982d61db1cbe76194b39ff16
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:16:59+02:00'
+    session_id: assessment-run-7fb191b3-e0de-43e0-a0ff-65562b230010
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: Codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4844.md
+  - supporting/eip-6110.md
+  - supporting/eip-7002.md
+  - supporting/eip-7251.md
+  - supporting/eip-7688.md
+  - supporting/eip-7732.md
+  - supporting/eip-7928.md
+  - supporting/eip-8282.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: The guest invokes the normal payload-validation and block-execution path against witness-backed state.
+  - source: eip.md
+    locator: Abstract
+    summary: The optional mechanism is stated not to change consensus validity rules.
+  rationale: >-
+    The proposal proves and replays existing execution rules; it specifies no new or
+    modified EVM gas-accounting rule.
+  confidence: high
+  uncertainty_note: No gas schedule or gas-charging site is introduced in the package.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Host-side input construction
+    summary: Witness construction consumes data gathered by the existing block-level read/write tracker used for BAL construction.
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: The guest uses the normal execution path with WitnessState replacing the pre-state database.
+  rationale: >-
+    EIP-8025 observes existing accesses to build a witness and substitutes a state
+    backend; it does not move gas checks or state accesses inside any opcode.
+  confidence: high
+  uncertainty_note: Ordering requirements belonging to EIP-7928 are a dependency interaction, not a change made by EIP-8025.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: NewPayloadRequest carries existing blob versioned hashes and the payload carries existing blob gas fields.
+  - source: supporting/eip-4844.md
+    locator: Specification > Gas accounting
+    summary: EIP-4844 defines the blob-gas mechanism that EIP-8025's guest validates.
+  rationale: >-
+    Blob data and accounting fields are inputs to stateless validation, but EIP-8025
+    does not alter their accounting mechanism.
+  confidence: high
+  uncertainty_note: None; the blob mechanism is consumed unchanged.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The execution-layer changes are a stateless guest and prover-side guest-input construction.
+  rationale: >-
+    No state-gas cost, state-byte rate, state-gas budget, reservoir, or spill path is
+    introduced or modified.
+  confidence: high
+  uncertainty_note: Witness construction changes data availability for execution, not the cost of writing state.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: Payload execution follows the normal execution-engine path without a new refund operation.
+  rationale: The proposal introduces no EVM gas-refund mechanism.
+  confidence: high
+  uncertainty_note: None; refunds are not changed or newly exposed by the proposal.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The feature is fully opt-in, changes no consensus validity rules, and leaves non-participating nodes unchanged.
+  - source: eip.md
+    locator: Test Cases
+    summary: The proposal points to dedicated execution-layer conformance tests.
+  rationale: >-
+    The package supports adding a dedicated stateless-validation suite, but does not
+    require existing execution tests to be reworked.
+  confidence: medium
+  uncertainty_note: The package does not describe how much of an existing payload corpus would be reused by the new guest suite.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Nodes outside the optional modes have unchanged behavior and duties.
+  - source: eip.md
+    locator: Rationale > Build operational experience
+    summary: Proofs are non-critical artifacts and are not placed on the fork-choice or attestation path.
+  rationale: >-
+    Existing tests need not additionally assert a proof, witness, or stateless result;
+    those outputs belong to the opt-in feature's own tests.
+  confidence: high
+  uncertainty_note: None material for pre-existing tests in the sealed proposal.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: The proposal defines a separate guest input/output interface rather than a transition-tool field.
+  - source: eip.md
+    locator: Test Cases
+    summary: No transition-tool interface addition is specified.
+  rationale: >-
+    The new stateless guest is a separate mechanism; the package does not require a
+    field or mechanism in the state transition tool interface.
+  confidence: medium
+  uncertainty_note: A test implementation could choose to expose the guest through a transition tool, but that interface is not specified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: Tests must construct a new StatelessInput and check a new StatelessValidationResult.
+  - source: eip.md
+    locator: Specification > Execution Layer > SSZ encoding
+    summary: Inputs require schema-prefixed SSZ and progressive-container/list serialization with fixed subordinate bounds.
+  rationale: >-
+    Reusable EIP-specific primitives are needed to assemble witnesses and payload
+    requests, serialize the guest input, run it, and assert structured success or
+    sentinel-failure output.
+  confidence: medium
+  uncertainty_note: The package does not specify whether these helpers are framework expectations/modifiers or a standalone runner.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Terminology
+    summary: A proof system proves guest computation and may vary in proof format, verifier logic, cost, and security assumptions.
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The execution result is accepted only after proof verification and binding to the expected guest, request root, chain, and schema.
+  rationale: >-
+    Proving full stateless payload validation is one novel cryptographic mechanism,
+    while the concrete proof system is deliberately not fixed; this fits the
+    single-novel-mechanism anchor.
+  confidence: medium
+  uncertainty_note: Concrete proof systems and their testing resources are not identified, so the eventual mechanism count may differ.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: Cases include decode failure sentinels, bounded and contiguous ancestor headers, missing witness data, invalid payloads, and transaction-key verification.
+  - source: eip.md
+    locator: Specification > Execution Layer > Host-side input construction
+    summary: Witness creation must capture reads, writes, code, ancestors, and sibling trie nodes while reproducing the expected post-state root.
+  - source: eip.md
+    locator: Specification > Execution Layer > SSZ encoding
+    summary: Schema IDs, progressive collections, and several fixed byte/header bounds add serialization boundaries.
+  rationale: >-
+    Multiple boundary-prone mechanisms compose across malformed schemas, empty or
+    non-contiguous header witnesses, trie-node completeness, code and public-key
+    lists, invalid execution, fork selection, and post-state reconstruction. Witness
+    completeness across arbitrary blocks requires an elevated case count.
+  confidence: high
+  uncertainty_note: Concrete proof-format boundaries remain unknown and are not added to this score.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The execution-layer surface adds guest validation and witness construction, not block RLP validation.
+  - source: eip.md
+    locator: Specification > Consensus Layer > Req/resp domain
+    summary: Proof backfill and synchronization protocols are specified on the consensus layer.
+  rationale: >-
+    No execution block-RLP validation mechanism is added. The proposal's explicit
+    proof-sync protocols are consensus-layer behavior and are excluded from this
+    execution-only score.
+  confidence: high
+  uncertainty_note: None; the cross-layer boundary is explicit.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: The host consumes NewPayloadRequest as payload data supplied by the consensus layer.
+  - source: eip.md
+    locator: Specification > Consensus Layer > Proof engine interface
+    summary: ProofEngine is a separate interface merely modeled on the Engine API.
+  rationale: >-
+    EIP-8025 consumes the dependency-defined NewPayloadRequest and adds a distinct
+    proof-engine protocol; it specifies no new Engine API field, endpoint, or
+    communication mechanism.
+  confidence: high
+  uncertainty_note: Any transport mapping between an EL host and proof node is implementation-dependent and not an Engine API change in the package.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The execution-layer additions are off-chain host/guest and witness components.
+  rationale: No system contract is introduced by EIP-8025.
+  confidence: high
+  uncertainty_note: System contracts from required EIPs remain dependency interactions.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output > ExecutionWitness
+    summary: Ancestor headers let the guest reproduce recent block hashes and existing system-contract logic.
+  - source: eip.md
+    locator: Specification > Execution Layer > Host-side input construction
+    summary: The witness records existing state accesses rather than changing contract behavior or state.
+  rationale: >-
+    Existing system-contract execution must be witnessed, but no contract code,
+    state transition, or behavior is modified directly or indirectly.
+  confidence: high
+  uncertainty_note: None; observability for proving is not a behavioral modification.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: The guest reuses ordinary block execution and introduces no instruction definition.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: Existing execution is run against WitnessState without specifying any changed opcode result.
+  rationale: No existing opcode behavior is modified or deprecated.
+  confidence: high
+  uncertainty_note: State-backend substitution must preserve opcode behavior and is tested as equivalence, not scored as a modification.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The specified components do not include a precompile.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: Proof verification is delegated to a proof node and is not exposed as an EVM precompile.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: The normal payload path is replayed without a precompile logic or gas-schedule change.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > SSZ encoding
+    summary: A new host/guest interface serializes StatelessInput as a two-byte schema ID followed by SSZ and serializes a structured SSZ result.
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: The public payload-request commitment is an SSZ hash-tree-root binding.
+  rationale: >-
+    The proposal introduces a new schema-versioned SSZ encoding at the execution
+    host/guest interface, satisfying the rubric's binary interface-level encoding
+    anchor.
+  confidence: high
+  uncertainty_note: This is a new proof-stack interface encoding, not a replacement of transaction or block RLP.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: Existing serialized transactions are carried inside ExecutionPayload; no transaction envelope is defined.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: None.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: The guest uses the normal new-payload path and verifies supplied public keys against the existing transaction signatures.
+  rationale: >-
+    Supplied public keys are an optimization input that must reproduce existing
+    signature recovery; transaction validity and intrinsic-gas rules are unchanged.
+  confidence: high
+  uncertainty_note: The new guest needs equivalence tests, but it does not create a new transaction-validity rule.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: StatelessInput packages an existing NewPayloadRequest, witness, chain ID, and public keys without defining a new canonical block/header field.
+  rationale: >-
+    EIP-8025 adds proof-stack input fields, not a field to the canonical execution
+    block or header.
+  confidence: high
+  uncertainty_note: Payload fields originating in required EIPs are scored as interactions, not as fields introduced by EIP-8025.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: Production guests must compare the payload timestamp with fork activation data, while the reference shape uses one implementation per fork.
+  rationale: >-
+    Selecting and checking fork rules in the guest does not modify state or an
+    existing internal variable at the activation block; no activation transition is
+    introduced.
+  confidence: medium
+  uncertainty_note: The exact production fork-configuration input and comparison are under-specified, but initialization or selection is not a score-3 modification.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer > Host-side input construction
+    summary: Witness construction is coupled to block execution, trie data, code reads, ancestor headers, and post-state-root reconstruction.
+  - source: eip.md
+    locator: Security Considerations > Verifier-prover decentralisation asymmetry
+    summary: Provers retain full EL state and run a non-trivial stack whose cost scales as O(n log^2 n) in witnessed computation size.
+  - source: eip.md
+    locator: Rationale > Build operational experience
+    summary: Proof size, generation latency, verifier throughput, and prover diversity require live operational measurement.
+  rationale: >-
+    Proving performance cannot be fully isolated from payload execution, state/trie
+    access, witness shape, and proof-system choice, and the proposal identifies a
+    substantial, superlinear proving burden with complex interactions.
+  confidence: high
+  uncertainty_note: Concrete proof systems are unpinned, so exact resource envelopes remain unknown.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: Acceptance binds proof verification to the guest program, successful result, payload-request root, chain ID, and schema ID.
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: Security-sensitive logic covers witness-backed state, state-root recomputation, fork rules, payload validity, and transaction-signature/public-key equivalence.
+  - source: eip.md
+    locator: Security Considerations > Soundness and consensus implications
+    summary: Proof results remain supplementary and cannot alter fork choice or consensus state in this optional phase.
+  rationale: >-
+    Soundness and binding interact with several critical execution components and
+    require targeted review and fuzzing, but the optional design preserves ordinary
+    re-execution and bounds failure to an opted-in node's local signal.
+  confidence: high
+  uncertainty_note: Security assumptions of the concrete proof systems are not specified; load-bearing proof use is explicitly outside this EIP.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Consensus Layer > Proof types and containers
+    summary: ProofType values and new proof systems are socialized out of band, with proof-system support configured dynamically.
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: Verification expects an exact guest plus request-root, chain, and schema binding, but no concrete proof-system/guest registry is defined.
+  - source: eip.md
+    locator: Specification > Execution Layer > Guest validation
+    summary: Production implementations must add a fork-activation timestamp comparison whose exact configuration path is not specified.
+  rationale: >-
+    Interoperable execution-proof tests require localized agreement on proof-type to
+    guest/verifier dispatch, public-input binding, and production fork selection.
+    These are open but do not make previously unobservable EVM behavior
+    consensus-critical in this optional phase.
+  confidence: high
+  uncertainty_note: The consensus-layer threshold k is also open, but is excluded from this execution-layer score.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 4
+  evidence:
+  - source: eip.md
+    locator: Front matter > requires
+    summary: The proposal explicitly requires EIPs 4844, 6110, 7002, 7251, 7688, 7732, 7928, and 8282.
+  - source: eip.md
+    locator: Specification > Execution Layer > Stateless input and output
+    summary: NewPayloadRequest and its SSZ commitment combine blob hashes, three established request families, two builder request families, progressive SSZ, delayed execution context, and the BAL.
+  - source: eip.md
+    locator: Specification > Execution Layer > Host-side input construction
+    summary: Witness generation reuses the BAL tracker and must cover request-driven system actions and fork-specific payload execution.
+  rationale: >-
+    There are strong coordinated interactions with 4844 (blob hashes and blob
+    fields), 6110 (deposits), 7002 (withdrawals), 7251 (consolidations), 7688
+    (progressive SSZ), 7732 (delayed execution-validation window and payload
+    context), 7928 (BAL and access tracker), and 8282 (builder requests). The
+    uncapped rule gives base score 3 for strong multi-EIP interdependence plus 1
+    for the first complete group of three among the five interactions beyond the
+    first three.
+  confidence: high
+  uncertainty_note: All eight interactions are explicit in the sealed package; no unidentified interaction is added.
+  exceptional_score_justification: >-
+    Score 4 is mechanically required by the uncapped anchor: eight interacting EIPs
+    produce base 3 plus floor((8 - 3) / 3) = 1, and each changes a distinct input,
+    schema, timing, or witness axis requiring coordinated cases.
+  interacting_eips:
+  - 4844
+  - 6110
+  - 7002
+  - 7251
+  - 7688
+  - 7732
+  - 7928
+  - 8282
+  unidentified_interactions: []
+totals:
+  primary_score: 21
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    Material execution-layer details remain open: concrete proof systems and
+    ProofType-to-guest/verifier dispatch, the exact adaptation between the proof's
+    chain configuration and the guest's chain/schema output, production fork-rule
+    selection, and the conformance-runner interface. The separate consensus-layer
+    threshold k is also open but is not used to score the execution surface.
+  affected_criteria:
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - cryptography
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 17
+    maximum: 25
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - Which concrete proof systems and ProofType values are supported, and how is each value bound to an exact guest program and verifier?
+  - How is PublicInput.chain_config mapped to or checked against the execution guest's chain_id and schema_id result?
+  - What fork-activation data is supplied to a production guest, and what exact timestamp/fork-selection failures must it return?
+  - Is the stateless guest exercised through a new transition-tool mechanism or a standalone conformance runner, and what reusable expectations are required?
+  - What value of k defines proof verification on the consensus side, noting that this does not affect the execution-layer score?
+notable_ambiguities:
+- >-
+  The abstract describes proof verification as a path that decouples verification
+  from re-execution, while the current optional phase explicitly requires
+  proof-verifying nodes to continue re-executing and treats proofs only as a
+  supplementary signal; this assessment uses the normative optional-phase behavior.
+- >-
+  PublicInput is shown with chain_config, while the execution guest's public result
+  exposes chain_id and schema_id; the exact cross-component binding is not fully
+  spelled out in the EIP text.
+- >-
+  Consensus networking and proof retention are substantial but intentionally do not
+  contribute to execution-layer anchors such as block syncing or Engine API changes.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the sealed package sources and permitted operational files,
+    attempted no internet or external access, used no skills or repository evidence,
+    and did not use post-snapshot information.

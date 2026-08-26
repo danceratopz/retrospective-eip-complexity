@@ -1,0 +1,585 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7851
+  title: Code-Controlled EOA Delegation
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of the Draft EIP-7851 snapshot. The proposal
+    extends EIP-7702 with an ECDSA-disabled delegation prefix, adds the
+    state-writing SETSELFDELEGATE opcode, changes delegated-code recognition,
+    and adds authorization, transaction-validity, and transaction-pool rules.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-7851/manifest.yaml
+    manifest_sha256: 232b6e55ff0d0e3a42a3e5ba9fbb646cce3c25b7d0fcdadf9c39c74708f291cf
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7851.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: a659ac72d473505f6a106e7bfa0364df16808cf1
+    content_sha256: 92d7407d2d3c6e2d797e4f6f91e74aa0eba18f1ba82daa9b90cb981eab61de66
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7851.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-7851.md
+    content_sha256: 02106c20d7ca55809bccbe955c2108275deebdaa7a396aea56860f5821d8d1d4
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:03:44+02:00'
+    session_id: assessment-run-856996ca-a5fb-48e3-993b-64d84b3dd168
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7702.md
+  - supporting/eip-8151.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Parameters; Specification > SETSELFDELEGATE
+    summary: SETSELFDELEGATE has a fixed cost of 9500 for every execution attempt.
+  rationale: >-
+    Adding a fixed charge for one opcode updates the existing opcode gas-cost
+    mechanism; it does not introduce a separate or dynamic execution-gas model.
+  confidence: high
+  uncertainty_note: >-
+    The amount is explicit, but charge ordering relative to checks and state
+    access is unspecified and scored in the state-access-ordering row.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE, execution rules 1-3
+    summary: >-
+      The new opcode charges 9500, checks the authority's raw code, and may
+      replace that code, without explicitly ordering the charge and accesses.
+  rationale: >-
+    A new state-accessing and state-writing operation is introduced whose
+    position in the gas/access order must be settled, matching score 2.
+  confidence: high
+  uncertainty_note: >-
+    Ordering relative to the static check, raw-code read, no-op branches, and
+    code write is not specified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The complete specification covers delegation execution, one opcode, and
+      ECDSA-related validation; it defines no blob behavior or cost.
+  rationale: No blob gas accounting mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: No blob surface appears in the snapshot.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE; Rationale, final paragraph
+    summary: >-
+      Success writes one 23-byte code value, while the only defined charge is
+      the fixed 9500 SETSELFDELEGATE execution-gas cost.
+  rationale: >-
+    No StateGasCosts rate, state-gas charging site, block budget, reservoir, or
+    spill rule is defined, so the documented proposal scores zero.
+  confidence: medium
+  uncertainty_note: >-
+    Integration of this new code-writing path with a separate state-gas regime
+    is materially unspecified and recorded separately.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE; Rationale, final paragraph
+    summary: >-
+      Each attempt pays a fixed charge and either writes code or returns zero;
+      no refund action is defined.
+  rationale: No gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: >-
+    EIP-7702's refund is not extended or invoked by EIP-7851's opcode.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Delegated Code Execution; Specification > Validation; Backwards Compatibility
+    summary: >-
+      Clients must recognize a second delegation prefix across execution and
+      reject or skip ECDSA actions for it; enabled delegations remain unchanged.
+  - source: supporting/eip-7702.md
+    locator: Specification > Set code transaction > Behavior > Delegation indicator
+    summary: >-
+      Existing delegation behavior spans CALL, CALLCODE, DELEGATECALL,
+      STATICCALL, transaction destinations, CODESIZE, and CODECOPY.
+  rationale: >-
+    Existing delegation and transaction-validation suites need coordinated
+    updates across several paths, but only for the delegated-EOA category.
+  confidence: medium
+  uncertainty_note: >-
+    The package has no test inventory, so the exact number of pre-existing
+    vectors needing rework is unavailable.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE; Backwards Compatibility
+    summary: >-
+      New outputs apply to EIP-7851 cases, while existing enabled delegations
+      are explicitly unchanged.
+  rationale: >-
+    The snapshot defines feature-specific expectations but no new assertion
+    that unrelated pre-existing tests must carry.
+  confidence: medium
+  uncertainty_note: >-
+    No packaged test-format material identifies a mechanically added invariant
+    outside EIP-7851 cases.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: >-
+      The proposal changes execution and transaction validation but defines no
+      transition-tool request or response field.
+  rationale: No transition-tool interface field or mechanism is specified.
+  confidence: high
+  uncertainty_note: >-
+    Implementing the rules in a transition tool is distinct from changing its
+    external interface.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE; Specification > Validation
+    summary: >-
+      Observable outcomes are stack success, exceptional halt, account code,
+      revert behavior, and transaction validity.
+  rationale: >-
+    These are expressible with ordinary EVM state and transaction expectations;
+    no new framework abstraction is required by the snapshot.
+  confidence: medium
+  uncertainty_note: >-
+    No test-framework implementation is packaged, so this is limited to the
+    specified observable outcomes.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Validation; Rationale, final paragraph
+    summary: >-
+      The feature disables existing ECDSA authority, and the new opcode performs
+      no signature verification or authority recovery.
+  rationale: >-
+    No cryptographic primitive or functionality is introduced or modified; an
+    already recovered identity is gated by raw account code.
+  confidence: high
+  uncertainty_note: ECDSA is context, but its algorithm is unchanged.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE
+    summary: >-
+      Cases include low-160-bit truncation, zero-address no-op, exact 23-byte
+      raw-code and two-prefix checks, static halt, revert, and success/no-change.
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE, frame-local paragraphs; Specification > Validation
+    summary: >-
+      Loaded frames keep old code while re-entrant calls load the new target;
+      current-state sender and authorization checks add further boundaries.
+  rationale: >-
+    Multiple boundary-prone mechanisms interact, with an elevated matrix across
+    frame locality, re-entrancy, revert, static execution, and raw-code shape.
+  confidence: high
+  uncertainty_note: Gas/access ordering at boundary gas amounts is unspecified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block RLP field or block RLP validation rule is defined.
+  rationale: No RLP validation mechanism for block syncing is introduced.
+  confidence: high
+  uncertainty_note: >-
+    Transaction validity affects block acceptance but is not block-RLP
+    validation under this anchor.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API field, endpoint, or communication mechanism is specified.
+  rationale: The Engine API is unchanged.
+  confidence: high
+  uncertainty_note: No Engine API surface appears in the package.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The feature consists of an account-code prefix, an opcode, and validation
+      rules; it deploys no protocol-designated contract.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: No system-contract surface appears in the snapshot.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The proposal names no pre-existing system contract or its state.
+  rationale: No direct or indirect system-contract modification is specified.
+  confidence: high
+  uncertainty_note: No system-contract dependency is identified by the package.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Parameters; Specification > SETSELFDELEGATE
+    summary: >-
+      One opcode is added with one stack input, one output, no data portion, and
+      a constant 9500 gas cost.
+  rationale: >-
+    Under this anchor it is one simple opcode: small stack mechanics and constant
+    gas, despite its stateful semantic importance.
+  confidence: high
+  uncertainty_note: The opcode byte is TBD, but the count and stack/gas shape are explicit.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Delegated Code Execution
+    summary: >-
+      Clients must treat new 0xef0101 identically to existing 0xef0100 for
+      delegated code execution.
+  - source: supporting/eip-7702.md
+    locator: Specification > Set code transaction > Behavior > Delegation indicator
+    summary: >-
+      Delegation affects CALL, CALLCODE, DELEGATECALL, STATICCALL, transaction
+      destinations, CODESIZE, and CODECOPY.
+  rationale: >-
+    Existing code-executing opcodes obtain a different result for the new
+    recognized prefix; any such non-gas behavior modification mandates score 3.
+  confidence: high
+  uncertainty_note: >-
+    Existing-operation vectors must be repeated for the second prefix.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification; Security Considerations, final paragraph
+    summary: >-
+      EIP-7851 defines no precompile and leaves ecrecover behavior to companion
+      EIP-8151.
+  rationale: No precompile is introduced by this proposal.
+  confidence: high
+  uncertainty_note: The companion is an interaction, not part of EIP-7851's mechanism.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, final paragraph
+    summary: >-
+      EIP-7851 does not make direct ECDSA checks reject disabled authorities and
+      points ecrecover behavior to EIP-8151.
+  - source: supporting/eip-8151.md
+    locator: Abstract; Specification > Modified ecRecover Behavior
+    summary: The companion, rather than EIP-7851, modifies ecrecover.
+  rationale: EIP-7851 modifies no existing precompile logic or gas schedule.
+  confidence: high
+  uncertainty_note: Coordination with EIP-8151 is scored under Cross-EIP interactions.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification
+    summary: >-
+      The new 0xef0101 sequence is raw account code; no transaction, block, or
+      interface encoding is changed.
+  rationale: >-
+    An account-code marker is outside this anchor's RLP/SSZ scope.
+  confidence: high
+  uncertainty_note: EIP-7702 transaction structures are reused without re-encoding.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Validation
+    summary: >-
+      Rules apply to EIP-7702 authorization processing and existing
+      ECDSA-authenticated transactions; no transaction type is added.
+  rationale: The proposal introduces no new transaction type.
+  confidence: high
+  uncertainty_note: It depends on the existing EIP-7702 transaction mechanism.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Validation
+    summary: >-
+      EIP-7702 authorizations from exact 0xef0101 code are invalid and skipped;
+      an ECDSA transaction from such a sender is invalid for blocks and pools.
+  rationale: >-
+    Existing authorization and sender-validity paths gain a state-dependent
+    branch requiring updated vectors, but no redesigned testing infrastructure.
+  confidence: high
+  uncertainty_note: >-
+    ECDSA-authenticated transaction is not enumerated by transaction type, so
+    coverage across existing families must be derived.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block or header field is defined.
+  rationale: The block and header schemas are unchanged.
+  confidence: high
+  uncertainty_note: No block/header surface appears in the snapshot.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification; Backwards Compatibility
+    summary: >-
+      Rules apply when new prefixes or actions are encountered; no
+      activation-block state rewrite or internal-variable modification exists.
+  rationale: No state or internal variable is modified specifically at activation.
+  confidence: high
+  uncertainty_note: Existing enabled delegations are explicitly unchanged.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, third paragraph
+    summary: >-
+      Delegated-code lookup can reuse an existing path, while transaction pools
+      may require an additional sender account-code read.
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE
+    summary: Success reads and replaces the authority's raw code.
+  rationale: >-
+    The opcode is locally benchmarkable, but sender-state reads and delegation
+    resolution affect existing pool and execution paths with stated limited impact.
+  confidence: medium
+  uncertainty_note: >-
+    No benchmarks are packaged; the EIP characterizes execution-load change as small.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations, first two paragraphs
+    summary: >-
+      Disabling ECDSA is irreversible, the original key cannot restore it, and
+      wallets are told to treat SETSELFDELEGATE as their highest privilege.
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE; Specification > Validation
+    summary: >-
+      The mechanism changes account code, re-entrant targets, authorization
+      processing, sender validity, and pool admission.
+  rationale: >-
+    A defect can permanently affect user control and funds while interacting
+    with multiple critical execution and authorization components, requiring
+    extensive review and fuzzing.
+  confidence: high
+  uncertainty_note: >-
+    Application-level ECDSA verification remains outside the protection.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter; Specification > Parameters
+    summary: The snapshot is Draft and leaves SETSELFDELEGATE_OPCODE as TBD.
+  - source: eip.md
+    locator: Specification > SETSELFDELEGATE
+    summary: >-
+      The opcode charges per attempt and performs raw-code checks and writes,
+      without stating their exact consensus-visible gas/access order.
+  rationale: >-
+    Clients need agreement on localized details, especially the opcode byte and
+    within-opcode order, before complete vectors can be baselined.
+  confidence: high
+  uncertainty_note: >-
+    Implementation, devnet, and discussion evidence is absent from the sealed
+    package and was not consulted.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Front matter requires; Abstract; Specification > Validation
+    summary: >-
+      EIP-7851 requires and extends EIP-7702 delegation execution and
+      authorization processing.
+  - source: eip.md
+    locator: Security Considerations, final paragraph
+    summary: EIP-8151 is the companion for ecrecover behavior.
+  - source: supporting/eip-8151.md
+    locator: Specification > Account Code Check
+    summary: >-
+      EIP-8151 permits only empty or 0xef0100 raw code, distinguishing the
+      disabled 0xef0101 prefix.
+  rationale: >-
+    EIP-7851 depends on and modifies EIP-7702 and needs coordinated ecrecover
+    consideration with EIP-8151; the interactions are important but limited.
+  confidence: high
+  uncertainty_note: >-
+    Only the two explicit numbered interactions are counted; indirect
+    dependencies of supporting documents are excluded.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7702
+  - 8151
+  unidentified_interactions:
+  - Existing ECDSA-authenticated transaction families covered by sender-code validity
+totals:
+  primary_score: 23
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    The opcode byte is TBD. The snapshot also does not fully specify charge and
+    state-access ordering or how its new code write participates in a separate
+    block-level state-gas regime. These omissions are confined to the directly
+    affected anchors.
+  affected_criteria:
+  - state_access_ordering_within_opcode_execution
+  - state_gas_accounting_changes
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 23
+    maximum: 25
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - What byte value is assigned to SETSELFDELEGATE_OPCODE?
+  - >-
+    At what point is fixed gas charged relative to stack validation, the static
+    check, raw-code access, no-op decisions, and the write?
+  - >-
+    Does a successful code replacement incur distinct state gas or affect a
+    state-gas budget or spill path, and if so how?
+  - >-
+    Which opcode accesses or writes are recordable in the block-level access
+    list at each gas boundary?
+notable_ambiguities:
+- >-
+  Special consideration: gas-boundary vectors multiply across static/non-static
+  context, enabled/disabled prefix, valid/invalid code shape, zero/nonzero
+  delegate, success/no-op, revert/success, and re-entrant/direct execution.
+- >-
+  ECDSA-authenticated transaction is not enumerated by type, so the breadth of
+  sender-code validity coverage must be explicit in tests.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md,
+    package/manifest.yaml, package/output-template.yaml, and the four allowlisted
+    assessment source files. No internet access, link following, external source,
+    repository evidence, prior assessment, post-snapshot information, validator,
+    or assessment skill was used.

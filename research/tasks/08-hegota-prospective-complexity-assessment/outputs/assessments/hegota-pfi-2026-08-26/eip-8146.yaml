@@ -1,0 +1,673 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8146
+  title: Block Access List Sidecars
+  layers:
+  - execution
+  - consensus
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer-only assessment of the draft EIP-8146 snapshot. The scored
+    surface separates the EIP-7928 RLP-encoded block access list from payload
+    delivery, adds early BAL delivery and block-hash pairing through the Engine
+    API, and enables EL prefetching or optional post-state-root computation. CL
+    sidecar gossip, PTC voting, fork choice, and SSZ-container work are boundary
+    context and are not scored as execution-layer complexity.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/packages/hegota-pfi-2026-08-26/eip-8146/manifest.yaml
+    manifest_sha256: fa5ce0cd621dc5912bb781f4661c9db17ee9f28b8441daf45052e1d5d6705d38
+  cohort_snapshot:
+    snapshot_id: hegota-pfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/hegota-pfi-2026-08-26.yaml
+    manifest_sha256: bdb644e26dc26aa9bd33878aa9837841e0d386bc2f0fbcdfe5a9a01fc21f851d
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-8146.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 2b8ad5f28661fed292923ceb22a2f8ab09d0b523
+    content_sha256: 6ae7e9e4ae78701183d38ac322c5d28f29691852371c1c390eec7b6c2bb2effd
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-8146.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/TASK.md
+    content_sha256: dfcd489eb00d9a2f6a66cfdd917ffdf6a02858edd110435ae716cf34e74511cb
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/inputs/prompts/hegota-pfi-2026-08-26/eip-8146.md
+    content_sha256: ed68c2e11ea9069996b111514ba16cbae159a3c8150fb4d358232f9d323d8d15
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-08-26T14:28:35+02:00'
+    session_id: assessment-run-e5b7dd27-bcd2-4c32-b5c7-9646d12706b8
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7732.md
+  - supporting/eip-7805.md
+  - supporting/eip-7928.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The EL block-access-list construction and validation rules remain those of
+      EIP-7928; this proposal changes delivery rather than EVM gas accounting.
+  rationale: >-
+    No EVM gas schedule or gas-accounting mechanism is added or modified on the
+    execution layer.
+  confidence: high
+  uncertainty_note: >-
+    The package specifies no gas-rule change; performance motivation for future
+    gas-limit increases is not itself a gas-accounting change.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      BAL construction and validation rules are explicitly left unchanged from
+      EIP-7928.
+  - source: supporting/eip-7928.md
+    locator: Specification > Gas Validation Before State Access
+    summary: >-
+      The inherited proposal defines the opcode state-access and gas-validation
+      ordering that determines BAL inclusion.
+  rationale: >-
+    EIP-8146 does not change inherited within-opcode access or gas-charge
+    ordering; it only transports the resulting BAL separately.
+  confidence: high
+  uncertainty_note: >-
+    No EIP-8146 text reopens or overrides the inherited opcode-ordering rules.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API > engine_newPayloadV5
+    summary: >-
+      The existing payload call is described as unchanged apart from the BAL
+      being delivered separately; no blob-gas rule is specified.
+  rationale: No blob-gas accounting mechanism or value is changed.
+  confidence: high
+  uncertainty_note: >-
+    Consensus-side blob availability is mentioned only to distinguish it from
+    BAL availability and is outside the scored EL surface.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The execution-layer change preserves EIP-7928 BAL construction and
+      validation and introduces no state-writing gas budget or charge.
+  rationale: >-
+    No state-gas charging site, rate, reservoir, budget, or spill interaction is
+    introduced or modified.
+  confidence: high
+  uncertainty_note: >-
+    Prefetching state is a performance operation, not a state-gas charge.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The proposal confines the EL change to BAL delivery and retains existing
+      BAL validation rules.
+  rationale: No new EVM refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: >-
+    The package contains no refund-rule amendment attributable to EIP-8146.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API
+    summary: >-
+      BAL and payload delivery are split, getPayload returns the BAL separately,
+      and the new notify call must precede newPayload for the same block hash.
+  - source: supporting/eip-7928.md
+    locator: Specification > Engine API
+    summary: >-
+      The inherited BAL flow put blockAccessList in ExecutionPayloadV4 and had
+      engine_newPayloadV5 validate that supplied field.
+  rationale: >-
+    Existing Engine API tests for the EIP-7928 BAL path require considerable but
+    category-local reworking to remove BAL delivery from newPayload, issue the
+    notification first, and pair both calls by block hash.
+  confidence: medium
+  uncertainty_note: >-
+    The package seals no implementation or test inventory, so the affected test
+    count is inferred only from the specified replacement of the BAL API flow.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API
+    summary: >-
+      For a given blockHash, engine_notifyBlockAccessListV1 must be called before
+      engine_newPayloadV5, and the EL may rely on BAL presence at payload delivery.
+  rationale: >-
+    The broad class of post-fork Engine API payload tests gains a mechanical
+    ordering-and-pairing invariant even when the test's subject is not sidecar
+    propagation; this is broader than a contrived case but not every EL test.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not define which test families exercise CL-to-EL delivery,
+    so the precise breadth below all fork tests is uncertain.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      Execution semantics and BAL construction/validation are unchanged; the new
+      transport is specified under the Engine API.
+  rationale: >-
+    The EIP does not require a new transition-tool field or mechanism because its
+    scored change is asynchronous Engine API delivery, not a state-transition
+    input or output change.
+  confidence: medium
+  uncertainty_note: >-
+    No transition-tool section is provided, but no changed transition semantics
+    establish a need to extend that interface.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API > New engine_notifyBlockAccessListV1
+    summary: >-
+      A new two-parameter Engine API method delivers a BAL independently before
+      payload submission.
+  rationale: >-
+    An Engine API test harness needs a minor extension to issue the new method and
+    express the required before-newPayload sequence, while ordinary call/result
+    assertions should otherwise suffice.
+  confidence: low
+  uncertainty_note: >-
+    The sealed package contains no test-framework description, so whether this is
+    merely a helper addition or a reusable new expectation primitive is unresolved.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Single Commitment, Shared Across Layers
+    summary: >-
+      The design reuses the EIP-7928 keccak256 commitment and explicitly avoids a
+      second hashing scheme.
+  - source: eip.md
+    locator: Rationale > No Separate Signature
+    summary: No separate sidecar signature or new signature scheme is introduced.
+  rationale: >-
+    Existing Keccak-256 commitment verification is reused; no new cryptographic
+    mechanism is added on the execution layer.
+  confidence: high
+  uncertainty_note: >-
+    A new CL dependency on an existing Keccak implementation is not new
+    cryptography and is outside the scored EL surface.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API
+    summary: >-
+      BAL and payload are separate calls keyed by blockHash, with mandatory
+      ordering and a best case in which the BAL precedes the payload.
+  - source: eip.md
+    locator: Specification > Fork Choice > Modified on_execution_payload_envelope
+    summary: >-
+      The envelope-first arrival case is cached and replayed only after the BAL is
+      delivered, establishing an EL-facing ordering boundary.
+  rationale: >-
+    Multiple boundary-prone cases require testing: BAL/payload hash pairing,
+    separate arrival timing, missing or mismatched notifications, and minimum or
+    maximum BAL payloads. The EIP constrains the valid call order, limiting the
+    combinatorial burden below the highest anchor.
+  confidence: medium
+  uncertainty_note: >-
+    Duplicate, conflicting, late, and orphaned notifications are not specified,
+    so the final number of execution-client boundary cases is uncertain.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The EL block header commitment is unchanged from EIP-7928; the EIP changes
+      propagation of the committed BAL rather than block RLP validation.
+  rationale: >-
+    No new execution-block RLP validation mechanism requiring client block-sync
+    testing is introduced.
+  confidence: high
+  uncertainty_note: >-
+    CL sidecar req/resp and retention requirements are not scored as EL block
+    syncing under this anchor.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API > engine_getPayloadV6
+    summary: >-
+      getPayload returns a separate blockAccessList field alongside the
+      ExecutionPayload.
+  - source: eip.md
+    locator: Specification > Engine API > New engine_notifyBlockAccessListV1
+    summary: >-
+      A new endpoint takes blockAccessList and blockHash and triggers storage and
+      prefetch work.
+  - source: eip.md
+    locator: Specification > Engine API > engine_newPayloadV5
+    summary: >-
+      newPayload no longer carries the BAL and must follow the matching notify
+      call.
+  rationale: >-
+    Multiple Engine API fields are introduced or relocated across the get and
+    notify paths, and a new endpoint is added, satisfying the score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    The exact JSON response and error schemas are omitted, but the endpoint and
+    its multiple parameters plus the getPayload field are explicit.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The execution-layer change is limited to BAL delivery and validation.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: >-
+    System-contract accesses recorded by the inherited BAL are not contracts
+    added by EIP-8146.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: BAL construction and validation remain those of EIP-7928.
+  rationale: No existing system-contract code, state, or behavior is modified.
+  confidence: high
+  uncertainty_note: >-
+    Prefetching entries that may include system-contract state has no specified
+    behavioral effect on those contracts.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The EIP retains existing execution and BAL validation rules.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: No opcode-table or EVM-instruction change appears in the package.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The proposal states that BAL construction and validation are unchanged.
+  rationale: No existing opcode result or non-gas behavior is modified.
+  confidence: high
+  uncertainty_note: >-
+    Inherited EIP-7928 observability rules are not changed by sidecar transport.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: Only BAL transport and early EL processing are specified.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: The package specifies no precompile address or call behavior.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: Existing execution and BAL validation semantics are retained.
+  rationale: No precompile logic or gas schedule is modified.
+  confidence: high
+  uncertainty_note: >-
+    Precompiles may be represented in a BAL under EIP-7928, but EIP-8146 does not
+    change their behavior.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API
+    summary: >-
+      The BAL remains RLP-encoded bytes when returned by getPayload and delivered
+      through notifyBlockAccessList.
+  - source: eip.md
+    locator: Rationale > Single Commitment, Shared Across Layers
+    summary: >-
+      The existing keccak256 of the RLP-encoded BAL is reused unchanged.
+  rationale: >-
+    The execution-layer interface relocates an existing RLP byte sequence but
+    does not switch or alter its encoding.
+  confidence: high
+  uncertainty_note: >-
+    New and modified SSZ containers are consensus-layer work and are excluded by
+    the execution-only assessment boundary.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: The proposal changes BAL propagation, not transaction envelopes.
+  rationale: No transaction type is introduced.
+  confidence: high
+  uncertainty_note: >-
+    FOCIL transaction filtering is a stated benefit, not a transaction-type change.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: BAL construction and validation rules stay as specified in EIP-7928.
+  rationale: >-
+    EIP-8146 introduces no transaction validity or intrinsic-gas rule; it changes
+    when auxiliary BAL data reaches the EL.
+  confidence: high
+  uncertainty_note: >-
+    Its stated benefit to FOCIL builders filtering invalidated transactions does
+    not impose a new EIP-8146 transaction-validity rule.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The execution block header block_access_list_hash field is explicitly
+      unchanged from EIP-7928.
+  rationale: No new execution block or execution header field is introduced.
+  confidence: high
+  uncertainty_note: >-
+    The new field in the CL ExecutionPayloadBid is outside the execution-layer
+    scoring boundary.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The EL header and BAL validation rules remain unchanged, with no activation
+      block state mutation specified.
+  rationale: >-
+    No execution state, pre-existing internal variable, or irregular transition
+    is modified at fork activation.
+  confidence: high
+  uncertainty_note: >-
+    Activation of a new RPC capability is not a state or internal-variable
+    mutation under this anchor.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      A roughly 70 KiB average and potentially large BAL is moved off the payload
+      critical path to create an execution prefetch head start.
+  - source: eip.md
+    locator: Specification > Engine API > New engine_notifyBlockAccessListV1
+    summary: >-
+      On notification, the EL stores the BAL, warms state through prefetching,
+      and may begin parallel post-state-root computation.
+  - source: eip.md
+    locator: Motivation
+    summary: >-
+      The stated objective is shorter payload propagation and validation to make
+      slot-time headroom available for gas-limit increases.
+  rationale: >-
+    The mechanism deliberately changes performance on the payload-validation
+    critical path and couples network arrival, Engine API scheduling, state-cache
+    behavior, execution, and optional parallel root computation. It cannot be
+    validated fully in isolation and substantially affects existing performance
+    benchmarks, meeting score 3.
+  confidence: high
+  uncertainty_note: >-
+    The package supplies size claims and sequencing but no benchmarks, and it
+    leaves the optional precomputation strategy implementation-defined.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API > New engine_notifyBlockAccessListV1
+    summary: >-
+      The EL stores and acts on BAL bytes before payload arrival by prefetching and
+      optionally computing a post-state root.
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      The EIP identifies withholding, network overhead, and hashing up to the
+      maximum BAL size, while retaining payload validation as the safety gate.
+  - source: supporting/eip-7928.md
+    locator: Security Considerations > Early Rejection of Malicious BALs
+    summary: >-
+      The inherited BAL design recognizes malicious declarations can force
+      unnecessary I/O and defer rejection until execution advances.
+  rationale: >-
+    Early action on builder-committed but not yet execution-validated BAL data
+    touches the Engine cache, state I/O, and later payload validation, slightly
+    altering resource-exhaustion and correct-pairing assumptions and warranting
+    targeted review and fuzzing.
+  confidence: medium
+  uncertainty_note: >-
+    Notify-call input validation, cache bounds, eviction, duplicates, and errors
+    are unspecified, preventing a firmer assessment of the risk envelope.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API > New engine_notifyBlockAccessListV1
+    summary: >-
+      The method defines parameters and successful EL actions but no response,
+      error, duplicate, conflict, malformed-input, or lifecycle behavior.
+  - source: eip.md
+    locator: Specification > Engine API > engine_getPayloadV6
+    summary: >-
+      The BAL is said to be a separate response field, but the exact response
+      container and failure semantics are not specified.
+  - source: eip.md
+    locator: Specification > Engine API > engine_newPayloadV5
+    summary: >-
+      The EL must pair a previously delivered BAL by blockHash, but orphaned,
+      repeated, or conflicting entries are not resolved in the text.
+  rationale: >-
+    Multiple test-constructable details require client agreement before Engine
+    API tests can be baselined. The gaps are material but localized to the new
+    asynchronous delivery and cache protocol, matching score 2 rather than a
+    protocol-wide re-baselining.
+  confidence: high
+  uncertainty_note: >-
+    The EIP is Draft and the sealed package contains no permitted implementation,
+    devnet, discussion-thread, or test evidence with which to resolve these gaps.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Preamble > requires
+    summary: EIP-8146 explicitly requires EIPs 7732 and 7928.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      It modifies EIP-7732 payload and bid containers and changes propagation of
+      EIP-7928 BALs.
+  - source: eip.md
+    locator: Abstract
+    summary: >-
+      The early BAL is also designed to help EIP-7805 inclusion-list builders
+      avoid transactions invalidated by the pending block.
+  - source: supporting/eip-7805.md
+    locator: Specification > Execution Layer
+    summary: >-
+      EIP-7805 performs post-payload validity checks for omitted inclusion-list
+      transactions, the operation the early BAL is intended to assist.
+  rationale: >-
+    The proposal strongly composes EIP-7732's separated payload delivery with
+    EIP-7928's BAL commitment and validation, requiring coordinated vectors for
+    both, while also creating an explicit but more limited EIP-7805 interaction.
+    Three interacting EIPs and two deep interdependencies justify score 3; no
+    uncapped increment applies because there are not more than three.
+  confidence: high
+  uncertainty_note: >-
+    The EIP-7805 benefit is motivational rather than a normative dependency, but
+    it still calls for interaction testing where both mechanisms are enabled.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7732
+  - 7805
+  - 7928
+  unidentified_interactions: []
+totals:
+  primary_score: 20
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    The new asynchronous Engine API protocol is materially under-specified. Its
+    happy path and required notify-before-newPayload order are clear, but its
+    response and error schemas, malformed input handling, duplicate or conflicting
+    notifications, blockHash cache lifetime and eviction, and orphan/reorg behavior
+    are not. These are one connected API-lifecycle gap and are not separately
+    multiplied across unrelated EVM anchors.
+  affected_criteria:
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 17
+    maximum: 22
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - >-
+    What result and error objects does engine_notifyBlockAccessListV1 return for
+    success, malformed RLP, an unknown blockHash, or resource-limit failure?
+  - >-
+    How must the EL handle duplicate or conflicting BAL notifications for the same
+    blockHash, including a notification after payload processing?
+  - >-
+    What cache bounds, retention, eviction, and reorg/orphan rules apply to BALs
+    received for payloads that arrive late or never arrive?
+  - >-
+    What is the exact engine_getPayloadV6 response container after blockAccessList
+    is removed from the ExecutionPayload, and how is that shape versioned?
+notable_ambiguities:
+- >-
+  The claimed protocol-enforced one-second useful-work window does not align
+  cleanly with the specified envelope-first case, which says the eventual EL head
+  start is zero; this affects performance expectations but not the existence of
+  the performance-testing burden.
+- >-
+  EIP-7928 describes engine_newPayloadV5 as accepting an ExecutionPayloadV4 that
+  contains blockAccessList, whereas EIP-8146 says engine_newPayloadV5 is unchanged
+  yet does not carry the BAL. The intended replacement flow is evident, but the
+  precise versioned interface definition is not provided.
+- >-
+  CL validation hashes opaque BAL bytes and the EL begins work immediately, but
+  the point at which malformed RLP is rejected before or during speculative EL
+  work is not stated.
+overall_confidence: medium
+snapshot_id: hegota-pfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I assessed only the execution-layer surface of the sealed EIP-8146 package,
+    consulted every allowlisted assessment source and no prohibited source, did
+    not use the internet or post-snapshot information, and did not use latent
+    knowledge to fill specification gaps or as scoring evidence.
