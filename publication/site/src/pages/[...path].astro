@@ -94,6 +94,7 @@ if (props.kind === 'result') title = resultTitles[props.result];
 const dataTitles = { catalog: 'Data catalog', canonical: 'Canonical research data', derived: 'Derived publication data', downloads: 'Downloads' };
 if (props.kind === 'data') title = dataTitles[props.section];
 const hegotaRows = data.assessments.filter((item) => item.fork === 'hegota');
+const forkShipping = data.fork_shipping;
 const correlations = [
   ['Delivery lead time', 34, 0.56], ['Specification rework', 49, 0.70], ['Integration exposure', 49, 0.40],
   ['Coordination surface', 49, 0.49], ['Emergent coupling', 49, 0.56], ['Observed-effort composite v0', 49, 0.58],
@@ -142,11 +143,30 @@ const correlations = [
     <div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Download CSV</a></div>
   </>}
 
-  {props.kind === 'result' && ['observed', 'association'].includes(props.result) && <>
-    <p class="eyebrow">Descriptive retrospective analysis</p><h1>{resultTitles[props.result]}</h1><p class="lede">Score-blind public-artifact proxies describe specification rework, integration exposure, coordination surface, emergent coupling, and delivery timing. They are not person-hours or causal effects.</p>
-    <div class="caveat">Hegotá is excluded because it has no observed outcome. Amsterdam is right-censored and potentially in-sample.</div>
+  {props.kind === 'result' && props.result === 'association' && <>
+    <p class="eyebrow">Primary retrospective result</p><h1>Does predicted complexity track delivery?</h1>
+    <p class="lede">At fork level, the study compares the time from development underway in earnest—the first devnet with at least two independent execution-layer clients—to mainnet against three summaries of predicted complexity.</p>
+    <div class="caveat"><strong>Five forks, descriptive only.</strong> Amsterdam uses the projected 15 December 2026 mainnet date and is potentially in-sample. Correlation does not establish that complexity caused delivery time; one fork can materially change these coefficients.</div>
+    <h2>Fork shipping span</h2>
+    <Chart spec={data.charts['fork-shipping']} label="Three scatter plots comparing fork shipping span with summed complexity, High-tier complexity, and the hardest single EIP" description="Filled points are four shipped forks. The open Amsterdam point uses a projected mainnet date. The development clock starts at the first devnet running at least two independent EL implementations." />
+    <div class="grid" aria-label="Fork-level correlation summary">
+      {forkShipping.correlations.map((item) => <article class="card"><p class="eyebrow">{item.label}</p><div class="stat">ρ {item.spearman_rho.toFixed(2)}</div><p class="muted">Pearson r {item.pearson_r.toFixed(2)} · n = 5 forks</p></article>)}
+    </div>
+    <div class="table-region" role="region" aria-label="Fork shipping data" tabindex="0"><table><caption>Fork-level values plotted above</caption><thead><tr><th scope="col">Fork</th><th scope="col">First ≥2-EL devnet</th><th scope="col">Mainnet</th><th scope="col" class="number">Days</th><th scope="col" class="number">Total score</th><th scope="col" class="number">High-tier sum</th><th scope="col" class="number">Hardest EIP</th></tr></thead><tbody>{forkShipping.rows.map((row) => <tr data-shipping-fork={row.fork}><td>{row.fork_name}{row.projected && ' (projected)'}</td><td>{row.first_multi_el_devnet}<br /><span class="muted">{row.first_multi_el_devnet_at}</span></td><td>{row.mainnet_at}</td><td class="number">{row.shipping_days}</td><td class="number">{row.total_score}</td><td class="number">{row.high_tier_score_sum}</td><td class="number">{row.hardest_eip}: {row.max_score}</td></tr>)}</tbody></table></div>
+    <p class="muted">Cancun is the only fork whose ≥2-EL start differs from its first EL devnet: devnets 1–3 ran a single patched geth fork, so this clock begins at dencun-devnet-4. Cancun also largely distinguishes the total-load and critical-path readings in this five-fork sample.</p>
+    <h2>EIP-level observed proxies</h2>
+    <p>As a separate view, each retrospective fork–EIP relationship is compared with score-blind public-artifact proxies for rework, integration, coordination, emergent coupling, and relative observed effort.</p>
     <Chart spec={data.charts['predicted-observed']} label="Faceted scatter plots comparing predicted complexity with observed-effort proxies" description="Each point is one of the 49 retrospective fork–EIP relationships; outlined encoding identifies censored Amsterdam observations." />
-    <div class="table-region" role="region" aria-label="Rank correlations" tabindex="0"><table><caption>Overall Spearman rank correlations</caption><thead><tr><th scope="col">Metric</th><th scope="col" class="number">N</th><th scope="col" class="number">Spearman ρ</th></tr></thead><tbody>{correlations.map((row) => <tr><td>{row[0]}</td><td class="number">{row[1]}</td><td class="number">{Number(row[2]).toFixed(2)}</td></tr>)}</tbody></table></div>
+    <div class="table-region" role="region" aria-label="Rank correlations" tabindex="0"><table><caption>Overall EIP-level Spearman rank correlations</caption><thead><tr><th scope="col">Metric</th><th scope="col" class="number">N</th><th scope="col" class="number">Spearman ρ</th></tr></thead><tbody>{correlations.map((row) => <tr><td>{row[0]}</td><td class="number">{row[1]}</td><td class="number">{Number(row[2]).toFixed(2)}</td></tr>)}</tbody></table></div>
+    <div class="actions"><a href={basePath('results/predicted-complexity/')}>Browse predicted scores</a><a href={basePath('results/observed-effort/')}>How observed proxies are defined</a><a href={basePath('results/human-automated-alignment/')}>Human–automated alignment</a></div>
+  </>}
+
+  {props.kind === 'result' && props.result === 'observed' && <>
+    <p class="eyebrow">Score-blind measurements</p><h1>{resultTitles[props.result]}</h1><p class="lede">Public-artifact proxies describe specification rework, integration exposure, coordination surface, emergent coupling, and delivery timing. They are not person-hours or causal effects.</p>
+    <div class="caveat">Hegotá is excluded because it has no observed outcome. Amsterdam is right-censored and potentially in-sample.</div>
+    <Chart spec={data.charts['predicted-observed']} label="Faceted scatter plots comparing predicted complexity with observed-effort proxies" description="The five proxy families were selected without reading predicted scores; this chart shows their later descriptive association with the 49 retrospective assessments." />
+    <div class="table-region" role="region" aria-label="Rank correlations" tabindex="0"><table><caption>Overall EIP-level Spearman rank correlations</caption><thead><tr><th scope="col">Metric</th><th scope="col" class="number">N</th><th scope="col" class="number">Spearman ρ</th></tr></thead><tbody>{correlations.map((row) => <tr><td>{row[0]}</td><td class="number">{row[1]}</td><td class="number">{Number(row[2]).toFixed(2)}</td></tr>)}</tbody></table></div>
+    <div class="actions"><a class="button" href={basePath('results/predicted-vs-observed/')}>See the central relationship analysis</a><a href={basePath('study/alternatives-and-decisions/')}>Metric-selection decisions</a></div>
   </>}
 
   {props.kind === 'result' && props.result === 'alignment' && <>

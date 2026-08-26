@@ -108,6 +108,23 @@ def validate() -> dict[str, int]:
     require(len(not_applicable) == 7, "Hegotá N/A population mismatch")
     require(all(row["score"] is None and row["tier"] is None for row in not_applicable), "N/A rows must not have score or tier")
 
+    shipping = data["fork_shipping"]
+    require(len(shipping["rows"]) == 5, "fork-shipping chart must contain five forks")
+    require(
+        [item["spearman_rho"] for item in shipping["correlations"]] == [0.4, 0.5, 0.9],
+        "fork-shipping rank correlations changed",
+    )
+    shipping_by_fork = {row["fork"]: row for row in shipping["rows"]}
+    require(
+        shipping_by_fork["cancun"]["first_multi_el_devnet"] == "dencun-devnet-4",
+        "Cancun ≥2-EL development start changed",
+    )
+    require(
+        shipping_by_fork["amsterdam"]["projected"] is True
+        and shipping_by_fork["amsterdam"]["mainnet_at"] == "2026-12-15",
+        "Amsterdam projection changed",
+    )
+
     serialized = data_path.read_text(encoding="utf-8")
     forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key"]
     for term in forbidden:
@@ -146,10 +163,13 @@ def validate() -> dict[str, int]:
     require(not broken, "broken internal links:\n" + "\n".join(broken[:20]))
 
     predicted_html = (DIST / "results/predicted-complexity/index.html").read_text(encoding="utf-8")
+    association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
     require(predicted_html.count('data-mode="') == 93, "all-forks HTML table row count mismatch")
     require(hegota_html.count('data-mode="prospective"') == 44, "Hegotá HTML table row count mismatch")
     require("data-retrospective-only" in predicted_html, "retrospective-only filter is missing")
+    require("generated/charts/fork-shipping.json" in association_html, "primary fork-shipping chart is missing")
+    require(association_html.count('data-shipping-fork="') == 5, "fork-shipping table row count mismatch")
 
     js_files = sorted((DIST / "_astro").glob("*.js"))
     require(js_files, "bundled JavaScript is missing")
