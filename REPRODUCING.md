@@ -128,9 +128,27 @@ uv run --locked python scripts/run_fork.py --fork FORK --jobs 3 --dry-run
 uv run --locked python scripts/run_fork.py --fork FORK --jobs 3
 ```
 
-All 49 packages are sealed and validated. The 12 Osaka assignments are already complete; Shanghai, Cancun, Prague, and Amsterdam contain 37 pending assignments. The orchestrator skips canonical outputs that already exist. Do not delete or overwrite an original assessment to force a rerun; independent verification belongs to Task 06 and must preserve the original score.
+All 49 packages are sealed and validated, and all 49 original assignments are complete. The orchestrator skips canonical outputs that already exist. Do not delete or overwrite an original assessment to force a rerun; independent verification belongs to Task 06 and must preserve the original score.
 
 Task 05 excludes opportunistic execution-specs and execution-spec-tests evidence from primary assessor packages. Exact immutable links to those repositories are retained only as manifest provenance and never enter `assessment_source_files`. A Danos checklist may be configured per fork through a machine-local path; when none is configured, the validated canonical output remains the completion record.
+
+## Task 07: observed-effort metrics and prediction join
+
+Recompute the observed-effort metrics and their redundancy analysis from the canonical Task 01/03/04/04b records (both scripts are score-blind and never read Task 05 outputs):
+
+```bash
+cd research/tasks/07-observed-effort-metrics
+uv run scripts/compute_metrics.py
+uv run scripts/analyze_redundancy.py
+```
+
+The prediction-outcome join and the interactive comparison charts are produced by a third, explicitly gated script that refuses to run unless all 49 original Task 05 assessments exist:
+
+```bash
+uv run scripts/plot_predicted_vs_observed.py
+```
+
+Metric definitions, missing-data rules, the Amsterdam censor date, and the composite construction are specified in the task's `TASK.md`; the metric-selection rationale is recorded in `outputs/redundancy/redundancy-report.md`. Outputs are deterministic apart from the recorded `generated_at` timestamp. Serve `outputs/join/` with the HTTP command below to browse the charts.
 
 ## Deterministic rerender check
 

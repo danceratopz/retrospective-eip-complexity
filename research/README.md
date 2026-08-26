@@ -33,12 +33,16 @@ research/
         ├── templates/    # One fork cutoff/cohort record
         ├── scripts/      # Validation and review rendering
         └── outputs/      # Proposed cutoffs, cohorts, policy, and plots
-    └── 05-retrospective-complexity-assignment/
+    ├── 05-retrospective-complexity-assignment/
         ├── TASK.md
         ├── inputs/       # Sealed one-EIP historical packages
         ├── prompts/      # One isolated-session wrapper per EIP
         ├── scripts/      # Preparation, isolation, orchestration, and validation
         └── outputs/      # Original retrospective assignments
+    └── 07-observed-effort-metrics/
+        ├── TASK.md
+        ├── scripts/      # Deterministic metric computation, redundancy analysis, prediction-join plots
+        └── outputs/      # Per-row metrics with evidence IDs, composite, correlation matrices, join/ charts
 ```
 
 YAML is the canonical research format because the records require human review, evidence notes, and occasional uncertainty. Dates must use quoted ISO 8601 values (`"YYYY-MM-DD"` or a full timestamp). Every factual claim must carry a primary-source reference.
@@ -54,3 +58,5 @@ Task 04 consumes Task 01 inclusion events and EIP revision histories once per fo
 Task 04b consumes the approved Task 04 inventory and Task 01 fork-scope events. It freezes a separate fork-level initial evaluation horizon and partitions final EIPs into forecastable and late-scope aggregation cohorts. Every EIP is still assessed individually; cohort membership affects only fork-level totals.
 
 Task 05 consumes only human-approved Task 04 records. It builds deterministic, hindsight-controlled historical packages and runs one isolated complexity-assessment session per EIP. Original assessments remain immutable inputs to later independent verification.
+
+Task 07 derives per-relationship observed-effort metrics from Tasks 01, 03, 04, and 04b. Metric definition, computation, and redundancy analysis are score-blind (they never read Task 05 outputs); a separate, explicitly gated script joins the metrics against the 49 predictions and renders the comparison charts. Metrics are derived artifacts with a `calculation_version` and per-row evidence IDs rather than new research observations.

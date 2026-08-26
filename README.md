@@ -32,9 +32,11 @@ Task 01: fork membership and EIP histories
                          +--> Task 05: isolated historical complexity assignment
                                     |
                                     +--> Task 06: independent verification (planned)
+                                    |
+                                    +--> Task 07: observed-effort metrics and prediction join
 ```
 
-Task 02 is independent supporting research and is not required to choose the Task 04 historical assessment ref. Tasks 03 and 04 provide the timeline-based human review used to freeze that ref. Task 04b separately defines which final EIPs were forecastable at the initial fork-scoping horizon; it never changes an EIP's assessment ref or score. Task 05 consumes only approved Task 04 records and then seals each EIP into a hindsight-controlled, one-EIP assessment package.
+Task 02 is independent supporting research and is not required to choose the Task 04 historical assessment ref. Tasks 03 and 04 provide the timeline-based human review used to freeze that ref. Task 04b separately defines which final EIPs were forecastable at the initial fork-scoping horizon; it never changes an EIP's assessment ref or score. Task 05 consumes only approved Task 04 records and then seals each EIP into a hindsight-controlled, one-EIP assessment package. Task 07 derives observed-effort metrics score-blind from Tasks 01/03/04/04b, then — only once all 49 original assessments exist — joins them against the Task 05 predictions and renders the comparison charts.
 
 ## Current state
 
@@ -45,8 +47,9 @@ Task 02 is independent supporting research and is not required to choose the Tas
 | Task 03 | All five fork timelines rendered and validated |
 | Task 04 | All 49 execution-affecting fork–EIP refs selected, human-approved, and mechanically validated |
 | Task 04b | Cutoffs and initial/late aggregation cohorts proposed for all five forks; human review pending |
-| Task 05 | All 49 packages sealed and validated; 12 Osaka assessments complete and 37 assessments pending |
+| Task 05 | All 49 original assessments complete and mechanically validated across the five forks |
 | Task 06 | Not yet defined |
+| Task 07 | Candidate metrics computed for all 49 rows (`observed-metrics-v0`); 5 metrics + composite selected via score-blind redundancy analysis; prediction join and interactive charts rendered |
 
 ## Reproducibility model
 

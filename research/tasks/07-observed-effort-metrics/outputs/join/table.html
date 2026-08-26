@@ -1,0 +1,846 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joined data — predicted vs observed</title>
+<style>
+ body { background:#f9f9f7; color:#0b0b0b; font-family:system-ui, -apple-system, 'Segoe UI', sans-serif; margin:2rem; }
+ table { border-collapse:collapse; background:#fcfcfb; }
+ th,td { border:1px solid #e1e0d9; padding:.3rem .55rem; text-align:right;
+          font-variant-numeric: tabular-nums; }
+ td:first-child,th:first-child,td:nth-child(3),th:nth-child(3)
+   { text-align:left; }
+ th { color:#52514e; position:sticky; top:0; background:#fcfcfb;
+      cursor:pointer; user-select:none; white-space:nowrap; }
+ th:hover { background:#e1e0d9; }
+ th .arrow { color:#898781; font-size:.75em; }
+ tbody tr:hover { background:#f4f3ef; }
+ .controls { margin:.8rem 0; display:flex; gap:.8rem; align-items:center;
+              flex-wrap:wrap; }
+ .controls input,.controls select { font:inherit; padding:.3rem .5rem;
+     border:1px solid #c3c2b7; border-radius:4px; background:#fcfcfb;
+     color:#0b0b0b; }
+ .muted { color:#898781; font-size:.9rem; }
+</style></head><body>
+<p><a href="index.html">&larr; back</a></p>
+<div class="controls">
+ <input id="q" type="search" placeholder="Filter rows (any column)…" size="30">
+ <select id="forkSel"><option value="">All forks</option><option value='shanghai'>Shanghai/Shapella (2023)</option><option value='cancun'>Cancun/Dencun (2024)</option><option value='prague'>Prague/Pectra (2025)</option><option value='osaka'>Osaka/Fusaka (2025)</option><option value='amsterdam'>Amsterdam/Glamsterdam (censored)</option></select>
+ <span id="count" class="muted"></span>
+ <span class="muted">Click a column header to sort; click again to reverse.
+ Empty cells (censored/missing) always sort last.</span>
+</div>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>fork</th>
+      <th>eip</th>
+      <th>eip_title</th>
+      <th>predicted_score</th>
+      <th>predicted_tier</th>
+      <th>days_cutoff_to_mainnet</th>
+      <th>subst_revisions_after_cutoff</th>
+      <th>devnet_count</th>
+      <th>deps_final</th>
+      <th>deps_after_cutoff</th>
+      <th>observed_effort_composite_v0</th>
+      <th>cohort</th>
+      <th>censored</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>amsterdam</td>
+      <td>7928</td>
+      <td>Block-Level Access Lists</td>
+      <td>40</td>
+      <td>high</td>
+      <td></td>
+      <td>50</td>
+      <td>17</td>
+      <td>10</td>
+      <td>2</td>
+      <td>0.94</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>8037</td>
+      <td>State Creation Gas Cost Increase</td>
+      <td>35</td>
+      <td>high</td>
+      <td></td>
+      <td>27</td>
+      <td>14</td>
+      <td>19</td>
+      <td>16</td>
+      <td>0.86</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>8282</td>
+      <td>Builder Execution Requests</td>
+      <td>32</td>
+      <td>high</td>
+      <td></td>
+      <td>2</td>
+      <td>3</td>
+      <td>8</td>
+      <td>1</td>
+      <td>0.44</td>
+      <td>late_scope</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>2780</td>
+      <td>Resource-based intrinsic transaction gas</td>
+      <td>25</td>
+      <td>high</td>
+      <td></td>
+      <td>15</td>
+      <td>3</td>
+      <td>14</td>
+      <td>7</td>
+      <td>0.68</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7843</td>
+      <td>SLOTNUM opcode</td>
+      <td>23</td>
+      <td>high</td>
+      <td></td>
+      <td>1</td>
+      <td>15</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.37</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7708</td>
+      <td>ETH transfers emit a log</td>
+      <td>19</td>
+      <td>medium</td>
+      <td></td>
+      <td>10</td>
+      <td>15</td>
+      <td>5</td>
+      <td>5</td>
+      <td>0.74</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>8038</td>
+      <td>State-access gas cost update</td>
+      <td>17</td>
+      <td>medium</td>
+      <td></td>
+      <td>12</td>
+      <td>3</td>
+      <td>10</td>
+      <td>7</td>
+      <td>0.62</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7954</td>
+      <td>Increase Maximum Contract Size</td>
+      <td>14</td>
+      <td>medium</td>
+      <td></td>
+      <td>1</td>
+      <td>14</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.40</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7997</td>
+      <td>Deterministic Factory Contract</td>
+      <td>14</td>
+      <td>medium</td>
+      <td></td>
+      <td>7</td>
+      <td>3</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.42</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7778</td>
+      <td>Block Gas Accounting without Refunds</td>
+      <td>13</td>
+      <td>medium</td>
+      <td></td>
+      <td>5</td>
+      <td>15</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.50</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>8024</td>
+      <td>Backward compatible SWAPN, DUPN, EXCHANGE</td>
+      <td>13</td>
+      <td>medium</td>
+      <td></td>
+      <td>7</td>
+      <td>15</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.52</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>8246</td>
+      <td>Remove SELFDESTRUCT Burn</td>
+      <td>12</td>
+      <td>medium</td>
+      <td></td>
+      <td>1</td>
+      <td>3</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.27</td>
+      <td>late_scope</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7981</td>
+      <td>Increase Access List Cost</td>
+      <td>11</td>
+      <td>low</td>
+      <td></td>
+      <td>6</td>
+      <td>13</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.48</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7976</td>
+      <td>Increase Calldata Floor Cost</td>
+      <td>10</td>
+      <td>low</td>
+      <td></td>
+      <td>2</td>
+      <td>13</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.42</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>amsterdam</td>
+      <td>7610</td>
+      <td>Revert creation in case of non-empty storage</td>
+      <td>9</td>
+      <td>low</td>
+      <td></td>
+      <td>1</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.33</td>
+      <td>forecastable_at_cutoff</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>cancun</td>
+      <td>4844</td>
+      <td>Shard Blob Transactions</td>
+      <td>48</td>
+      <td>high</td>
+      <td>461.60</td>
+      <td>24</td>
+      <td>12</td>
+      <td>6</td>
+      <td>0</td>
+      <td>1.00</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>cancun</td>
+      <td>4788</td>
+      <td>Beacon block root in the EVM</td>
+      <td>38</td>
+      <td>high</td>
+      <td>321.60</td>
+      <td>10</td>
+      <td>5</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.56</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>cancun</td>
+      <td>6780</td>
+      <td>SELFDESTRUCT only in same transaction</td>
+      <td>16</td>
+      <td>medium</td>
+      <td>349.60</td>
+      <td>2</td>
+      <td>5</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0.58</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>cancun</td>
+      <td>1153</td>
+      <td>Transient storage opcodes</td>
+      <td>15</td>
+      <td>medium</td>
+      <td>461.60</td>
+      <td>2</td>
+      <td>5</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.50</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>cancun</td>
+      <td>5656</td>
+      <td>MCOPY - Memory copying instruction</td>
+      <td>9</td>
+      <td>low</td>
+      <td>293.60</td>
+      <td>4</td>
+      <td>5</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.50</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>cancun</td>
+      <td>7516</td>
+      <td>BLOBBASEFEE opcode</td>
+      <td>9</td>
+      <td>low</td>
+      <td>181.60</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.36</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7594</td>
+      <td>PeerDAS - Peer Data Availability Sampling</td>
+      <td>24</td>
+      <td>high</td>
+      <td>432.10</td>
+      <td>3</td>
+      <td>6</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.76</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7892</td>
+      <td>Blob Parameter Only Hardforks</td>
+      <td>18</td>
+      <td>medium</td>
+      <td>253.30</td>
+      <td>6</td>
+      <td>6</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.71</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7823</td>
+      <td>Set upper bounds for MODEXP</td>
+      <td>13</td>
+      <td>medium</td>
+      <td>313.90</td>
+      <td>1</td>
+      <td>6</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.62</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7642</td>
+      <td>eth/69 - history expiry and simpler receipts</td>
+      <td>12</td>
+      <td>medium</td>
+      <td>285.20</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.39</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7910</td>
+      <td>eth_config JSON-RPC Method</td>
+      <td>12</td>
+      <td>medium</td>
+      <td>146.30</td>
+      <td>5</td>
+      <td>0</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.65</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7918</td>
+      <td>Blob base fee bounded by execution cost</td>
+      <td>11</td>
+      <td>low</td>
+      <td>251.90</td>
+      <td>6</td>
+      <td>5</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.85</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7951</td>
+      <td>Precompile for secp256r1 Curve Support</td>
+      <td>11</td>
+      <td>low</td>
+      <td>154.20</td>
+      <td>1</td>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.33</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7935</td>
+      <td>Set default gas limit to 60M</td>
+      <td>10</td>
+      <td>low</td>
+      <td>208.00</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.25</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7825</td>
+      <td>Transaction Gas Limit Cap</td>
+      <td>8</td>
+      <td>low</td>
+      <td>285.90</td>
+      <td>1</td>
+      <td>5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.40</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7883</td>
+      <td>ModExp Gas Cost Increase</td>
+      <td>8</td>
+      <td>low</td>
+      <td>285.50</td>
+      <td>3</td>
+      <td>6</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.76</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7934</td>
+      <td>RLP Execution Block Size Limit</td>
+      <td>7</td>
+      <td>low</td>
+      <td>208.00</td>
+      <td>2</td>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.43</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>osaka</td>
+      <td>7939</td>
+      <td>Count leading zeros (CLZ) opcode</td>
+      <td>6</td>
+      <td>low</td>
+      <td>154.20</td>
+      <td>1</td>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.33</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7002</td>
+      <td>Execution layer triggerable withdrawals</td>
+      <td>38</td>
+      <td>high</td>
+      <td>475.40</td>
+      <td>17</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.79</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>6110</td>
+      <td>Supply validator deposits on chain</td>
+      <td>36</td>
+      <td>high</td>
+      <td>475.40</td>
+      <td>7</td>
+      <td>8</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.58</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7685</td>
+      <td>General purpose execution layer requests</td>
+      <td>34</td>
+      <td>high</td>
+      <td>377.40</td>
+      <td>5</td>
+      <td>7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.35</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7702</td>
+      <td>Set Code for EOAs</td>
+      <td>33</td>
+      <td>high</td>
+      <td>349.40</td>
+      <td>26</td>
+      <td>7</td>
+      <td>12</td>
+      <td>7</td>
+      <td>0.83</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>2935</td>
+      <td>Serve historical block hashes from state</td>
+      <td>24</td>
+      <td>high</td>
+      <td>391.40</td>
+      <td>12</td>
+      <td>8</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0.79</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7251</td>
+      <td>Increase the MAX_EFFECTIVE_BALANCE</td>
+      <td>19</td>
+      <td>medium</td>
+      <td>412.40</td>
+      <td>17</td>
+      <td>8</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.79</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>2537</td>
+      <td>Precompile for BLS12-381 curve operations</td>
+      <td>16</td>
+      <td>medium</td>
+      <td>475.40</td>
+      <td>17</td>
+      <td>8</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.61</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7623</td>
+      <td>Increase calldata cost</td>
+      <td>16</td>
+      <td>medium</td>
+      <td>391.40</td>
+      <td>8</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.42</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7691</td>
+      <td>Blob throughput increase</td>
+      <td>16</td>
+      <td>medium</td>
+      <td>139.60</td>
+      <td>1</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.41</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7642</td>
+      <td>eth/69 - history expiry and simpler receipts</td>
+      <td>14</td>
+      <td>medium</td>
+      <td>19.50</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.21</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>prague</td>
+      <td>7840</td>
+      <td>Add blob schedule to EL config files</td>
+      <td>8</td>
+      <td>low</td>
+      <td>111.70</td>
+      <td>1</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.23</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>shanghai</td>
+      <td>4895</td>
+      <td>Beacon chain push withdrawals as operations</td>
+      <td>30</td>
+      <td>high</td>
+      <td>397.40</td>
+      <td>8</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.97</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>shanghai</td>
+      <td>3860</td>
+      <td>Limit and meter initcode</td>
+      <td>23</td>
+      <td>high</td>
+      <td>432.90</td>
+      <td>3</td>
+      <td>7</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.77</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>shanghai</td>
+      <td>3651</td>
+      <td>Warm COINBASE</td>
+      <td>6</td>
+      <td>low</td>
+      <td>404.90</td>
+      <td>0</td>
+      <td>7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.50</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>shanghai</td>
+      <td>3855</td>
+      <td>PUSH0 instruction</td>
+      <td>6</td>
+      <td>low</td>
+      <td>432.90</td>
+      <td>1</td>
+      <td>7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.50</td>
+      <td>forecastable_at_cutoff</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>shanghai</td>
+      <td>6049</td>
+      <td>Deprecate SELFDESTRUCT</td>
+      <td>3</td>
+      <td>low</td>
+      <td>83.90</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.27</td>
+      <td>late_scope</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+<script>
+(function () {
+  const table = document.querySelector("table");
+  const tbody = table.tBodies[0];
+  const ths = Array.from(table.tHead.rows[0].cells);
+  const q = document.getElementById("q");
+  const forkSel = document.getElementById("forkSel");
+  const count = document.getElementById("count");
+  let sortCol = -1, dir = 1;
+
+  ths.forEach((th, i) => {
+    const arrow = document.createElement("span");
+    arrow.className = "arrow";
+    th.appendChild(arrow);
+    th.addEventListener("click", () => {
+      dir = (sortCol === i) ? -dir : 1;
+      sortCol = i;
+      ths.forEach(t => t.querySelector(".arrow").textContent = "");
+      arrow.textContent = dir === 1 ? " \u25B2" : " \u25BC";
+      sortRows();
+    });
+  });
+
+  function cellText(row, i) { return row.cells[i].textContent.trim(); }
+
+  function sortRows() {
+    const rows = Array.from(tbody.rows);
+    rows.sort((a, b) => {
+      const va = cellText(a, sortCol), vb = cellText(b, sortCol);
+      if (va === "" && vb === "") return 0;
+      if (va === "") return 1;               // empties last either direction
+      if (vb === "") return -1;
+      const na = parseFloat(va), nb = parseFloat(vb);
+      if (!isNaN(na) && !isNaN(nb)) return (na - nb) * dir;
+      return va.localeCompare(vb) * dir;
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  }
+
+  function applyFilter() {
+    const needle = q.value.trim().toLowerCase();
+    const fork = forkSel.value;
+    let shown = 0;
+    Array.from(tbody.rows).forEach(row => {
+      const matchesFork = !fork || cellText(row, 0) === fork;
+      const matchesText = !needle ||
+        row.textContent.toLowerCase().includes(needle);
+      const show = matchesFork && matchesText;
+      row.style.display = show ? "" : "none";
+      if (show) shown++;
+    });
+    count.textContent = shown + " / " + tbody.rows.length + " rows";
+  }
+
+  q.addEventListener("input", applyFilter);
+  forkSel.addEventListener("change", applyFilter);
+  applyFilter();
+})();
+</script>
+</body></html>
