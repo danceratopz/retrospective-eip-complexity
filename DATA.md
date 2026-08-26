@@ -10,8 +10,10 @@ YAML is the canonical research format. Canonical records include:
 - fork milestones and per-EIP devnet participation;
 - proposed and approved assessment refs;
 - proposed and approved fork evaluation cutoffs and aggregation cohorts;
-- sealed historical assessment packages; and
-- original retrospective complexity assignments.
+- sealed historical assessment packages;
+- original retrospective complexity assignments;
+- frozen prospective fork-cohort snapshots and reviewed layer dispositions; and
+- isolated prospective complexity assignments in their task-specific namespace.
 
 Dates use quoted ISO 8601 values. Every factual observation must reference a source ID or be explicitly marked unknown. Git evidence records the repository, full commit SHA, path, and immutable permalink. Selected assessment refs additionally record the Git blob SHA and content SHA-256.
 
@@ -30,16 +32,17 @@ The following are derived from canonical records and may be regenerated:
 - offline HTML figures;
 - SVG and PDF figures;
 - plot manifests;
-- fork-cutoff review timelines; and
-- generated Task 05 prompts and sealed packages.
+- fork-cutoff review timelines;
+- generated Task 05 prompts and sealed packages; and
+- generated Task 08 one-EIP prompts, packages, freeze manifests, and summaries.
 
 Generated artifacts are retained in this initial snapshot because they make review convenient and their manifests permit direct hash comparison. They must never be edited by hand.
 
 ## Agent-produced evidence
 
-Task 04 ref proposals, Task 04b cutoff/cohort proposals, and Task 05 complexity assignments are agent-produced research records. Their provenance includes the task contract, inputs, selected historical content or scope event, rationale, confidence, unknowns, and review state.
+Task 04 ref proposals, Task 04b cutoff/cohort proposals, Task 05 complexity assignments, and Task 08 layer dispositions and prospective assignments are agent-produced research records. Their provenance includes the task contract, inputs, selected historical content or common snapshot, rationale, confidence, unknowns, and review state.
 
-Validated raw and canonical assessment YAML is versioned. Verbose Task 05 console transcripts are excluded from Git because they contain machine-specific paths and local Codex session identifiers. They are operational diagnostics rather than scoring evidence.
+Validated raw and canonical assessment YAML is versioned. Verbose Task 05 and Task 08 console transcripts are excluded from Git because they contain machine-specific paths and local Codex session identifiers. They are operational diagnostics rather than scoring evidence.
 
 ## Publication boundary
 

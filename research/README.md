@@ -39,10 +39,16 @@ research/
         ├── prompts/      # One isolated-session wrapper per EIP
         ├── scripts/      # Preparation, isolation, orchestration, and validation
         └── outputs/      # Original retrospective assignments
-    └── 07-observed-effort-metrics/
+    ├── 07-observed-effort-metrics/
         ├── TASK.md
         ├── scripts/      # Deterministic metric computation, redundancy analysis, prediction-join plots
         └── outputs/      # Per-row metrics with evidence IDs, composite, correlation matrices, join/ charts
+    └── 08-hegota-prospective-complexity-assessment/
+        ├── TASK.md
+        ├── inputs/       # Frozen 2026-08-26 EIP-8081 PFI cohort
+        ├── prompts/      # Coordinator plus isolated one-EIP prompt contract
+        ├── scripts/      # Shared-engine adapter, isolation, validation, and aggregation
+        └── outputs/      # Reviewed dispositions, frozen assessments, and summaries
 ```
 
 YAML is the canonical research format because the records require human review, evidence notes, and occasional uncertainty. Dates must use quoted ISO 8601 values (`"YYYY-MM-DD"` or a full timestamp). Every factual claim must carry a primary-source reference.
@@ -60,3 +66,5 @@ Task 04b consumes the approved Task 04 inventory and Task 01 fork-scope events. 
 Task 05 consumes only human-approved Task 04 records. It builds deterministic, hindsight-controlled historical packages and runs one isolated complexity-assessment session per EIP. Original assessments remain immutable inputs to later independent verification.
 
 Task 07 derives per-relationship observed-effort metrics from Tasks 01, 03, 04, and 04b. Metric definition, computation, and redundancy analysis are score-blind (they never read Task 05 outputs); a separate, explicitly gated script joins the metrics against the 49 predictions and renders the comparison charts. Metrics are derived artifacts with a `calculation_version` and per-row evidence IDs rather than new research observations.
+
+Task 08 freezes a separate prospective Hegotá PFI snapshot and reuses Task 05's execution-layer rubric and isolated one-EIP engine. Its common snapshot, layer-applicability gate, packages, assessments, freezes, and aggregates remain separate from the retrospective dataset. Consensus-only PFI entries receive explicit not-applicable records unless a future study adopts a dedicated consensus-layer rubric.

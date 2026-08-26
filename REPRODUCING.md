@@ -150,6 +150,39 @@ uv run scripts/plot_predicted_vs_observed.py
 
 Metric definitions, missing-data rules, the Amsterdam censor date, and the composite construction are specified in the task's `TASK.md`; the metric-selection rationale is recorded in `outputs/redundancy/redundancy-report.md`. Outputs are deterministic apart from the recorded `generated_at` timestamp. Serve `outputs/join/` with the HTTP command below to browse the charts.
 
+## Task 08: Hegotá prospective PFI assessment
+
+Read `research/tasks/08-hegota-prospective-complexity-assessment/TASK.md` and its `README.md` completely. The source cohort contains the 44 EIPs listed as Proposed for Inclusion in EIP-8081 at EIPs commit `ac450a4ab2f37387385ee9c54b62f518d97e6cc9`.
+
+Validate the frozen cohort against a complete local EIPs clone:
+
+```bash
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/validate_cohort.py \
+  --eips-repo ../EIPs
+```
+
+Validate the 37 sealed packages, require byte-identical regeneration from the
+pinned EIPs and rubric snapshots, and verify the frozen assessments before
+regenerating the deterministic summaries:
+
+```bash
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/validate_packages.py
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/prepare_packages.py \
+  --verify-regeneration --eips-repo ../EIPs --pm-repo ../pm
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/finalize.py \
+  --summarize
+```
+
+The top-level prompt for a filesystem-enabled coordinator LLM is `research/tasks/08-hegota-prospective-complexity-assessment/prompts/coordinator.md`. The coordinator first completes the human-reviewed execution/cross-layer/consensus disposition record, then extracts or parameterizes the reusable Task 05 engine, passes the 49-assessment Task 05 regression gate, constructs and freezes deterministic packages, runs one fresh isolated assessor per scorable EIP, freezes the outputs, and only then renders the cohort summary.
+
+Consensus-only PFI entries remain in the cohort but receive `not_applicable_to_el_rubric` records rather than numeric zeroes. Task 08 results use a separate namespace and never enter Task 05 retrospective totals or Task 07 analysis.
+
+The completed snapshot contains 37 validated execution-layer assessments. Five consensus-only entries and the two project-owner exclusions, EIP-8163 and EIP-8173, have no numeric score or tier. The human-readable aggregate is `research/tasks/08-hegota-prospective-complexity-assessment/outputs/summary.md`.
+
 ## Deterministic rerender check
 
 For a configured fork, hash the output directory, rerender from unchanged inputs, and require an empty diff. For example:
