@@ -323,6 +323,8 @@ def validate() -> dict[str, int]:
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
     require(hegota_html.count('data-mode="prospective"') == 44, "Hegotá HTML table row count mismatch")
+    require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
+    require(hegota_html.count('data-sort-key="') == 8, "Hegotá assessment columns must all be sortable")
     require(
         "independently of the STEEL team’s ongoing manual assessment work" in hegota_html,
         "Hegotá manual-assessment independence disclosure is missing",
