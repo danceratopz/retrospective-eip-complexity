@@ -244,6 +244,16 @@ def validate() -> dict[str, int]:
         "Hegotá Execution Layer scope is missing",
     )
     require("data-retrospective-only" in eip_index_html, "retrospective-only filter is missing")
+    hegota_chart = json.loads((DIST / "generated/charts/hegota-scores.json").read_text(encoding="utf-8"))
+    require(
+        len(hegota_chart["data"]["values"]) == 37
+        and all(row.get("title") for row in hegota_chart["data"]["values"]),
+        "Hegotá chart must carry every scored EIP title",
+    )
+    require(
+        any(item.get("field") == "title" and item.get("title") == "EIP name" for item in hegota_chart["encoding"]["tooltip"]),
+        "Hegotá chart tooltip is missing EIP names",
+    )
     require(
         association_html.index("generated/charts/fork-totals.json")
         < association_html.index("generated/charts/fork-shipping.json"),

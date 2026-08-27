@@ -429,7 +429,13 @@ def charts(
         },
         "hegota-scores": {
             "data": {"values": [
-                {"eip": f"EIP-{row['eip']}", "score": row["score"], "tier": row["tier"], "under": row["under_specification"]}
+                {
+                    "eip": f"EIP-{row['eip']}",
+                    "score": row["score"],
+                    "tier": row["tier"],
+                    "title": row["title"],
+                    "under": row["under_specification"],
+                }
                 for row in assessment_rows if row["fork"] == "hegota" and row["status"] == "scored"
             ]},
             "description": "Hegotá prospective execution-layer rubric scores, sorted by score.",
@@ -437,6 +443,7 @@ def charts(
                 "color": {"field": "tier", "scale": {"domain": ["low", "medium", "high"], "range": ["#2f855a", "#b7791f", "#c53030"]}, "title": "Tier", "type": "nominal"},
                 "tooltip": [
                     {"field": "eip", "title": "Proposal", "type": "nominal"},
+                    {"field": "title", "title": "EIP name", "type": "nominal"},
                     {"field": "score", "title": "Score", "type": "quantitative"},
                     {"field": "tier", "title": "Tier", "type": "nominal"},
                     {"field": "under", "title": "Under-specified", "type": "nominal"},
