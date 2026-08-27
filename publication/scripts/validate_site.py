@@ -261,6 +261,30 @@ def validate() -> dict[str, int]:
     )
     require("Fork-level correlation summary" not in association_html, "five-fork correlation cards remain")
     require(association_html.count('data-shipping-fork="') == 5, "fork-shipping table row count mismatch")
+    observed_charts = {
+        "predicted-observed-specification-rework": "Specification rework",
+        "predicted-observed-eip-interactions": "New EIP interactions",
+    }
+    for chart, metric in observed_charts.items():
+        require(f"generated/charts/{chart}.json" in association_html, f"{metric} chart is missing")
+        observed_spec = json.loads((DIST / f"generated/charts/{chart}.json").read_text(encoding="utf-8"))
+        observed_metrics = {row["metric"] for row in observed_spec["data"]["values"]}
+        require(observed_metrics == {metric}, f"{metric} chart contains another proxy")
+        require(len(observed_spec["data"]["values"]) == 34, f"{metric} must contain the 34 shipped-fork relationships")
+        require(
+            {row["fork"] for row in observed_spec["data"]["values"]}
+            == {"Shanghai / Shapella", "Cancun / Dencun", "Prague / Pectra", "Osaka / Fusaka"},
+            f"{metric} chart must exclude incomplete Amsterdam observations",
+        )
+        require("shape" not in observed_spec["encoding"] and "strokeDash" not in observed_spec["encoding"], f"{metric} retains censor encoding")
+        require(observed_spec["width"] == observed_spec["height"] == 500, f"{metric} plotting area must be square")
+    require("generated/charts/predicted-observed.json" not in association_html, "combined horizontal proxy chart remains")
+    require("Amsterdam is omitted from these plots" in association_html, "Amsterdam exclusion is unexplained")
+    require("right-censored" not in association_html.lower(), "censoring jargon remains on results page")
+    require(">34</td>" in association_html, "shipped-fork correlation sample size is incorrect")
+    require("counts substantive revisions" in association_html, "specification-rework proxy is unexplained")
+    require("counts distinct <code>requires</code> or <code>interacts_with</code>" in association_html, "EIP-interaction proxy is unexplained")
+    require("Emergent coupling" not in association_html, "jargon-heavy proxy label remains")
     require("generated/charts/human-alignment.json" in human_llm_html, "human–LLM chart is missing")
     require(human_llm_html.count('data-human-llm-eip="') == 12, "human–LLM table row count mismatch")
     require(human_llm_html.count('data-sort-key="') == 6, "human–LLM columns must all be sortable")

@@ -455,48 +455,57 @@ def charts(
     joined = read_csv(joined_path)
     sources.append(source(joined_path))
     metrics = [
-        ("subst_revisions_after_cutoff", "Specification rework"),
-        ("devnet_count", "Integration exposure"),
-        ("deps_final", "Coordination surface"),
-        ("deps_after_cutoff", "Emergent coupling"),
-        ("observed_effort_composite_v0", "Observed-effort composite v0"),
+        (
+            "subst_revisions_after_cutoff",
+            "Specification rework",
+            "predicted-observed-specification-rework",
+            "Predicted Complexity Versus Specification Rework",
+        ),
+        (
+            "deps_after_cutoff",
+            "New EIP interactions",
+            "predicted-observed-eip-interactions",
+            "Predicted Complexity Versus New EIP Interactions",
+        ),
     ]
-    values = []
-    for row in joined:
-        for field, label in metrics:
+    for field, label, chart_id, chart_title in metrics:
+        values = []
+        for row in joined:
+            if row["censored"] == "True":
+                continue
             value = number(row[field])
             if value is not None:
                 values.append({
-                    "censored": row["censored"] == "True",
                     "eip": f"EIP-{row['eip']}",
                     "fork": FORK_NAMES[row["fork"]],
                     "metric": label,
                     "observed": value,
                     "predicted": number(row["predicted_score"]),
                 })
-    specs["predicted-observed"] = {
-        "data": {"values": values},
-        "description": "Predicted complexity against five score-blind observed-effort proxies for 49 retrospective relationships.",
-        "encoding": {
-            "color": {"field": "fork", "title": "Fork", "type": "nominal"},
-            "column": {"field": "metric", "header": {"labelAngle": 0}, "title": None, "type": "nominal"},
-            "shape": {"field": "censored", "scale": {"domain": [False, True], "range": ["circle", "circle"]}, "title": "Right-censored", "type": "nominal"},
-            "strokeDash": {"field": "censored", "legend": None, "type": "nominal"},
-            "tooltip": [
-                {"field": "fork", "title": "Fork", "type": "nominal"},
-                {"field": "eip", "title": "EIP", "type": "nominal"},
-                {"field": "predicted", "title": "Predicted score", "type": "quantitative"},
-                {"field": "observed", "title": "Observed proxy", "type": "quantitative"},
-                {"field": "censored", "title": "Right-censored", "type": "nominal"},
-            ],
-            "x": {"field": "predicted", "title": "Predicted complexity", "type": "quantitative"},
-            "y": {"field": "observed", "title": "Observed proxy", "type": "quantitative"},
-        },
-        "height": 240,
-        "mark": {"filled": True, "opacity": 0.82, "size": 70, "type": "point"},
-        "title": "Predicted complexity and observed-effort proxies",
-        "width": 220,
-    }
+        specs[chart_id] = {
+            "data": {"values": values},
+            "description": f"Predicted complexity against the score-blind {label.lower()} proxy for 34 relationships in shipped forks.",
+            "encoding": {
+                "color": {
+                    "field": "fork",
+                    "legend": {"orient": "bottom"},
+                    "title": "Fork",
+                    "type": "nominal",
+                },
+                "tooltip": [
+                    {"field": "fork", "title": "Fork", "type": "nominal"},
+                    {"field": "eip", "title": "EIP", "type": "nominal"},
+                    {"field": "predicted", "title": "Predicted score", "type": "quantitative"},
+                    {"field": "observed", "title": label, "type": "quantitative"},
+                ],
+                "x": {"field": "predicted", "title": "Predicted complexity", "type": "quantitative"},
+                "y": {"field": "observed", "title": label, "type": "quantitative"},
+            },
+            "height": 500,
+            "mark": {"filled": True, "opacity": 0.82, "size": 70, "type": "point"},
+            "title": chart_title,
+            "width": 500,
+        }
 
     shipping_analysis, shipping_sources = fork_shipping(assessment_rows)
     shipping_specs = fork_shipping_specs(shipping_analysis)
