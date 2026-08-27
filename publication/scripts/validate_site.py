@@ -193,6 +193,11 @@ def validate() -> dict[str, int]:
         osaka_html.index("Complexity assessments") < osaka_html.index("How the historical refs were selected"),
         "fork assessment table must precede the supporting timeline",
     )
+    require(
+        "generated/charts/fork-milestones-osaka.json" in osaka_html
+        and "generated/charts/timeline-osaka.json" in osaka_html,
+        "Osaka fork and EIP timelines must render separately",
+    )
 
     fork_links = {}
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
@@ -209,11 +214,34 @@ def validate() -> dict[str, int]:
             require(url in detail.links, f"assessment page omits EIP-{row['eip']} revision link")
 
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
+        milestone_path = DIST / f"generated/charts/fork-milestones-{fork}.json"
+        milestone = json.loads(milestone_path.read_text(encoding="utf-8"))
+        require(milestone["width"] <= 1080, f"{fork} milestone timeline is too wide")
+        require("vconcat" not in milestone, f"{fork} milestone timeline was not separated")
+
         timeline_path = DIST / f"generated/charts/timeline-{fork}.json"
         timeline = json.loads(timeline_path.read_text(encoding="utf-8"))
-        require(timeline["vconcat"][0]["width"] <= 1080, f"{fork} milestone timeline is too wide")
-        require(timeline["vconcat"][1]["spec"]["width"] <= 820, f"{fork} EIP timelines are too wide")
-        require("subtitle" not in timeline["vconcat"][1]["title"], f"{fork} chart contains prose subtitles")
+        require(timeline["spec"]["width"] <= 820, f"{fork} EIP timelines are too wide")
+        require("vconcat" not in timeline, f"{fork} EIP timeline was not separated")
+        x_encodings = [
+            item["encoding"]["x"]
+            for item in timeline["spec"]["layer"]
+            if "x" in item.get("encoding", {})
+        ]
+        require(x_encodings, f"{fork} EIP timeline has no time encoding")
+        require(
+            len({tuple(item["scale"]["domain"]) for item in x_encodings}) == 1,
+            f"{fork} EIP timeline rows do not share one date domain",
+        )
+        require(
+            all(
+                item["axis"].get("labels")
+                and item["axis"].get("ticks")
+                and item["axis"].get("orient") == "top"
+                for item in x_encodings
+            ),
+            f"{fork} EIP timeline shared time axis is not visible",
+        )
 
     js_files = sorted((DIST / "_astro").glob("*.js"))
     require(js_files, "bundled JavaScript is missing")

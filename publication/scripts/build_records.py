@@ -397,32 +397,43 @@ def fork_shipping_spec(analysis: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def publication_timeline(spec: dict[str, Any]) -> dict[str, Any]:
-    spec.pop("$schema", None)
-    spec.pop("title", None)
-    spec["spacing"] = 16
-
+def publication_timelines(
+    spec: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    schema = spec["$schema"]
+    config = spec["config"]
     milestones, histories = spec["vconcat"]
     milestones["width"] = 1080
     milestones["height"] = min(milestones["height"], 320)
-    milestones["title"]["text"] = "Fork milestones and relevant devnets"
+    milestones.pop("title", None)
 
-    histories["title"].pop("subtitle", None)
-    histories["title"].pop("subtitleColor", None)
-    histories["title"].pop("subtitleFontSize", None)
-    histories["title"]["fontSize"] = 15
-    histories["title"]["text"] = "EIP revision histories and selected assessment refs"
+    histories.pop("title", None)
     histories["facet"]["row"]["header"]["labelFontSize"] = 10
     histories["facet"]["row"]["header"]["labelLimit"] = 245
     histories["spec"]["width"] = 820
 
     for item in histories["spec"]["layer"]:
         encoding = item.get("encoding", {})
+        if "x" in encoding:
+            encoding["x"]["axis"] = {
+                "domain": True,
+                "format": "%b %Y",
+                "grid": True,
+                "gridColor": "#E2E8F0",
+                "labelAngle": 0,
+                "labelColor": "#475569",
+                "labels": True,
+                "orient": "top",
+                "tickCount": 8,
+                "ticks": True,
+                "title": None,
+            }
         if "tooltip" in encoding:
             encoding["tooltip"] = [
                 field for field in encoding["tooltip"] if field.get("field") != "rationale"
             ]
-    return spec
+    common = {"$schema": schema, "config": config}
+    return ({**common, **milestones}, {**common, **histories})
 
 
 def charts(
@@ -569,7 +580,9 @@ def charts(
     for fork in FORK_ORDER[:-1]:
         path = TIMELINES / fork / "el-evaluation-cutoff-review.vl.json"
         spec = json.loads(path.read_text(encoding="utf-8"))
-        specs[f"timeline-{fork}"] = publication_timeline(spec)
+        milestones, histories = publication_timelines(spec)
+        specs[f"fork-milestones-{fork}"] = milestones
+        specs[f"timeline-{fork}"] = histories
         sources.append(source(path))
 
     for name, spec in specs.items():
