@@ -210,7 +210,7 @@ npm test
 npm run preview -- --host 127.0.0.1 --port 4321
 ```
 
-`npm run check` requires byte-identical adapter output across two consecutive generations. `npm test` checks the 93-record population, Hegotá score and N/A gates, generated-file hashes, static routes and links, base-path handling, forbidden public fields, semantic chart alternatives, and payload budgets. The resulting localhost URL is `http://127.0.0.1:4321/retrospective-complexity-eval/`.
+`npm run check` requires byte-identical adapter output across two consecutive generations. `npm test` checks the 93-record population, Hegotá score and N/A gates, generated-file hashes, static routes and links, base-path handling, forbidden public fields, semantic chart alternatives, and payload budgets. The resulting localhost URL is `http://127.0.0.1:4321/retrospective-eip-complexity/`.
 
 ## Viewing offline plots
 

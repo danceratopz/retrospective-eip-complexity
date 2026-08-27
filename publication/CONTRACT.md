@@ -1,6 +1,6 @@
 # Static publication contract
 
-Status: `local_preview`. This contract authorizes a static artifact served only on `127.0.0.1` beneath `/retrospective-complexity-eval/`. It does not authorize a remote, review artifact, GitHub Pages configuration, or public deployment.
+Status: `public`. The owner authorized deployment of the sanitized static artifact to `https://danceratopz.github.io/retrospective-eip-complexity/` on 27 August 2026.
 
 ## Normative scope
 
@@ -17,8 +17,8 @@ The following decisions are fixed:
 - The site explains method before results and supports both fork and EIP browsing.
 - Retrospective and prospective records remain structurally separate.
 - A minimal project-owned Python generator is a fallback only if the owner later rejects Node/npm or limits the site to a fixed snapshot.
-- A future deployment uses a clean-checkout custom GitHub Actions Pages artifact, full-SHA action pins, and least privileges.
-- Nothing becomes public until every mandatory release gate passes and the owner authorizes it.
+- Deployment uses a clean-checkout custom GitHub Actions Pages artifact, full-SHA action pins, and least privileges.
+- Only the adapter’s sanitized output is deployed; canonical research inputs remain repository records and excluded operational material is never copied into the Pages artifact.
 
 Changing one of these decisions requires an explicit owner review and a versioned contract change. An implementation inconsistency is a reason to stop, not permission to select another architecture silently.
 
@@ -149,7 +149,7 @@ A future build must:
 - sort every collection and serialize UTF-8 JSON with two-space indentation, sorted keys, and one trailing newline;
 - omit wall-clock build timestamps and use source-controlled identity such as the source commit when a date is needed;
 - produce identical file lists and hashes on two consecutive builds from unchanged inputs;
-- work beneath `/retrospective-complexity-eval/` with one centralized base-path helper;
+- work beneath `/retrospective-eip-complexity/` with one centralized base-path helper;
 - issue zero CDN, API, font, analytics, telemetry, or other external requests after build;
 - keep one shared local visualization runtime rather than one inline runtime per chart;
 - retain page title, method summary, status, limitations, semantic table, approved downloads, and provenance with JavaScript disabled; and
@@ -163,7 +163,7 @@ Initial performance budgets are 200 KiB compressed for a non-chart route, no mor
 
 ## Release states
 
-The current state is `local_preview`. [`contract/routes.json`](contract/routes.json) machine-owns the following transition conditions:
+The current state is `public`. [`contract/routes.json`](contract/routes.json) machine-owns the following transition conditions:
 
 1. `contract_internal`: contract files may exist locally; nothing is published.
 2. `local_preview`: a later Astro artifact is served only on localhost beneath the repository subpath.
@@ -171,23 +171,21 @@ The current state is `local_preview`. [`contract/routes.json`](contract/routes.j
 4. `publication_ready`: every license, redistribution, data-freeze, privacy, accessibility, performance, and factual review gate passes.
 5. `public`: the owner explicitly authorizes and creates the Pages deployment from the reviewed artifact.
 
-Only the owner can authorize `publication_ready` or `public`. State transitions are monotonic review decisions, not values inferred from the presence of files. The current artifact remains localhost-only.
+Only the owner can authorize `publication_ready` or `public`. State transitions are monotonic review decisions, not values inferred from the presence of files. The owner explicitly authorized the Pages deployment represented by this contract revision on 27 August 2026.
 
-## Unresolved blockers
+## Public-release decision
 
-Public release is blocked while any mandatory item below remains unresolved:
+The owner reviewed the static artifact and authorized its publication from `danceratopz/retrospective-eip-complexity`. The deployment preserves these release decisions:
 
-- the repository license and the license for project-owned research data, prose, Python code, and future site code;
-- the future GitHub owner, repository, Pages URL, repository visibility, and review/publication sequence;
-- all source entries with unknown redistribution state, plus attribution review before any source body is published;
-- one authoritative, owner-approved 49-assessment Task 05 publication freeze and resolution of contradictory maturity documentation;
-- human approval of the five Task 04b cutoff/cohort records;
-- whether SVG and untagged PDF downloads ship in the first release;
-- the final WCAG target, with WCAG 2.2 AA recommended;
-- final performance budgets after the representative implementation;
-- formal approval of this localhost artifact as a distributable review artifact.
+- the repository currently grants no project license; default copyright applies;
+- no upstream source body is republished, including sources with unknown or reference-only redistribution status;
+- the validated 49-assessment Task 05 dataset is the retrospective publication snapshot;
+- Task 04b classifications retain their provisional status and are not presented as approved findings;
+- SVG and PDF downloads are not part of this release;
+- automated privacy, link, accessibility-structure, determinism, and performance checks run before deployment; and
+- the research limitations and prospective/retrospective separation remain visible in the artifact.
 
-The validator passing proves internal consistency of this contract. It does not resolve a blocker, constitute legal review, establish publication readiness, or authorize release.
+The validator passing proves internal consistency of this contract and artifact boundary. Public status records the owner’s deployment authorization; it is not a claim that the study’s stated methodological limitations have been eliminated.
 
 ## Machine-readable ownership
 

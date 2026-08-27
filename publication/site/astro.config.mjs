@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  base: '/retrospective-complexity-eval',
+  base: '/retrospective-eip-complexity',
   build: { format: 'directory' },
   output: 'static',
-  site: 'http://127.0.0.1:4321',
+  site: 'https://danceratopz.github.io',
 });

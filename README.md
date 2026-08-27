@@ -11,10 +11,11 @@ The initial fork range is Shanghai/Shapella through Amsterdam/Glamsterdam. Execu
 
 ## Start here
 
+- [Published study site](https://danceratopz.github.io/retrospective-eip-complexity/) presents the methodology, fork and EIP assessments, results, and Human-versus-LLM comparison.
 - [REPRODUCING.md](REPRODUCING.md) describes the end-to-end research and review process.
 - [DATA.md](DATA.md) explains what is canonical, derived, generated, or deliberately excluded.
 - [research/README.md](research/README.md) describes the task-oriented directory structure.
-- [publication/CONTRACT.md](publication/CONTRACT.md) defines the sanitized local static-site boundary.
+- [publication/CONTRACT.md](publication/CONTRACT.md) defines the sanitized static-publication boundary.
 - Every task has its own `TASK.md` contract, inputs, templates, outputs, and provenance rules.
 
 ## Workflow
@@ -55,9 +56,11 @@ Task 02 is independent supporting research and is not required to choose the Tas
 | Task 07 | Candidate metrics computed for all 49 rows (`observed-metrics-v0`); 5 metrics + composite selected via score-blind redundancy analysis; prediction join and interactive charts rendered |
 | Task 08 | Complete: 44-entry Hegotá PFI snapshot reviewed; 37 execution-layer assessments validated and frozen; 5 consensus-only entries and 2 owner exclusions left unscored |
 
-## Local static site
+## Published and local site
 
-The publication adapter and Astro site under `publication/` project the committed research outputs into a localhost-only review artifact. The site contains 49 retrospective assessments plus all 44 Hegotá PFI entries, with prospective data labelled and kept out of the Task 07 outcome analysis.
+The publication adapter and Astro site under `publication/` project the committed research outputs into the [GitHub Pages site](https://danceratopz.github.io/retrospective-eip-complexity/). The site contains 49 retrospective assessments plus all 44 Hegotá PFI entries, with prospective data labelled and kept out of the Task 07 outcome analysis. Pushes to `main` rebuild, validate, and deploy the site through [the Pages workflow](.github/workflows/pages.yml).
+
+To build and preview the same artifact locally:
 
 ```bash
 cd publication/site
@@ -68,7 +71,7 @@ npm test
 npm run preview -- --host 127.0.0.1 --port 4321
 ```
 
-Open `http://127.0.0.1:4321/retrospective-complexity-eval/` after the server starts.
+Open `http://127.0.0.1:4321/retrospective-eip-complexity/` after the server starts.
 
 ## Reproducibility model
 
@@ -78,4 +81,4 @@ Historical interpretation and human review cannot be guaranteed to produce ident
 
 ## Repository status
 
-This repository was created as a local research checkpoint. No remote is configured and the static site is served only on localhost. A license and a publication review of raw evidence and operational metadata are still required before public distribution.
+This repository contains the research record and the source for its public static study site. The Pages build publishes only the adapter’s sanitized generated output; raw evidence trees, sealed assessment packages, prompts, logs, caches, and operational metadata are excluded. No project license is currently included, so public availability does not grant additional reuse rights.

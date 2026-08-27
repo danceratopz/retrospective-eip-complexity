@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 DIST = ROOT / "publication/site/dist"
-BASE = "/retrospective-complexity-eval/"
+BASE = "/retrospective-eip-complexity/"
 
 
 class SiteError(RuntimeError):
@@ -95,7 +95,7 @@ def validate() -> dict[str, int]:
     data_path = DIST / "generated/publication.json"
     data = json.loads(data_path.read_text(encoding="utf-8"))
     require(data["schema_version"] == "1.1.0", "publication schema mismatch")
-    require(data["release_state"] == "local_preview", "release state mismatch")
+    require(data["release_state"] == "public", "release state mismatch")
     rows = data["assessments"]
     historical = [row for row in rows if row["mode"] == "retrospective"]
     prospective = [row for row in rows if row["mode"] == "prospective"]

@@ -672,7 +672,7 @@ def build() -> dict[str, Any]:
         "forks": fork_summaries,
         "hegota": hegota,
         "human_llm": {"rows": alignment_rows},
-        "release_state": "local_preview",
+        "release_state": "public",
         "schema_version": VERSION,
     }
     write_json(PUBLIC / "publication.json", payload)

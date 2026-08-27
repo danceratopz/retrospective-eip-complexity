@@ -465,7 +465,7 @@ def validate_routes_labels_adapter(
     release_items = routes.get("release_states", [])
     release_keys = [item.get("key") for item in release_items]
     require(set(release_keys) == RELEASE_STATES and len(release_keys) == len(set(release_keys)), "routes: release states mismatch")
-    require(routes.get("release_state") == "local_preview", "routes: release state must be local_preview")
+    require(routes.get("release_state") == "public", "routes: release state must be public")
     owner_states = {item["key"]: item["owner_authorization_required"] for item in release_items}
     require(owner_states["publication_ready"] and owner_states["public"], "routes: owner gates are missing")
 

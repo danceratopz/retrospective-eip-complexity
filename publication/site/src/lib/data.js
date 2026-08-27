@@ -9,5 +9,5 @@ export function loadPublication() {
 
 export function basePath(value = '') {
   const normalized = value.replace(/^\/+/, '');
-  return `/retrospective-complexity-eval/${normalized}`;
+  return `/retrospective-eip-complexity/${normalized}`;
 }
