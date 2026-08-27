@@ -1,8 +1,8 @@
 ---
 import { basePath } from '../lib/data.js';
-const { spec, label, description, fit = false } = Astro.props;
+const { spec, label, description, fit = false, compact = false } = Astro.props;
 ---
-<figure class="chart-figure">
+<figure class:list={["chart-figure", compact && "chart-figure-compact"]}>
   <div class="chart" data-vega-spec={basePath(spec)} data-fit-chart={fit || undefined} role="img" aria-label={label}>
     <p class="chart-status">Loading interactive chart…</p>
   </div>
@@ -17,9 +17,10 @@ const { spec, label, description, fit = false } = Astro.props;
 
     const contentWidth = element.clientWidth - 34;
     if (typeof spec.width === 'number') {
-      // Preserve room for the milestone labels outside the plotting rectangle.
-      const width = Math.floor(contentWidth - 192);
-      if (width >= 640) {
+      const standardFit = element.dataset.fitChart === 'standard';
+      // Timelines need a wider label gutter; ordinary charts only need axis room.
+      const width = Math.floor(contentWidth - (standardFit ? 96 : 192));
+      if (width >= (standardFit ? 180 : 640)) {
         spec.width = Math.min(spec.width, width);
         const tickCount = width < 760 ? 6 : width < 900 ? 8 : 10;
         for (const layer of spec.layer ?? []) {

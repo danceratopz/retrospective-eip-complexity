@@ -126,10 +126,7 @@ def validate() -> dict[str, int]:
 
     shipping = data["fork_shipping"]
     require(len(shipping["rows"]) == 5, "fork-shipping chart must contain five forks")
-    require(
-        [item["spearman_rho"] for item in shipping["correlations"]] == [0.4, 0.5, 0.9],
-        "fork-shipping rank correlations changed",
-    )
+    require("correlations" not in shipping, "five-fork correlations must not be published")
     shipping_by_fork = {row["fork"]: row for row in shipping["rows"]}
     require(
         shipping_by_fork["cancun"]["first_multi_el_devnet"] == "dencun-devnet-4",
@@ -140,6 +137,14 @@ def validate() -> dict[str, int]:
         and shipping_by_fork["amsterdam"]["mainnet_at"] == "2026-12-15",
         "Amsterdam projection changed",
     )
+    human_llm = data["human_llm"]["rows"]
+    require(len(human_llm) == 12, "human–LLM comparison must contain 12 Amsterdam EIPs")
+    require(
+        [(row["eip"], row["human_score"], row["llm_v1_score"], row["llm_v2_score"]) for row in human_llm[:3]]
+        == [(7928, 29, 26, 40), (8037, 28, 21, 35), (8038, 20, 17, 17)],
+        "human–LLM score ordering changed",
+    )
+    require(sum(row["clean"] for row in human_llm) == 2, "human–LLM clean comparison count changed")
 
     serialized = data_path.read_text(encoding="utf-8")
     forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key"]
@@ -156,7 +161,7 @@ def validate() -> dict[str, int]:
     require(manifest["source_records"] == sorted(manifest["source_records"], key=lambda item: item["path"]), "source records are not stable-sorted")
 
     html_files = sorted(DIST.rglob("*.html"))
-    require(len(html_files) == 155, f"expected 155 static pages, found {len(html_files)}")
+    require(len(html_files) == 153, f"expected 153 static pages, found {len(html_files)}")
     broken: list[str] = []
     chart_pages = 0
     for html_path in html_files:
@@ -183,10 +188,10 @@ def validate() -> dict[str, int]:
             require(document.table_count or "generated/charts/" in text, f"{relative}: chart lacks table or data download")
     require(not broken, "broken internal links:\n" + "\n".join(broken[:20]))
 
-    predicted_html = (DIST / "results/predicted-complexity/index.html").read_text(encoding="utf-8")
     association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
     eip_index_html = (DIST / "eips/index.html").read_text(encoding="utf-8")
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
+    human_llm_html = (DIST / "human-vs-llm/index.html").read_text(encoding="utf-8")
     osaka_html = (DIST / "forks/osaka/index.html").read_text(encoding="utf-8")
     study_html = (DIST / "study/index.html").read_text(encoding="utf-8")
     require(
@@ -211,9 +216,17 @@ def validate() -> dict[str, int]:
     require("id=\"background\"" in study_html, "study background is missing")
     require("id=\"limitations\"" in study_html, "study limitations are missing")
     require("Method before results" not in study_html, "obsolete study eyebrow remains")
-    for removed_route in ["data", "limitations", "reproduce", "study/question-and-population", "study/workflow"]:
+    for removed_route in [
+        "data",
+        "limitations",
+        "reproduce",
+        "results/human-automated-alignment",
+        "results/observed-effort",
+        "results/predicted-complexity",
+        "study/question-and-population",
+        "study/workflow",
+    ]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
-    require(predicted_html.count('data-mode="') == 93, "all-forks HTML table row count mismatch")
     require(eip_index_html.count('data-mode="') == 93, "EIP index relationship row count mismatch")
     require('data-table-search' in eip_index_html, "EIP index substring search is missing")
     require('data-table-fork' in eip_index_html, "EIP index fork filter is missing")
@@ -230,9 +243,45 @@ def validate() -> dict[str, int]:
         "Execution Layer and execution-client networking surfaces only" in hegota_html,
         "Hegotá Execution Layer scope is missing",
     )
-    require("data-retrospective-only" in predicted_html, "retrospective-only filter is missing")
-    require("generated/charts/fork-shipping.json" in association_html, "primary fork-shipping chart is missing")
+    require("data-retrospective-only" in eip_index_html, "retrospective-only filter is missing")
+    require(
+        association_html.index("generated/charts/fork-totals.json")
+        < association_html.index("generated/charts/fork-shipping.json"),
+        "fork totals must be the first Results plot",
+    )
+    for chart in ["fork-shipping", "fork-shipping-high-tier", "fork-shipping-hardest-eip"]:
+        require(f"generated/charts/{chart}.json" in association_html, f"{chart} chart is missing")
+        chart_text = (DIST / f"generated/charts/{chart}.json").read_text(encoding="utf-8")
+        require("Spearman" not in chart_text and "Pearson" not in chart_text, f"{chart} publishes unstable correlations")
+        chart_spec = json.loads(chart_text)
+        require(chart_spec["width"] == chart_spec["height"] == 500, f"{chart} plotting area must be square")
+    require(
+        "Fork Shipping Time Versus Predicted Complexity" in association_html,
+        "fork-shipping section title must appear outside the charts",
+    )
+    require("Fork-level correlation summary" not in association_html, "five-fork correlation cards remain")
     require(association_html.count('data-shipping-fork="') == 5, "fork-shipping table row count mismatch")
+    require("generated/charts/human-alignment.json" in human_llm_html, "human–LLM chart is missing")
+    require(human_llm_html.count('data-human-llm-eip="') == 12, "human–LLM table row count mismatch")
+    require(human_llm_html.count('data-sort-key="') == 6, "human–LLM columns must all be sortable")
+    require(">Block-Level Access Lists</td>" in human_llm_html, "human–LLM proposal titles are missing")
+    require("The LLM applied a “risk-review tax.”" in human_llm_html, "human–LLM systematic difference is missing")
+    require("currently the only fork with a completed human complexity evaluation" in human_llm_html, "Amsterdam comparison rationale is missing")
+    require("manual evaluation for Hegotá is still underway" in human_llm_html, "Hegotá manual-evaluation status is missing")
+    require("structured sanity check" in human_llm_html, "human–LLM sanity-check framing is missing")
+    require("The two LLM evaluations differ only in the template." in human_llm_html, "controlled template comparison is not prominent")
+    require(
+        "https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md"
+        in human_llm_html,
+        "complexity-assessment template v1 permalink is missing",
+    )
+    require(
+        "https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md"
+        in human_llm_html,
+        "complexity-assessment template v2 permalink is missing",
+    )
+    require("No proposal revision or implementation evidence changed between them." in human_llm_html, "controlled LLM inputs are unclear")
+    require("Only two EIPs meet" not in human_llm_html, "secondary clean-subset warning remains prominent")
     require(osaka_html.count(">Current master</a>") == 12, "Osaka current-revision links are incomplete")
     require(osaka_html.count(">File history</a>") == 12, "Osaka file-history links are incomplete")
     require(

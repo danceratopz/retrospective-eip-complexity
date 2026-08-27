@@ -41,14 +41,14 @@ The required order is:
 2. workflow, evidence freezing, historical cutoffs, scope classifications, and EL-rubric boundary;
 3. status vocabulary, canonical/derived ownership, observed-effort proxy construction, and limitations;
 4. fork and EIP browsing with criterion evidence and provenance;
-5. predicted-complexity, observed-effort, association, and limited human-alignment results; and
+5. fork-level predicted complexity, association results, and the limited Amsterdam human–LLM comparison; and
 6. approved downloadable data products.
 
 The landing page must not lead with a correlation coefficient. Scores and associations appear only where method and caveats are available through the required cross-links in [`contract/routes.json`](contract/routes.json).
 
 ## Route and template contract
 
-Route identity, path parameters, source record types, templates, labels, provenance requirements, navigation, release states, and allowed cross-links are machine-owned by [`contract/routes.json`](contract/routes.json). The global navigation is Study, Forks, EIPs, and Results.
+Route identity, path parameters, source record types, templates, labels, provenance requirements, navigation, release states, and allowed cross-links are machine-owned by [`contract/routes.json`](contract/routes.json). The global navigation is Study, Forks, EIPs, Results, and Human vs LLM.
 
 The required route families are:
 
@@ -59,7 +59,8 @@ The required route families are:
 | Forks | `/forks/`, `/forks/{fork}/` | Fork inventory, maturity, timeline, scope, totals, EIPs, and caveats |
 | EIPs | `/eips/`, `/eips/{eip}/` | Global occurrence index; never a collapsed cross-cutoff score |
 | Assessments | `/forks/{fork}/eips/{eip}/` | The scoring authority shown to readers for one fork cutoff and EIP revision |
-| Results | `/results/predicted-complexity/`, `/results/observed-effort/`, `/results/predicted-vs-observed/`, `/results/human-automated-alignment/` | Explanation, mandatory caveats, chart, semantic table, and approved download |
+| Results | `/results/predicted-vs-observed/` | Fork complexity totals, shipping-time comparisons, observed-effort associations, mandatory caveats, and semantic tables |
+| Human vs LLM | `/human-vs-llm/` | Descriptive Amsterdam comparison of published human and blinded LLM complexity evaluations |
 | Prospective | `/prospective/hegota/` | Approved frozen Task 08 summary, plot, semantic table, downloads, provenance, and caveats |
 
 Approved downloads remain linked from the relevant results and assessment pages. Canonical research records and reproduction instructions remain repository documentation rather than standalone publication routes.

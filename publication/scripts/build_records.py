@@ -7,7 +7,6 @@ import argparse
 import csv
 import hashlib
 import json
-import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -219,33 +218,6 @@ def parse_datetime(value: str) -> datetime:
     return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed.astimezone(timezone.utc)
 
 
-def average_ranks(values: list[int]) -> list[float]:
-    ranks = [0.0] * len(values)
-    ordered = sorted(range(len(values)), key=values.__getitem__)
-    position = 0
-    while position < len(ordered):
-        end = position + 1
-        while end < len(ordered) and values[ordered[end]] == values[ordered[position]]:
-            end += 1
-        rank = (position + 1 + end) / 2
-        for index in ordered[position:end]:
-            ranks[index] = rank
-        position = end
-    return ranks
-
-
-def pearson(values_x: list[float], values_y: list[float]) -> float:
-    mean_x = sum(values_x) / len(values_x)
-    mean_y = sum(values_y) / len(values_y)
-    numerator = sum((x - mean_x) * (y - mean_y) for x, y in zip(values_x, values_y, strict=True))
-    denominator = math.sqrt(
-        sum((x - mean_x) ** 2 for x in values_x) * sum((y - mean_y) ** 2 for y in values_y)
-    )
-    if denominator == 0:
-        raise BuildError("fork-shipping correlation has a constant input")
-    return numerator / denominator
-
-
 def fork_shipping(
     assessment_rows: list[dict[str, Any]],
 ) -> tuple[dict[str, Any], list[dict[str, str]]]:
@@ -294,41 +266,25 @@ def fork_shipping(
             }
         )
 
-    correlation_fields = [
-        ("total_score", "Summed predicted complexity"),
-        ("high_tier_score_sum", "High-tier score sum"),
-        ("max_score", "Hardest single EIP"),
-    ]
-    shipping_days = [row["shipping_days"] for row in rows]
-    correlations = []
-    for field, label in correlation_fields:
-        values = [row[field] for row in rows]
-        correlations.append(
-            {
-                "field": field,
-                "label": label,
-                "pearson_r": round(pearson(values, shipping_days), 2),
-                "spearman_rho": round(pearson(average_ranks(values), average_ranks(shipping_days)), 2),
-            }
-        )
     return {
-        "correlations": correlations,
         "definition": "Calendar days from the fork's first devnet running at least two independent EL implementations to mainnet activation.",
         "rows": rows,
     }, sources
 
 
-def fork_shipping_spec(analysis: dict[str, Any]) -> dict[str, Any]:
+def fork_shipping_specs(analysis: dict[str, Any]) -> list[dict[str, Any]]:
     colors = ["#3457d5", "#c53030", "#2f855a", "#b7791f", "#7c3aed"]
     domains = [row["fork_name"] for row in analysis["rows"]]
-    panels = []
-    for index, correlation in enumerate(analysis["correlations"]):
-        field = correlation["field"]
-        x_title = correlation["label"]
+    specs = []
+    for field, x_title in [
+        ("total_score", "Summed predicted complexity"),
+        ("high_tier_score_sum", "High-tier score sum"),
+        ("max_score", "Hardest single EIP"),
+    ]:
         shared_encoding = {
             "color": {
                 "field": "fork_name",
-                "legend": {"title": "Fork"} if index == 0 else None,
+                "legend": None,
                 "scale": {"domain": domains, "range": colors},
                 "type": "nominal",
             },
@@ -348,13 +304,15 @@ def fork_shipping_spec(analysis: dict[str, Any]) -> dict[str, Any]:
             "y": {
                 "field": "shipping_days",
                 "scale": {"zero": True},
-                "title": "Days: first ≥2-EL devnet → mainnet" if index == 0 else None,
+                "title": "Days: first ≥2-EL devnet → mainnet",
                 "type": "quantitative",
             },
         }
-        panels.append(
+        specs.append(
             {
-                "height": 320,
+                "data": {"values": analysis["rows"]},
+                "description": f"Fork-level shipping span plotted against {x_title.lower()}.",
+                "height": 500,
                 "layer": [
                     {
                         "encoding": shared_encoding,
@@ -375,26 +333,11 @@ def fork_shipping_spec(analysis: dict[str, Any]) -> dict[str, Any]:
                         "mark": {"align": "left", "dx": 8, "fontSize": 11, "type": "text"},
                     },
                 ],
-                "title": {
-                    "subtitle": f"Spearman ρ = {correlation['spearman_rho']:.2f} · Pearson r = {correlation['pearson_r']:.2f}",
-                    "text": x_title,
-                },
-                "width": 300,
+                "title": x_title,
+                "width": 500,
             }
         )
-    return {
-        "data": {"values": analysis["rows"]},
-        "description": "Fork-level shipping spans plotted against three summaries of predicted execution-layer complexity.",
-        "hconcat": panels,
-        "resolve": {"scale": {"color": "shared", "y": "shared"}},
-        "title": {
-            "subtitle": [
-                "Development starts at the first devnet with at least two independent EL implementations.",
-                "Amsterdam is an open marker using the projected 2026-12-15 mainnet date; n = 5 forks, descriptive only.",
-            ],
-            "text": "Fork shipping time versus predicted complexity",
-        },
-    }
+    return specs
 
 
 def publication_timelines(
@@ -450,7 +393,7 @@ def publication_timelines(
 
 def charts(
     assessment_rows: list[dict[str, Any]],
-) -> tuple[dict[str, str], dict[str, Any], list[dict[str, str]]]:
+) -> tuple[dict[str, str], dict[str, Any], list[dict[str, Any]], list[dict[str, str]]]:
     chart_dir = PUBLIC / "charts"
     chart_dir.mkdir(parents=True, exist_ok=True)
     sources: list[dict[str, str]] = []
@@ -556,36 +499,97 @@ def charts(
     }
 
     shipping_analysis, shipping_sources = fork_shipping(assessment_rows)
-    specs["fork-shipping"] = fork_shipping_spec(shipping_analysis)
+    shipping_specs = fork_shipping_specs(shipping_analysis)
+    specs["fork-shipping"] = shipping_specs[0]
+    specs["fork-shipping-high-tier"] = shipping_specs[1]
+    specs["fork-shipping-hardest-eip"] = shipping_specs[2]
     sources.extend(shipping_sources)
 
-    alignment_values = []
+    alignment_rows = []
     for path in sorted(ALIGNMENT.glob("eip-*.yaml")):
         item = load_yaml(path)
-        alignment_values.append({
-            "automated": item["observations"]["B_historical_rubric_automated"]["total"],
-            "clean": item["clean_comparison"]["eligible"],
-            "eip": f"EIP-{item['eip']['number']}",
-            "human": item["observations"]["C_historical_human"]["recomputed_total"],
-        })
+        observations = item["observations"]
+        alignment_rows.append(
+            {
+                "clean": item["clean_comparison"]["eligible"],
+                "eip": item["eip"]["number"],
+                "human_score": observations["C_historical_human"]["recomputed_total"],
+                "human_tier": observations["C_historical_human"]["recomputed_tier"],
+                "llm_v1_score": observations["B_historical_rubric_automated"]["total"],
+                "llm_v1_tier": observations["B_historical_rubric_automated"]["tier"],
+                "llm_v2_score": observations["A_current_rubric_automated"]["total"],
+                "llm_v2_tier": observations["A_current_rubric_automated"]["tier"],
+                "title": item["eip"]["title"],
+            }
+        )
         sources.append(source(path))
+    alignment_rows.sort(key=lambda row: (-row["human_score"], row["eip"]))
+    eip_order = [f"EIP-{row['eip']}" for row in alignment_rows]
+    alignment_values = []
+    for row in alignment_rows:
+        for evaluation, score, tier in [
+            ("Human · v1 rubric", row["human_score"], row["human_tier"]),
+            ("LLM · v1 rubric", row["llm_v1_score"], row["llm_v1_tier"]),
+            ("LLM · v2 rubric", row["llm_v2_score"], row["llm_v2_tier"]),
+        ]:
+            alignment_values.append(
+                {
+                    "clean": row["clean"],
+                    "eip": f"EIP-{row['eip']}",
+                    "evaluation": evaluation,
+                    "score": score,
+                    "tier": tier,
+                    "title": row["title"],
+                }
+            )
     specs["human-alignment"] = {
         "data": {"values": alignment_values},
-        "description": "Historical-rubric automated and human Amsterdam scores for the 12 reconstructable comparisons.",
-        "encoding": {
-            "color": {"field": "clean", "title": "Clean comparison", "type": "nominal"},
-            "tooltip": [
-                {"field": "eip", "title": "EIP", "type": "nominal"},
-                {"field": "human", "title": "Human", "type": "quantitative"},
-                {"field": "automated", "title": "Automated", "type": "quantitative"},
-                {"field": "clean", "title": "Clean", "type": "nominal"},
-            ],
-            "x": {"field": "human", "scale": {"zero": True}, "title": "Historical human score", "type": "quantitative"},
-            "y": {"field": "automated", "scale": {"zero": True}, "title": "Blinded automated score", "type": "quantitative"},
+        "description": "Three complexity-evaluation scores for each of 12 Amsterdam EIPs, ordered by the historical human score.",
+        "height": 460,
+        "layer": [
+            {
+                "encoding": {
+                    "x": {"aggregate": "min", "field": "score", "type": "quantitative"},
+                    "x2": {"aggregate": "max", "field": "score"},
+                    "y": {"field": "eip", "sort": eip_order, "title": None, "type": "nominal"},
+                },
+                "mark": {"color": "#d9d7cf", "strokeWidth": 2, "type": "rule"},
+            },
+            {
+                "encoding": {
+                    "color": {
+                        "field": "evaluation",
+                        "legend": {"orient": "top", "title": None},
+                        "scale": {
+                            "domain": ["Human · v1 rubric", "LLM · v1 rubric", "LLM · v2 rubric"],
+                            "range": ["#17202a", "#3457d5", "#b52e31"],
+                        },
+                        "type": "nominal",
+                    },
+                    "shape": {"field": "evaluation", "legend": None, "type": "nominal"},
+                    "tooltip": [
+                        {"field": "eip", "title": "EIP", "type": "nominal"},
+                        {"field": "title", "title": "Title", "type": "nominal"},
+                        {"field": "evaluation", "title": "Evaluation", "type": "nominal"},
+                        {"field": "score", "title": "Score", "type": "quantitative"},
+                        {"field": "tier", "title": "Tier", "type": "nominal"},
+                        {"field": "clean", "title": "Clean same-rubric comparison", "type": "nominal"},
+                    ],
+                    "x": {
+                        "field": "score",
+                        "scale": {"domain": [0, 42]},
+                        "title": "Complexity score (rubric-specific scale)",
+                        "type": "quantitative",
+                    },
+                    "y": {"field": "eip", "sort": eip_order, "title": None, "type": "nominal"},
+                },
+                "mark": {"filled": True, "size": 120, "stroke": "white", "strokeWidth": 1, "type": "point"},
+            },
+        ],
+        "title": {
+            "subtitle": "V2 uses a different rubric; compare ordering rather than raw distance.",
+            "text": "Amsterdam Human and Blinded LLM Scores",
         },
-        "height": 380,
-        "mark": {"filled": True, "size": 100, "type": "point"},
-        "title": "Amsterdam historical-checklist alignment",
         "width": 680,
     }
 
@@ -601,7 +605,7 @@ def charts(
         path = chart_dir / f"{name}.json"
         write_json(path, spec)
         outputs[name] = f"generated/charts/{name}.json"
-    return outputs, shipping_analysis, sources
+    return outputs, shipping_analysis, alignment_rows, sources
 
 
 def write_csv(rows: list[dict[str, Any]]) -> None:
@@ -625,7 +629,7 @@ def build() -> dict[str, Any]:
     rows.sort(key=lambda row: (FORK_ORDER.index(row["fork"]), row["eip"]))
     if len(rows) != 93 or len(retrospective) != 49 or len(prospective) != 44:
         raise BuildError("assessment population mismatch")
-    chart_paths, shipping_analysis, chart_sources = charts(rows)
+    chart_paths, shipping_analysis, alignment_rows, chart_sources = charts(rows)
     write_csv(rows)
     fork_summaries = []
     for fork in FORK_ORDER:
@@ -651,6 +655,7 @@ def build() -> dict[str, Any]:
         "fork_shipping": shipping_analysis,
         "forks": fork_summaries,
         "hegota": hegota,
+        "human_llm": {"rows": alignment_rows},
         "release_state": "local_preview",
         "schema_version": VERSION,
     }

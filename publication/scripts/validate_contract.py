@@ -39,10 +39,8 @@ ROUTE_FAMILIES = {
     "fork_eip_assessment",
     "global_eip_index",
     "global_eip_detail",
-    "result_predicted_complexity",
-    "result_observed_effort",
     "result_predicted_vs_observed",
-    "result_human_alignment",
+    "human_llm_comparison",
     "prospective_hegota",
 }
 LABEL_KEYS = {
