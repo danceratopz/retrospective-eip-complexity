@@ -164,6 +164,7 @@ def validate() -> dict[str, int]:
         document = Document()
         document.feed(text)
         relative = html_path.relative_to(DIST)
+        require("cohort" not in text.lower(), f"{relative}: user-facing cohort jargon remains")
         require(document.h1_count == 1, f"{relative}: expected one h1")
         require(document.has_title, f"{relative}: title is missing")
         require(document.has_skip_link and document.has_main and document.has_nav, f"{relative}: required landmarks are missing")
@@ -233,7 +234,9 @@ def validate() -> dict[str, int]:
         require("vconcat" not in milestone, f"{fork} milestone timeline was not separated")
 
         timeline_path = DIST / f"generated/charts/timeline-{fork}.json"
-        timeline = json.loads(timeline_path.read_text(encoding="utf-8"))
+        timeline_text = timeline_path.read_text(encoding="utf-8")
+        require("cohort" not in timeline_text.lower(), f"{fork} timeline contains cohort jargon")
+        timeline = json.loads(timeline_text)
         require(timeline["spec"]["width"] <= 820, f"{fork} EIP timelines are too wide")
         require("vconcat" not in timeline, f"{fork} EIP timeline was not separated")
         x_encodings = [

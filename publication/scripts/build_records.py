@@ -412,6 +412,12 @@ def publication_timelines(
     histories["facet"]["row"]["header"]["labelLimit"] = 245
     histories["spec"]["width"] = 820
 
+    for value in histories["data"]["values"]:
+        if "cohort" in value:
+            value["scope_at_cutoff"] = value.pop("cohort")
+        if value.get("selection_mode") == "aggregation_cohort":
+            value["selection_mode"] = "fork scope"
+
     for item in histories["spec"]["layer"]:
         encoding = item.get("encoding", {})
         if "x" in encoding:
@@ -429,9 +435,15 @@ def publication_timelines(
                 "title": None,
             }
         if "tooltip" in encoding:
-            encoding["tooltip"] = [
-                field for field in encoding["tooltip"] if field.get("field") != "rationale"
-            ]
+            tooltip = []
+            for field in encoding["tooltip"]:
+                if field.get("field") == "rationale":
+                    continue
+                if field.get("field") == "cohort":
+                    field["field"] = "scope_at_cutoff"
+                    field["title"] = "Scope at cutoff"
+                tooltip.append(field)
+            encoding["tooltip"] = tooltip
     common = {"$schema": schema, "config": config}
     return ({**common, **milestones}, {**common, **histories})
 
@@ -456,7 +468,7 @@ def charts(
     specs: dict[str, dict[str, Any]] = {
         "fork-totals": {
             "data": {"values": totals},
-            "description": "Retrospective EL-rubric score sums for five historical fork cohorts.",
+            "description": "Retrospective EL-rubric score sums for five historical forks.",
             "encoding": {
                 "color": {"field": "fork_name", "legend": None, "type": "nominal"},
                 "tooltip": [
