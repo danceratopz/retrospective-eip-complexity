@@ -107,6 +107,17 @@ def validate() -> dict[str, int]:
     require(len(scored_hegota) == 37 and sum(row["score"] for row in scored_hegota) == 776, "Hegotá score gate mismatch")
     require(len(not_applicable) == 7, "Hegotá N/A population mismatch")
     require(all(row["score"] is None and row["tier"] is None for row in not_applicable), "N/A rows must not have score or tier")
+    for row in historical:
+        commit = row["assessed_revision"]
+        require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None, "invalid assessed EIP commit")
+        require(
+            row["assessed_revision_url"].startswith(f"https://github.com/ethereum/EIPs/blob/{commit}/EIPS/eip-"),
+            "assessed-revision permalink mismatch",
+        )
+        require(
+            row["revision_diff_url"].startswith(f"https://github.com/ethereum/EIPs/compare/{commit}...master?"),
+            "current-master diff link mismatch",
+        )
 
     shipping = data["fork_shipping"]
     require(len(shipping["rows"]) == 5, "fork-shipping chart must contain five forks")
@@ -165,11 +176,38 @@ def validate() -> dict[str, int]:
     predicted_html = (DIST / "results/predicted-complexity/index.html").read_text(encoding="utf-8")
     association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
+    osaka_html = (DIST / "forks/osaka/index.html").read_text(encoding="utf-8")
     require(predicted_html.count('data-mode="') == 93, "all-forks HTML table row count mismatch")
     require(hegota_html.count('data-mode="prospective"') == 44, "Hegotá HTML table row count mismatch")
     require("data-retrospective-only" in predicted_html, "retrospective-only filter is missing")
     require("generated/charts/fork-shipping.json" in association_html, "primary fork-shipping chart is missing")
     require(association_html.count('data-shipping-fork="') == 5, "fork-shipping table row count mismatch")
+    require(osaka_html.count(">Diff → current master</a>") == 12, "Osaka revision diff links are incomplete")
+    require(
+        osaka_html.index("Complexity assessments") < osaka_html.index("How the historical refs were selected"),
+        "fork assessment table must precede the supporting timeline",
+    )
+
+    fork_links = {}
+    for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
+        document = Document()
+        document.feed((DIST / f"forks/{fork}/index.html").read_text(encoding="utf-8"))
+        fork_links[fork] = set(document.links)
+    for row in historical:
+        detail = Document()
+        detail.feed(
+            (DIST / f"forks/{row['fork']}/eips/{row['eip']}/index.html").read_text(encoding="utf-8")
+        )
+        for url in [row["assessed_revision_url"], row["revision_diff_url"]]:
+            require(url in fork_links[row["fork"]], f"fork page omits EIP-{row['eip']} revision link")
+            require(url in detail.links, f"assessment page omits EIP-{row['eip']} revision link")
+
+    for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
+        timeline_path = DIST / f"generated/charts/timeline-{fork}.json"
+        timeline = json.loads(timeline_path.read_text(encoding="utf-8"))
+        require(timeline["vconcat"][0]["width"] <= 1080, f"{fork} milestone timeline is too wide")
+        require(timeline["vconcat"][1]["spec"]["width"] <= 820, f"{fork} EIP timelines are too wide")
+        require("subtitle" not in timeline["vconcat"][1]["title"], f"{fork} chart contains prose subtitles")
 
     js_files = sorted((DIST / "_astro").glob("*.js"))
     require(js_files, "bundled JavaScript is missing")

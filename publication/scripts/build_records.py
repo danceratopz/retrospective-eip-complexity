@@ -64,6 +64,14 @@ def source(path: Path) -> dict[str, str]:
     return {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
 
 
+def github_diff_to_master(commit: str, path: str) -> str:
+    path_hash = hashlib.sha256(path.encode()).hexdigest()
+    return (
+        f"https://github.com/ethereum/EIPs/compare/{commit}...master"
+        f"?diff=split&short_path={path_hash[:7]}#diff-{path_hash}"
+    )
+
+
 def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
     rows: list[dict[str, Any]] = []
     sources: list[dict[str, str]] = []
@@ -72,9 +80,13 @@ def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
             item = load_yaml(path)
             totals = item["totals"]
             under = item["under_specification"]
+            historical_eip = item["provenance"]["historical_eip"]
             rows.append(
                 {
                     "assessment_route": f"forks/{fork}/eips/{item['eip']['number']}/",
+                    "assessed_revision": historical_eip["commit"],
+                    "assessed_revision_at": historical_eip["committed_at"],
+                    "assessed_revision_url": historical_eip["immutable_url"],
                     "confidence": item["overall_confidence"],
                     "criteria": [
                         {"id": criterion["id"], "label": criterion["label"], "score": criterion["score"]}
@@ -89,6 +101,9 @@ def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
                     "summary": item["assessment"]["historical_scope_summary"],
                     "tier": totals["complexity_tier"],
                     "title": item["eip"]["title"],
+                    "revision_diff_url": github_diff_to_master(
+                        historical_eip["commit"], historical_eip["path"]
+                    ),
                     "under_specification": under["present"],
                     "under_specification_summary": under["summary"],
                 }
@@ -383,6 +398,34 @@ def fork_shipping_spec(analysis: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def publication_timeline(spec: dict[str, Any]) -> dict[str, Any]:
+    spec.pop("$schema", None)
+    spec.pop("title", None)
+    spec["spacing"] = 16
+
+    milestones, histories = spec["vconcat"]
+    milestones["width"] = 1080
+    milestones["height"] = min(milestones["height"], 320)
+    milestones["title"]["text"] = "Fork milestones and relevant devnets"
+
+    histories["title"].pop("subtitle", None)
+    histories["title"].pop("subtitleColor", None)
+    histories["title"].pop("subtitleFontSize", None)
+    histories["title"]["fontSize"] = 15
+    histories["title"]["text"] = "EIP revision histories and selected assessment refs"
+    histories["facet"]["row"]["header"]["labelFontSize"] = 10
+    histories["facet"]["row"]["header"]["labelLimit"] = 245
+    histories["spec"]["width"] = 820
+
+    for item in histories["spec"]["layer"]:
+        encoding = item.get("encoding", {})
+        if "tooltip" in encoding:
+            encoding["tooltip"] = [
+                field for field in encoding["tooltip"] if field.get("field") != "rationale"
+            ]
+    return spec
+
+
 def charts(
     assessment_rows: list[dict[str, Any]],
 ) -> tuple[dict[str, str], dict[str, Any], list[dict[str, str]]]:
@@ -527,8 +570,7 @@ def charts(
     for fork in FORK_ORDER[:-1]:
         path = TIMELINES / fork / "el-evaluation-cutoff-review.vl.json"
         spec = json.loads(path.read_text(encoding="utf-8"))
-        spec.pop("$schema", None)
-        specs[f"timeline-{fork}"] = spec
+        specs[f"timeline-{fork}"] = publication_timeline(spec)
         sources.append(source(path))
 
     for name, spec in specs.items():

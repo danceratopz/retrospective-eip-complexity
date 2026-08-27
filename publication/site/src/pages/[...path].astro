@@ -115,12 +115,18 @@ const correlations = [
   {props.kind === 'fork' && <>
     <p class="eyebrow">Retrospective fork cohort</p><h1>{fork.name}</h1><p class="lede">{fork.scored_count} execution-layer assessments with a score sum of {fork.score_sum}.</p>
     {fork.fork === 'amsterdam' && <div class="caveat"><strong>Right-censored and potentially in-sample.</strong> Amsterdam’s observation window ends before its final outcome.</div>}
-    <h2>Development and evaluation horizon</h2><Chart spec={data.charts[`timeline-${fork.fork}`]} label={`Timeline and evaluation-cutoff chart for ${fork.name}`} description="Filled markers are inclusion-state transitions; the review lanes preserve the selected assessment ref and fork-level evaluation cutoff." />
-    <AssessmentTable rows={forkRows} caption={`${fork.name} complexity assessments`} />
+    <h2>Complexity assessments</h2>
+    <p>Each score uses the immutable historical EIP revision linked in the final column. “Diff → current master” is intentionally a moving GitHub comparison so readers can see how the proposal has changed since assessment.</p>
+    <AssessmentTable rows={forkRows} caption={`${fork.name} complexity assessments`} forkContext={true} />
+    <h2 id="historical-refs">How the historical refs were selected</h2>
+    <p>The timeline supports the assessment table by showing the revision and inclusion history used to choose each input. It is process evidence, not an additional complexity result.</p>
+    <ul class="timeline-guide"><li><strong>Revision traces:</strong> the dark line counts substantive post-creation revisions; the faint line counts all revisions.</li><li><strong>REF:</strong> the immutable EIP revision used for assessment. The amber rule is its proposal anchor.</li><li><strong>PFI, CFI, and SFI:</strong> recorded fork-inclusion state transitions; open markers retain repeated same-state records.</li><li><strong>CUTOFF:</strong> the fork-level initial-evaluation horizon. Triangles identify relevant devnets or testnets.</li></ul>
+    <Chart spec={data.charts[`timeline-${fork.fork}`]} label={`Timeline supporting historical assessment-ref selection for ${fork.name}`} description="A compact view of fork milestones, EIP revision histories, inclusion-state transitions, selected assessment refs, and the fork evaluation cutoff." />
   </>}
 
   {props.kind === 'assessment' && <>
     <p class="eyebrow">Retrospective assessment</p><h1>EIP-{assessment.eip}: {assessment.title}</h1><p class="lede">{assessment.summary}</p>
+    <div class="source-note"><strong>Assessment input:</strong> <a href={assessment.assessed_revision_url}>immutable EIP revision <code>{assessment.assessed_revision.slice(0, 10)}</code></a> from {assessment.assessed_revision_at.slice(0, 10)} · <a href={assessment.revision_diff_url}>compare with current master</a></div>
     <div class="grid"><div class="card"><span class="muted">Primary score</span><div class="stat">{assessment.score}</div></div><div class="card"><span class="muted">Tier</span><p><span class:list={["pill", assessment.tier]}>{assessment.tier}</span></p></div><div class="card"><span class="muted">Confidence</span><div class="stat">{assessment.confidence}</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">{assessment.under_specification ? 'Yes' : 'No'}</div></div></div>
     <h2>Criterion scores</h2><ul class="criterion-grid">{assessment.criteria.map((criterion) => <li><span>{criterion.label}</span><strong>{criterion.score}</strong></li>)}</ul>
     <h2>Uncertainty</h2><p>{assessment.under_specification_summary}</p>

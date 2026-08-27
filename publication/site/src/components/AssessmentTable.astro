@@ -1,6 +1,6 @@
 ---
 import { basePath } from '../lib/data.js';
-const { rows, caption = 'Complexity assessments', controls = false, rowAnchors = false } = Astro.props;
+const { rows, caption = 'Complexity assessments', controls = false, rowAnchors = false, forkContext = false } = Astro.props;
 ---
 {controls && (
   <div class="table-tools" data-table-controls>
@@ -12,18 +12,19 @@ const { rows, caption = 'Complexity assessments', controls = false, rowAnchors =
 <div class="table-region" role="region" aria-label={caption} tabindex="0">
   <table data-assessment-table>
     <caption>{caption}</caption>
-    <thead><tr><th scope="col">Study</th><th scope="col">Proposal</th><th scope="col">Fork</th><th scope="col">Layers</th><th scope="col" class="number">Score</th><th scope="col">Tier/status</th><th scope="col">Confidence</th><th scope="col">Under-specified</th></tr></thead>
+    <thead><tr>{!forkContext && <th scope="col">Study</th>}<th scope="col">Proposal</th>{!forkContext && <th scope="col">Fork</th>}<th scope="col">Layers</th><th scope="col" class="number">Score</th><th scope="col">Tier/status</th><th scope="col">Confidence</th><th scope="col">Under-specified</th>{forkContext && <th scope="col">Assessment input</th>}</tr></thead>
     <tbody>
       {rows.map((row) => (
         <tr id={rowAnchors ? `eip-${row.eip}` : undefined} data-mode={row.mode} data-search={`${row.eip} ${row.title} ${row.fork}`.toLowerCase()}>
-          <td><span class:list={["pill", row.mode === 'prospective' && 'prospective']}>{row.mode}</span></td>
+          {!forkContext && <td><span class:list={["pill", row.mode === 'prospective' && 'prospective']}>{row.mode}</span></td>}
           <td><a href={basePath(row.assessment_route)}>EIP-{row.eip}: {row.title}</a>{row.rationale && <p class="muted">{row.rationale}</p>}</td>
-          <td>{row.fork === 'hegota' ? 'Hegotá' : row.fork}</td>
+          {!forkContext && <td>{row.fork === 'hegota' ? 'Hegotá' : row.fork}</td>}
           <td>{row.layers.join(', ')}</td>
           <td class="number">{row.score ?? '—'}</td>
           <td>{row.tier ? <span class:list={["pill", row.tier]}>{row.tier}</span> : <span class="pill na">N/A</span>}</td>
           <td>{row.confidence ?? '—'}</td>
           <td>{row.under_specification === null ? '—' : row.under_specification ? 'Yes' : 'No'}</td>
+          {forkContext && <td class="revision-links"><a href={row.assessed_revision_url}>Assessed <code>{row.assessed_revision.slice(0, 10)}</code></a><span class="muted">{row.assessed_revision_at.slice(0, 10)}</span><a href={row.revision_diff_url}>Diff → current master</a></td>}
         </tr>
       ))}
     </tbody>
