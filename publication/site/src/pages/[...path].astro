@@ -7,23 +7,13 @@ import { loadPublication, basePath } from '../lib/data.js';
 export function getStaticPaths() {
   const data = loadPublication();
   const pages: [string, any][] = [
-    ['study/question-and-population', { kind: 'study', section: 'question' }],
-    ['study/workflow', { kind: 'study', section: 'workflow' }],
-    ['study/evidence-controls', { kind: 'study', section: 'evidence' }],
-    ['study/scoring-rubric', { kind: 'study', section: 'rubric' }],
-    ['study/alternatives-and-decisions', { kind: 'study', section: 'decisions' }],
+    ['study', { kind: 'study' }],
     ['forks', { kind: 'fork-index' }],
     ['eips', { kind: 'eip-index' }],
     ['results/predicted-complexity', { kind: 'result', result: 'predicted' }],
     ['results/observed-effort', { kind: 'result', result: 'observed' }],
     ['results/predicted-vs-observed', { kind: 'result', result: 'association' }],
     ['results/human-automated-alignment', { kind: 'result', result: 'alignment' }],
-    ['data', { kind: 'data', section: 'catalog' }],
-    ['data/canonical', { kind: 'data', section: 'canonical' }],
-    ['data/derived', { kind: 'data', section: 'derived' }],
-    ['data/downloads', { kind: 'data', section: 'downloads' }],
-    ['limitations', { kind: 'limitations' }],
-    ['reproduce', { kind: 'reproduce' }],
     ['prospective/hegota', { kind: 'hegota' }],
   ];
   for (const fork of data.forks.filter((item) => item.fork !== 'hegota')) pages.push([`forks/${fork.fork}`, { kind: 'fork', fork: fork.fork }]);
@@ -34,54 +24,80 @@ export function getStaticPaths() {
 
 const props = Astro.props as any;
 const data = loadPublication();
-const study = {
-  question: {
-    title: 'Question and population',
-    lede: 'Can a proposal’s early specification predict later implementation and coordination burden?',
+const studyTitle = 'Can Execution Layer Complexity Assessments Help Predict Time to Mainnet?';
+const studySections = [
+  {
+    id: 'background',
+    title: 'Background',
     body: [
-      'The retrospective population contains 49 execution-only or cross-layer fork–EIP relationships from Shanghai through Amsterdam. Each relationship is assessed from a pinned proposal revision intended to approximate entry into fork development.',
-      'The Hegotá branch is a separate prospective snapshot of the 44 proposals listed as Proposed for Inclusion in EIP-8081 on 2026-08-26. It is comparable at the rubric level but has no observed outcome and never enters the retrospective association analysis.',
+      'Testing is frequently the critical path. Before the first devnet, implementing Execution Layer consensus tests and their supporting test frameworks, then ensuring those tests agree with client implementations, is costly. Once devnets begin, interoperability testing across Execution Layer clients, debugging, and repeated integration cycles can dominate the remaining time to mainnet.',
     ],
   },
-  workflow: {
-    title: 'Research workflow',
-    lede: 'Collection, historical ref selection, isolated scoring, and observed-history construction remain separate.',
+  {
+    id: 'research-question',
+    title: 'Research Question',
+    body: [
+      'This study asks whether complexity assessments made from early Execution Layer EIP specifications can help anticipate that broader delivery process. The primary fork-level analysis compares three summaries of predicted Execution Layer complexity with the time from the first devnet running at least two independent Execution Layer clients to mainnet.',
+      'A separate EIP-level analysis asks whether predicted Execution Layer complexity tracks score-blind public-artifact measures of specification rework, integration exposure, coordination surface, emergent coupling, and relative observed effort.',
+    ],
+  },
+  {
+    id: 'evaluations',
+    title: 'What Was Evaluated',
+    body: [
+      'The retrospective study contains 49 fork–EIP relationships whose proposals have an Execution Layer surface, including execution-only and cross-layer EIPs, from Shanghai through Amsterdam. Only the Execution Layer surface is scored. Each relationship is assessed from a pinned proposal revision intended to approximate its entry into fork development.',
+      'Hegotá is a separate forward-looking evaluation of the 44 proposals listed as Proposed for Inclusion in EIP-8081 on 26 August 2026. The 37 proposals with an applicable Execution Layer or execution-client networking surface were scored; five Consensus Layer–only proposals and two explicit exclusions were retained as N/A. Its scores were produced with an LLM using the same Execution Layer complexity-assignment rubric, independently of the STEEL team’s ongoing manual assessment work. Hegotá has no observed outcome and never enters the retrospective association analysis.',
+    ],
+  },
+  {
+    id: 'workflow',
+    title: 'Research Workflow',
     body: [
       'Task 01 records fork membership and source history. Tasks 03 and 04 select and review historical proposal horizons. Task 05 creates sealed one-EIP packages and runs isolated assessments. Task 07 defines observed-effort proxies before joining them to scores.',
       'Every derived publication record points back to a repository-relative source path and SHA-256. The publication adapter reads research outputs but cannot modify them.',
     ],
   },
-  evidence: {
-    title: 'Evidence controls',
-    lede: 'The primary scores are designed to reduce observable hindsight channels.',
+  {
+    id: 'evidence-controls',
+    title: 'Evidence Controls',
     body: [
       'Each assessor received one sealed proposal package, the pinned rubric, and explicitly admitted supporting documents. Network access, repository access, other assessments, implementations, tests, observed outcomes, and aggregate progress were excluded.',
       'Isolation cannot erase latent model knowledge. The study therefore reports package provenance, exposure attestations, under-specification, confidence, and known recovery events instead of claiming perfect blindness.',
     ],
   },
-  rubric: {
-    title: 'Scoring rubric',
-    lede: 'Twenty-eight execution-layer criteria produce a primary score and Low, Medium, or High tier.',
+  {
+    id: 'scoring-rubric',
+    title: 'Scoring Rubric',
     body: [
-      'Scores below 12 are Low, 12 through 22 are Medium, and 23 or above are High. The criteria cover gas rules, execution and state behavior, testing surfaces, APIs, encodings, system contracts, opcodes, precompiles, transactions, activation, performance, security, under-specified behavior, and cross-EIP interactions.',
-      'The rubric estimates specification-implied execution-layer complexity. It does not estimate person-hours, cost, severity, importance, consensus-layer complexity, or probability of inclusion.',
+      'Twenty-eight Execution Layer criteria produce a primary score and Low, Medium, or High tier. Scores below 12 are Low, 12 through 22 are Medium, and 23 or above are High. The criteria cover gas rules, execution and state behavior, testing surfaces, APIs, encodings, system contracts, opcodes, precompiles, transactions, activation, performance, security, under-specified behavior, and cross-EIP interactions.',
+      'The rubric estimates specification-implied Execution Layer complexity. It does not estimate person-hours, cost, severity, importance, Consensus Layer complexity, or probability of inclusion.',
     ],
   },
-  decisions: {
-    title: 'Alternatives and decisions',
-    lede: 'The study favors pinned evidence and explicit limitations over a larger but less controlled sample.',
+  {
+    id: 'study-design-decisions',
+    title: 'Study Design Decisions',
     body: [
-      'The research uses fork–EIP relationships rather than unique EIPs because one proposal can appear in more than one fork context. Consensus-only proposals remain visible but never receive a zero EL score.',
+      'The study favors pinned evidence and explicit limitations over a larger but less controlled sample.',
+      'The research uses fork–EIP relationships rather than unique EIPs because one proposal can appear in more than one fork context. Consensus Layer–only proposals remain visible but never receive a zero EL score.',
       'Observed-effort metrics were defined score-blind. Correlations remain descriptive: they do not show that complexity caused delay, revisions, coordination, or engineering effort.',
     ],
   },
-};
+];
+const studyLimitations = [
+  'Complexity scores do not measure person-hours, cost, importance, risk, or causality.',
+  'Fork totals depend on the number of included EIPs and how proposals are split.',
+  'Historical ref selection approximates entry into development and can be imperfect.',
+  'Observed-effort proxies are derived from recorded public artifacts and omit private work.',
+  'Amsterdam is right-censored and potentially in-sample.',
+  'Hegotá is forward-looking, can change after the snapshot, and has no observed outcome.',
+  'Consensus Layer–only work receives no EL score; zero would be misleading.',
+  'Isolation reduces observable hindsight but cannot erase latent model knowledge.',
+];
 const titles = {
   'fork-index': 'Forks', 'eip-index': 'EIPs', fork: 'Fork detail', assessment: 'Assessment detail', eip: 'EIP detail',
-  limitations: 'Limitations', reproduce: 'Reproduce', hegota: 'Hegotá prospective assessment', data: 'Data', result: 'Results', study: 'Study',
+  hegota: 'Hegotá prospective assessment', result: 'Results', study: studyTitle,
 };
 let title = titles[props.kind] ?? 'Research';
-if (props.kind === 'study') title = study[props.section].title;
 const fork = props.fork ? data.forks.find((item) => item.fork === props.fork) : null;
 const forkRows = props.fork ? data.assessments.filter((item) => item.fork === props.fork) : [];
 const assessment = props.kind === 'assessment' ? data.assessments.find((item) => item.fork === props.fork && item.eip === props.eip) : null;
@@ -91,8 +107,6 @@ if (assessment) title = `EIP-${assessment.eip}: ${assessment.title}`;
 if (eip) title = `EIP-${eip.eip}: ${eip.title}`;
 const resultTitles = { predicted: 'Predicted complexity', observed: 'Observed-effort proxies', association: 'Predicted versus observed', alignment: 'Human–automated alignment' };
 if (props.kind === 'result') title = resultTitles[props.result];
-const dataTitles = { catalog: 'Data catalog', canonical: 'Canonical research data', derived: 'Derived publication data', downloads: 'Downloads' };
-if (props.kind === 'data') title = dataTitles[props.section];
 const hegotaRows = data.assessments.filter((item) => item.fork === 'hegota');
 const forkShipping = data.fork_shipping;
 const correlations = [
@@ -102,13 +116,19 @@ const correlations = [
 ---
 <Layout title={title}>
   {props.kind === 'study' && <>
-    <p class="eyebrow">Method before results</p><h1>{study[props.section].title}</h1><p class="lede">{study[props.section].lede}</p>
-    {study[props.section].body.map((paragraph) => <p>{paragraph}</p>)}
-    <div class="actions"><a href={basePath('study/workflow/')}>Workflow</a><a href={basePath('study/evidence-controls/')}>Evidence controls</a><a href={basePath('study/scoring-rubric/')}>Scoring rubric</a><a href={basePath('limitations/')}>Limitations</a></div>
+    <p class="eyebrow">Methodology</p>
+    <h1>{studyTitle}</h1>
+    <p class="lede">We used an LLM to perform retrospective complexity assessments from early Execution Layer EIP specifications, then tested whether those scores help explain how long a fork takes to reach mainnet and the later engineering burden visible in public artifacts.</p>
+    <nav class="actions" aria-label="Study sections">
+      {studySections.map((section) => <a href={`#${section.id}`}>{section.title}</a>)}
+      <a href="#limitations">Limitations</a>
+    </nav>
+    {studySections.map((section) => <section aria-labelledby={section.id}><h2 id={section.id}>{section.title}</h2>{section.id === 'background' && <p>The <a href="https://steel.ethereum.foundation/">STEEL team</a> introduced its <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">Execution Layer EIP complexity-assessment methodology</a> during the Amsterdam fork-scoping process to make the difficulty of implementing, testing, coordinating, and shipping the Execution Layer surface of an EIP to mainnet more legible before scope decisions are made.</p>}{section.body.map((paragraph) => <p>{paragraph}</p>)}</section>)}
+    <section aria-labelledby="limitations"><h2 id="limitations">Limitations</h2><p>The results are evidence about a research rubric, not a universal measure of protocol work.</p><ul>{studyLimitations.map((limitation) => <li>{limitation}</li>)}</ul></section>
   </>}
 
   {props.kind === 'fork-index' && <>
-    <p class="eyebrow">Complexity Evaluations</p><h1>Forks</h1><p class="lede">Five retrospective fork complexity evaluations and one forward-looking complexity evaluation for Hegotá.</p>
+    <p class="eyebrow">Complexity Evaluations</p><h1>Forks</h1><p class="lede">Five retrospective fork evaluations of Execution Layer complexity and one forward-looking Execution Layer complexity evaluation for Hegotá.</p>
     <div class="grid">{data.forks.map((item) => <article class="card"><span class:list={["pill", item.mode === 'prospective' && 'prospective']}>{item.mode}</span><h2>{item.name}</h2><p><strong>{item.scored_count}</strong> scored · <strong>{item.not_applicable_count}</strong> N/A · score sum <strong>{item.score_sum}</strong></p><a href={basePath(item.fork === 'hegota' ? 'prospective/hegota/' : `forks/${item.fork}/`)}>View fork →</a></article>)}</div>
   </>}
 
@@ -141,8 +161,8 @@ const correlations = [
   </>}
 
   {props.kind === 'eip-index' && <>
-    <p class="eyebrow">Cross-fork index</p><h1>EIPs</h1><p class="lede">{data.eips.length} unique proposals represented across 93 fork–EIP relationships.</p>
-    <div class="table-region" role="region" aria-label="Global EIP index" tabindex="0"><table><caption>Unique proposal index</caption><thead><tr><th scope="col">Proposal</th><th scope="col">Fork relationships</th></tr></thead><tbody>{data.eips.map((item) => <tr><td><a href={basePath(`eips/${item.eip}/`)}>EIP-{item.eip}: {item.title}</a></td><td>{item.relationships.map((rel) => rel.fork === 'hegota' ? 'Hegotá' : rel.fork).join(', ')}</td></tr>)}</tbody></table></div>
+    <p class="eyebrow">Cross-fork index</p><h1>EIPs</h1><p class="lede">{data.eips.length} proposals represented across 93 fork–EIP relationships.</p>
+    <AssessmentTable rows={data.assessments} caption="EIP complexity assessments" controls={true} sortable={true} proposalRoute="global" />
   </>}
 
   {props.kind === 'eip' && <>
@@ -158,7 +178,7 @@ const correlations = [
   </>}
 
   {props.kind === 'result' && props.result === 'association' && <>
-    <p class="eyebrow">Primary retrospective result</p><h1>Does predicted complexity track delivery?</h1>
+    <p class="eyebrow">Primary retrospective result</p><h1>Does Predicted Complexity Track Time to Mainnet?</h1>
     <p class="lede">At fork level, the study compares the time from development underway in earnest—the first devnet with at least two independent execution-layer clients—to mainnet against three summaries of predicted complexity.</p>
     <div class="caveat"><strong>Five forks, descriptive only.</strong> Amsterdam uses the projected 15 December 2026 mainnet date and is potentially in-sample. Correlation does not establish that complexity caused delivery time; one fork can materially change these coefficients.</div>
     <h2>Fork shipping span</h2>
@@ -180,7 +200,7 @@ const correlations = [
     <div class="caveat">Hegotá is excluded because it has no observed outcome. Amsterdam is right-censored and potentially in-sample.</div>
     <Chart spec={data.charts['predicted-observed']} label="Faceted scatter plots comparing predicted complexity with observed-effort proxies" description="The five proxy families were selected without reading predicted scores; this chart shows their later descriptive association with the 49 retrospective assessments." />
     <div class="table-region" role="region" aria-label="Rank correlations" tabindex="0"><table><caption>Overall EIP-level Spearman rank correlations</caption><thead><tr><th scope="col">Metric</th><th scope="col" class="number">N</th><th scope="col" class="number">Spearman ρ</th></tr></thead><tbody>{correlations.map((row) => <tr><td>{row[0]}</td><td class="number">{row[1]}</td><td class="number">{Number(row[2]).toFixed(2)}</td></tr>)}</tbody></table></div>
-    <div class="actions"><a class="button" href={basePath('results/predicted-vs-observed/')}>See the central relationship analysis</a><a href={basePath('study/alternatives-and-decisions/')}>Metric-selection decisions</a></div>
+    <div class="actions"><a class="button" href={basePath('results/predicted-vs-observed/')}>See the central relationship analysis</a><a href={`${basePath('study/')}#study-design-decisions`}>Metric-selection decisions</a></div>
   </>}
 
   {props.kind === 'result' && props.result === 'alignment' && <>
@@ -190,29 +210,11 @@ const correlations = [
     <a href={basePath('generated/charts/human-alignment.json')}>Download plotted values and Vega-Lite specification</a>
   </>}
 
-  {props.kind === 'data' && <>
-    <p class="eyebrow">Provenance</p><h1>{dataTitles[props.section]}</h1>
-    {props.section === 'catalog' && <><p class="lede">Canonical YAML stays owned by the research tasks. The publication adapter emits sanitized projections, tables, chart specifications, and downloads.</p><div class="grid"><article class="card"><h2>Canonical</h2><p>Frozen task-owned inputs and outputs with validators and hashes.</p><a href={basePath('data/canonical/')}>Inspect ownership</a></article><article class="card"><h2>Derived</h2><p>Deterministic publication records and chart data.</p><a href={basePath('data/derived/')}>Inspect derivation</a></article><article class="card"><h2>Downloads</h2><p>Approved CSV, JSON, and chart specifications.</p><a href={basePath('data/downloads/')}>Open downloads</a></article></div></>}
-    {props.section === 'canonical' && <><p class="lede">Research tasks remain authoritative. Publication code reads them without editing or recursively copying their trees.</p><ul><li>Task 05: 49 validated retrospective assessments.</li><li>Task 07: score-blind observed metrics and prediction join.</li><li>Task 08: frozen 44-entry Hegotá snapshot, 37 canonical assessments, and 7 N/A dispositions.</li></ul></>}
-    {props.section === 'derived' && <><p class="lede">Every generated file is stable-sorted and included in a SHA-256 provenance manifest.</p><a class="button" href={basePath('generated/provenance.json')}>Open public provenance manifest</a></>}
-    {props.section === 'downloads' && <><p class="lede">These files contain sanitized publication fields, not raw EIP bodies, prompts, sessions, or assessor outputs.</p><div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Complexity assessments CSV</a><a class="button" href={basePath('generated/publication.json')}>Publication JSON</a><a href={basePath('generated/provenance.json')}>Provenance JSON</a></div></>}
-  </>}
-
-  {props.kind === 'limitations' && <>
-    <p class="eyebrow">Interpretation boundary</p><h1>Limitations</h1><p class="lede">The results are evidence about a research rubric, not a universal measure of protocol work.</p>
-    <ul><li>Complexity scores do not measure person-hours, cost, importance, risk, or causality.</li><li>Fork totals depend on the number of included EIPs and how proposals are split.</li><li>Historical ref selection approximates entry into development and can be imperfect.</li><li>Observed-effort proxies are derived from recorded public artifacts and omit private work.</li><li>Amsterdam is right-censored and potentially in-sample.</li><li>Hegotá is prospective, can change after the snapshot, and has no observed outcome.</li><li>Consensus-only work receives no EL score; zero would be misleading.</li><li>Isolation reduces observable hindsight but cannot erase latent model knowledge.</li></ul>
-  </>}
-
-  {props.kind === 'reproduce' && <>
-    <p class="eyebrow">Local reproduction</p><h1>Reproduce</h1><p class="lede">The site is a deterministic projection of committed research outputs.</p>
-    <ol><li>Use Node 22.22.1 and the locked Task 05 Python environment.</li><li>From <code>publication/site</code>, run <code>npm ci</code>.</li><li>Run <code>npm run data:check</code> to build the adapter output twice.</li><li>Run <code>npm run build</code> to create the static artifact.</li><li>Run <code>npm run preview -- --host 127.0.0.1 --port 4321</code>.</li></ol>
-    <p>The preview is rooted at <code>/retrospective-complexity-eval/</code>. Research validators and the full acquisition workflow remain documented in the repository’s top-level reproduction guide.</p>
-  </>}
-
   {props.kind === 'hegota' && <>
-    <p class="eyebrow prospective-text">Prospective · frozen 2026-08-26 snapshot</p><h1>Hegotá PFI complexity assessment</h1><p class="lede">EL-rubric total: 776 across 37 scored PFI EIPs. Of 44 PFI entries, five are consensus-only and two were explicitly excluded; none received a numeric score or tier.</p>
-    <div class="grid"><div class="card"><span class="muted">Scored execution surfaces</span><div class="stat">37</div></div><div class="card"><span class="muted">Not applicable</span><div class="stat">7</div></div><div class="card"><span class="muted">Low / Medium / High</span><div class="stat">4 / 20 / 13</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">34 / 37</div></div></div>
-    <div class="notice"><strong>Common information cutoff:</strong> {data.hegota.information_cutoff_at}. The assessment covers execution-layer and execution-client-networking surfaces only. It does not predict final fork scope or include observed outcomes.</div>
+    <p class="eyebrow prospective-text">Prospective · frozen 2026-08-26 snapshot</p><h1>Hegotá PFI complexity assessment</h1><p class="lede">EL-rubric total: 776 across 37 scored PFI EIPs. Of 44 PFI entries, five are Consensus Layer–only and two were explicitly excluded; none received a numeric score or tier.</p>
+    <div class="notice"><strong>Independent LLM Evaluation.</strong> These scores were produced with an LLM using the same Execution Layer complexity-assignment rubric, independently of the STEEL team’s ongoing manual assessment work.</div>
+    <div class="grid"><div class="card"><span class="muted">Scored EL surfaces</span><div class="stat">37</div></div><div class="card"><span class="muted">Not applicable</span><div class="stat">7</div></div><div class="card"><span class="muted">Low / Medium / High</span><div class="stat">4 / 20 / 13</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">34 / 37</div></div></div>
+    <div class="notice"><strong>Common information cutoff:</strong> {data.hegota.information_cutoff_at}. The assessment covers Execution Layer and execution-client networking surfaces only. It does not predict final fork scope or include observed outcomes.</div>
     <h2>Scored proposals</h2><Chart spec={data.charts['hegota-scores']} label="Ranked Hegotá prospective scores" description="Bars encode the 37 applicable execution-layer rubric scores. The seven N/A entries remain in the semantic table below." />
     <AssessmentTable rows={hegotaRows} caption="Hegotá PFI snapshot: scored and not-applicable entries" rowAnchors={true} />
     <h2>Caveats</h2><ul>{data.hegota.caveats.map((caveat) => <li>{caveat}</li>)}</ul>

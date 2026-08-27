@@ -156,7 +156,7 @@ def validate() -> dict[str, int]:
     require(manifest["source_records"] == sorted(manifest["source_records"], key=lambda item: item["path"]), "source records are not stable-sorted")
 
     html_files = sorted(DIST.rglob("*.html"))
-    require(len(html_files) == 165, f"expected 165 static pages, found {len(html_files)}")
+    require(len(html_files) == 155, f"expected 155 static pages, found {len(html_files)}")
     broken: list[str] = []
     chart_pages = 0
     for html_path in html_files:
@@ -164,6 +164,10 @@ def validate() -> dict[str, int]:
         document = Document()
         document.feed(text)
         relative = html_path.relative_to(DIST)
+        require(
+            "Retrospective LLM-Based Complexity Evaluations" in text,
+            f"{relative}: publication title is missing",
+        )
         require("cohort" not in text.lower(), f"{relative}: user-facing cohort jargon remains")
         require(document.h1_count == 1, f"{relative}: expected one h1")
         require(document.has_title, f"{relative}: title is missing")
@@ -181,10 +185,51 @@ def validate() -> dict[str, int]:
 
     predicted_html = (DIST / "results/predicted-complexity/index.html").read_text(encoding="utf-8")
     association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
+    eip_index_html = (DIST / "eips/index.html").read_text(encoding="utf-8")
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
     osaka_html = (DIST / "forks/osaka/index.html").read_text(encoding="utf-8")
+    study_html = (DIST / "study/index.html").read_text(encoding="utf-8")
+    require(
+        "Can Execution Layer Complexity Assessments Help Predict Time to Mainnet?" in study_html,
+        "study question or Execution Layer scope is missing",
+    )
+    require(
+        "retrospective complexity assessments from early Execution Layer EIP specifications" in study_html,
+        "LLM assessment disclosure or Execution Layer scope is missing",
+    )
+    require("Only the Execution Layer surface is scored." in study_html, "cross-layer scoring boundary is missing")
+    require(
+        "independently of the STEEL team’s ongoing manual assessment work" in study_html,
+        "Hegotá manual-assessment independence disclosure is missing from the study",
+    )
+    require("https://steel.ethereum.foundation/" in study_html, "STEEL team link is missing")
+    require(
+        "https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md"
+        in study_html,
+        "complexity-assessment template link is missing",
+    )
+    require("id=\"background\"" in study_html, "study background is missing")
+    require("id=\"limitations\"" in study_html, "study limitations are missing")
+    require("Method before results" not in study_html, "obsolete study eyebrow remains")
+    for removed_route in ["data", "limitations", "reproduce", "study/question-and-population", "study/workflow"]:
+        require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
     require(predicted_html.count('data-mode="') == 93, "all-forks HTML table row count mismatch")
+    require(eip_index_html.count('data-mode="') == 93, "EIP index relationship row count mismatch")
+    require('data-table-search' in eip_index_html, "EIP index substring search is missing")
+    require('data-table-fork' in eip_index_html, "EIP index fork filter is missing")
+    require(eip_index_html.count('data-sort-key="') == 8, "EIP index columns must all be sortable")
+    require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
+    require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
     require(hegota_html.count('data-mode="prospective"') == 44, "Hegotá HTML table row count mismatch")
+    require(
+        "independently of the STEEL team’s ongoing manual assessment work" in hegota_html,
+        "Hegotá manual-assessment independence disclosure is missing",
+    )
+    require("<strong>Independent LLM Evaluation.</strong>" in hegota_html, "Hegotá LLM disclosure is not emphasized")
+    require(
+        "Execution Layer and execution-client networking surfaces only" in hegota_html,
+        "Hegotá Execution Layer scope is missing",
+    )
     require("data-retrospective-only" in predicted_html, "retrospective-only filter is missing")
     require("generated/charts/fork-shipping.json" in association_html, "primary fork-shipping chart is missing")
     require(association_html.count('data-shipping-fork="') == 5, "fork-shipping table row count mismatch")

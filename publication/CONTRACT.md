@@ -33,36 +33,36 @@ Data flows only in that order. No site edit can flow back into a research task, 
 
 ## Audiences and reading order
 
-The site serves Ethereum protocol contributors, client and test implementers, research-method reviewers, and reproducibility or source auditors. It must let a new reader establish the question, population, evidence controls, scoring rubric, maturity, and limitations before seeing comparison results.
+The site serves Ethereum protocol contributors, client and test implementers, research-method reviewers, and reproducibility or source auditors. It must let a new reader establish the question, study scope, evidence controls, scoring rubric, maturity, and limitations before seeing comparison results.
 
 The required order is:
 
-1. question and five-fork population;
-2. workflow, evidence freezing, historical cutoffs, scope cohorts, and EL-rubric boundary;
+1. research question and five-fork retrospective scope;
+2. workflow, evidence freezing, historical cutoffs, scope classifications, and EL-rubric boundary;
 3. status vocabulary, canonical/derived ownership, observed-effort proxy construction, and limitations;
 4. fork and EIP browsing with criterion evidence and provenance;
 5. predicted-complexity, observed-effort, association, and limited human-alignment results; and
-6. approved data products and reproduction instructions.
+6. approved downloadable data products.
 
 The landing page must not lead with a correlation coefficient. Scores and associations appear only where method and caveats are available through the required cross-links in [`contract/routes.json`](contract/routes.json).
 
 ## Route and template contract
 
-Route identity, path parameters, source record types, templates, labels, provenance requirements, navigation, release states, and allowed cross-links are machine-owned by [`contract/routes.json`](contract/routes.json). The global navigation is Study, Forks, EIPs, Results, Data, Limitations, and Reproduce.
+Route identity, path parameters, source record types, templates, labels, provenance requirements, navigation, release states, and allowed cross-links are machine-owned by [`contract/routes.json`](contract/routes.json). The global navigation is Study, Forks, EIPs, and Results.
 
 The required route families are:
 
 | Area | Routes | Reader-facing authority |
 | --- | --- | --- |
-| Landing | `/` | Question, population, current maturity, caveats, and reading path |
-| Study | `/study/question-and-population/`, `/study/workflow/`, `/study/evidence-controls/`, `/study/scoring-rubric/`, `/study/alternatives-and-decisions/` | Method and decisions before results |
+| Landing | `/` | Question, study scope, current maturity, caveats, and reading path |
+| Study | `/study/` | Background, research question, scope, method, evidence controls, scoring rubric, design decisions, and limitations |
 | Forks | `/forks/`, `/forks/{fork}/` | Fork inventory, maturity, timeline, scope, totals, EIPs, and caveats |
 | EIPs | `/eips/`, `/eips/{eip}/` | Global occurrence index; never a collapsed cross-cutoff score |
 | Assessments | `/forks/{fork}/eips/{eip}/` | The scoring authority shown to readers for one fork cutoff and EIP revision |
 | Results | `/results/predicted-complexity/`, `/results/observed-effort/`, `/results/predicted-vs-observed/`, `/results/human-automated-alignment/` | Explanation, mandatory caveats, chart, semantic table, and approved download |
 | Prospective | `/prospective/hegota/` | Approved frozen Task 08 summary, plot, semantic table, downloads, provenance, and caveats |
-| Data | `/data/`, `/data/canonical/`, `/data/derived/`, `/data/downloads/` | Ownership, schemas, provenance, disposition, and approved downloads |
-| Limitations and reproduction | `/limitations/`, `/reproduce/` | Study limitations and clean-checkout reproduction boundary |
+
+Approved downloads remain linked from the relevant results and assessment pages. Canonical research records and reproduction instructions remain repository documentation rather than standalone publication routes.
 
 One EIP may have different assessment refs and information cutoffs in different forks. The fork-specific assessment page is therefore the reader-facing score authority. A global EIP page may aggregate occurrences and cross-links, but it must never replace distinct fork cutoffs with one score.
 
@@ -74,8 +74,8 @@ Exact display text, applicability, minimum caveats, allowed chart/table treatmen
 
 - **Historical / retrospective** means an approved historical revision was evaluated at its recorded information cutoff, not that the final shipped specification was scored.
 - **Prospective** means an evaluation against one pre-agreed snapshot before the observed outcome. It is mutually exclusive with retrospective.
-- **Provisional** means the required human approval gate has not passed. All Task 04b cohort state remains provisional until explicit approval.
-- **Forecastable at cutoff** and **Late scope** are mutually exclusive Task 04b aggregation cohorts. They do not change an individual EIP's Task 04 ref or transfer one EIP's score to another.
+- **Provisional** means the required human approval gate has not passed. All Task 04b classification state remains provisional until explicit approval.
+- **Forecastable at cutoff** and **Late scope** are mutually exclusive Task 04b scope classifications. They do not change an individual EIP's Task 04 ref or transfer one EIP's score to another.
 - **Censored** means an observation window is incomplete. **Right-censored** means it ends at a censor date before the final outcome; Amsterdam requires both the right-censored meaning and its pinned date wherever observed-effort values appear.
 - **Potentially in-sample** means later Amsterdam evidence may have informed the rubric or study design. Amsterdam associations are not independent out-of-sample validation.
 - **Not applicable to EL rubric** is the only scoring treatment for consensus-only work in this study. It is never an execution-layer score of zero.

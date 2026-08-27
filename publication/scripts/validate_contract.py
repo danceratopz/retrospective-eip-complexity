@@ -33,11 +33,7 @@ RECORD_TYPES = {
 }
 ROUTE_FAMILIES = {
     "landing",
-    "study_question_population",
-    "study_workflow",
-    "study_evidence_controls",
-    "study_scoring_rubric",
-    "study_alternatives_decisions",
+    "study",
     "fork_index",
     "fork_detail",
     "fork_eip_assessment",
@@ -47,12 +43,6 @@ ROUTE_FAMILIES = {
     "result_observed_effort",
     "result_predicted_vs_observed",
     "result_human_alignment",
-    "data_catalog",
-    "data_canonical",
-    "data_derived",
-    "data_downloads",
-    "limitations",
-    "reproduce",
     "prospective_hegota",
 }
 LABEL_KEYS = {
