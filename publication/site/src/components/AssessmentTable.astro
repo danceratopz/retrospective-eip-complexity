@@ -1,6 +1,7 @@
 ---
 import { basePath } from '../lib/data.js';
-const { rows, caption = 'Complexity assessments', controls = false, rowAnchors = false, forkContext = false } = Astro.props;
+const { rows, caption = 'Complexity Assessments', controls = false, rowAnchors = false, forkContext = false, sortable = false } = Astro.props;
+const levelSort = (value: string | null | undefined) => value === 'low' ? '1-low' : value === 'medium' ? '2-medium' : value === 'high' ? '3-high' : `4-${value ?? ''}`;
 ---
 {controls && (
   <div class="table-tools" data-table-controls>
@@ -10,12 +11,12 @@ const { rows, caption = 'Complexity assessments', controls = false, rowAnchors =
   </div>
 )}
 <div class="table-region" role="region" aria-label={caption} tabindex="0">
-  <table data-assessment-table>
+  <table data-assessment-table data-sortable-table={sortable || undefined}>
     <caption>{caption}</caption>
-    <thead><tr>{!forkContext && <th scope="col">Study</th>}<th scope="col">Proposal</th>{!forkContext && <th scope="col">Fork</th>}<th scope="col">Layers</th><th scope="col" class="number">Score</th><th scope="col">Tier/status</th><th scope="col">Confidence</th><th scope="col">Under-specified</th>{forkContext && <th scope="col">Assessment input</th>}</tr></thead>
+    <thead><tr>{!forkContext && <th scope="col">Study</th>}<th scope="col" aria-sort={sortable ? 'none' : undefined}>{sortable ? <button class="sort-button" type="button" data-sort-key="sortProposal" data-sort-kind="number">Proposal</button> : 'Proposal'}</th>{!forkContext && <th scope="col">Fork</th>}<th scope="col" aria-sort={sortable ? 'none' : undefined}>{sortable ? <button class="sort-button" type="button" data-sort-key="sortLayers">Layers</button> : 'Layers'}</th><th scope="col" class="number" aria-sort={sortable ? 'none' : undefined}>{sortable ? <button class="sort-button" type="button" data-sort-key="sortScore" data-sort-kind="number">Score</button> : 'Score'}</th><th scope="col" aria-sort={sortable ? 'none' : undefined}>{sortable ? <button class="sort-button" type="button" data-sort-key="sortTier">Tier/status</button> : 'Tier/status'}</th><th scope="col" aria-sort={sortable ? 'none' : undefined}>{sortable ? <button class="sort-button" type="button" data-sort-key="sortConfidence">Confidence</button> : 'Confidence'}</th><th scope="col" aria-sort={sortable ? 'none' : undefined}>{sortable ? <button class="sort-button" type="button" data-sort-key="sortUnderSpecified">Under-specified</button> : 'Under-specified'}</th>{forkContext && <th scope="col" aria-sort={sortable ? 'none' : undefined}>{sortable ? <button class="sort-button" type="button" data-sort-key="sortAssessment">Assessment input</button> : 'Assessment input'}</th>}</tr></thead>
     <tbody>
       {rows.map((row) => (
-        <tr id={rowAnchors ? `eip-${row.eip}` : undefined} data-mode={row.mode} data-search={`${row.eip} ${row.title} ${row.fork}`.toLowerCase()}>
+        <tr id={rowAnchors ? `eip-${row.eip}` : undefined} data-mode={row.mode} data-search={`${row.eip} ${row.title} ${row.fork}`.toLowerCase()} data-sort-proposal={row.eip} data-sort-layers={row.layers.join(', ')} data-sort-score={row.score ?? ''} data-sort-tier={levelSort(row.tier ?? row.status)} data-sort-confidence={levelSort(row.confidence)} data-sort-under-specified={row.under_specification === null ? '' : row.under_specification ? 'yes' : 'no'} data-sort-assessment={row.assessed_revision_at ?? ''}>
           {!forkContext && <td><span class:list={["pill", row.mode === 'prospective' && 'prospective']}>{row.mode}</span></td>}
           <td><a href={basePath(row.assessment_route)}>EIP-{row.eip}: {row.title}</a>{row.rationale && <p class="muted">{row.rationale}</p>}</td>
           {!forkContext && <td>{row.fork === 'hegota' ? 'Hegotá' : row.fork}</td>}
@@ -30,6 +31,41 @@ const { rows, caption = 'Complexity assessments', controls = false, rowAnchors =
     </tbody>
   </table>
 </div>
+{sortable && (
+  <script>
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    for (const table of document.querySelectorAll<HTMLTableElement>('[data-sortable-table]:not([data-sort-ready])')) {
+      table.setAttribute('data-sort-ready', 'true');
+      const body = table.tBodies[0];
+      const rows = Array.from(body.rows);
+      rows.forEach((row, index) => { row.dataset.sortIndex = String(index); });
+      for (const button of table.querySelectorAll<HTMLButtonElement>('[data-sort-key]')) {
+        button.addEventListener('click', () => {
+          const header = button.closest('th');
+          const key = button.dataset.sortKey;
+          if (!header || !key) return;
+          const direction = header.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+          const multiplier = direction === 'ascending' ? 1 : -1;
+          rows.sort((left, right) => {
+            const leftValue = left.dataset[key] ?? '';
+            const rightValue = right.dataset[key] ?? '';
+            if (!leftValue || !rightValue) {
+              if (!leftValue && !rightValue) return Number(left.dataset.sortIndex) - Number(right.dataset.sortIndex);
+              return !leftValue ? 1 : -1;
+            }
+            const comparison = button.dataset.sortKind === 'number'
+              ? Number(leftValue) - Number(rightValue)
+              : collator.compare(leftValue, rightValue);
+            return comparison ? comparison * multiplier : Number(left.dataset.sortIndex) - Number(right.dataset.sortIndex);
+          });
+          for (const item of table.querySelectorAll<HTMLElement>('th[aria-sort]')) item.setAttribute('aria-sort', 'none');
+          header.setAttribute('aria-sort', direction);
+          body.append(...rows);
+        });
+      }
+    }
+  </script>
+)}
 {controls && (
   <script>
     const controls = document.querySelector<HTMLElement>('[data-table-controls]');

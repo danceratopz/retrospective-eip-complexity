@@ -190,7 +190,7 @@ def validate() -> dict[str, int]:
     require(osaka_html.count(">Current master</a>") == 12, "Osaka current-revision links are incomplete")
     require(osaka_html.count(">File history</a>") == 12, "Osaka file-history links are incomplete")
     require(
-        osaka_html.index("Complexity assessments") < osaka_html.index("How the historical refs were selected"),
+        osaka_html.index("Complexity Assessments") < osaka_html.index("How the Historical Refs Were Selected"),
         "fork assessment table must precede the supporting timeline",
     )
     require(
@@ -199,6 +199,18 @@ def validate() -> dict[str, int]:
         "Osaka fork and EIP timelines must render separately",
     )
     require(osaka_html.count("data-fit-chart") == 2, "Osaka timelines must opt into responsive fitting")
+    require(osaka_html.count("data-fork-link") == 6, "Osaka quick navigation must include every fork")
+    require('aria-current="page"' in osaka_html, "Osaka quick navigation must identify the current fork")
+    require(osaka_html.count('data-sort-key="') == 7, "Osaka assessment columns must all be sortable")
+    require("GPT-5.6 Sol LLM at xhigh reasoning effort" in osaka_html, "fork assessment method is missing")
+    require(
+        "https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md"
+        in osaka_html,
+        "STEEL template permalink is missing",
+    )
+    require("Current master” and “File history”" not in osaka_html, "obsolete GitHub-link prose remains")
+    require("timeline-guide" not in osaka_html, "timeline key must use a simple list")
+    require("The main purpose of this panel" in osaka_html, "EIP-history purpose is unexplained")
 
     fork_links = {}
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:

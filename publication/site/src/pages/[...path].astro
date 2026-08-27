@@ -114,18 +114,21 @@ const correlations = [
 
   {props.kind === 'fork' && <>
     <p class="eyebrow">Retrospective fork cohort</p><h1>{fork.name}</h1><p class="lede">{fork.scored_count} execution-layer assessments with a score sum of {fork.score_sum}.</p>
+    <nav class="fork-nav" aria-label="Fork Navigation" data-fork-nav>
+      <span class="fork-nav-label">Forks</span>
+      {data.forks.map((item) => <a href={basePath(item.fork === 'hegota' ? 'prospective/hegota/' : `forks/${item.fork}/`)} aria-current={item.fork === fork.fork ? 'page' : undefined} data-fork-link>{item.name}</a>)}
+    </nav>
     {fork.fork === 'amsterdam' && <div class="caveat"><strong>Right-censored and potentially in-sample.</strong> Amsterdam’s observation window ends before its final outcome.</div>}
-    <h2>Complexity assessments</h2>
-    <p>Each score uses the immutable historical EIP revision linked in the final column. “Current master” and “File history” are moving, file-scoped GitHub views of that EIP only; they avoid the unrelated repository changes included by GitHub’s compare view.</p>
-    <AssessmentTable rows={forkRows} caption={`${fork.name} complexity assessments`} forkContext={true} />
-    <h2 id="historical-refs">How the historical refs were selected</h2>
+    <h2 id="complexity-assessments">Complexity Assessments</h2>
+    <p>Each assessment was automated using the GPT-5.6 Sol LLM at xhigh reasoning effort, evaluating the EIP revision linked in the Assessment Input column against <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">version 2 of STEEL’s complexity-assignment template</a>.</p>
+    <AssessmentTable rows={forkRows} caption={`${fork.name} Complexity Assessments`} forkContext={true} sortable={true} />
+    <h2 id="historical-refs">How the Historical Refs Were Selected</h2>
     <p>These timelines support the assessment table by showing the fork chronology and the revision and inclusion history used to choose each input. They are process evidence, not additional complexity results. Each chart has its own time axis; horizontal positions should only be compared within a chart.</p>
-    <h3>Fork milestones and relevant devnets</h3>
-    <p>This fork-level chronology uses the full plotting width and its own date scale.</p>
+    <h3 id="fork-milestones">Fork Milestones and Relevant Devnets</h3>
     <Chart spec={data.charts[`fork-milestones-${fork.fork}`]} label={`Fork milestones and relevant devnets for ${fork.name}`} description="Fork-level scope, devnet, testnet, and activation milestones on an independent time axis." fit={true} />
-    <h3>EIP revision histories and selected assessment refs</h3>
-    <p>Every EIP row below uses the same date scale, shown once above the panel.</p>
-    <ul class="timeline-guide"><li><strong>Revision traces:</strong> the dark line counts substantive post-creation revisions; the faint line counts all revisions.</li><li><strong>REF:</strong> the immutable EIP revision used for assessment. The amber rule is its proposal anchor.</li><li><strong>PFI, CFI, and SFI:</strong> recorded fork-inclusion state transitions; open markers retain repeated same-state records.</li><li><strong>CUTOFF:</strong> the fork-level initial-evaluation horizon. Triangles identify relevant devnets or testnets.</li></ul>
+    <h3 id="eip-revision-histories">EIP Revision Histories and Selected Assessment Refs</h3>
+    <p>The main purpose of this panel is to show where the selected assessment ref (REF) falls in each EIP’s revision history. The other traces and markers provide context for that selection. Every EIP row uses the same date scale, shown once above the panel.</p>
+    <ul><li><strong>Revision traces:</strong> the dark line counts substantive post-creation revisions; the faint line counts all revisions.</li><li><strong>REF:</strong> the immutable EIP revision used for assessment. The amber rule is its proposal anchor.</li><li><strong>PFI, CFI, and SFI:</strong> recorded fork-inclusion state transitions; open markers retain repeated same-state records.</li><li><strong>CUTOFF:</strong> the fork-level initial-evaluation horizon. Triangles identify relevant devnets or testnets.</li></ul>
     <Chart spec={data.charts[`timeline-${fork.fork}`]} label={`EIP revision histories supporting historical assessment-ref selection for ${fork.name}`} description="Aligned EIP revision histories, inclusion-state transitions, selected assessment refs, and the fork evaluation cutoff on one shared time axis." fit={true} />
   </>}
 
