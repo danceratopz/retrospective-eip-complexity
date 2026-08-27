@@ -305,6 +305,14 @@ def validate() -> dict[str, int]:
         require("Score at cutoff" in html, f"{page} page omits the primary at-cutoff total")
         require("Added-later score" in html, f"{page} page omits the late-addition increment")
         require("Final-scope score" in html, f"{page} page omits the final-scope total")
+    require(
+        home_html.count('data-sort-key="') == 6,
+        "home fork-total columns must all be sortable",
+    )
+    require(
+        association_html.count('data-sort-key="') == 14,
+        "results fork-total and shipping columns must all be sortable",
+    )
     for removed_route in [
         "data",
         "limitations",

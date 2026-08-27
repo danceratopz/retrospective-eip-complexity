@@ -1,0 +1,33 @@
+<script>
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  for (const table of document.querySelectorAll<HTMLTableElement>('[data-sortable-table]:not([data-sort-ready])')) {
+    table.setAttribute('data-sort-ready', 'true');
+    const body = table.tBodies[0];
+    const rows = Array.from(body.rows);
+    rows.forEach((row, index) => { row.dataset.sortIndex = String(index); });
+    for (const button of table.querySelectorAll<HTMLButtonElement>('[data-sort-key]')) {
+      button.addEventListener('click', () => {
+        const header = button.closest('th');
+        const key = button.dataset.sortKey;
+        if (!header || !key) return;
+        const direction = header.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+        const multiplier = direction === 'ascending' ? 1 : -1;
+        rows.sort((left, right) => {
+          const leftValue = left.dataset[key] ?? '';
+          const rightValue = right.dataset[key] ?? '';
+          if (!leftValue || !rightValue) {
+            if (!leftValue && !rightValue) return Number(left.dataset.sortIndex) - Number(right.dataset.sortIndex);
+            return !leftValue ? 1 : -1;
+          }
+          const comparison = button.dataset.sortKind === 'number'
+            ? Number(leftValue) - Number(rightValue)
+            : collator.compare(leftValue, rightValue);
+          return comparison ? comparison * multiplier : Number(left.dataset.sortIndex) - Number(right.dataset.sortIndex);
+        });
+        for (const item of table.querySelectorAll<HTMLElement>('th[aria-sort]')) item.setAttribute('aria-sort', 'none');
+        header.setAttribute('aria-sort', direction);
+        body.append(...rows);
+      });
+    }
+  }
+</script>
