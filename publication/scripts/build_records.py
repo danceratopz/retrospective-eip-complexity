@@ -20,6 +20,7 @@ TASK05 = ROOT / "research/tasks/05-retrospective-complexity-assignment/outputs/f
 TASK07 = ROOT / "research/tasks/07-observed-effort-metrics/outputs/join"
 TASK08 = ROOT / "research/tasks/08-hegota-prospective-complexity-assessment/outputs"
 ALIGNMENT = ROOT / "research/tasks/05c-amsterdam-human-assessment-alignment/outputs/comparisons"
+CUTOFF_INPUTS = ROOT / "research/tasks/04b-fork-evaluation-cutoffs/outputs/forks"
 TIMELINES = ROOT / "research/tasks/04b-fork-evaluation-cutoffs/outputs/review"
 TIMELINE_INPUTS = ROOT / "research/tasks/03-fork-development-timelines/inputs/forks"
 VERSION = "1.1.0"
@@ -75,7 +76,30 @@ def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
     rows: list[dict[str, Any]] = []
     sources: list[dict[str, str]] = []
     for fork in FORK_ORDER[:-1]:
-        for path in sorted((TASK05 / fork).glob("eip-*.yaml")):
+        cutoff_path = CUTOFF_INPUTS / f"{fork}.yaml"
+        cutoff = load_yaml(cutoff_path)
+        cutoff_entries = cutoff["eips"]
+        if any(
+            entry["cohort"] not in {"forecastable_at_cutoff", "late_scope"}
+            for entry in cutoff_entries
+        ):
+            raise BuildError(f"Task 04b contains an unknown scope classification for {fork}")
+        scope_by_eip = {
+            entry["number"]: (
+                "included_at_cutoff"
+                if entry["cohort"] == "forecastable_at_cutoff"
+                else "added_after_cutoff"
+            )
+            for entry in cutoff_entries
+        }
+        if len(scope_by_eip) != len(cutoff_entries):
+            raise BuildError(f"Task 04b contains duplicate EIPs for {fork}")
+        assessment_paths = sorted((TASK05 / fork).glob("eip-*.yaml"))
+        assessment_eips = {int(path.stem.removeprefix("eip-")) for path in assessment_paths}
+        if assessment_eips != set(scope_by_eip):
+            raise BuildError(f"Task 04b scope does not match Task 05 assessments for {fork}")
+        sources.append(source(cutoff_path))
+        for path in assessment_paths:
             item = load_yaml(path)
             totals = item["totals"]
             under = item["under_specification"]
@@ -97,6 +121,7 @@ def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
                     "layers": item["eip"]["layers"],
                     "mode": "retrospective",
                     "score": totals["primary_score"],
+                    "scope_timing": scope_by_eip[item["eip"]["number"]],
                     "status": "scored",
                     "summary": item["assessment"]["historical_scope_summary"],
                     "tier": totals["complexity_tier"],
@@ -229,7 +254,9 @@ def fork_shipping(
         timeline = load_yaml(path)
         sources.append(source(path))
         fork_rows = [row for row in historical if row["fork"] == fork]
-        eips = {row["eip"] for row in fork_rows}
+        at_cutoff_rows = [row for row in fork_rows if row["scope_timing"] == "included_at_cutoff"]
+        late_rows = [row for row in fork_rows if row["scope_timing"] == "added_after_cutoff"]
+        eips = {row["eip"] for row in at_cutoff_rows}
         actual_mainnet = next(
             (item["occurred_at"] for item in timeline["milestones"] if item.get("kind") == "mainnet"),
             None,
@@ -247,10 +274,11 @@ def fork_shipping(
             for devnet in timeline["devnets"]
             if devnet["id"] == start_id
         )
-        high_rows = [row for row in fork_rows if row["tier"] == "high"]
-        hardest = max(fork_rows, key=lambda row: row["score"])
+        high_rows = [row for row in at_cutoff_rows if row["tier"] == "high"]
+        hardest = max(at_cutoff_rows, key=lambda row: row["score"])
         rows.append(
             {
+                "at_cutoff_eips": len(at_cutoff_rows),
                 "first_multi_el_devnet": start_id,
                 "first_multi_el_devnet_at": start_at.date().isoformat(),
                 "fork": fork,
@@ -258,11 +286,14 @@ def fork_shipping(
                 "fork_short": FORK_NAMES[fork].split(" / ")[0],
                 "hardest_eip": f"EIP-{hardest['eip']}",
                 "high_tier_score_sum": sum(row["score"] for row in high_rows),
+                "late_addition_eips": len(late_rows),
+                "late_addition_score_sum": sum(row["score"] for row in late_rows),
                 "mainnet_at": mainnet_at.date().isoformat(),
                 "max_score": hardest["score"],
                 "projected": projected,
                 "shipping_days": (mainnet_at - start_at).days,
-                "total_score": sum(row["score"] for row in fork_rows),
+                "total_score": sum(row["score"] for row in at_cutoff_rows),
+                "final_scope_score_sum": sum(row["score"] for row in fork_rows),
             }
         )
 
@@ -277,9 +308,9 @@ def fork_shipping_specs(analysis: dict[str, Any]) -> list[dict[str, Any]]:
     domains = [row["fork_name"] for row in analysis["rows"]]
     specs = []
     for field, x_title in [
-        ("total_score", "Summed predicted complexity"),
-        ("high_tier_score_sum", "High-tier score sum"),
-        ("max_score", "Hardest single EIP"),
+        ("total_score", "Complexity score sum at cutoff"),
+        ("high_tier_score_sum", "High-tier score sum at cutoff"),
+        ("max_score", "Hardest EIP score at cutoff"),
     ]:
         shared_encoding = {
             "color": {
@@ -290,10 +321,14 @@ def fork_shipping_specs(analysis: dict[str, Any]) -> list[dict[str, Any]]:
             },
             "tooltip": [
                 {"field": "fork_name", "title": "Fork", "type": "nominal"},
-                {"field": "total_score", "title": "Summed score", "type": "quantitative"},
-                {"field": "high_tier_score_sum", "title": "High-tier sum", "type": "quantitative"},
-                {"field": "max_score", "title": "Hardest EIP score", "type": "quantitative"},
-                {"field": "hardest_eip", "title": "Hardest EIP", "type": "nominal"},
+                {"field": "total_score", "title": "Score at cutoff", "type": "quantitative"},
+                {"field": "at_cutoff_eips", "title": "EIPs at cutoff", "type": "quantitative"},
+                {"field": "late_addition_score_sum", "title": "Added-later score", "type": "quantitative"},
+                {"field": "late_addition_eips", "title": "EIPs added later", "type": "quantitative"},
+                {"field": "final_scope_score_sum", "title": "Final-scope score", "type": "quantitative"},
+                {"field": "high_tier_score_sum", "title": "High-tier sum at cutoff", "type": "quantitative"},
+                {"field": "max_score", "title": "Hardest EIP score at cutoff", "type": "quantitative"},
+                {"field": "hardest_eip", "title": "Hardest EIP at cutoff", "type": "nominal"},
                 {"field": "shipping_days", "title": "Shipping span (days)", "type": "quantitative"},
                 {"field": "first_multi_el_devnet", "title": "First ≥2-EL devnet", "type": "nominal"},
                 {"field": "first_multi_el_devnet_at", "title": "Development start", "type": "temporal"},
@@ -399,32 +434,78 @@ def charts(
     sources: list[dict[str, str]] = []
     outputs: dict[str, str] = {}
     historical = [row for row in assessment_rows if row["mode"] == "retrospective"]
-    totals = [
-        {
-            "eips": sum(row["fork"] == fork for row in historical),
-            "fork": fork,
-            "fork_name": FORK_NAMES[fork],
-            "score": sum(row["score"] for row in historical if row["fork"] == fork),
-        }
-        for fork in FORK_ORDER[:-1]
+    scopes = [
+        ("included_at_cutoff", "Included by cutoff", 0),
+        ("added_after_cutoff", "Added after cutoff", 1),
     ]
+    totals = []
+    for fork in FORK_ORDER[:-1]:
+        for scope_timing, scope_label, scope_order in scopes:
+            scoped = [
+                row
+                for row in historical
+                if row["fork"] == fork and row["scope_timing"] == scope_timing
+            ]
+            totals.append(
+                {
+                    "eips": len(scoped),
+                    "fork": fork,
+                    "fork_name": FORK_NAMES[fork],
+                    "scope": scope_label,
+                    "scope_order": scope_order,
+                    "score": sum(row["score"] for row in scoped),
+                }
+            )
     specs: dict[str, dict[str, Any]] = {
         "fork-totals": {
             "data": {"values": totals},
-            "description": "Retrospective EL-rubric score sums for five historical forks.",
-            "encoding": {
-                "color": {"field": "fork_name", "legend": None, "type": "nominal"},
-                "tooltip": [
-                    {"field": "fork_name", "title": "Fork", "type": "nominal"},
-                    {"field": "score", "title": "Score sum", "type": "quantitative"},
-                    {"field": "eips", "title": "Scored EIPs", "type": "quantitative"},
-                ],
-                "x": {"field": "fork_name", "sort": None, "title": None, "type": "nominal"},
-                "y": {"field": "score", "title": "Retrospective score sum", "type": "quantitative"},
-            },
+            "description": "Predicted EL-rubric score sums split between EIPs included by each fork's evaluation cutoff and EIPs added later.",
             "height": 320,
-            "mark": {"cornerRadiusTopLeft": 4, "cornerRadiusTopRight": 4, "type": "bar"},
-            "title": "Retrospective predicted-complexity totals",
+            "layer": [
+                {
+                    "encoding": {
+                        "color": {
+                            "field": "scope",
+                            "legend": {"orient": "top", "title": "Scope timing"},
+                            "scale": {
+                                "domain": ["Included by cutoff", "Added after cutoff"],
+                                "range": ["#3457d5", "#e67e22"],
+                            },
+                            "type": "nominal",
+                        },
+                        "order": {"field": "scope_order", "sort": "ascending", "type": "quantitative"},
+                        "tooltip": [
+                            {"field": "fork_name", "title": "Fork", "type": "nominal"},
+                            {"field": "scope", "title": "Scope timing", "type": "nominal"},
+                            {"field": "score", "title": "Score subtotal", "type": "quantitative"},
+                            {"field": "eips", "title": "EIPs", "type": "quantitative"},
+                        ],
+                        "x": {"field": "fork_name", "sort": None, "title": None, "type": "nominal"},
+                        "y": {
+                            "field": "score",
+                            "stack": "zero",
+                            "title": "Predicted complexity score sum",
+                            "type": "quantitative",
+                        },
+                    },
+                    "mark": {"stroke": "white", "strokeWidth": 1, "type": "bar"},
+                },
+                {
+                    "encoding": {
+                        "text": {"field": "final_score", "type": "quantitative"},
+                        "x": {"field": "fork_name", "sort": None, "title": None, "type": "nominal"},
+                        "y": {"field": "final_score", "type": "quantitative"},
+                    },
+                    "mark": {"dy": -8, "fontSize": 12, "fontWeight": "bold", "type": "text"},
+                    "transform": [
+                        {
+                            "aggregate": [{"as": "final_score", "field": "score", "op": "sum"}],
+                            "groupby": ["fork_name"],
+                        }
+                    ],
+                },
+            ],
+            "title": "Predicted Complexity at and After the Scope Cutoff",
             "width": 760,
         },
         "hegota-scores": {
@@ -625,7 +706,7 @@ def charts(
 
 
 def write_csv(rows: list[dict[str, Any]]) -> None:
-    fields = ["mode", "fork", "eip", "title", "layers", "status", "score", "tier", "confidence", "under_specification", "exclusion_kind", "rationale"]
+    fields = ["mode", "fork", "eip", "title", "layers", "status", "score", "tier", "confidence", "under_specification", "scope_timing", "exclusion_kind", "rationale"]
     path = PUBLIC / "downloads/complexity-assessments.csv"
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as stream:
@@ -651,13 +732,24 @@ def build() -> dict[str, Any]:
     for fork in FORK_ORDER:
         fork_rows = [row for row in rows if row["fork"] == fork]
         scored = [row for row in fork_rows if row["status"] == "scored"]
+        at_cutoff = [row for row in scored if row.get("scope_timing") == "included_at_cutoff"]
+        added_later = [row for row in scored if row.get("scope_timing") == "added_after_cutoff"]
         fork_summaries.append({
+            "at_cutoff_count": len(at_cutoff) if fork != "hegota" else None,
+            "at_cutoff_score_sum": sum(row["score"] for row in at_cutoff) if fork != "hegota" else None,
             "eip_count": len(fork_rows),
+            "final_scope_score_sum": sum(row["score"] for row in scored),
             "fork": fork,
+            "late_addition_count": len(added_later) if fork != "hegota" else None,
+            "late_addition_score_sum": sum(row["score"] for row in added_later) if fork != "hegota" else None,
             "mode": "prospective" if fork == "hegota" else "retrospective",
             "name": FORK_NAMES[fork],
             "not_applicable_count": len(fork_rows) - len(scored),
-            "score_sum": sum(row["score"] for row in scored),
+            "score_sum": (
+                sum(row["score"] for row in at_cutoff)
+                if fork != "hegota"
+                else sum(row["score"] for row in scored)
+            ),
             "scored_count": len(scored),
         })
     unique_eips: dict[int, dict[str, Any]] = {}

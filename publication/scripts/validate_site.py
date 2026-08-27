@@ -107,6 +107,46 @@ def validate() -> dict[str, int]:
     require(len(scored_hegota) == 37 and sum(row["score"] for row in scored_hegota) == 776, "Hegotá score gate mismatch")
     require(len(not_applicable) == 7, "Hegotá N/A population mismatch")
     require(all(row["score"] is None and row["tier"] is None for row in not_applicable), "N/A rows must not have score or tier")
+    expected_scope_totals = {
+        "shanghai": {"included_at_cutoff": (4, 65), "added_after_cutoff": (1, 3)},
+        "cancun": {"included_at_cutoff": (5, 126), "added_after_cutoff": (1, 9)},
+        "prague": {"included_at_cutoff": (8, 216), "added_after_cutoff": (3, 38)},
+        "osaka": {"included_at_cutoff": (8, 105), "added_after_cutoff": (4, 35)},
+        "amsterdam": {"included_at_cutoff": (13, 243), "added_after_cutoff": (2, 44)},
+    }
+    for fork, expected_scopes in expected_scope_totals.items():
+        for scope_timing, expected in expected_scopes.items():
+            scoped = [
+                row
+                for row in historical
+                if row["fork"] == fork and row["scope_timing"] == scope_timing
+            ]
+            require(
+                (len(scoped), sum(row["score"] for row in scoped)) == expected,
+                f"{fork} {scope_timing} count or score sum changed",
+            )
+    fork_summaries = {row["fork"]: row for row in data["forks"] if row["mode"] == "retrospective"}
+    require(
+        {
+            fork: (
+                row["score_sum"],
+                row["at_cutoff_score_sum"],
+                row["late_addition_score_sum"],
+                row["final_scope_score_sum"],
+            )
+            for fork, row in fork_summaries.items()
+        }
+        == {
+            fork: (
+                expected["included_at_cutoff"][1],
+                expected["included_at_cutoff"][1],
+                expected["added_after_cutoff"][1],
+                expected["included_at_cutoff"][1] + expected["added_after_cutoff"][1],
+            )
+            for fork, expected in expected_scope_totals.items()
+        },
+        "retrospective score_sum must represent the primary at-cutoff prediction",
+    )
     for row in historical:
         commit = row["assessed_revision"]
         require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None, "invalid assessed EIP commit")
@@ -129,6 +169,26 @@ def validate() -> dict[str, int]:
     require("correlations" not in shipping, "five-fork correlations must not be published")
     shipping_by_fork = {row["fork"]: row for row in shipping["rows"]}
     require(
+        {
+            fork: (
+                row["at_cutoff_eips"],
+                row["total_score"],
+                row["late_addition_eips"],
+                row["late_addition_score_sum"],
+                row["final_scope_score_sum"],
+            )
+            for fork, row in shipping_by_fork.items()
+        }
+        == {
+            "shanghai": (4, 65, 1, 3, 68),
+            "cancun": (5, 126, 1, 9, 135),
+            "prague": (8, 216, 3, 38, 254),
+            "osaka": (8, 105, 4, 35, 140),
+            "amsterdam": (13, 243, 2, 44, 287),
+        },
+        "fork-shipping scores must use the at-cutoff prediction and retain later additions separately",
+    )
+    require(
         shipping_by_fork["cancun"]["first_multi_el_devnet"] == "dencun-devnet-4",
         "Cancun ≥2-EL development start changed",
     )
@@ -136,6 +196,30 @@ def validate() -> dict[str, int]:
         shipping_by_fork["amsterdam"]["projected"] is True
         and shipping_by_fork["amsterdam"]["mainnet_at"] == "2026-12-15",
         "Amsterdam projection changed",
+    )
+    require(
+        shipping_by_fork["amsterdam"]["high_tier_score_sum"] == 123
+        and shipping_by_fork["amsterdam"]["hardest_eip"] == "EIP-7928"
+        and shipping_by_fork["amsterdam"]["max_score"] == 40,
+        "Amsterdam shipping summaries include a late-scope EIP",
+    )
+
+    fork_totals = json.loads((DIST / "generated/charts/fork-totals.json").read_text(encoding="utf-8"))
+    require(len(fork_totals["data"]["values"]) == 10, "fork totals must contain two scope-timing rows per fork")
+    require(
+        {
+            (row["fork"], row["scope"]): (row["eips"], row["score"])
+            for row in fork_totals["data"]["values"]
+        }
+        == {
+            (fork, "Included by cutoff"): expected["included_at_cutoff"]
+            for fork, expected in expected_scope_totals.items()
+        }
+        | {
+            (fork, "Added after cutoff"): expected["added_after_cutoff"]
+            for fork, expected in expected_scope_totals.items()
+        },
+        "stacked fork-total chart does not preserve the cutoff split",
     )
     human_llm = data["human_llm"]["rows"]
     require(len(human_llm) == 12, "human–LLM comparison must contain 12 Amsterdam EIPs")
@@ -189,6 +273,7 @@ def validate() -> dict[str, int]:
     require(not broken, "broken internal links:\n" + "\n".join(broken[:20]))
 
     association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
+    home_html = (DIST / "index.html").read_text(encoding="utf-8")
     eip_index_html = (DIST / "eips/index.html").read_text(encoding="utf-8")
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
     human_llm_html = (DIST / "human-vs-llm/index.html").read_text(encoding="utf-8")
@@ -216,6 +301,10 @@ def validate() -> dict[str, int]:
     require("id=\"background\"" in study_html, "study background is missing")
     require("id=\"limitations\"" in study_html, "study limitations are missing")
     require("Method before results" not in study_html, "obsolete study eyebrow remains")
+    for html, page in [(home_html, "home"), (association_html, "association")]:
+        require("Score at cutoff" in html, f"{page} page omits the primary at-cutoff total")
+        require("Added-later score" in html, f"{page} page omits the late-addition increment")
+        require("Final-scope score" in html, f"{page} page omits the final-scope total")
     for removed_route in [
         "data",
         "limitations",
