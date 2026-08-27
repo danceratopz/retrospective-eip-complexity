@@ -64,12 +64,12 @@ def source(path: Path) -> dict[str, str]:
     return {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
 
 
-def github_diff_to_master(commit: str, path: str) -> str:
-    path_hash = hashlib.sha256(path.encode()).hexdigest()
-    return (
-        f"https://github.com/ethereum/EIPs/compare/{commit}...master"
-        f"?diff=split&short_path={path_hash[:7]}#diff-{path_hash}"
-    )
+def github_current_revision(path: str) -> str:
+    return f"https://github.com/ethereum/EIPs/blob/master/{path}"
+
+
+def github_revision_history(path: str) -> str:
+    return f"https://github.com/ethereum/EIPs/commits/master/{path}"
 
 
 def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
@@ -94,6 +94,7 @@ def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
                     ],
                     "eip": item["eip"]["number"],
                     "fork": fork,
+                    "current_revision_url": github_current_revision(historical_eip["path"]),
                     "layers": item["eip"]["layers"],
                     "mode": "retrospective",
                     "score": totals["primary_score"],
@@ -101,9 +102,7 @@ def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
                     "summary": item["assessment"]["historical_scope_summary"],
                     "tier": totals["complexity_tier"],
                     "title": item["eip"]["title"],
-                    "revision_diff_url": github_diff_to_master(
-                        historical_eip["commit"], historical_eip["path"]
-                    ),
+                    "revision_history_url": github_revision_history(historical_eip["path"]),
                     "under_specification": under["present"],
                     "under_specification_summary": under["summary"],
                 }

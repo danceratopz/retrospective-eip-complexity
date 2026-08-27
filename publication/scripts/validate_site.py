@@ -115,8 +115,13 @@ def validate() -> dict[str, int]:
             "assessed-revision permalink mismatch",
         )
         require(
-            row["revision_diff_url"].startswith(f"https://github.com/ethereum/EIPs/compare/{commit}...master?"),
-            "current-master diff link mismatch",
+            row["current_revision_url"] == f"https://github.com/ethereum/EIPs/blob/master/EIPS/eip-{row['eip']}.md",
+            "current-master EIP link mismatch",
+        )
+        require(
+            row["revision_history_url"]
+            == f"https://github.com/ethereum/EIPs/commits/master/EIPS/eip-{row['eip']}.md",
+            "EIP file-history link mismatch",
         )
 
     shipping = data["fork_shipping"]
@@ -182,7 +187,8 @@ def validate() -> dict[str, int]:
     require("data-retrospective-only" in predicted_html, "retrospective-only filter is missing")
     require("generated/charts/fork-shipping.json" in association_html, "primary fork-shipping chart is missing")
     require(association_html.count('data-shipping-fork="') == 5, "fork-shipping table row count mismatch")
-    require(osaka_html.count(">Diff → current master</a>") == 12, "Osaka revision diff links are incomplete")
+    require(osaka_html.count(">Current master</a>") == 12, "Osaka current-revision links are incomplete")
+    require(osaka_html.count(">File history</a>") == 12, "Osaka file-history links are incomplete")
     require(
         osaka_html.index("Complexity assessments") < osaka_html.index("How the historical refs were selected"),
         "fork assessment table must precede the supporting timeline",
@@ -198,7 +204,7 @@ def validate() -> dict[str, int]:
         detail.feed(
             (DIST / f"forks/{row['fork']}/eips/{row['eip']}/index.html").read_text(encoding="utf-8")
         )
-        for url in [row["assessed_revision_url"], row["revision_diff_url"]]:
+        for url in [row["assessed_revision_url"], row["current_revision_url"], row["revision_history_url"]]:
             require(url in fork_links[row["fork"]], f"fork page omits EIP-{row['eip']} revision link")
             require(url in detail.links, f"assessment page omits EIP-{row['eip']} revision link")
 
