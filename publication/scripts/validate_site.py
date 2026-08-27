@@ -198,6 +198,7 @@ def validate() -> dict[str, int]:
         and "generated/charts/timeline-osaka.json" in osaka_html,
         "Osaka fork and EIP timelines must render separately",
     )
+    require(osaka_html.count("data-fit-chart") == 2, "Osaka timelines must opt into responsive fitting")
 
     fork_links = {}
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:

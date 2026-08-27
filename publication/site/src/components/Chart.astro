@@ -1,15 +1,50 @@
 ---
 import { basePath } from '../lib/data.js';
-const { spec, label, description } = Astro.props;
+const { spec, label, description, fit = false } = Astro.props;
 ---
-<figure>
-  <div class="chart" data-vega-spec={basePath(spec)} role="img" aria-label={label}>
+<figure class="chart-figure">
+  <div class="chart" data-vega-spec={basePath(spec)} data-fit-chart={fit || undefined} role="img" aria-label={label}>
     <p class="chart-status">Loading interactive chart…</p>
   </div>
   <figcaption class="muted">{description}</figcaption>
 </figure>
 <script>
   import embed from 'vega-embed';
+
+  function fittedSpec(rawSpec: any, element: HTMLElement) {
+    const spec = structuredClone(rawSpec);
+    if (!element.hasAttribute('data-fit-chart')) return spec;
+
+    const contentWidth = element.clientWidth - 34;
+    if (typeof spec.width === 'number') {
+      // Preserve room for the milestone labels outside the plotting rectangle.
+      const width = Math.floor(contentWidth - 192);
+      if (width >= 640) {
+        spec.width = Math.min(spec.width, width);
+        const tickCount = width < 760 ? 6 : width < 900 ? 8 : 10;
+        for (const layer of spec.layer ?? []) {
+          if (layer.encoding?.x?.axis) layer.encoding.x.axis.tickCount = tickCount;
+        }
+      }
+    } else if (spec.facet?.row && typeof spec.spec?.width === 'number') {
+      // The faceted history panel also needs its EIP-label gutter and y axis.
+      const labelWidth = spec.facet.row.header?.labelLimit ?? 245;
+      const width = Math.floor(contentWidth - labelWidth - 76);
+      if (width >= 560) {
+        spec.spec.width = Math.min(spec.spec.width, width);
+        const tickCount = width < 700 ? 6 : 8;
+        for (const layer of spec.spec.layer ?? []) {
+          if (layer.encoding?.x?.axis) layer.encoding.x.axis.tickCount = tickCount;
+        }
+      }
+    }
+    return spec;
+  }
+
+  function markOverflow(element: HTMLElement) {
+    element.dataset.overflow = element.scrollWidth > element.clientWidth + 1 ? 'true' : 'false';
+  }
+
   for (const element of document.querySelectorAll<HTMLElement>('[data-vega-spec]:not([data-rendered])')) {
     element.setAttribute('data-rendered', 'true');
     const status = element.querySelector('.chart-status');
@@ -18,7 +53,11 @@ const { spec, label, description } = Astro.props;
         if (!response.ok) throw new Error(`Chart request failed: ${response.status}`);
         return response.json();
       })
-      .then((spec) => embed(element, spec, { actions: false, renderer: 'svg' }))
+      .then((spec) => embed(element, fittedSpec(spec, element), { actions: false, renderer: 'svg' }))
+      .then(() => {
+        markOverflow(element);
+        new ResizeObserver(() => markOverflow(element)).observe(element);
+      })
       .catch((error) => { if (status) status.textContent = `Chart unavailable: ${error.message}`; });
   }
 </script>
