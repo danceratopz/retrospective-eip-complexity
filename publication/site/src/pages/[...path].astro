@@ -22,78 +22,9 @@ export function getStaticPaths() {
 
 const props = Astro.props as any;
 const data = loadPublication();
-const studyTitle = 'Can Execution Layer Complexity Assessments Help Predict Time to Mainnet?';
-const studySections = [
-  {
-    id: 'background',
-    title: 'Background',
-    body: [
-      'Testing is frequently the critical path. Before the first devnet, implementing Execution Layer consensus tests and their supporting test frameworks, then ensuring those tests agree with client implementations, is costly. Once devnets begin, interoperability testing across Execution Layer clients, debugging, and repeated integration cycles can dominate the remaining time to mainnet.',
-    ],
-  },
-  {
-    id: 'research-question',
-    title: 'Research Question',
-    body: [
-      'This study asks whether complexity assessments made from early Execution Layer EIP specifications can help anticipate that broader delivery process. The primary fork-level analysis compares three summaries of predicted Execution Layer complexity with the time from the first devnet running at least two independent Execution Layer clients to mainnet.',
-      'A separate EIP-level analysis asks whether predicted Execution Layer complexity tracks two score-blind public-artifact measures: specification rework and newly documented EIP interactions.',
-    ],
-  },
-  {
-    id: 'evaluations',
-    title: 'What Was Evaluated',
-    body: [
-      'The retrospective study contains 49 fork–EIP relationships whose proposals have an Execution Layer surface, including execution-only and cross-layer EIPs, from Shanghai through Amsterdam. Only the Execution Layer surface is scored. Each relationship is assessed from a pinned proposal revision intended to approximate its entry into fork development.',
-      'Hegotá is a separate forward-looking evaluation of the 44 proposals listed as Proposed for Inclusion in EIP-8081 on 26 August 2026. The 37 proposals with an applicable Execution Layer or execution-client networking surface were scored; five Consensus Layer–only proposals and two explicit exclusions were retained as N/A. Its scores were produced with an LLM using the same Execution Layer complexity-assignment rubric, independently of the STEEL team’s ongoing manual assessment work. Hegotá has no observed outcome and never enters the retrospective association analysis.',
-    ],
-  },
-  {
-    id: 'workflow',
-    title: 'Research Workflow',
-    body: [
-      'Task 01 records fork membership and source history. Tasks 03 and 04 select and review historical proposal horizons. Task 05 creates sealed one-EIP packages and runs isolated assessments. Task 07 defines observed-effort proxies before joining them to scores.',
-      'Every derived publication record points back to a repository-relative source path and SHA-256. The publication adapter reads research outputs but cannot modify them.',
-    ],
-  },
-  {
-    id: 'evidence-controls',
-    title: 'Evidence Controls',
-    body: [
-      'Each assessor received one sealed proposal package, the pinned rubric, and explicitly admitted supporting documents. Network access, repository access, other assessments, implementations, tests, observed outcomes, and aggregate progress were excluded.',
-      'Isolation cannot erase latent model knowledge. The study therefore reports package provenance, exposure attestations, under-specification, confidence, and known recovery events instead of claiming perfect blindness.',
-    ],
-  },
-  {
-    id: 'scoring-rubric',
-    title: 'Scoring Rubric',
-    body: [
-      'Twenty-eight Execution Layer criteria produce a primary score and Low, Medium, or High tier. Scores below 12 are Low, 12 through 22 are Medium, and 23 or above are High. The criteria cover gas rules, execution and state behavior, testing surfaces, APIs, encodings, system contracts, opcodes, precompiles, transactions, activation, performance, security, under-specified behavior, and cross-EIP interactions.',
-      'The rubric estimates specification-implied Execution Layer complexity. It does not estimate person-hours, cost, severity, importance, Consensus Layer complexity, or probability of inclusion.',
-    ],
-  },
-  {
-    id: 'study-design-decisions',
-    title: 'Study Design Decisions',
-    body: [
-      'The study favors pinned evidence and explicit limitations over a larger but less controlled sample.',
-      'The research uses fork–EIP relationships rather than unique EIPs because one proposal can appear in more than one fork context. Consensus Layer–only proposals remain visible but never receive a zero EL score.',
-      'Observed-effort metrics were defined score-blind. Correlations remain descriptive: they do not show that complexity caused delay, revisions, coordination, or engineering effort.',
-    ],
-  },
-];
-const studyLimitations = [
-  'Complexity scores do not measure person-hours, cost, importance, risk, or causality.',
-  'Fork totals depend on the number of included EIPs and how proposals are split.',
-  'Historical ref selection approximates entry into development and can be imperfect.',
-  'Observed-effort proxies are derived from recorded public artifacts and omit private work.',
-  'Amsterdam is right-censored and potentially in-sample.',
-  'Hegotá is forward-looking, can change after the snapshot, and has no observed outcome.',
-  'Consensus Layer–only work receives no EL score; zero would be misleading.',
-  'Isolation reduces observable hindsight but cannot erase latent model knowledge.',
-];
 const titles = {
   'fork-index': 'Forks', 'eip-index': 'EIPs', fork: 'Fork detail', assessment: 'Assessment detail', eip: 'EIP detail',
-  hegota: 'Hegotá prospective assessment', 'human-llm': 'Human versus LLM evaluations', result: 'Results', study: studyTitle,
+  hegota: 'Hegotá prospective assessment', 'human-llm': 'Human versus LLM evaluations', result: 'Results', study: 'Study moved',
 };
 let title = titles[props.kind] ?? 'Research';
 const fork = props.fork ? data.forks.find((item) => item.fork === props.fork) : null;
@@ -113,17 +44,10 @@ const correlations = [
   ['Specification rework', 34, 0.75], ['New EIP interactions', 34, 0.56],
 ];
 ---
-<Layout title={title}>
+<Layout title={title} redirect={props.kind === 'study' ? basePath() : undefined}>
   {props.kind === 'study' && <>
-    <p class="eyebrow">Methodology</p>
-    <h1>{studyTitle}</h1>
-    <p class="lede">We used an LLM to perform retrospective complexity assessments from early Execution Layer EIP specifications, then tested whether those scores help explain how long a fork takes to reach mainnet and the later engineering burden visible in public artifacts.</p>
-    <nav class="actions" aria-label="Study sections">
-      {studySections.map((section) => <a href={`#${section.id}`}>{section.title}</a>)}
-      <a href="#limitations">Limitations</a>
-    </nav>
-    {studySections.map((section) => <section aria-labelledby={section.id}><h2 id={section.id}>{section.title}</h2>{section.id === 'background' && <p>The <a href="https://steel.ethereum.foundation/">STEEL team</a> introduced its <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">Execution Layer EIP complexity-assessment methodology</a> during the Amsterdam fork-scoping process to make the difficulty of implementing, testing, coordinating, and shipping the Execution Layer surface of an EIP to mainnet more legible before scope decisions are made.</p>}{section.body.map((paragraph) => <p>{paragraph}</p>)}</section>)}
-    <section aria-labelledby="limitations"><h2 id="limitations">Limitations</h2><p>The results are evidence about a research rubric, not a universal measure of protocol work.</p><ul>{studyLimitations.map((limitation) => <li>{limitation}</li>)}</ul></section>
+    <h1>Study Moved</h1>
+    <p>The study is now the <a href={basePath()}>site homepage</a>.</p>
   </>}
 
   {props.kind === 'fork-index' && <>
@@ -236,7 +160,7 @@ const correlations = [
       <li><strong>V2 shifted scores upward.</strong> Its apparent improvement in tier agreement cannot be separated from the expanded rubric and changed thresholds.</li>
     </ul>
     <p>The strongest supported use is as a structured second opinion: retain the LLM’s criterion-level flags and ranking signal, then have a human approve the evidence, aggregation, and final score.</p>
-    <div class="actions"><a href={basePath('generated/charts/human-alignment.json')}>Download chart specification and values</a><a href={basePath('study/')}>Read the methodology and limitations</a></div>
+    <div class="actions"><a href={basePath('generated/charts/human-alignment.json')}>Download chart specification and values</a><a href={basePath()}>Read the methodology and limitations</a></div>
   </>}
 
   {props.kind === 'hegota' && <>

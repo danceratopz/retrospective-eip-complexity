@@ -278,7 +278,8 @@ def validate() -> dict[str, int]:
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
     human_llm_html = (DIST / "human-vs-llm/index.html").read_text(encoding="utf-8")
     osaka_html = (DIST / "forks/osaka/index.html").read_text(encoding="utf-8")
-    study_html = (DIST / "study/index.html").read_text(encoding="utf-8")
+    study_html = home_html
+    legacy_study_html = (DIST / "study/index.html").read_text(encoding="utf-8")
     require(
         "Can Execution Layer Complexity Assessments Help Predict Time to Mainnet?" in study_html,
         "study question or Execution Layer scope is missing",
@@ -301,14 +302,19 @@ def validate() -> dict[str, int]:
     require("id=\"background\"" in study_html, "study background is missing")
     require("id=\"limitations\"" in study_html, "study limitations are missing")
     require("Method before results" not in study_html, "obsolete study eyebrow remains")
-    for html, page in [(home_html, "home"), (association_html, "association")]:
-        require("Score at cutoff" in html, f"{page} page omits the primary at-cutoff total")
-        require("Added-later score" in html, f"{page} page omits the late-addition increment")
-        require("Final-scope score" in html, f"{page} page omits the final-scope total")
+    require("Evaluation-first research publication" not in home_html, "obsolete landing-page eyebrow remains")
+    require("How much complexity did an EIP imply before implementation?" not in home_html, "obsolete landing page remains")
     require(
-        home_html.count('data-sort-key="') == 6,
-        "home fork-total columns must all be sortable",
+        'href="/retrospective-eip-complexity/">Study</a>' in home_html,
+        "Study navigation must point to the homepage",
     )
+    require(
+        'http-equiv="refresh" content="0; url=/retrospective-eip-complexity/"' in legacy_study_html
+        and '<meta name="robots" content="noindex">' in legacy_study_html,
+        "legacy Study route must redirect to the homepage",
+    )
+    for label in ["Score at cutoff", "Added-later score", "Final-scope score"]:
+        require(label in association_html, f"association page omits {label.lower()}")
     require(
         association_html.count('data-sort-key="') == 14,
         "results fork-total and shipping columns must all be sortable",

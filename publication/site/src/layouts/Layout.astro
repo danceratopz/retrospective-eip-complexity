@@ -3,9 +3,9 @@ import '../styles/global.css';
 import SortableTables from '../components/SortableTables.astro';
 import { basePath } from '../lib/data.js';
 
-const { title, description = 'A reproducible evaluation of EIP complexity and observed development history.' } = Astro.props;
+const { title, description = 'A reproducible evaluation of EIP complexity and observed development history.', redirect } = Astro.props;
 const nav = [
-  ['Study', 'study/'],
+  ['Study', ''],
   ['Forks', 'forks/'],
   ['EIPs', 'eips/'],
   ['Results', 'results/predicted-vs-observed/'],
@@ -18,6 +18,8 @@ const nav = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    {redirect && <meta name="robots" content="noindex" />}
+    {redirect && <meta http-equiv="refresh" content={`0; url=${redirect}`} />}
     <title>{title} · Retrospective LLM-Based Complexity Evaluations</title>
   </head>
   <body>
