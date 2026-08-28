@@ -309,6 +309,11 @@ def validate() -> dict[str, int]:
         "Study navigation must point to the homepage",
     )
     require(
+        'href="https://github.com/danceratopz/retrospective-eip-complexity"' in home_html
+        and 'aria-label="View the source repository on GitHub (opens in a new tab)"' in home_html,
+        "accessible source-repository link is missing",
+    )
+    require(
         'http-equiv="refresh" content="0; url=/retrospective-eip-complexity/"' in legacy_study_html
         and '<meta name="robots" content="noindex">' in legacy_study_html,
         "legacy Study route must redirect to the homepage",
