@@ -48,7 +48,8 @@ research/
         ├── inputs/       # Frozen 2026-08-26 EIP-8081 PFI cohort
         ├── prompts/      # Coordinator plus isolated one-EIP prompt contract
         ├── scripts/      # Shared-engine adapter, isolation, validation, and aggregation
-        └── outputs/      # Reviewed dispositions, frozen assessments, and summaries
+        ├── extensions/   # Append-only same-snapshot SFI/CFI assessment
+        └── outputs/      # PFI freeze plus original and combined summaries
 ```
 
 YAML is the canonical research format because the records require human review, evidence notes, and occasional uncertainty. Dates must use quoted ISO 8601 values (`"YYYY-MM-DD"` or a full timestamp). Every factual claim must carry a primary-source reference.
@@ -67,4 +68,4 @@ Task 05 consumes only human-approved Task 04 records. It builds deterministic, h
 
 Task 07 derives per-relationship observed-effort metrics from Tasks 01, 03, 04, and 04b. Metric definition, computation, and redundancy analysis are score-blind (they never read Task 05 outputs); a separate, explicitly gated script joins the metrics against the 49 predictions and renders the comparison charts. Metrics are derived artifacts with a `calculation_version` and per-row evidence IDs rather than new research observations.
 
-Task 08 freezes a separate prospective Hegotá PFI snapshot and reuses Task 05's execution-layer rubric and isolated one-EIP engine. Its common snapshot, layer-applicability gate, packages, assessments, freezes, and aggregates remain separate from the retrospective dataset. Consensus-only PFI entries receive explicit not-applicable records unless a future study adopts a dedicated consensus-layer rubric.
+Task 08 freezes a separate prospective Hegotá PFI snapshot and reuses Task 05's execution-layer rubric and isolated one-EIP engine. An append-only extension evaluates the EIPs that were SFI'd and CFI'd at the same 2026-08-26 snapshot, without rewriting the original PFI result. The combined overview status-labels all rows for visibility. Its common snapshot, layer-applicability gate, packages, assessments, freezes, and aggregates remain separate from the retrospective dataset. Consensus-only PFI entries receive explicit not-applicable records unless a future study adopts a dedicated consensus-layer rubric.

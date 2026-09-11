@@ -101,12 +101,26 @@ def validate() -> dict[str, int]:
     prospective = [row for row in rows if row["mode"] == "prospective"]
     scored_hegota = [row for row in prospective if row["status"] == "scored"]
     not_applicable = [row for row in prospective if row["status"] == "not_applicable"]
-    require(len(rows) == 93, "all-forks table must contain 93 relationships")
+    require(len(rows) == 95, "all-forks table must contain 95 relationships")
     require(len(historical) == 49, "retrospective-only table must contain 49 relationships")
-    require(len(prospective) == 44, "Hegotá table must contain 44 entries")
-    require(len(scored_hegota) == 37 and sum(row["score"] for row in scored_hegota) == 776, "Hegotá score gate mismatch")
+    require(len(prospective) == 46, "Hegotá table must contain 46 entries")
+    require(len(scored_hegota) == 39 and sum(row["score"] for row in scored_hegota) == 856, "Hegotá score gate mismatch")
     require(len(not_applicable) == 7, "Hegotá N/A population mismatch")
     require(all(row["score"] is None and row["tier"] is None for row in not_applicable), "N/A rows must not have score or tier")
+    require(
+        {row["snapshot_status"] for row in prospective} == {"PFI", "SFI", "CFI"},
+        "Hegotá snapshot statuses are incomplete",
+    )
+    require(
+        {row["eip"]: row["snapshot_status"] for row in prospective if row["snapshot_status"] != "PFI"}
+        == {7805: "SFI", 8141: "CFI"},
+        "Hegotá SFI/CFI snapshot membership mismatch",
+    )
+    pfi_scored = [row for row in scored_hegota if row["snapshot_status"] == "PFI"]
+    require(
+        len(pfi_scored) == 37 and sum(row["score"] for row in pfi_scored) == 776,
+        "Hegotá original PFI subtotal changed",
+    )
     expected_scope_totals = {
         "shanghai": {"included_at_cutoff": (4, 65), "added_after_cutoff": (1, 3)},
         "cancun": {"included_at_cutoff": (5, 126), "added_after_cutoff": (1, 9)},
@@ -245,7 +259,7 @@ def validate() -> dict[str, int]:
     require(manifest["source_records"] == sorted(manifest["source_records"], key=lambda item: item["path"]), "source records are not stable-sorted")
 
     html_files = sorted(DIST.rglob("*.html"))
-    require(len(html_files) == 153, f"expected 153 static pages, found {len(html_files)}")
+    require(len(html_files) == 155, f"expected 155 static pages, found {len(html_files)}")
     broken: list[str] = []
     chart_pages = 0
     for html_path in html_files:
@@ -335,15 +349,20 @@ def validate() -> dict[str, int]:
         "study/workflow",
     ]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
-    require(eip_index_html.count('data-mode="') == 93, "EIP index relationship row count mismatch")
+    require(eip_index_html.count('data-mode="') == 95, "EIP index relationship row count mismatch")
     require('data-table-search' in eip_index_html, "EIP index substring search is missing")
     require('data-table-fork' in eip_index_html, "EIP index fork filter is missing")
     require(eip_index_html.count('data-sort-key="') == 8, "EIP index columns must all be sortable")
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
-    require(hegota_html.count('data-mode="prospective"') == 44, "Hegotá HTML table row count mismatch")
+    require(hegota_html.count('data-mode="prospective"') == 46, "Hegotá HTML table row count mismatch")
     require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
-    require(hegota_html.count('data-sort-key="') == 8, "Hegotá assessment columns must all be sortable")
+    require(hegota_html.count('data-sort-key="') == 9, "Hegotá assessment columns must all be sortable")
+    require("Snapshot status" in hegota_html, "Hegotá snapshot-status column is missing")
+    require(
+        "Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot" in hegota_html,
+        "Hegotá SFI/CFI snapshot disclosure is missing",
+    )
     require(
         "independently of the STEEL team’s ongoing manual assessment work" in hegota_html,
         "Hegotá manual-assessment independence disclosure is missing",
@@ -356,9 +375,13 @@ def validate() -> dict[str, int]:
     require("data-retrospective-only" in eip_index_html, "retrospective-only filter is missing")
     hegota_chart = json.loads((DIST / "generated/charts/hegota-scores.json").read_text(encoding="utf-8"))
     require(
-        len(hegota_chart["data"]["values"]) == 37
+        len(hegota_chart["data"]["values"]) == 39
         and all(row.get("title") for row in hegota_chart["data"]["values"]),
         "Hegotá chart must carry every scored EIP title",
+    )
+    require(
+        {row["snapshot_status"] for row in hegota_chart["data"]["values"]} == {"PFI", "SFI", "CFI"},
+        "Hegotá chart snapshot statuses are incomplete",
     )
     require(
         any(item.get("field") == "title" and item.get("title") == "EIP name" for item in hegota_chart["encoding"]["tooltip"]),

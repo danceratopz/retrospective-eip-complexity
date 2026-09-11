@@ -19,6 +19,9 @@ TASK_CONTRACT = TASK_ROOT / "TASK.md"
 ASSESSMENT_CONTRACT = TASK_ROOT / "prompts" / "ASSESSMENT-CONTRACT.md"
 TASK05_TEMPLATE = TASK05_ROOT / "templates" / "output.yaml"
 PACKAGE_FREEZE = TASK_ROOT / "outputs" / "package-manifest.yaml"
+EXPECTED_TASK_ID = "08-hegota-prospective-complexity-assessment"
+EXPECTED_FORK_ID = "hegota"
+EXPECTED_SNAPSHOT_ID = "hegota-pfi-2026-08-26-ac450a4"
 PROVENANCE_ONLY_REPOSITORIES = {
     *package_engine.PROVENANCE_ONLY_REPOSITORIES,
     "ethereum/consensus-specs",
@@ -64,9 +67,9 @@ def validate_package(package: Path) -> None:
         package.name,
     )
     if identity != (
-        "08-hegota-prospective-complexity-assessment",
-        "hegota",
-        "hegota-pfi-2026-08-26-ac450a4",
+        EXPECTED_TASK_ID,
+        EXPECTED_FORK_ID,
+        EXPECTED_SNAPSHOT_ID,
         f"eip-{number}",
     ):
         raise ValidationError(f"Package identity mismatch: {package}")
@@ -87,7 +90,7 @@ def validate_package(package: Path) -> None:
     if manifest.get("cohort_manifest") != {
         "path": rel(COHORT_PATH),
         "content_sha256": file_sha256(COHORT_PATH),
-        "snapshot_id": "hegota-pfi-2026-08-26-ac450a4",
+        "snapshot_id": EXPECTED_SNAPSHOT_ID,
     }:
         raise ValidationError(f"EIP-{number} cohort-manifest provenance mismatch")
     review_record = manifest.get("cohort_review", {})
@@ -190,7 +193,7 @@ def validate_package(package: Path) -> None:
 
     if (
         template.get("task_id") != manifest["task_id"]
-        or template.get("fork_id") != "hegota"
+        or template.get("fork_id") != EXPECTED_FORK_ID
         or template.get("snapshot_id") != manifest["snapshot_id"]
         or template.get("eip") != manifest["eip"]
         or "snapshot_scope_summary" not in template.get("assessment", {})

@@ -150,9 +150,9 @@ uv run scripts/plot_predicted_vs_observed.py
 
 Metric definitions, missing-data rules, the Amsterdam censor date, and the composite construction are specified in the task's `TASK.md`; the metric-selection rationale is recorded in `outputs/redundancy/redundancy-report.md`. Outputs are deterministic apart from the recorded `generated_at` timestamp. Serve `outputs/join/` with the HTTP command below to browse the charts.
 
-## Task 08: Hegotá prospective PFI assessment
+## Task 08: Hegotá prospective candidate assessment
 
-Read `research/tasks/08-hegota-prospective-complexity-assessment/TASK.md` and its `README.md` completely. The source cohort contains the 44 EIPs listed as Proposed for Inclusion in EIP-8081 at EIPs commit `ac450a4ab2f37387385ee9c54b62f518d97e6cc9`.
+Read `research/tasks/08-hegota-prospective-complexity-assessment/TASK.md` and its `README.md` completely. The original source cohort contains the 44 EIPs listed as Proposed for Inclusion in EIP-8081 at EIPs commit `ac450a4ab2f37387385ee9c54b62f518d97e6cc9`. An append-only extension evaluates EIP-7805 and EIP-8141 from that exact commit and labels them as Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot.
 
 Validate the frozen cohort against a complete local EIPs clone:
 
@@ -181,7 +181,25 @@ The top-level prompt for a filesystem-enabled coordinator LLM is `research/tasks
 
 Consensus-only PFI entries remain in the cohort but receive `not_applicable_to_el_rubric` records rather than numeric zeroes. Task 08 results use a separate namespace and never enter Task 05 retrospective totals or Task 07 analysis.
 
-The completed snapshot contains 37 validated execution-layer assessments. Five consensus-only entries and the two project-owner exclusions, EIP-8163 and EIP-8173, have no numeric score or tier. The human-readable aggregate is `research/tasks/08-hegota-prospective-complexity-assessment/outputs/summary.md`.
+The original PFI snapshot contains 37 validated execution-layer assessments. Five consensus-only entries and the two project-owner exclusions, EIP-8163 and EIP-8173, have no numeric score or tier. Its human-readable aggregate is `research/tasks/08-hegota-prospective-complexity-assessment/outputs/summary.md`.
+
+Validate the two-entry SFI/CFI extension, its packages, byte-identical regeneration, assessment freeze, and deterministic combined summary with:
+
+```bash
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/validate_sfi_cfi_cohort.py \
+  --eips-repo ../EIPs
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/validate_sfi_cfi_packages.py
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/prepare_sfi_cfi.py \
+  --verify-regeneration --eips-repo ../EIPs --pm-repo ../pm
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/08-hegota-prospective-complexity-assessment/scripts/finalize_sfi_cfi.py \
+  --summarize
+```
+
+The original PFI aggregate remains 776 across 37 scored EIPs. The extension adds 80 across two scored EIPs, for a combined visibility view of 856 across 39 scored EIPs. The combined table, including all 46 entries and their snapshot statuses, is `research/tasks/08-hegota-prospective-complexity-assessment/outputs/summary-all-candidates.md`.
 
 ## Deterministic rerender check
 

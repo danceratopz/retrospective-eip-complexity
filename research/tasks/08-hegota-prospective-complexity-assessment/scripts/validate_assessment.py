@@ -13,6 +13,10 @@ from validate_packages import NAMESPACE, PACKAGE_ROOT
 
 OUTPUT_ROOT = TASK_ROOT / "outputs" / "assessments" / NAMESPACE
 PROMPT_ROOT = TASK_ROOT / "inputs" / "prompts" / NAMESPACE
+RAW_ROOT = TASK_ROOT / "outputs" / "raw" / NAMESPACE
+EXPECTED_TASK_ID = "08-hegota-prospective-complexity-assessment"
+EXPECTED_FORK_ID = "hegota"
+EXPECTED_SNAPSHOT_ID = "hegota-pfi-2026-08-26-ac450a4"
 CONFIDENCE = output_engine.CONFIDENCE
 BINARY_CRITERIA = output_engine.BINARY_CRITERIA
 require_text = output_engine.require_text
@@ -45,9 +49,9 @@ def validate(_fork_id: str, number: int, output_override: Path | None = None) ->
 
     if (
         result.get("schema_version") != 1
-        or result.get("task_id") != "08-hegota-prospective-complexity-assessment"
-        or result.get("fork_id") != "hegota"
-        or result.get("snapshot_id") != "hegota-pfi-2026-08-26-ac450a4"
+        or result.get("task_id") != EXPECTED_TASK_ID
+        or result.get("fork_id") != EXPECTED_FORK_ID
+        or result.get("snapshot_id") != EXPECTED_SNAPSHOT_ID
     ):
         raise ValidationError("Unexpected schema, task, fork, or snapshot identity")
     if int(result.get("eip", {}).get("number", -1)) != number:
@@ -113,7 +117,7 @@ def validate(_fork_id: str, number: int, output_override: Path | None = None) ->
         require_text(raw_output.get("path"), "provenance.assessor_raw_output.path")
         require_text(raw_output.get("content_sha256"), "provenance.assessor_raw_output.content_sha256")
         raw_path = (TASK_ROOT / raw_output["path"]).resolve()
-        raw_root = (TASK_ROOT / "outputs" / "raw" / NAMESPACE).resolve()
+        raw_root = RAW_ROOT.resolve()
         if not raw_path.is_relative_to(raw_root) or not raw_path.is_file():
             raise ValidationError("assessor_raw_output does not resolve under Task 08 outputs/raw")
         if sha256_file(raw_path) != raw_output["content_sha256"]:

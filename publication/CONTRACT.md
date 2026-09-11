@@ -67,7 +67,7 @@ Approved downloads remain linked from the relevant results and assessment pages.
 
 One EIP may have different assessment refs and information cutoffs in different forks. The fork-specific assessment page is therefore the reader-facing score authority. A global EIP page may aggregate occurrences and cross-links, but it must never replace distinct fork cutoffs with one score.
 
-The Hegotá route accepts the owner-approved `hegota-pfi-2026-08-26-ac450a4` freeze only: 44 PFI entries, 37 validated assessments, 7 not-applicable dispositions, and an EL-rubric score sum of 776. `prospective_cohort_summary` owns the page and `prospective_eip_assessment` owns its table rows. These records remain structurally separate from Task 05 and never enter Task 07 correlations or observed-effort plots.
+The Hegotá route accepts the owner-approved `hegota-candidates-2026-08-26-ac450a4` combined view only: the unchanged 44-entry PFI freeze plus the append-only SFI/CFI extension from the same source snapshot. It contains 46 status-labelled entries, 39 validated assessments, 7 not-applicable dispositions, and an EL-rubric score sum of 856. The page must retain the original PFI subtotal of 776 across 37 assessments and identify EIP-7805 and EIP-8141 as Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot. `prospective_cohort_summary` owns the page and `prospective_eip_assessment` owns its table rows. These records remain structurally separate from Task 05 and never enter Task 07 correlations or observed-effort plots.
 
 ## Terminology and labels
 

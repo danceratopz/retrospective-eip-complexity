@@ -399,10 +399,10 @@ def validate_record(
         if (
             record_type != "prospective_cohort_summary"
             or payload.get("snapshot_id") != adapter["prospective_gate"]["snapshot_id"]
-            or payload.get("population_count") != 44
-            or payload.get("scored_count") != 37
+            or payload.get("population_count") != 46
+            or payload.get("scored_count") != 39
             or payload.get("not_applicable_count") != 7
-            or payload.get("el_rubric_total") != 776
+            or payload.get("el_rubric_total") != 856
             or record.get("maturity") != "approved"
         ):
             codes.add("prospective_empty_state")
@@ -526,11 +526,15 @@ def validate_routes_labels_adapter(
     gate = adapter["prospective_gate"]
     require(gate["allowed_record_type_now"] == "prospective_cohort_summary", "adapter: prospective summary type mismatch")
     require(gate["reserved_route_family"] == "prospective_hegota", "adapter: prospective route mismatch")
-    require(gate["snapshot_id"] == "hegota-pfi-2026-08-26-ac450a4", "adapter: prospective snapshot mismatch")
-    require(gate["population_count"] == 44, "adapter: prospective population mismatch")
-    require(gate["assessment_count"] == 37, "adapter: prospective assessment count mismatch")
+    require(gate["snapshot_id"] == "hegota-candidates-2026-08-26-ac450a4", "adapter: prospective snapshot mismatch")
+    require(gate["population_count"] == 46, "adapter: prospective population mismatch")
+    require(gate["assessment_count"] == 39, "adapter: prospective assessment count mismatch")
     require(gate["not_applicable_count"] == 7, "adapter: prospective N/A count mismatch")
-    require(gate["el_rubric_total"] == 776, "adapter: prospective score sum mismatch")
+    require(gate["el_rubric_total"] == 856, "adapter: prospective score sum mismatch")
+    require(gate["original_pfi_assessment_count"] == 37, "adapter: original PFI count mismatch")
+    require(gate["original_pfi_el_rubric_total"] == 776, "adapter: original PFI total mismatch")
+    require(gate["extension_assessment_count"] == 2, "adapter: extension count mismatch")
+    require(gate["extension_el_rubric_total"] == 80, "adapter: extension total mismatch")
     require(gate["validation_result"] == "pass", "adapter: prospective validation gate mismatch")
 
     require(schema.get("$schema") == JSON_SCHEMA_DRAFT, "schema: must use Draft 2020-12")

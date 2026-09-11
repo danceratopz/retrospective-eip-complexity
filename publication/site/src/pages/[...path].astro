@@ -85,13 +85,13 @@ const correlations = [
   </>}
 
   {props.kind === 'eip-index' && <>
-    <p class="eyebrow">Cross-fork index</p><h1>EIPs</h1><p class="lede">{data.eips.length} proposals represented across 93 fork–EIP relationships.</p>
+    <p class="eyebrow">Cross-fork index</p><h1>EIPs</h1><p class="lede">{data.eips.length} proposals represented across 95 fork–EIP relationships.</p>
     <AssessmentTable rows={data.assessments} caption="EIP complexity assessments" controls={true} sortable={true} proposalRoute="global" />
   </>}
 
   {props.kind === 'eip' && <>
     <p class="eyebrow">Proposal Across Forks</p><h1>EIP-{eip.eip}: {eip.title}</h1>
-    <div class="grid">{eip.relationships.map((rel) => <article class="card"><span class:list={["pill", rel.mode === 'prospective' && 'prospective']}>{rel.mode}</span><h2>{rel.fork === 'hegota' ? 'Hegotá' : rel.fork}</h2><p>{rel.status === 'scored' ? <>Score <strong>{rel.score}</strong> · <span class:list={["pill", rel.tier]}>{rel.tier}</span></> : <span class="pill na">Not applicable</span>}</p></article>)}</div>
+    <div class="grid">{eip.relationships.map((rel) => <article class="card"><span class:list={["pill", rel.mode === 'prospective' && 'prospective']}>{rel.mode}</span>{rel.snapshot_status && <> <span class="pill">{rel.snapshot_status} at snapshot</span></>}<h2>{rel.fork === 'hegota' ? 'Hegotá' : rel.fork}</h2><p>{rel.status === 'scored' ? <>Score <strong>{rel.score}</strong> · <span class:list={["pill", rel.tier]}>{rel.tier}</span></> : <span class="pill na">Not applicable</span>}</p></article>)}</div>
   </>}
 
   {props.kind === 'result' && props.result === 'association' && <>
@@ -164,12 +164,13 @@ const correlations = [
   </>}
 
   {props.kind === 'hegota' && <>
-    <p class="eyebrow prospective-text">Prospective · frozen 2026-08-26 snapshot</p><h1>Hegotá PFI complexity assessment</h1><p class="lede">EL-rubric total: 776 across 37 scored PFI EIPs. Of 44 PFI entries, five are Consensus Layer–only and two were explicitly excluded; none received a numeric score or tier.</p>
+    <p class="eyebrow prospective-text">Prospective · frozen 2026-08-26 snapshot</p><h1>Hegotá candidate complexity assessment</h1><p class="lede">Original PFI result: 776 across 37 scored EIPs. The SFI/CFI extension adds 80 across two scored EIPs, producing a combined visibility view of 856 across 39 scored Execution Layer surfaces. Seven PFI entries remain not applicable or explicitly excluded.</p>
     <div class="notice"><strong>Independent LLM Evaluation.</strong> These scores were produced with an LLM using the same Execution Layer complexity-assignment rubric, independently of the STEEL team’s ongoing manual assessment work.</div>
-    <div class="grid"><div class="card"><span class="muted">Scored EL surfaces</span><div class="stat">37</div></div><div class="card"><span class="muted">Not applicable</span><div class="stat">7</div></div><div class="card"><span class="muted">Low / Medium / High</span><div class="stat">4 / 20 / 13</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">34 / 37</div></div></div>
+    <div class="grid"><div class="card"><span class="muted">Scored EL surfaces</span><div class="stat">39</div></div><div class="card"><span class="muted">Not applicable</span><div class="stat">7</div></div><div class="card"><span class="muted">Low / Medium / High</span><div class="stat">4 / 21 / 14</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">36 / 39</div></div></div>
     <div class="notice"><strong>Common information cutoff:</strong> {data.hegota.information_cutoff_at}. The assessment covers Execution Layer and execution-client networking surfaces only. It does not predict final fork scope or include observed outcomes.</div>
-    <h2>Scored proposals</h2><Chart spec={data.charts['hegota-scores']} label="Ranked Hegotá prospective scores" description="Bars encode the 37 applicable execution-layer rubric scores. The seven N/A entries remain in the semantic table below." />
-    <AssessmentTable rows={hegotaRows} caption="Hegotá PFI snapshot: scored and not-applicable entries" rowAnchors={true} sortable={true} />
+    <div class="notice"><strong>Snapshot status.</strong> EIP-7805 and EIP-8141 are Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot. They are shown alongside the original PFI rows for visibility, with status identified in every row; the original PFI subtotal remains unchanged.</div>
+    <h2>Scored proposals</h2><Chart spec={data.charts['hegota-scores']} label="Ranked Hegotá prospective scores" description="Bars encode the 39 applicable execution-layer rubric scores across PFI, SFI, and CFI candidates. The seven N/A entries remain in the semantic table below." />
+    <AssessmentTable rows={hegotaRows} caption="Hegotá 2026-08-26 candidate snapshot: scored and not-applicable entries" rowAnchors={true} sortable={true} snapshotStatus={true} />
     <h2>Caveats</h2><ul>{data.hegota.caveats.map((caveat) => <li>{caveat}</li>)}</ul>
     <div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Download all assessments</a><a href={basePath('generated/publication.json')}>Publication JSON</a></div>
   </>}

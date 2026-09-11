@@ -19,6 +19,10 @@ PUBLIC = ROOT / "publication/site/public/generated"
 TASK05 = ROOT / "research/tasks/05-retrospective-complexity-assignment/outputs/fork-eips"
 TASK07 = ROOT / "research/tasks/07-observed-effort-metrics/outputs/join"
 TASK08 = ROOT / "research/tasks/08-hegota-prospective-complexity-assessment/outputs"
+TASK08_EXTENSION = (
+    ROOT
+    / "research/tasks/08-hegota-prospective-complexity-assessment/extensions/sfi-cfi-2026-08-26/outputs"
+)
 ALIGNMENT = ROOT / "research/tasks/05c-amsterdam-human-assessment-alignment/outputs/comparisons"
 CUTOFF_INPUTS = ROOT / "research/tasks/04b-fork-evaluation-cutoffs/outputs/forks"
 TIMELINES = ROOT / "research/tasks/04b-fork-evaluation-cutoffs/outputs/review"
@@ -136,35 +140,55 @@ def retrospective_rows() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
 
 
 def prospective_rows() -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, str]]]:
-    summary_path = TASK08 / "summary.yaml"
+    summary_path = TASK08 / "summary-all-candidates.yaml"
     validation_path = TASK08 / "validation-report.yaml"
     manifest_path = TASK08 / "assessment-manifest.yaml"
+    extension_validation_path = TASK08_EXTENSION / "validation-report.yaml"
+    extension_manifest_path = TASK08_EXTENSION / "assessment-manifest.yaml"
     summary = load_yaml(summary_path)
     validation = load_yaml(validation_path)
     manifest = load_yaml(manifest_path)
+    extension_validation = load_yaml(extension_validation_path)
+    extension_manifest = load_yaml(extension_manifest_path)
     expected = {
-        "snapshot": "hegota-pfi-2026-08-26-ac450a4",
-        "population": 44,
-        "scored": 37,
+        "snapshot": "hegota-candidates-2026-08-26-ac450a4",
+        "population": 46,
+        "scored": 39,
         "not_applicable": 7,
-        "total": 776,
+        "total": 856,
     }
     observed = {
         "snapshot": summary["snapshot"]["snapshot_id"],
-        "population": summary["population"]["pfi_entries"],
+        "population": summary["population"]["meta_eip_listed_entries"],
         "scored": summary["population"]["scored_el_rubric"],
         "not_applicable": summary["population"]["not_applicable_total"],
-        "total": summary["el_rubric_total"]["score_sum"],
+        "total": summary["el_rubric_totals"]["all_candidates"]["score_sum"],
     }
     if observed != expected:
         raise BuildError(f"Task 08 publication gate mismatch: {observed!r}")
-    if validation.get("result") != "pass" or manifest.get("assessment_count") != 37:
+    if (
+        validation.get("result") != "pass"
+        or manifest.get("assessment_count") != 37
+        or extension_validation.get("result") != "pass"
+        or extension_manifest.get("assessment_count") != 2
+    ):
         raise BuildError("Task 08 validation or assessment freeze is not complete")
 
     rows: list[dict[str, Any]] = []
-    sources = [source(summary_path), source(validation_path), source(manifest_path)]
+    sources = [
+        source(summary_path),
+        source(validation_path),
+        source(manifest_path),
+        source(extension_validation_path),
+        source(extension_manifest_path),
+    ]
     for summary_row in summary["scored_eips"]:
-        path = TASK08 / "assessments/hegota-pfi-2026-08-26" / f"eip-{summary_row['eip']}.yaml"
+        assessment_root = (
+            TASK08 / "assessments/hegota-pfi-2026-08-26"
+            if summary_row["snapshot_status"] == "PFI"
+            else TASK08_EXTENSION / "assessments"
+        )
+        path = assessment_root / f"eip-{summary_row['eip']}.yaml"
         item = load_yaml(path)
         rows.append(
             {
@@ -179,6 +203,7 @@ def prospective_rows() -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[
                 "layers": item["eip"]["layers"],
                 "mode": "prospective",
                 "score": item["totals"]["primary_score"],
+                "snapshot_status": summary_row["snapshot_status"],
                 "status": "scored",
                 "summary": item["assessment"]["snapshot_scope_summary"],
                 "tier": item["totals"]["complexity_tier"],
@@ -201,6 +226,7 @@ def prospective_rows() -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[
                 "mode": "prospective",
                 "rationale": item["rationale"],
                 "score": None,
+                "snapshot_status": item["snapshot_status"],
                 "status": "not_applicable",
                 "summary": item["rationale"],
                 "tier": None,
@@ -215,11 +241,15 @@ def prospective_rows() -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[
         "confidence_distribution": summary["distributions"]["confidence"],
         "information_cutoff_at": summary["snapshot"]["information_cutoff_at"],
         "not_applicable": 7,
-        "score_sum": 776,
-        "scored": 37,
+        "pfi_score_sum": 776,
+        "pfi_scored": 37,
+        "sfi_cfi_score_sum": 80,
+        "sfi_cfi_scored": 2,
+        "score_sum": 856,
+        "scored": 39,
         "snapshot_id": expected["snapshot"],
         "tier_distribution": summary["distributions"]["tiers"],
-        "total_entries": 44,
+        "total_entries": 46,
         "under_specification_distribution": summary["distributions"]["under_specification"],
     }
     return rows, public_summary, sources
@@ -513,6 +543,7 @@ def charts(
                 {
                     "eip": f"EIP-{row['eip']}",
                     "score": row["score"],
+                    "snapshot_status": row["snapshot_status"],
                     "tier": row["tier"],
                     "title": row["title"],
                     "under": row["under_specification"],
@@ -526,15 +557,16 @@ def charts(
                     {"field": "eip", "title": "Proposal", "type": "nominal"},
                     {"field": "title", "title": "EIP name", "type": "nominal"},
                     {"field": "score", "title": "Score", "type": "quantitative"},
+                    {"field": "snapshot_status", "title": "Snapshot status", "type": "nominal"},
                     {"field": "tier", "title": "Tier", "type": "nominal"},
                     {"field": "under", "title": "Under-specified", "type": "nominal"},
                 ],
                 "x": {"field": "score", "title": "EL-rubric score", "type": "quantitative"},
                 "y": {"field": "eip", "sort": "-x", "title": None, "type": "nominal"},
             },
-            "height": 760,
+            "height": 800,
             "mark": {"type": "bar"},
-            "title": "Hegotá PFI prospective assessment scores",
+            "title": "Hegotá candidate assessment scores at the 2026-08-26 snapshot",
             "width": 900,
         },
     }
@@ -706,7 +738,7 @@ def charts(
 
 
 def write_csv(rows: list[dict[str, Any]]) -> None:
-    fields = ["mode", "fork", "eip", "title", "layers", "status", "score", "tier", "confidence", "under_specification", "scope_timing", "exclusion_kind", "rationale"]
+    fields = ["mode", "fork", "eip", "title", "snapshot_status", "layers", "status", "score", "tier", "confidence", "under_specification", "scope_timing", "exclusion_kind", "rationale"]
     path = PUBLIC / "downloads/complexity-assessments.csv"
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as stream:
@@ -724,7 +756,7 @@ def build() -> dict[str, Any]:
     prospective, hegota, prospective_sources = prospective_rows()
     rows = retrospective + prospective
     rows.sort(key=lambda row: (FORK_ORDER.index(row["fork"]), row["eip"]))
-    if len(rows) != 93 or len(retrospective) != 49 or len(prospective) != 44:
+    if len(rows) != 95 or len(retrospective) != 49 or len(prospective) != 46:
         raise BuildError("assessment population mismatch")
     chart_paths, shipping_analysis, alignment_rows, chart_sources = charts(rows)
     write_csv(rows)
@@ -755,7 +787,7 @@ def build() -> dict[str, Any]:
     unique_eips: dict[int, dict[str, Any]] = {}
     for row in rows:
         item = unique_eips.setdefault(row["eip"], {"eip": row["eip"], "relationships": [], "title": row["title"]})
-        item["relationships"].append({"fork": row["fork"], "mode": row["mode"], "score": row["score"], "status": row["status"], "tier": row["tier"]})
+        item["relationships"].append({"fork": row["fork"], "mode": row["mode"], "score": row["score"], "snapshot_status": row.get("snapshot_status"), "status": row["status"], "tier": row["tier"]})
     payload = {
         "assessments": rows,
         "charts": chart_paths,

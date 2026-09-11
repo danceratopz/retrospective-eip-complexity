@@ -1,0 +1,633 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 7805
+  title: Fork-choice enforced Inclusion Lists (FOCIL)
+  layers:
+  - execution
+  - consensus
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer-only assessment of the draft FOCIL proposal at the sealed
+    snapshot. The scored surface is the post-payload inclusion-list satisfaction
+    check, its payload-construction implications, and its Engine API inputs,
+    endpoint, and status. Committee selection, beacon-state containers,
+    consensus fork choice, validator timing, CL gossip/RPC, and BLS signatures
+    are cross-layer context and are not scored as execution-layer complexity.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/extensions/sfi-cfi-2026-08-26/inputs/packages/eip-7805/manifest.yaml
+    manifest_sha256: c8a7be6f3f26b0182684e41092d59875b0634041e00e21836a74a379c97fbefc
+  cohort_snapshot:
+    snapshot_id: hegota-sfi-cfi-2026-08-26-ac450a4
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/extensions/sfi-cfi-2026-08-26/inputs/cohort.yaml
+    manifest_sha256: 99da5f56e2ac637dfe5d208961b176d0b7b517870ec25495ae77f9452ab5b617
+    captured_on: '2026-08-26'
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    committed_at: '2026-08-25T11:56:58Z'
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: ac450a4ab2f37387385ee9c54b62f518d97e6cc9
+    path: EIPS/eip-7805.md
+    committed_at: '2026-08-25T11:56:58Z'
+    git_blob_sha: 0a3955d9e8772b7666f560402b2d81ae032a3d06
+    content_sha256: 81096dd37cab86a5007e50d9357f0230f2f3dcbdf4df16b9afd44da6c74098a1
+    immutable_url: https://github.com/ethereum/EIPs/blob/ac450a4ab2f37387385ee9c54b62f518d97e6cc9/EIPS/eip-7805.md
+    information_cutoff_at: '2026-08-25T11:56:58Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/extensions/sfi-cfi-2026-08-26/TASK.md
+    content_sha256: d0797333e8de68d4bb7893079c0ea26d99f35d2bd67218161f3014f620adef79
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/extensions/sfi-cfi-2026-08-26/inputs/prompts/eip-7805.md
+    content_sha256: cee4a2eda7eafcea8eb96a25137b9f3ea41d3aaf0230cece45b7b76de8ddbc8b
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-09-11T09:46:53+02:00'
+    session_id: assessment-run-5ca37736-6680-47f7-af74-107015e2afc0
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: /root
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7547.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer, introductory paragraph and steps 1-3
+    summary: >-
+      The new check consumes the already-computed remaining block gas and a
+      transaction gas value; it does not define a new gas charge, schedule, or
+      accounting mechanism.
+  rationale: >-
+    Comparing a listed transaction's gas against gas_left is a payload
+    satisfaction condition, not a change to EVM gas accounting.
+  confidence: high
+  uncertainty_note: No gas-accounting rule change is described in the sealed proposal.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer, introductory paragraph and step 3
+    summary: >-
+      Nonce and balance are checked against state S after all payload
+      transactions execute; the proposal does not move an access or gas charge
+      within any opcode.
+  rationale: >-
+    The new observation is block-level and post-transaction, outside opcode
+    execution, so opcode state-access ordering is unchanged.
+  confidence: high
+  uncertainty_note: None material for this anchor within the execution-layer scope.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer, steps 1-3
+    summary: >-
+      The satisfaction algorithm describes transaction presence, remaining
+      execution gas, nonce, and balance only; it specifies no blob-gas rule.
+  rationale: No blob gas accounting mechanism is introduced or modified.
+  confidence: high
+  uncertainty_note: None material in the sealed execution-layer specification.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer, introductory paragraph and step 3
+    summary: >-
+      The EL reads post-payload nonce and balance to classify missing IL
+      transactions; no state-write gas cost, state-gas budget, reservoir, or
+      spill rule is specified.
+  rationale: The proposal does not change state gas accounting.
+  confidence: high
+  uncertainty_note: None material in the sealed execution-layer specification.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The complete EL algorithm adds an inclusion-satisfaction check and does
+      not introduce refund creation, accrual, or settlement behavior.
+  rationale: No new EVM gas-refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None material in the sealed execution-layer specification.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API Changes
+    summary: >-
+      Existing forkchoiceUpdated and newPayload flows are modified to carry IL
+      data, and newPayload can return INCLUSION_LIST_UNSATISFIED.
+  rationale: >-
+    A minor, focused subset of pre-existing Engine API and payload-processing
+    tests must be adapted for the added IL input and response path; the EIP does
+    not rework broad EVM or transaction-test categories.
+  confidence: medium
+  uncertainty_note: >-
+    Exact endpoint schemas and versioning are absent, so the precise count of
+    pre-existing API vectors needing edits is not determined.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer; Specification > Engine API Changes
+    summary: >-
+      The new status is conditional on supplied IL transactions and the EIP
+      states that an unsatisfied block remains valid; it does not prescribe a
+      new assertion for unrelated tests.
+  rationale: >-
+    Tests not exercising FOCIL do not gain a specified additional invariant or
+    universally required assertion.
+  confidence: medium
+  uncertainty_note: >-
+    The missing concrete API schema leaves test plumbing open, but no new
+    unrelated-test assertion is stated.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer; Specification > Engine API Changes
+    summary: >-
+      Evaluating the new post-state rule requires IL transactions that are not
+      block contents, and produces a distinct INCLUSION_LIST_UNSATISFIED outcome.
+  rationale: >-
+    Transition testing requires a new side-input mechanism for the IL set and a
+    distinguishable satisfaction result, which is more than a single ordinary
+    field even though the exact tool schema is not specified.
+  confidence: medium
+  uncertainty_note: >-
+    The EIP specifies Engine API behavior, not the transition-tool mapping, so
+    the exact number and shape of tool fields remain open.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API Changes
+    summary: >-
+      Tests must provide IL transactions to modified calls, exercise a new
+      getInclusionList endpoint, and recognize INCLUSION_LIST_UNSATISFIED.
+  rationale: >-
+    Existing endpoint and result helpers need minor extension for the new IL
+    input and status, but the package does not establish a reusable permanent
+    framework-level primitive.
+  confidence: medium
+  uncertainty_note: >-
+    No test-framework design is included, so a dedicated expectation type is
+    possible but not demonstrably required by this snapshot.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer; Specification > Consensus Layer > New containers
+    summary: >-
+      The execution check uses presence, gas, nonce, and balance; the BLS
+      signature appears only in the consensus-layer SignedInclusionList.
+  rationale: >-
+    No cryptographic mechanism is introduced or modified on the execution-layer
+    surface; consensus-layer signature work is excluded from scoring.
+  confidence: high
+  uncertainty_note: None material after applying the required layer boundary.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer, steps 1-3
+    summary: >-
+      Each listed transaction branches on payload presence, the gas-left
+      boundary, and post-state nonce and balance validity.
+  - source: eip.md
+    locator: Security Considerations > Payload Construction
+    summary: >-
+      Multiple IL transactions can become valid through nonce and balance state
+      changes, producing a naive O(n^2) rechecking pattern and requiring live EOA
+      tracking, including balance changes caused by AA transactions.
+  rationale: >-
+    There are multiple boundary-prone mechanisms, and interacting transaction
+    sequences create an elevated combinatorial case set across ordering,
+    validity, state changes, and available gas.
+  confidence: high
+  uncertainty_note: >-
+    Precise validity and list-normalization rules are missing, so the full case
+    matrix is not yet enumerable.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer; Specification > Engine API Changes
+    summary: >-
+      FOCIL supplies IL data across Engine API calls and expressly leaves an
+      unsatisfied execution block valid; it adds no execution-block RLP field or
+      RLP validation mechanism.
+  rationale: >-
+    No block-RLP validation change requiring execution-client sync testing is
+    introduced. Consensus gossip and availability behavior are outside scope.
+  confidence: high
+  uncertainty_note: >-
+    The supporting EIP's consensus syncing design is not a syncing rule of
+    EIP-7805 and is not attributed to this anchor.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API Changes
+    summary: >-
+      The proposal adds engine_getInclusionListV1, extends
+      engine_forkchoiceUpdated payloadAttributes with an IL, and adds IL
+      transactions plus an INCLUSION_LIST_UNSATISFIED result to engine_newPayload.
+  rationale: >-
+    A new endpoint is introduced alongside changes to multiple existing Engine
+    API endpoints, exactly matching the score-3 anchor.
+  confidence: high
+  uncertainty_note: >-
+    Concrete types and versioned method signatures are under-specified, but the
+    number and classes of API changes are explicit enough to fix this score.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The EL feature is specified as a post-payload client check over IL
+      transactions, with no contract address, code, state, or system call.
+  rationale: No new system contract is introduced.
+  confidence: high
+  uncertainty_note: None material in the sealed proposal.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The post-payload check does not invoke, modify, or assign behavior to any
+      pre-existing system contract.
+  rationale: No direct or indirect system-contract modification is specified.
+  confidence: high
+  uncertainty_note: None material in the sealed proposal.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The proposed logic runs after payload transactions have executed and
+      defines no EVM instruction or opcode number.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None material in the sealed proposal.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The new rule is a post-execution payload check and does not change the
+      result or behavior of any existing opcode.
+  rationale: No pre-existing opcode behavior is modified.
+  confidence: high
+  uncertainty_note: None material in the sealed proposal.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      The execution specification adds client-side satisfaction logic and no
+      precompile address, input contract, output, or gas schedule.
+  rationale: No precompile is added.
+  confidence: high
+  uncertainty_note: None material in the sealed proposal.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer
+    summary: >-
+      No existing precompile logic or gas accounting is referenced by the
+      post-payload inclusion-list check.
+  rationale: No pre-existing precompile is modified.
+  confidence: high
+  uncertainty_note: None material in the sealed proposal.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > IL Building
+    summary: >-
+      The byte cap is measured over RLP-encoded transactions, reusing the
+      transaction encoding; no transaction, execution-block, or Engine API
+      encoding is changed.
+  rationale: >-
+    Carrying existing encoded transactions in an IL does not itself introduce
+    an RLP/SSZ encoding change on the execution-layer surface.
+  confidence: high
+  uncertainty_note: >-
+    The new Engine API schemas are absent, but no switch of interface encoding
+    is proposed.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer; Specification > IL Building
+    summary: >-
+      Inclusion lists contain transactions selected from the public mempool and
+      the EL checks those transactions; no new transaction envelope is defined.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: None material in the sealed proposal.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer, step 3
+    summary: >-
+      The new payload-satisfaction decision queries whether a missing existing
+      transaction passes nonce and balance checks against post-state S; it does
+      not redefine those transactions' validity or intrinsic gas.
+  rationale: >-
+    The EIP uses transaction-validity information as an input to a new
+    inclusion condition but does not modify transaction-type validity rules.
+  confidence: medium
+  uncertainty_note: >-
+    The exact subset of validity checks is under-specified; that gap is recorded
+    under cross-client consensus rather than treated as a validity-rule change.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Engine API Changes
+    summary: >-
+      ILs are supplied through payloadAttributes and a newPayload parameter; the
+      EIP specifies no new execution payload, block, or block-header field.
+  rationale: No execution-layer block or header field is introduced.
+  confidence: high
+  uncertainty_note: >-
+    Consensus-layer IL containers are excluded and are not execution block or
+    header fields.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      The proposal requires a hard fork for consensus-layer validation changes
+      but specifies no activation-block state mutation or modification of an
+      existing internal variable on the EL.
+  rationale: Fork scheduling alone is not a new fork-activation mechanism.
+  confidence: high
+  uncertainty_note: No special execution-layer activation transition is described.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Security Considerations > Payload Construction
+    summary: >-
+      Naive payload construction can require O(n^2) validity checks; the proposed
+      mitigation tracks nonce and balance changes of involved EOAs throughout
+      payload construction, including AA-induced balance changes.
+  - source: eip.md
+    locator: Roles And Participants > Builder
+    summary: >-
+      The builder must update its payload with collected IL transactions inside
+      a time-sensitive slot workflow, and the exact timing is deferred pending
+      tests and benchmarks.
+  rationale: >-
+    The mechanism interacts continuously with existing payload construction and
+    state changes, cannot be validated solely as an isolated fixed-cost check,
+    and has an explicit quadratic naive path plus latency sensitivity.
+  confidence: high
+  uncertainty_note: >-
+    The optimized algorithm, maximum effective transaction count, and timing
+    budget are not normatively fixed in the package.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer; Specification > Engine API Changes
+    summary: >-
+      Post-state transaction classification produces a new Engine API status
+      that the CL uses to decide whether the otherwise-valid block satisfies ILs.
+  - source: eip.md
+    locator: Security Considerations > Consensus Liveness; Security Considerations > Payload Construction
+    summary: >-
+      Canonical block production depends on builders receiving and satisfying
+      ILs in time, while correct construction must account for interdependent
+      nonce and balance changes among listed transactions.
+  rationale: >-
+    On the EL surface, correctness spans critical payload execution,
+    state-dependent hypothetical validity, builder construction, and the
+    Engine-API result consumed by fork choice; errors can impair liveness or the
+    intended censorship-resistance guarantee and warrant extensive review and
+    fuzzing.
+  confidence: high
+  uncertainty_note: >-
+    Consensus gossip, committee behavior, and attester logic are excluded; the
+    score rests on the EL classification and construction boundary alone.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Execution Layer, steps 1-3
+    summary: >-
+      The consensus-relevant INCLUSION_LIST_UNSATISFIED decision is stated in
+      terms of T.gas, T.origin, presence, nonce, and balance without fully
+      defining transaction identity, ordering/duplication handling, or exact
+      validity and affordability calculations across transaction forms.
+  - source: eip.md
+    locator: Specification > Engine API Changes
+    summary: >-
+      The endpoint changes are listed without normative request/response types,
+      IL aggregation rules, or versioned signatures for the modified methods.
+  rationale: >-
+    A newly observable cross-layer status directly controls attestation, while
+    constructible cases affecting that status lack a unique EL answer. Clients
+    must agree on these details before authoritative vectors can be baselined.
+  confidence: high
+  uncertainty_note: >-
+    This score reflects the sealed Draft text only; prohibited implementation,
+    devnet, discussion, and later-revision information was not consulted.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale > Core Properties > Same-slot
+    summary: >-
+      FOCIL explicitly contrasts its same-slot constraints with the forward
+      inclusion-list design of EIP-7547 and calls the removed one-slot delay an
+      improvement.
+  - source: supporting/eip-7547.md
+    locator: Specification > Execution layer
+    summary: >-
+      EIP-7547 defines overlapping inclusion-list retrieval, forkchoiceUpdated,
+      newPayload, and EL validation surfaces, but with summary and exclusion
+      objects rather than EIP-7805's committee IL input.
+  - source: eip.md
+    locator: Security Considerations > Payload Construction
+    summary: >-
+      The optimization must notice EOA balance changes caused by Account
+      Abstraction transactions, an interaction named without an EIP number.
+  rationale: >-
+    The identified EIP-7547 relationship is a limited alternative-design
+    interaction requiring compatibility and vector consideration, not a stated
+    dependency. The package also identifies a bounded AA behavior interaction
+    without assigning it an EIP number.
+  confidence: high
+  uncertainty_note: >-
+    The proposal does not state coexistence, replacement, or dependency
+    semantics for EIP-7547, so the interaction is kept at the limited score.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7547
+  unidentified_interactions:
+  - Account Abstraction transactions that change tracked EOA balances during payload construction
+totals:
+  primary_score: 20
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: >-
+    Material EL details are unresolved: the exact hypothetical transaction
+    validity/affordability predicate, transaction identity and list
+    normalization, and normative Engine API schemas are not defined. The builder
+    timing and optimization are also deferred. These gaps chiefly affect the
+    new side-input/result tooling, boundary matrix, performance/security
+    validation, and cross-client baselining; they are not reused to inflate
+    unrelated gas, opcode, encoding, or transaction-type anchors.
+  affected_criteria:
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - edge_boundary_conditions
+  - performance_risks
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 14
+    maximum: 23
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - >-
+    What exact transaction-validity and balance-affordability rules, including
+    fee components and transaction forms, define validly includable at post-state S?
+  - >-
+    How are transaction presence, duplicates, ordering, and aggregation across
+    multiple committee ILs normalized before the EL check?
+  - >-
+    What are the normative request and response schemas and versioned signatures
+    for getInclusionList, forkchoiceUpdated, and newPayload?
+  - >-
+    Is gas_left tested independently for each missing transaction, and what
+    exact transaction gas value is denoted by T.gas?
+  - >-
+    Which payload-construction algorithm and timing budget are normative rather
+    than implementation guidance?
+notable_ambiguities:
+- >-
+  The text says an unsatisfied block is valid while requiring the EL to return a
+  special status to the CL, leaving the exact Engine API validity/status model
+  unspecified.
+- >-
+  The phrase nonce and balance checks does not fully specify the hypothetical
+  append-validity predicate for all existing transaction forms.
+- >-
+  Consensus-layer SignedInclusionList containers and gossip rules provide
+  context but are intentionally excluded from this execution-only score.
+overall_confidence: medium
+snapshot_id: hegota-sfi-cfi-2026-08-26-ac450a4
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    This assessment used only PROMPT.md, ASSESSMENT-CONTRACT.md,
+    package/manifest.yaml, package/output-template.yaml, and every file listed
+    under assessment_source_files. No link was followed and no prohibited or
+    post-snapshot information was accessed.

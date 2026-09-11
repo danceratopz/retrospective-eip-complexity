@@ -34,13 +34,13 @@ The following are derived from canonical records and may be regenerated:
 - plot manifests;
 - fork-cutoff review timelines;
 - generated Task 05 prompts and sealed packages; and
-- generated Task 08 one-EIP prompts, packages, freeze manifests, and summaries.
+- generated Task 08 one-EIP prompts, packages, freeze manifests, extension artifacts, and original-plus-combined summaries.
 
 Generated artifacts are retained in this initial snapshot because they make review convenient and their manifests permit direct hash comparison. They must never be edited by hand.
 
 ## Agent-produced evidence
 
-Task 04 ref proposals, Task 04b cutoff/cohort proposals, Task 05 complexity assignments, and Task 08 layer dispositions and prospective assignments are agent-produced research records. Their provenance includes the task contract, inputs, selected historical content or common snapshot, rationale, confidence, unknowns, and review state.
+Task 04 ref proposals, Task 04b cutoff/cohort proposals, Task 05 complexity assignments, and Task 08 layer dispositions and prospective assignments are agent-produced research records. Task 08 keeps the original PFI freeze immutable and records the same-snapshot SFI/CFI work as an append-only extension. Their provenance includes the task contract, inputs, selected historical content or common snapshot, rationale, confidence, unknowns, and review state.
 
 Validated raw and canonical assessment YAML is versioned. Verbose Task 05 and Task 08 console transcripts are excluded from Git because they contain machine-specific paths and local Codex session identifiers. They are operational diagnostics rather than scoring evidence.
 
