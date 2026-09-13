@@ -160,7 +160,7 @@ def build() -> dict[str, Any]:
         "rubrics": rubrics,
         "schema_version": VERSION,
     }
-    index = compare_index(assessments, eips)
+    index = compare_index(assessments, eips, criteria)
     sanitizer = Sanitizer()
     sanitizer.check(payload)
     sanitizer.check(index)

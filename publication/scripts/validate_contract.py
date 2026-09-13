@@ -39,6 +39,7 @@ ROUTE_FAMILIES = {
     "fork_eip_assessment",
     "global_eip_index",
     "global_eip_detail",
+    "eip_comparison",
     "result_predicted_vs_observed",
     "human_llm_comparison",
     "prospective_hegota",

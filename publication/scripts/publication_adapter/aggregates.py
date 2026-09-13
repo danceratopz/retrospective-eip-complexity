@@ -17,7 +17,7 @@ from .common import (
     STATUS_NOT_APPLICABLE,
     ASSESSMENT_STATUSES,
 )
-from .rubric import REGISTRY_ORDER, RUBRIC_ORDER, TIER_THRESHOLDS
+from .rubric import NOMINAL_MAXIMUM, REGISTRY_ORDER, RUBRIC_ORDER, TIER_THRESHOLDS
 
 
 def composition(assessments: list[dict[str, Any]]) -> dict[str, Any]:
@@ -138,7 +138,9 @@ def eip_index(occurrences: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return eips
 
 
-def compare_index(assessments: dict[str, dict[str, Any]], eips: list[dict[str, Any]]) -> dict[str, Any]:
+def compare_index(
+    assessments: dict[str, dict[str, Any]], eips: list[dict[str, Any]], criteria: list[dict[str, Any]]
+) -> dict[str, Any]:
     """Compact client-side payload for the shared EIP comparison view."""
     rows = []
     for assessment in sorted(assessments.values(), key=lambda item: item["id"]):
@@ -164,8 +166,11 @@ def compare_index(assessments: dict[str, dict[str, Any]], eips: list[dict[str, A
         )
     return {
         "schema_version": "2.0.0",
-        "criteria": REGISTRY_ORDER,
-        "rubrics": {str(revision): {"criteria": order, "tier_thresholds": TIER_THRESHOLDS[revision]} for revision, order in RUBRIC_ORDER.items()},
+        "criteria": [
+            {"id": item["id"], "label": item["label"], "short_definition": item["short_definition"], "rubric_revisions": item["rubric_revisions"]}
+            for item in criteria
+        ],
+        "rubrics": {str(revision): {"criteria": order, "tier_thresholds": TIER_THRESHOLDS[revision], "nominal_maximum": NOMINAL_MAXIMUM[revision]} for revision, order in RUBRIC_ORDER.items()},
         "forks": [{"fork": fork, "name": FORK_NAMES[fork], "short_name": FORK_SHORT_NAMES[fork]} for fork in FORK_ORDER],
         "eips": [
             {

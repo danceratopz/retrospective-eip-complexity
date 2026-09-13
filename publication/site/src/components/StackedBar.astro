@@ -4,19 +4,14 @@
  *
  * `max` fixes the scale so bars in the same table are comparable (absolute mode); `normalized` stretches
  * every bar to the full width (composition mode). The whole bar is one keyboard stop whose tooltip and
- * accessible name read out every segment; individual segments answer pointer hover.
+ * accessible name read out every segment; individual segments answer pointer hover. Markup comes from
+ * the shared renderer in `lib/stacked-bar.ts`, which the client-side comparison view also uses.
  */
 import type { CriterionDefinition } from '../lib/domain';
-import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
-
-export interface Segment {
-  id: string;
-  score: number;
-  detail?: string;
-}
+import { stackedBarHtml, type BarSegment } from '../lib/stacked-bar';
 
 interface Props {
-  segments: Segment[];
+  segments: BarSegment[];
   definitions: Record<string, CriterionDefinition> | Map<string, CriterionDefinition>;
   total?: number;
   max?: number;
@@ -29,37 +24,8 @@ interface Props {
 }
 
 const { segments, definitions, total, max, normalized = false, size = 'regular', label, unit = 'points', showTotal = false, class: className } = Astro.props as Props;
-const lookup = (id: string): CriterionDefinition => (definitions instanceof Map ? definitions.get(id) : definitions[id]);
-const ordered = segments
-  .filter((segment) => segment.score > 0)
-  .sort((a, b) => (DISPLAY_INDEX.get(a.id) ?? 99) - (DISPLAY_INDEX.get(b.id) ?? 99));
-const sum = total ?? ordered.reduce((value, segment) => value + segment.score, 0);
-const scale = normalized ? sum : Math.max(max ?? sum, sum);
-const widthPercent = scale > 0 ? (sum / scale) * 100 : 0;
-const readout = ordered.map((segment) => `${lookup(segment.id).label} ${segment.score}`).join(', ');
-const accessibleName = `${label}: ${sum} ${unit}${ordered.length ? `. ${readout}.` : '.'}`;
-const percent = (value: number) => (sum > 0 ? `${Math.round((value / sum) * 100)}%` : '0%');
+const labels = new Map<string, string>();
+for (const [id, definition] of definitions instanceof Map ? definitions.entries() : Object.entries(definitions)) labels.set(id, definition.label);
+const html = stackedBarHtml({ segments, labels, total, max, normalized, size, label, unit, showTotal, className });
 ---
-<div
-  class:list={['stack', `stack-${size}`, className]}
-  tabindex="0"
-  role="img"
-  aria-label={accessibleName}
-  data-tip
-  data-tip-title={`${label}: ${sum} ${unit}`}
-  data-tip-body={ordered.map((segment) => `${lookup(segment.id).label}: ${segment.score} (${percent(segment.score)})`).join('\n')}
->
-  <div class="stack-track" style={`width:${widthPercent}%`}>
-    {ordered.map((segment) => (
-      <span
-        class="stack-segment"
-        style={`flex-grow:${segment.score};--fill:var(--criterion-${segment.id});--ink:var(--criterion-ink-${segment.id})`}
-        data-tip
-        data-tip-title={`${lookup(segment.id).label} — ${segment.score}`}
-        data-tip-body={[`${percent(segment.score)} of ${sum} ${unit}`, segment.detail].filter(Boolean).join('\n')}
-        aria-hidden="true"
-      ><span class="stack-abbr">{criterionAbbreviation(segment.id)}</span></span>
-    ))}
-  </div>
-  {showTotal && <span class="stack-total" aria-hidden="true">{sum}</span>}
-</div>
+<Fragment set:html={html} />

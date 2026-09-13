@@ -257,7 +257,7 @@ class GeneratedPayloadTests(unittest.TestCase):
         self.assertEqual((by_eip[7928]["human_total"], by_eip[7928]["llm_total"], by_eip[7928]["confounds"]["primary_llm_total"]), (29, 26, 40))
 
     def test_compare_index_mirrors_assessments(self) -> None:
-        self.assertEqual(self.index["criteria"], REGISTRY_ORDER)
+        self.assertEqual([item["id"] for item in self.index["criteria"]], REGISTRY_ORDER)
         rows = {item["id"]: item for item in self.index["assessments"]}
         self.assertEqual(set(rows), set(self.data["assessments"]))
         for identifier, row in rows.items():

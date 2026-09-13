@@ -168,8 +168,18 @@ def validate_eip_pages(data: dict) -> None:
             require(html.count('data-fork-tab="') == len(eip["occurrences"]), f"EIP-{eip['eip']}: fork tabs")
         require('class="stack stack-large' in html or 'status-not_applicable' in html, f"EIP-{eip['eip']}: stacked complexity bar missing")
         require("Criterion legend and glossary" in html, f"EIP-{eip['eip']}: legend missing")
+        if any(occurrence["llm"]["assessment_id"] for occurrence in eip["occurrences"]):
+            require(f"eips/compare/?eips={eip['eip']}&amp;fork=" in html or f"eips/compare/?eips={eip['eip']}&fork=" in html, f"EIP-{eip['eip']}: comparison entry point missing")
         require("Under-specified at assessment cutoff" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: under-specification wording missing")
         require("Assessment provenance" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: provenance section missing")
+    compare_html = (DIST / "eips/compare/index.html").read_text(encoding="utf-8")
+    require("data-compare-root" in compare_html and "data-compare-output" in compare_html, "compare page shell missing")
+    require("<noscript>" in compare_html, "compare page must explain the JavaScript requirement")
+    require((DIST / "generated/compare-index.json").is_file(), "compare index missing")
+    index = json.loads((DIST / "generated/compare-index.json").read_text(encoding="utf-8"))
+    require(len(index["assessments"]) == len(data["assessments"]), "compare index must mirror the assessments")
+    require(all("label" in item for item in index["criteria"]), "compare index criteria must carry labels")
+    require(compare_html.count('<option value="EIP-') == len(data["eips"]), "compare page must list every EIP in the picker")
 
 
 def validate() -> dict[str, int]:
@@ -343,7 +353,7 @@ def validate() -> dict[str, int]:
     require(manifest["source_records"] == sorted(manifest["source_records"], key=lambda item: item["path"]), "source records are not stable-sorted")
 
     html_files = sorted(DIST.rglob("*.html"))
-    require(len(html_files) == 155, f"expected 155 static pages, found {len(html_files)}")
+    require(len(html_files) == 156, f"expected 156 static pages, found {len(html_files)}")
     broken: list[str] = []
     chart_pages = 0
     for html_path in html_files:

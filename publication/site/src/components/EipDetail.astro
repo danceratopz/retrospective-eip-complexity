@@ -6,7 +6,7 @@
 import type { Eip, Publication } from '../lib/domain';
 import { assessmentsFor, comparisonsFor, defaultView, humanAssessment, primaryAssessment, rubricFor, viewModes } from '../lib/domain';
 import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, SOURCE_LABELS, VIEW_LABELS, forkContextLabel, rubricLabel, statusLabel } from '../lib/labels';
-import { eipRoute, forkRoute } from '../lib/routes';
+import { compareRoute, eipRoute, forkRoute } from '../lib/routes';
 import { domId, isoDate } from '../lib/format';
 import AssessmentCompare from './AssessmentCompare.astro';
 import AssessmentView from './AssessmentView.astro';
@@ -170,6 +170,7 @@ const contextLine = (panel) => {
 
         {primary && (
           <div class="actions">
+            <a class="button" href={compareRoute({ eips: [eip.eip], fork: occurrence.fork, source: panel.human?.scored ? 'compare' : 'llm' })}>Compare EIP-{eip.eip} with other EIPs</a>
             <a href={forkRoute(occurrence.fork)}>All {occurrence.fork_name} assessments</a>
           </div>
         )}

@@ -1,0 +1,134 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CriterionLegend from '../../components/CriterionLegend.astro';
+import { loadPublication, basePath } from '../../lib/data.js';
+import type { Publication } from '../../lib/domain';
+
+const data = loadPublication() as Publication;
+const forks = data.forks;
+const eipOptions = data.eips.map((eip) => ({ eip: eip.eip, title: eip.title, forks: eip.forks }));
+---
+<Layout title="Compare EIPs" description="Compare the Execution Layer complexity profiles of up to four EIPs under the LLM assessment, the Human assessment, or both.">
+  <p class="eyebrow">Shared comparison</p>
+  <h1>Compare EIPs</h1>
+  <p class="lede">Select up to four EIPs to compare their complexity profiles side by side and criterion by criterion. The selection, fork context, and assessment source live in this page's URL, so the view can be shared and reproduced.</p>
+  <noscript><div class="caveat"><strong>This view needs JavaScript.</strong> It reconstructs the comparison from the URL and the <a href={basePath('generated/compare-index.json')}>compare index</a>. Every EIP page still shows the complete assessment without scripts.</div></noscript>
+
+  <div class="compare-page" data-compare-root data-index-url={basePath('generated/compare-index.json')}>
+    <form class="compare-controls" data-compare-form aria-label="Comparison controls">
+      <div class="compare-picker">
+        <label for="compare-add">Add an EIP</label>
+        <input id="compare-add" type="text" list="compare-eip-options" placeholder="Type an EIP number or title" autocomplete="off" data-compare-add />
+        <datalist id="compare-eip-options">{eipOptions.map((eip) => <option value={`EIP-${eip.eip}`}>{eip.title}</option>)}</datalist>
+        <ul class="compare-chips" data-compare-chips aria-label="Selected EIPs"></ul>
+        <p class="muted" data-compare-limit hidden>At most four EIPs can be compared at once; remove one to add another.</p>
+      </div>
+      <label>Assessment source
+        <select data-compare-source>
+          <option value="llm">LLM</option>
+          <option value="human">Human</option>
+          <option value="compare">Human vs LLM</option>
+        </select>
+      </label>
+      <label>Fork context
+        <select data-compare-fork>
+          <option value="">Each EIP's default fork</option>
+          {forks.map((fork) => <option value={fork.fork}>{fork.name}</option>)}
+        </select>
+      </label>
+      <label>Order criteria by
+        <select data-compare-order>
+          <option value="score">Highest score</option>
+          <option value="spread">Largest difference</option>
+          <option value="stable">Stable criterion order</option>
+        </select>
+      </label>
+    </form>
+    <p class="muted" data-compare-empty>No EIPs selected yet. Add EIPs above, or open a comparison from any EIP page, fork page, or the EIP index.</p>
+    <div data-compare-output aria-live="polite"></div>
+    <p class="muted" data-compare-status hidden></p>
+  </div>
+
+  <CriterionLegend criteria={data.criteria} compact={true} />
+  <div class="actions"><a href={basePath('eips/')}>Browse all EIPs</a><a href={basePath('generated/compare-index.json')}>Download the compare index</a></div>
+</Layout>
+
+<script>
+  import { MAX_EIPS, optionLabel, readState, render, writeState, type CompareIndex } from '../../lib/compare-view';
+  import type { CompareState } from '../../lib/routes';
+
+  const root = document.querySelector<HTMLElement>('[data-compare-root]');
+  if (root) {
+    const form = root.querySelector<HTMLFormElement>('[data-compare-form]')!;
+    const add = root.querySelector<HTMLInputElement>('[data-compare-add]')!;
+    const chips = root.querySelector<HTMLElement>('[data-compare-chips]')!;
+    const limit = root.querySelector<HTMLElement>('[data-compare-limit]')!;
+    const sourceSelect = root.querySelector<HTMLSelectElement>('[data-compare-source]')!;
+    const forkSelect = root.querySelector<HTMLSelectElement>('[data-compare-fork]')!;
+    const orderSelect = root.querySelector<HTMLSelectElement>('[data-compare-order]')!;
+    const status = root.querySelector<HTMLElement>('[data-compare-status]')!;
+    let index: CompareIndex | null = null;
+    let state: CompareState = readState();
+
+    const renderChips = () => {
+      chips.replaceChildren();
+      for (const eip of state.eips) {
+        const entry = index?.eips.find((item) => item.eip === eip);
+        const chip = document.createElement('li');
+        chip.className = 'compare-chip';
+        const text = document.createElement('span');
+        text.textContent = entry ? optionLabel(entry) : `EIP-${eip}`;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.setAttribute('aria-label', `Remove EIP-${eip}`);
+        remove.textContent = '×';
+        remove.addEventListener('click', () => update({ ...state, eips: state.eips.filter((item) => item !== eip) }));
+        chip.append(text, remove);
+        chips.append(chip);
+      }
+      limit.hidden = state.eips.length < MAX_EIPS;
+      add.disabled = state.eips.length >= MAX_EIPS;
+    };
+
+    const update = (next: CompareState) => {
+      state = { ...next, eips: [...new Set(next.eips)].slice(0, MAX_EIPS) };
+      writeState(state);
+      sourceSelect.value = state.source ?? 'llm';
+      forkSelect.value = state.fork ?? '';
+      renderChips();
+      if (index) render(root, index, state);
+    };
+
+    form.addEventListener('submit', (event) => event.preventDefault());
+    add.addEventListener('change', () => {
+      const match = add.value.match(/(\d{1,5})/);
+      add.value = '';
+      if (!match) return;
+      const eip = Number.parseInt(match[1], 10);
+      if (!index?.eips.some((item) => item.eip === eip)) {
+        status.hidden = false;
+        status.textContent = `EIP-${eip} is not part of this study.`;
+        return;
+      }
+      status.hidden = true;
+      update({ ...state, eips: [...state.eips, eip] });
+    });
+    sourceSelect.addEventListener('change', () => update({ ...state, source: sourceSelect.value as CompareState['source'] }));
+    forkSelect.addEventListener('change', () => update({ ...state, fork: forkSelect.value || null }));
+    orderSelect.addEventListener('change', () => index && render(root, index, state));
+
+    fetch(root.dataset.indexUrl!)
+      .then((response) => {
+        if (!response.ok) throw new Error(`Compare index request failed: ${response.status}`);
+        return response.json();
+      })
+      .then((payload: CompareIndex) => {
+        index = payload;
+        update(state);
+      })
+      .catch((error: Error) => {
+        status.hidden = false;
+        status.textContent = `Comparison unavailable: ${error.message}`;
+      });
+  }
+</script>
