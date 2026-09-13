@@ -1,0 +1,16 @@
+---
+import type { Tier, TierThresholds } from '../lib/domain';
+import { scoreBands } from '../lib/domain';
+import { TIER_LABELS, TIER_MEANINGS } from '../lib/labels';
+
+interface Props {
+  tier: Tier;
+  thresholds?: TierThresholds | null;
+  size?: 'small' | 'regular';
+}
+
+const { tier, thresholds = null, size = 'regular' } = Astro.props as Props;
+const bands = thresholds ? scoreBands(thresholds) : null;
+const title = bands ? `${TIER_LABELS[tier]} (${bands[tier]}): ${TIER_MEANINGS[tier]}` : TIER_MEANINGS[tier];
+---
+<span class:list={['pill', tier, size === 'small' && 'pill-small']} title={title}>{TIER_LABELS[tier]}</span>

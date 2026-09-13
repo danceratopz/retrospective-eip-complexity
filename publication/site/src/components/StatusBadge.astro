@@ -1,0 +1,29 @@
+---
+/**
+ * Shared assessment-status badge. Zero complexity, unavailable, incomplete, and not-applicable states
+ * always look different from each other and from a scored tier.
+ */
+import type { Mode, Status } from '../lib/domain';
+import { STATUS_DESCRIPTIONS, statusLabel } from '../lib/labels';
+
+interface Props {
+  status: Status;
+  mode?: Mode;
+  detail?: string | null;
+  size?: 'small' | 'regular';
+}
+
+const { status, mode = 'retrospective', detail = null, size = 'regular' } = Astro.props as Props;
+const glyphs: Record<Status, string> = {
+  complete: '●',
+  available_in_open_pr: '◐',
+  in_progress: '◔',
+  incomplete: '◌',
+  not_applicable: '⊘',
+  not_available: '○',
+};
+---
+<span class:list={['status', `status-${status}`, size === 'small' && 'status-small']} title={detail ?? STATUS_DESCRIPTIONS[status]}>
+  <span class="status-glyph" aria-hidden="true">{glyphs[status]}</span>
+  <span>{statusLabel(status, mode)}</span>
+</span>

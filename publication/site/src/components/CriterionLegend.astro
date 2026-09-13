@@ -1,0 +1,59 @@
+---
+/**
+ * Grouped criterion legend and glossary: visual encoding → criterion name → rubric meaning.
+ */
+import type { CriterionDefinition } from '../lib/domain';
+import { CRITERION_GROUPS, CRITERION_PRESENTATION, DISPLAY_ORDER } from '../lib/criteria';
+import { rubricLabel } from '../lib/labels';
+
+interface Props {
+  criteria: CriterionDefinition[];
+  /** Restrict to criteria of one rubric revision; omit to show every registered criterion. */
+  revision?: 1 | 2 | null;
+  /** Emphasize criteria present in the current view. */
+  highlight?: Set<string> | string[] | null;
+  compact?: boolean;
+  open?: boolean;
+  summary?: string;
+}
+
+const { criteria, revision = null, highlight = null, compact = false, open = false, summary = 'Criterion legend and glossary' } = Astro.props as Props;
+const byId = new Map(criteria.map((item) => [item.id, item]));
+const highlighted = highlight ? new Set(highlight) : null;
+const visible = DISPLAY_ORDER.filter((id) => byId.has(id) && (!revision || byId.get(id).rubric_revisions.includes(revision)));
+const groups = CRITERION_GROUPS.map((group) => ({
+  ...group,
+  criteria: visible.filter((id) => CRITERION_PRESENTATION[id].group === group.id).map((id) => byId.get(id)),
+})).filter((group) => group.criteria.length);
+---
+<details class:list={['legend', compact && 'legend-compact']} open={open}>
+  <summary>{summary}</summary>
+  <p class="muted legend-intro">Every stacked bar, comparison matrix, and criterion table on this site uses the same criterion colours, abbreviations, and order. Colour marks the criterion group; the abbreviation and name identify the criterion. Scores are 0–3 per criterion (4 is exceptional; cross-EIP interactions is uncapped).</p>
+  <div class="legend-groups">
+    {groups.map((group) => (
+      <section class="legend-group" aria-labelledby={`legend-${group.id}`}>
+        <h3 id={`legend-${group.id}`}>{group.label}</h3>
+        <p class="muted">{group.description}</p>
+        <ul>
+          {group.criteria.map((criterion) => (
+            <li class:list={['legend-item', highlighted && !highlighted.has(criterion.id) && 'legend-dim']}>
+              <span class="swatch" style={`--fill:var(--criterion-${criterion.id});--ink:var(--criterion-ink-${criterion.id})`} aria-hidden="true">{CRITERION_PRESENTATION[criterion.id].abbreviation}</span>
+              <div>
+                <strong>{criterion.label}</strong>
+                {criterion.rubric_revisions.length === 1 && <span class="muted"> · {rubricLabel(criterion.rubric_revisions[0])} only</span>}
+                <div class="muted">{criterion.short_definition}</div>
+                {!compact && Object.keys(criterion.anchors).length > 0 && (
+                  <details class="anchors">
+                    <summary>Score anchors</summary>
+                    <dl>{Object.entries(criterion.anchors).map(([score, text]) => <><dt>{score}</dt><dd>{text}</dd></>)}</dl>
+                    {criterion.notes.length > 0 && <ul class="muted anchor-notes">{criterion.notes.map((note) => <li>{note}</li>)}</ul>}
+                  </details>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</details>
