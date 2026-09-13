@@ -1,0 +1,223 @@
+---
+/**
+ * Global EIP exploration and comparison surface: one row per fork occurrence, filterable by fork, band,
+ * source availability, under-specification, and status; rows can be selected for the shared comparison.
+ */
+import type { Publication } from '../lib/domain';
+import { allOccurrences, primaryAssessment } from '../lib/domain';
+import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, STATUS_LABELS, TIER_LABELS, UNDER_SPECIFIED_SHORT, statusLabel } from '../lib/labels';
+import { eipRoute, forkRoute } from '../lib/routes';
+import { truncate } from '../lib/format';
+import StackedBar from './StackedBar.astro';
+import StatusBadge from './StatusBadge.astro';
+import TierBadge from './TierBadge.astro';
+
+interface Props {
+  data: Publication;
+}
+
+const { data } = Astro.props as Props;
+const definitions = new Map(data.criteria.map((item) => [item.id, item]));
+const rows = allOccurrences(data).map((occurrence) => ({ occurrence, primary: primaryAssessment(data, occurrence) }));
+const maxScore = Math.max(...rows.map((row) => row.primary?.score ?? 0));
+const forks = data.forks;
+const thresholds = data.rubrics['2'].tier_thresholds;
+const levelSort = (value: string | null) => ({ low: '1', medium: '2', high: '3' })[value ?? ''] ?? '4';
+const statusSort = (value: string) => ['complete', 'available_in_open_pr', 'in_progress', 'incomplete', 'not_applicable', 'not_available'].indexOf(value);
+const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incomplete', 'not_available'] as const;
+---
+<form class="table-tools index-filters" data-index-filters aria-label="Filter EIP assessments">
+  <label>Search <input type="search" name="q" data-filter="q" placeholder="EIP number or title" /></label>
+  <label>Fork
+    <select name="fork" data-filter="fork">
+      <option value="">All forks</option>
+      {forks.map((fork) => <option value={fork.fork}>{fork.name}</option>)}
+    </select>
+  </label>
+  <label>Complexity band
+    <select name="band" data-filter="band">
+      <option value="">Any</option>
+      <option value="low">{TIER_LABELS.low}</option>
+      <option value="medium">{TIER_LABELS.medium}</option>
+      <option value="high">{TIER_LABELS.high}</option>
+    </select>
+  </label>
+  <label>Human assessment
+    <select name="human" data-filter="human">
+      <option value="">Any status</option>
+      <option value="scored">Scored (any status)</option>
+      {humanStatuses.map((status) => <option value={status}>{STATUS_LABELS[status]}</option>)}
+    </select>
+  </label>
+  <label>LLM assessment
+    <select name="llm" data-filter="llm">
+      <option value="">Any</option>
+      <option value="complete">{STATUS_LABELS.complete}</option>
+      <option value="not_applicable">{STATUS_LABELS.not_applicable}</option>
+    </select>
+  </label>
+  <label class="checkbox"><input type="checkbox" name="under" value="1" data-filter="under" /> {UNDER_SPECIFIED_SHORT} only</label>
+  <label class="checkbox"><input type="checkbox" name="mode" value="retrospective" data-filter="mode" /> Retrospective only</label>
+  <button type="reset" class="button-secondary">Clear filters</button>
+  <span class="muted" data-result-count aria-live="polite">{rows.length} fork–EIP relationships</span>
+</form>
+
+<div class="compare-bar" data-compare-selection hidden>
+  <span data-compare-count>0 selected</span>
+  <a class="button" data-compare-link href="#" aria-disabled="true">Compare selected</a>
+  <button type="button" class="button-secondary" data-compare-clear>Clear selection</button>
+  <span class="muted">Up to four EIPs.</span>
+</div>
+
+<div class="table-region" role="region" aria-label="EIP complexity assessments" tabindex="0">
+  <table class="index-table" data-assessment-table data-sortable-table>
+    <caption>EIP complexity assessments across all forks. Scores are the LLM revision-2 assessment; the Human column shows the STEEL checklist status. Click an EIP for its complete assessment.</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="select-col"><span class="visually-hidden">Select for comparison</span></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEip" data-sort-kind="number">EIP</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortFork">Fork</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScore" data-sort-kind="number">Score</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortBand">Band</button></th>
+        <th scope="col" class="profile-col">Complexity profile</th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortHuman">Human</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortUnder">{UNDER_SPECIFIED_SHORT}</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortStatus">LLM status</button></th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(({ occurrence, primary }) => (
+        <tr
+          id={`eip-${occurrence.eip}-${occurrence.fork}`}
+          data-eip={occurrence.eip}
+          data-fork={occurrence.fork}
+          data-mode={occurrence.mode}
+          data-band={primary?.tier ?? ''}
+          data-human-status={occurrence.human.status}
+          data-human-scored={occurrence.human.assessment_id && occurrence.human.score !== null ? '1' : '0'}
+          data-llm-status={occurrence.llm.status}
+          data-under={occurrence.llm.under_specified ? '1' : '0'}
+          data-search={`eip-${occurrence.eip} ${occurrence.eip} ${occurrence.title} ${occurrence.fork} ${occurrence.fork_name}`.toLowerCase()}
+          data-sort-eip={occurrence.eip}
+          data-sort-fork={`${String(data.forks.findIndex((fork) => fork.fork === occurrence.fork)).padStart(2, '0')} ${occurrence.eip}`}
+          data-sort-score={primary?.score ?? ''}
+          data-sort-band={primary ? levelSort(primary.tier) : ''}
+          data-sort-human={`${statusSort(occurrence.human.status)}-${String(occurrence.human.score ?? 0).padStart(3, '0')}`}
+          data-sort-under={occurrence.llm.under_specified === null ? '' : occurrence.llm.under_specified ? 'yes' : 'no'}
+          data-sort-status={statusSort(occurrence.llm.status)}
+        >
+          <td class="select-col">
+            {primary && <input type="checkbox" data-select-eip={occurrence.eip} data-select-fork={occurrence.fork} aria-label={`Select EIP-${occurrence.eip} (${occurrence.fork_name}) for comparison`} />}
+          </td>
+          <td class="eip-cell"><a href={eipRoute(occurrence.eip, { fork: occurrence.fork })}><strong>EIP-{occurrence.eip}</strong> {occurrence.title}</a></td>
+          <td class="fork-cell">
+            <a href={forkRoute(occurrence.fork)}>{occurrence.fork_name}</a>
+            <div class="fork-meta">
+              <span class:list={['pill', 'pill-small', occurrence.mode === 'prospective' && 'prospective']}>{MODE_LABELS[occurrence.mode]}</span>
+              {occurrence.snapshot_status && <span class="pill pill-small" title={SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status]}>{occurrence.snapshot_status}</span>}
+              {occurrence.scope_timing && <span class="muted">{SCOPE_TIMING_LABELS[occurrence.scope_timing]}</span>}
+            </div>
+          </td>
+          <td class="number score-cell">{primary ? primary.score : <span class="muted">—</span>}</td>
+          <td>{primary ? <TierBadge tier={primary.tier} thresholds={thresholds} size="small" /> : <span class="muted">—</span>}</td>
+          <td class="profile-col">
+            {primary
+              ? <StackedBar segments={primary.criteria.filter((criterion) => (criterion.score ?? 0) > 0).map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 140) }))} definitions={definitions} total={primary.score} max={maxScore} size="compact" label={`EIP-${occurrence.eip} ${occurrence.fork_name} LLM complexity`} />
+              : <StatusBadge status="not_applicable" size="small" detail={occurrence.llm.rationale} />}
+          </td>
+          <td class="human-cell">
+            <StatusBadge status={occurrence.human.status} mode={occurrence.mode} size="small" />
+            {occurrence.human.assessment_id && occurrence.human.score !== null && <span class="muted"> {occurrence.human.score} · r{occurrence.human.rubric_revision}</span>}
+          </td>
+          <td>{occurrence.llm.under_specified === null ? <span class="muted">—</span> : occurrence.llm.under_specified ? 'Yes' : 'No'}</td>
+          <td><StatusBadge status={occurrence.llm.status} mode={occurrence.mode} size="small" /></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  import { compareRoute } from '../lib/routes';
+
+  const form = document.querySelector<HTMLFormElement>('[data-index-filters]');
+  const table = document.querySelector<HTMLTableElement>('[data-assessment-table]');
+  if (form && table) {
+    const count = form.querySelector<HTMLElement>('[data-result-count]')!;
+    const controls = Array.from(form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-filter]'));
+    const control = (name: string) => controls.find((item) => item.dataset.filter === name)!;
+    const params = new URLSearchParams(window.location.search);
+    for (const item of controls) {
+      const value = params.get(item.dataset.filter!);
+      if (value === null) continue;
+      if (item instanceof HTMLInputElement && item.type === 'checkbox') item.checked = value === item.value || value === '1';
+      else item.value = value;
+    }
+
+    const apply = () => {
+      const query = (control('q') as HTMLInputElement).value.trim().toLowerCase();
+      const fork = control('fork').value;
+      const band = control('band').value;
+      const human = control('human').value;
+      const llm = control('llm').value;
+      const under = (control('under') as HTMLInputElement).checked;
+      const retrospective = (control('mode') as HTMLInputElement).checked;
+      let visible = 0;
+      for (const row of table.tBodies[0].rows) {
+        const data = row.dataset;
+        const matches =
+          (!query || data.search!.includes(query)) &&
+          (!fork || data.fork === fork) &&
+          (!band || data.band === band) &&
+          (!human || (human === 'scored' ? data.humanScored === '1' : data.humanStatus === human)) &&
+          (!llm || data.llmStatus === llm) &&
+          (!under || data.under === '1') &&
+          (!retrospective || data.mode === 'retrospective');
+        row.hidden = !matches;
+        if (matches) visible += 1;
+      }
+      count.textContent = `${visible} of ${table.tBodies[0].rows.length} fork–EIP relationships`;
+      const next = new URLSearchParams();
+      if (query) next.set('q', query);
+      if (fork) next.set('fork', fork);
+      if (band) next.set('band', band);
+      if (human) next.set('human', human);
+      if (llm) next.set('llm', llm);
+      if (under) next.set('under', '1');
+      if (retrospective) next.set('mode', 'retrospective');
+      const search = next.toString();
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`);
+    };
+    for (const item of controls) item.addEventListener(item instanceof HTMLInputElement && item.type === 'search' ? 'input' : 'change', apply);
+    form.addEventListener('reset', () => setTimeout(apply, 0));
+    form.addEventListener('submit', (event) => event.preventDefault());
+    apply();
+
+    // Selection for the shared comparison view -------------------------------------------------------
+    const selectionBar = document.querySelector<HTMLElement>('[data-compare-selection]')!;
+    const selectionCount = selectionBar.querySelector<HTMLElement>('[data-compare-count]')!;
+    const compareLink = selectionBar.querySelector<HTMLAnchorElement>('[data-compare-link]')!;
+    const clear = selectionBar.querySelector<HTMLButtonElement>('[data-compare-clear]')!;
+    const boxes = Array.from(table.querySelectorAll<HTMLInputElement>('[data-select-eip]'));
+    const updateSelection = () => {
+      const selected = boxes.filter((box) => box.checked);
+      const eips = [...new Set(selected.map((box) => Number(box.dataset.selectEip)))];
+      const forks = new Set(selected.map((box) => box.dataset.selectFork));
+      selectionBar.hidden = selected.length === 0;
+      selectionCount.textContent = `${eips.length} selected`;
+      const enabled = eips.length >= 1 && eips.length <= 4;
+      compareLink.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+      compareLink.href = enabled ? compareRoute({ eips, fork: forks.size === 1 ? [...forks][0] : null, source: 'llm' }) : '#';
+      for (const box of boxes) box.disabled = !box.checked && eips.length >= 4;
+    };
+    for (const box of boxes) box.addEventListener('change', updateSelection);
+    clear.addEventListener('click', () => {
+      for (const box of boxes) box.checked = false;
+      updateSelection();
+    });
+    compareLink.addEventListener('click', (event) => {
+      if (compareLink.getAttribute('aria-disabled') === 'true') event.preventDefault();
+    });
+    updateSelection();
+  }
+</script>

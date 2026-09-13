@@ -11,7 +11,6 @@ export function getStaticPaths() {
   const pages: [string, any][] = [
     ['study', { kind: 'study' }],
     ['forks', { kind: 'fork-index' }],
-    ['eips', { kind: 'eip-index' }],
     ['results/predicted-vs-observed', { kind: 'result', result: 'association' }],
     ['human-vs-llm', { kind: 'human-llm' }],
     ['prospective/hegota', { kind: 'hegota' }],
@@ -25,7 +24,7 @@ const props = Astro.props as any;
 const data = loadPublication();
 const rows = legacyAssessmentRows(data);
 const titles = {
-  'fork-index': 'Forks', 'eip-index': 'EIPs', fork: 'Fork detail', assessment: 'Assessment detail', eip: 'EIP detail',
+  'fork-index': 'Forks', fork: 'Fork detail', assessment: 'Assessment detail', eip: 'EIP detail',
   hegota: 'Hegotá prospective assessment', 'human-llm': 'Human versus LLM evaluations', result: 'Results', study: 'Study moved',
 };
 let title = titles[props.kind] ?? 'Research';
@@ -79,11 +78,6 @@ const correlations = [
   {props.kind === 'assessment' && <>
     <p class="eyebrow">Assessment moved</p><h1>EIP-{assessment.eip}: {assessment.title}</h1>
     <p class="lede">Every assessment of an EIP now lives on one page. Continue to <a href={eipRoute(assessment.eip, { fork: assessment.fork })}>EIP-{assessment.eip} in {fork.name}</a>.</p>
-  </>}
-
-  {props.kind === 'eip-index' && <>
-    <p class="eyebrow">Cross-fork index</p><h1>EIPs</h1><p class="lede">{data.eips.length} proposals represented across 95 fork–EIP relationships.</p>
-    <AssessmentTable rows={rows} caption="EIP complexity assessments" controls={true} sortable={true} proposalRoute="global" />
   </>}
 
   {props.kind === 'result' && props.result === 'association' && <>

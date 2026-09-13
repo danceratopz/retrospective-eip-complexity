@@ -444,9 +444,13 @@ def validate() -> dict[str, int]:
     ]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
     require(eip_index_html.count('data-mode="') == 95, "EIP index relationship row count mismatch")
-    require('data-table-search' in eip_index_html, "EIP index substring search is missing")
-    require('data-table-fork' in eip_index_html, "EIP index fork filter is missing")
-    require(eip_index_html.count('data-sort-key="') == 8, "EIP index columns must all be sortable")
+    for control in ["q", "fork", "band", "human", "llm", "under", "mode"]:
+        require(f'data-filter="{control}"' in eip_index_html, f"EIP index filter {control} is missing")
+    require(eip_index_html.count('data-sort-key="') == 7, "EIP index sortable columns changed")
+    require(eip_index_html.count('class="stack stack-compact') == 88, "EIP index must show one compact stacked bar per scored row")
+    require(eip_index_html.count('data-select-eip="') == 88, "EIP index must offer comparison selection for every scored row")
+    require("data-compare-selection" in eip_index_html, "EIP index comparison selection bar is missing")
+    require(eip_index_html.count('status status-not_applicable') == 14, "EIP index must badge the seven N/A rows twice (profile and status)")
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
     require(hegota_html.count('data-mode="prospective"') == 46, "Hegotá HTML table row count mismatch")
@@ -466,7 +470,6 @@ def validate() -> dict[str, int]:
         "Execution Layer and execution-client networking surfaces only" in hegota_html,
         "Hegotá Execution Layer scope is missing",
     )
-    require("data-retrospective-only" in eip_index_html, "retrospective-only filter is missing")
     hegota_chart = json.loads((DIST / "generated/charts/hegota-scores.json").read_text(encoding="utf-8"))
     require(
         len(hegota_chart["data"]["values"]) == 39
