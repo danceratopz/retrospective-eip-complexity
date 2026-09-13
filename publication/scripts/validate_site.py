@@ -485,7 +485,9 @@ def validate() -> dict[str, int]:
     require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
     require("Snapshot status" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
-        "Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot" in hegota_html,
+        "EIP-7805 was SFI and EIP-8141 was CFI, rather than PFI, at the frozen 2026-08-26 snapshot." in hegota_html
+        and hegota_html.count(">SFI</span>") >= 1
+        and hegota_html.count(">CFI</span>") >= 1,
         "Hegotá SFI/CFI snapshot disclosure is missing",
     )
     require(
