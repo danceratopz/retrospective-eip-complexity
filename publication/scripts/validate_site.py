@@ -504,20 +504,11 @@ def validate() -> dict[str, int]:
         "Execution Layer and execution-client networking surfaces only" in hegota_html,
         "Hegotá Execution Layer scope is missing",
     )
-    hegota_chart = json.loads((DIST / "generated/charts/hegota-scores.json").read_text(encoding="utf-8"))
-    require(
-        len(hegota_chart["data"]["values"]) == 39
-        and all(row.get("title") for row in hegota_chart["data"]["values"]),
-        "Hegotá chart must carry every scored EIP title",
-    )
-    require(
-        {row["snapshot_status"] for row in hegota_chart["data"]["values"]} == {"PFI", "SFI", "CFI"},
-        "Hegotá chart snapshot statuses are incomplete",
-    )
-    require(
-        any(item.get("field") == "title" and item.get("title") == "EIP name" for item in hegota_chart["encoding"]["tooltip"]),
-        "Hegotá chart tooltip is missing EIP names",
-    )
+    require("generated/charts/hegota-scores.json" not in hegota_html, "superseded Hegotá bar chart remains")
+    require('data-ranked-view="llm"' in hegota_html and 'data-ranked-view="human"' in hegota_html and 'data-ranked-view="both"' in hegota_html, "Hegotá ranked stacked bars are missing")
+    require(hegota_html.count('class="stack stack-large') >= 39 + 23, "Hegotá ranked bars must cover every scored LLM and Human assessment")
+    require("data-ranked-search" in hegota_html and 'data-filter="q"' in hegota_html, "Hegotá page must offer search on the ranked bars and the table")
+    require('data-filter="q"' in osaka_html, "fork pages must offer table search")
     require(
         association_html.index("generated/charts/fork-totals.json")
         < association_html.index("generated/charts/fork-shipping.json"),

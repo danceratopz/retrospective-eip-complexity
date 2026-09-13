@@ -12,6 +12,7 @@ import Chart from './Chart.astro';
 import CriterionLegend from './CriterionLegend.astro';
 import ForkComposition from './ForkComposition.astro';
 import EvaluationTable from './EvaluationTable.astro';
+import RankedBars from './RankedBars.astro';
 import StatusBadge from './StatusBadge.astro';
 
 interface Props {
@@ -107,7 +108,9 @@ const snapshot = hegota.human_snapshot;
 
 {prospective ? (
   <>
-    <h2>Scored proposals</h2><Chart spec={data.charts['hegota-scores']} label="Ranked Hegotá prospective scores" description="Bars encode the 39 applicable execution-layer rubric scores across PFI, SFI, and CFI candidates. The seven N/A entries remain in the semantic table above." />
+    <h2 id="scored-proposals">Scored proposals</h2>
+    <p class="muted">Every scored assessment as a stacked complexity bar, ranked by total on one shared scale. Switch evaluator to rank the human checklists, or show both per EIP. The seven not-applicable entries remain in the table above.</p>
+    <RankedBars data={data} occurrences={occurrences} id="scored-proposals-ranked" title="Hegotá scored proposals" />
     <h2>Caveats</h2><ul>{hegota.caveats.map((caveat) => <li>{caveat}</li>)}</ul>
     <div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Download all assessments</a><a href={basePath('generated/publication.json')}>Publication JSON</a></div>
   </>
