@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import EipDetail from '../../components/EipDetail.astro';
+import { loadPublication } from '../../lib/data.js';
+import type { Publication } from '../../lib/domain';
+import { findEip } from '../../lib/domain';
+
+export function getStaticPaths() {
+  const data = loadPublication() as Publication;
+  return data.eips.map((eip) => ({ params: { eip: String(eip.eip) }, props: { eip: eip.eip } }));
+}
+
+const data = loadPublication() as Publication;
+const eip = findEip(data, Number(Astro.props.eip));
+if (!eip) throw new Error(`Unknown EIP ${Astro.props.eip}`);
+const contexts = eip.occurrences.map((item) => item.fork_name).join(', ');
+---
+<Layout title={`EIP-${eip.eip}: ${eip.title}`} description={`Execution Layer complexity assessment of EIP-${eip.eip} (${eip.title}) in ${contexts}: score, criterion breakdown, rationale, uncertainty, and Human versus LLM comparison where available.`}>
+  <EipDetail data={data} eip={eip} />
+</Layout>

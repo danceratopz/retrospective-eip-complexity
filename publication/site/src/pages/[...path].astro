@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Chart from '../components/Chart.astro';
 import AssessmentTable from '../components/AssessmentTable.astro';
 import { loadPublication, basePath, legacyAssessmentRows } from '../lib/data.js';
+import { eipRoute } from '../lib/routes';
 
 export function getStaticPaths() {
   const data = loadPublication();
@@ -17,7 +18,6 @@ export function getStaticPaths() {
   ];
   for (const fork of data.forks.filter((item) => item.fork !== 'hegota')) pages.push([`forks/${fork.fork}`, { kind: 'fork', fork: fork.fork }]);
   for (const row of rows.filter((item) => item.mode === 'retrospective')) pages.push([`forks/${row.fork}/eips/${row.eip}`, { kind: 'assessment', fork: row.fork, eip: row.eip }]);
-  for (const eip of data.eips) pages.push([`eips/${eip.eip}`, { kind: 'eip', eip: eip.eip }]);
   return pages.map(([path, props]) => ({ params: { path }, props }));
 }
 
@@ -33,21 +33,18 @@ const fork = props.fork ? data.forks.find((item) => item.fork === props.fork) : 
 const forkRows = props.fork ? rows.filter((item) => item.fork === props.fork) : [];
 const lateForkRows = forkRows.filter((item) => item.scope_timing === 'added_after_cutoff');
 const assessment = props.kind === 'assessment' ? rows.find((item) => item.fork === props.fork && item.eip === props.eip) : null;
-const eip = props.kind === 'eip' ? data.eips.find((item) => item.eip === props.eip) : null;
 if (fork && props.kind === 'fork') title = fork.name;
 if (assessment) title = `EIP-${assessment.eip}: ${assessment.title}`;
-if (eip) title = `EIP-${eip.eip}: ${eip.title}`;
 const resultTitles = { association: 'Predicted versus observed' };
 if (props.kind === 'result') title = resultTitles[props.result];
 const hegotaRows = rows.filter((item) => item.fork === 'hegota');
 const retrospectiveForks = data.forks.filter((item) => item.mode === 'retrospective');
-const criterionLabels = Object.fromEntries(data.criteria.map((item) => [item.id, item.label]));
 const forkShipping = data.fork_shipping;
 const correlations = [
   ['Specification rework', 34, 0.75], ['New EIP interactions', 34, 0.56],
 ];
 ---
-<Layout title={title} redirect={props.kind === 'study' ? basePath() : undefined}>
+<Layout title={title} redirect={props.kind === 'study' ? basePath() : props.kind === 'assessment' ? eipRoute(assessment.eip, { fork: assessment.fork }) : undefined}>
   {props.kind === 'study' && <>
     <h1>Study Moved</h1>
     <p>The study is now the <a href={basePath()}>site homepage</a>.</p>
@@ -80,21 +77,13 @@ const correlations = [
   </>}
 
   {props.kind === 'assessment' && <>
-    <p class="eyebrow">Retrospective assessment</p><h1>EIP-{assessment.eip}: {assessment.title}</h1><p class="lede">{assessment.summary}</p>
-    <div class="source-note"><strong>Assessment input:</strong> <a href={assessment.assessed_revision_url}>immutable EIP revision <code>{assessment.assessed_revision.slice(0, 10)}</code></a> from {assessment.assessed_revision_at.slice(0, 10)} · <a href={assessment.current_revision_url}>current master</a> · <a href={assessment.revision_history_url}>file history</a></div>
-    <div class="grid"><div class="card"><span class="muted">Primary score</span><div class="stat">{assessment.score}</div></div><div class="card"><span class="muted">Tier</span><p><span class:list={["pill", assessment.tier]}>{assessment.tier}</span></p></div><div class="card"><span class="muted">Confidence</span><div class="stat">{assessment.confidence}</div></div><div class="card"><span class="muted">Under-specified</span><div class="stat">{assessment.under_specification ? 'Yes' : 'No'}</div></div></div>
-    <h2>Criterion scores</h2><ul class="criterion-grid">{assessment.criteria.map((criterion) => <li><span>{criterionLabels[criterion.id]}</span><strong>{criterion.score}</strong></li>)}</ul>
-    <h2>Uncertainty</h2><p>{assessment.under_specification_summary}</p>
+    <p class="eyebrow">Assessment moved</p><h1>EIP-{assessment.eip}: {assessment.title}</h1>
+    <p class="lede">Every assessment of an EIP now lives on one page. Continue to <a href={eipRoute(assessment.eip, { fork: assessment.fork })}>EIP-{assessment.eip} in {fork.name}</a>.</p>
   </>}
 
   {props.kind === 'eip-index' && <>
     <p class="eyebrow">Cross-fork index</p><h1>EIPs</h1><p class="lede">{data.eips.length} proposals represented across 95 fork–EIP relationships.</p>
     <AssessmentTable rows={rows} caption="EIP complexity assessments" controls={true} sortable={true} proposalRoute="global" />
-  </>}
-
-  {props.kind === 'eip' && <>
-    <p class="eyebrow">Proposal Across Forks</p><h1>EIP-{eip.eip}: {eip.title}</h1>
-    <div class="grid">{eip.occurrences.map((rel) => <article class="card"><span class:list={["pill", rel.mode === 'prospective' && 'prospective']}>{rel.mode}</span>{rel.snapshot_status && <> <span class="pill">{rel.snapshot_status} at snapshot</span></>}<h2>{rel.fork_name}</h2><p>{rel.llm.assessment_id ? <>Score <strong>{rel.llm.score}</strong> · <span class:list={["pill", rel.llm.tier]}>{rel.llm.tier}</span></> : <span class="pill na">Not applicable</span>}</p></article>)}</div>
   </>}
 
   {props.kind === 'result' && props.result === 'association' && <>

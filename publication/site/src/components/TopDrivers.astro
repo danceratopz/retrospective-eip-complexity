@@ -1,0 +1,30 @@
+---
+import type { Assessment, CriterionDefinition } from '../lib/domain';
+import { topDrivers } from '../lib/domain';
+import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
+import { domId } from '../lib/format';
+
+interface Props {
+  assessment: Assessment;
+  definitions: Map<string, CriterionDefinition>;
+  limit?: number;
+}
+
+const { assessment, definitions, limit = 4 } = Astro.props as Props;
+const drivers = topDrivers(assessment, DISPLAY_INDEX, limit);
+---
+{drivers.length > 0 ? (
+  <ol class="drivers">
+    {drivers.map((criterion) => (
+      <li>
+        <a href={`#${domId(assessment.id)}-${criterion.id}`}>
+          <span class="swatch" style={`--fill:var(--criterion-${criterion.id});--ink:var(--criterion-ink-${criterion.id})`} aria-hidden="true">{criterionAbbreviation(criterion.id)}</span>
+          <span class="driver-label">{definitions.get(criterion.id).label}</span>
+          <span class="driver-score">{criterion.score}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+) : (
+  <p class="muted">Every criterion scored zero.</p>
+)}

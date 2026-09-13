@@ -147,6 +147,31 @@ def validate_domain_model(data: dict, rows: list[dict]) -> None:
         require(comparison["delta"] == llm["score"] - human["score"], f"{comparison['id']}: delta")
 
 
+def validate_eip_pages(data: dict) -> None:
+    """Every EIP page carries every occurrence, every source view, and the shared components."""
+    for eip in data["eips"]:
+        html = (DIST / f"eips/{eip['eip']}/index.html").read_text(encoding="utf-8")
+        require(html.count("<h1>") == 1, f"EIP-{eip['eip']}: one h1")
+        for occurrence in eip["occurrences"]:
+            require(f'data-fork-panel="{occurrence["fork"]}"' in html, f"EIP-{eip['eip']}: missing {occurrence['fork']} panel")
+            if occurrence["llm"]["assessment_id"]:
+                require(f'data-assessment="{occurrence["llm"]["assessment_id"]}"' in html, f"EIP-{eip['eip']}: missing LLM view")
+            else:
+                require('class="status status-not_applicable' in html, f"EIP-{eip['eip']}: N/A disposition must be badged")
+            if occurrence["human"]["assessment_id"]:
+                require(f'data-assessment="{occurrence["human"]["assessment_id"]}"' in html, f"EIP-{eip['eip']}: missing Human view")
+            require(f'status status-{occurrence["human"]["status"]}' in html, f"EIP-{eip['eip']}: human status badge missing")
+            for comparison_id in occurrence["comparison_ids"]:
+                require(f'data-compare="{comparison_id}"' in html, f"EIP-{eip['eip']}: missing comparison {comparison_id}")
+                require("data-diff-only" in html, f"EIP-{eip['eip']}: differences-only toggle missing")
+        if len(eip["occurrences"]) > 1:
+            require(html.count('data-fork-tab="') == len(eip["occurrences"]), f"EIP-{eip['eip']}: fork tabs")
+        require('class="stack stack-large' in html or 'status-not_applicable' in html, f"EIP-{eip['eip']}: stacked complexity bar missing")
+        require("Criterion legend and glossary" in html, f"EIP-{eip['eip']}: legend missing")
+        require("Under-specified at assessment cutoff" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: under-specification wording missing")
+        require("Assessment provenance" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: provenance section missing")
+
+
 def validate() -> dict[str, int]:
     require(DIST.is_dir(), "site dist directory is missing; run npm run build")
     data_path = DIST / "generated/publication.json"
@@ -540,12 +565,17 @@ def validate() -> dict[str, int]:
         fork_links[fork] = set(document.links)
     for row in historical:
         detail = Document()
-        detail.feed(
-            (DIST / f"forks/{row['fork']}/eips/{row['eip']}/index.html").read_text(encoding="utf-8")
-        )
+        detail.feed((DIST / f"eips/{row['eip']}/index.html").read_text(encoding="utf-8"))
         for url in [row["assessed_revision_url"], row["current_revision_url"], row["revision_history_url"]]:
             require(url in fork_links[row["fork"]], f"fork page omits EIP-{row['eip']} revision link")
-            require(url in detail.links, f"assessment page omits EIP-{row['eip']} revision link")
+            require(url in detail.links, f"canonical EIP page omits EIP-{row['eip']} revision link")
+        legacy = (DIST / f"forks/{row['fork']}/eips/{row['eip']}/index.html").read_text(encoding="utf-8")
+        canonical = f"{BASE}eips/{row['eip']}/?fork={row['fork']}"
+        require(
+            f'http-equiv="refresh" content="0; url={canonical}"' in legacy and '<meta name="robots" content="noindex">' in legacy,
+            f"legacy assessment route for EIP-{row['eip']} must redirect to the canonical EIP page",
+        )
+    validate_eip_pages(data)
 
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
         milestone_path = DIST / f"generated/charts/fork-milestones-{fork}.json"
