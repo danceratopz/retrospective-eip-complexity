@@ -32,9 +32,13 @@ export function forkRoute(fork: string): string {
   return basePath(fork === 'hegota' ? 'prospective/hegota/' : `forks/${fork}/`);
 }
 
+export type CompareOrder = 'score' | 'spread' | 'stable';
+
 export interface CompareState {
   /** Assessment ids such as "amsterdam:7928:human:r1"; the canonical selection. */
   assessments: string[];
+  /** Criterion ordering of the matrix; "score" is the default and is omitted from the URL. */
+  order?: CompareOrder | null;
   /** Legacy selection by EIP number, resolved client-side against the compare index. */
   eips?: number[];
   fork?: string | null;
@@ -44,8 +48,9 @@ export interface CompareState {
 export const COMPARE_LIMIT = 6;
 
 export function compareRoute(state: CompareState): string {
-  if (state.assessments.length) return basePath(`eips/compare/${query({ a: state.assessments.join(',') })}`);
-  return basePath(`eips/compare/${query({ eips: state.eips?.length ? state.eips.join(',') : null, fork: state.fork, source: state.source })}`);
+  const order = state.order && state.order !== 'score' ? state.order : null;
+  if (state.assessments.length) return basePath(`eips/compare/${query({ a: state.assessments.join(','), order })}`);
+  return basePath(`eips/compare/${query({ eips: state.eips?.length ? state.eips.join(',') : null, fork: state.fork, source: state.source, order })}`);
 }
 
 export function parseCompareState(search: string): CompareState {
@@ -59,8 +64,10 @@ export function parseCompareState(search: string): CompareState {
     .map((value) => Number.parseInt(value, 10))
     .filter((value) => Number.isFinite(value) && value > 0);
   const source = params.get('source');
+  const order = params.get('order');
   return {
     assessments: [...new Set(assessments)],
+    order: order === 'spread' || order === 'stable' ? order : null,
     eips: [...new Set(eips)],
     fork: params.get('fork'),
     source: source === 'llm' || source === 'human' || source === 'compare' ? source : null,

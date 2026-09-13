@@ -75,7 +75,7 @@ const options = Object.values(data.assessments)
         remove.type = 'button';
         remove.setAttribute('aria-label', `Remove ${text.textContent}`);
         remove.textContent = '×';
-        remove.addEventListener('click', () => update({ assessments: state.assessments.filter((item) => item !== id) }));
+        remove.addEventListener('click', () => update({ ...state, assessments: state.assessments.filter((item) => item !== id) }));
         chip.append(text, remove);
         chips.append(chip);
       }
@@ -83,11 +83,13 @@ const options = Object.values(data.assessments)
       add.disabled = state.assessments.length >= COMPARE_LIMIT;
     };
 
+    const swap = (from: string, to: string) => update({ ...state, assessments: state.assessments.map((item) => (item === from ? to : item)) });
     const update = (next: CompareState) => {
-      state = { assessments: [...new Set(next.assessments)].slice(0, COMPARE_LIMIT) };
+      state = { assessments: [...new Set(next.assessments)].slice(0, COMPARE_LIMIT), order: next.order ?? null };
       writeState(state);
+      orderSelect.value = state.order ?? 'score';
       renderChips();
-      if (index) render(root, index, state, (from, to) => update({ assessments: state.assessments.map((item) => (item === from ? to : item)) }));
+      if (index) render(root, index, state, swap);
     };
 
     form.addEventListener('submit', (event) => event.preventDefault());
@@ -109,9 +111,9 @@ const options = Object.values(data.assessments)
         return;
       }
       status.hidden = true;
-      update({ assessments: [...state.assessments, id] });
+      update({ ...state, assessments: [...state.assessments, id] });
     });
-    orderSelect.addEventListener('change', () => index && render(root, index, state, (from, to) => update({ assessments: state.assessments.map((item) => (item === from ? to : item)) })));
+    orderSelect.addEventListener('change', () => update({ ...state, order: orderSelect.value as CompareState['order'] }));
 
     fetch(root.dataset.indexUrl!)
       .then((response) => {
@@ -120,7 +122,7 @@ const options = Object.values(data.assessments)
       })
       .then((payload: CompareIndex) => {
         index = payload;
-        update({ assessments: resolveLegacy(index, state) });
+        update({ ...state, assessments: resolveLegacy(index, state) });
       })
       .catch((error: Error) => {
         status.hidden = false;

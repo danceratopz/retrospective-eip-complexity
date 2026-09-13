@@ -158,7 +158,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
       return { criterion, position, maxValue, spread, present: values.some((value) => value > 0) };
     })
     .filter((row) => row.present);
-  const orderBy = (root.querySelector<HTMLSelectElement>('[data-compare-order]')?.value ?? 'score') as 'score' | 'spread' | 'stable';
+  const orderBy = state.order ?? 'score';
   present.sort((a, b) => {
     const stable = (DISPLAY_INDEX.get(a.criterion.id) ?? 99) - (DISPLAY_INDEX.get(b.criterion.id) ?? 99);
     if (orderBy === 'spread') return b.spread - a.spread || b.maxValue - a.maxValue || stable;
