@@ -90,13 +90,71 @@ def local_target(url: str) -> Path | None:
     return target
 
 
+def occurrence_rows(data: dict) -> list[dict]:
+    """Flatten EIP occurrences into one row per fork–EIP relationship with the primary LLM summary."""
+    rows = []
+    for eip in data["eips"]:
+        for occurrence in eip["occurrences"]:
+            primary = data["assessments"].get(occurrence["llm"]["assessment_id"]) if occurrence["llm"]["assessment_id"] else None
+            revision = primary["provenance"]["assessed_revision"] if primary else {}
+            rows.append(
+                {
+                    "assessed_revision": revision.get("commit"),
+                    "assessed_revision_url": revision.get("immutable_url"),
+                    "current_revision_url": revision.get("current_revision_url"),
+                    "revision_history_url": revision.get("revision_history_url"),
+                    "eip": occurrence["eip"],
+                    "fork": occurrence["fork"],
+                    "human_status": occurrence["human"]["status"],
+                    "mode": occurrence["mode"],
+                    "score": occurrence["llm"]["score"],
+                    "scope_timing": occurrence["scope_timing"],
+                    "snapshot_status": occurrence["snapshot_status"],
+                    "status": "scored" if primary else "not_applicable",
+                    "tier": occurrence["llm"]["tier"],
+                }
+            )
+    return rows
+
+
+def validate_domain_model(data: dict, rows: list[dict]) -> None:
+    """Invariants of the schema 2.0.0 domain model that the pages depend on."""
+    assessments = data["assessments"]
+    require(len(assessments) == 137, f"expected 137 assessments, found {len(assessments)}")
+    require(len(data["comparisons"]) == 32, "expected 32 same-rubric Human/LLM comparisons")
+    require(len(data["criteria"]) == 29, "criterion registry must contain 29 criteria")
+    require(set(data["rubrics"]) == {"1", "2"}, "both rubric revisions must be published")
+    for assessment in assessments.values():
+        order = data["rubrics"][str(assessment["rubric_revision"])]["criteria"]
+        require([item["id"] for item in assessment["criteria"]] == order, f"{assessment['id']}: criterion order")
+        if assessment["scored"]:
+            require(sum(item["score"] for item in assessment["criteria"]) == assessment["score"], f"{assessment['id']}: total")
+        else:
+            require(assessment["score"] is None and assessment["tier"] is None, f"{assessment['id']}: unscored assessments carry no score")
+    hegota_human = [row["human_status"] for row in rows if row["fork"] == "hegota"]
+    require(
+        {status: hegota_human.count(status) for status in set(hegota_human)}
+        == {"complete": 2, "available_in_open_pr": 14, "in_progress": 8, "incomplete": 1, "not_available": 21},
+        "Hegotá human-assessment status distribution changed",
+    )
+    for row in rows:
+        if row["status"] == "not_applicable":
+            require(row["score"] is None and row["tier"] is None, "N/A rows must not have score or tier")
+    for comparison in data["comparisons"].values():
+        human = assessments[comparison["human_assessment_id"]]
+        llm = assessments[comparison["llm_assessment_id"]]
+        require(human["rubric_revision"] == llm["rubric_revision"], f"{comparison['id']}: cross-rubric comparison")
+        require(comparison["delta"] == llm["score"] - human["score"], f"{comparison['id']}: delta")
+
+
 def validate() -> dict[str, int]:
     require(DIST.is_dir(), "site dist directory is missing; run npm run build")
     data_path = DIST / "generated/publication.json"
     data = json.loads(data_path.read_text(encoding="utf-8"))
-    require(data["schema_version"] == "1.1.0", "publication schema mismatch")
+    require(data["schema_version"] == "2.0.0", "publication schema mismatch")
     require(data["release_state"] == "public", "release state mismatch")
-    rows = data["assessments"]
+    rows = occurrence_rows(data)
+    validate_domain_model(data, rows)
     historical = [row for row in rows if row["mode"] == "retrospective"]
     prospective = [row for row in rows if row["mode"] == "prospective"]
     scored_hegota = [row for row in prospective if row["status"] == "scored"]
@@ -244,14 +302,15 @@ def validate() -> dict[str, int]:
     )
     require(sum(row["clean"] for row in human_llm) == 2, "human–LLM clean comparison count changed")
 
-    serialized = data_path.read_text(encoding="utf-8")
-    forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key"]
-    for term in forbidden:
-        require(term not in serialized, f"forbidden public-data term: {term}")
+    forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key", "assessment-run-"]
+    for generated in [data_path, DIST / "generated/compare-index.json", *sorted((DIST / "generated/downloads").glob("*.csv"))]:
+        serialized = generated.read_text(encoding="utf-8")
+        for term in forbidden:
+            require(term not in serialized, f"forbidden public-data term in {generated.name}: {term}")
 
     manifest_path = DIST / "generated/provenance.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    require(manifest["schema_version"] == "1.1.0", "provenance schema mismatch")
+    require(manifest["schema_version"] == "2.0.0", "provenance schema mismatch")
     for item in manifest["generated_files"]:
         path = DIST / "generated" / item["path"]
         require(path.is_file(), f"manifest output is missing: {item['path']}")

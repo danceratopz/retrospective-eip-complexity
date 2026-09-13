@@ -87,6 +87,7 @@ TASK_FAMILIES = {
     "05c-amsterdam-human-assessment-alignment",
     "07-observed-effort-metrics",
     "08-hegota-prospective-complexity-assessment",
+    "09-hegota-human-assessment-snapshot",
 }
 EXPECTED_JSON_FILES = {
     "contract/adapter-boundary.json",

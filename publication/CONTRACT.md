@@ -10,7 +10,7 @@ The research method remains defined by the repository's [README](../README.md), 
 
 The following decisions are fixed:
 
-- Astro 7.2.7 on Node 22.22.1 is the selected static site shell. No UI framework, server adapter, database, analytics, telemetry, or client-side application state is approved.
+- Astro 7.2.7 on Node 22.22.1 is the selected static site shell. No UI framework, server adapter, database, analytics, or telemetry is approved. Client-side scripts may only enhance pre-rendered HTML, and any view state they hold (selected fork, assessment source, comparison set, filters) must be reproducible from the page URL.
 - Python/YAML research outputs remain authoritative and read-only.
 - A one-way Python adapter will emit sanitized, schema-versioned JSON and CSV.
 - Vega-Lite 6.4.1 remains the visualization grammar, with Vega 6.4.0 and Vega-Embed 7.1.0 bundled as one local runtime.
@@ -119,6 +119,20 @@ Every future sanitized record must validate against [`schemas/publication-record
 Fork–EIP assessment records additionally carry the exact assessment commit, EIP path, Git blob SHA, content SHA-256, and information cutoff. Public provenance contains repository-relative paths and public upstream URLs only. No future public record may expose absolute machine paths, temporary paths, local file URLs, assessor run identifiers, prompts, capsules, logs, credentials, tokens, operational metadata, raw source bodies without an affirmative body disposition, or incomplete prospective work.
 
 The record types are study metadata, fork, global EIP, retrospective fork–EIP assessment, result summary, chart specification/data index, data catalog entry, prospective cohort summary, prospective EIP assessment, and the deprecated empty prospective status retained only for schema compatibility.
+
+## Assessment domain model
+
+The adapter projects research records into one domain model that every page consumes:
+
+- an **EIP** has one or more **occurrences**, one per fork context;
+- an occurrence has zero or more **assessments**, each identified by its **source** (`llm` or `human`) and its **rubric checklist revision** (1 or 2);
+- an assessment has an explicit **status** (`complete`, `available_in_open_pr`, `in_progress`, `incomplete`, `not_applicable`, `not_available`) and a `scored` flag; an unscored assessment never carries a total or tier;
+- a **comparison** exists only for a Human and an LLM assessment of the same occurrence under the same rubric revision, and stores per-criterion deltas;
+- one **criterion registry** (29 identifiers across both revisions) and per-revision **tier thresholds** are emitted once and shared by every page.
+
+Assessment source is first-class presentation state, not collapsed metadata. The primary study score remains the revision-2 LLM assessment; the Amsterdam revision-1 LLM re-run from Task 05c is published only as the like-for-like counterpart of the published human checklist. Payload `schema_version` is `2.0.0`.
+
+Human checklists are STEEL-authored content from `ethspecs/pm`, which is licensed CC0-1.0. Their published score cells and rationale text are projected verbatim with an immutable permalink to the source blob. Hegotá human checklists come from the Task 09 snapshot, which distinguishes merged files, open pull requests, draft pull requests, and inconsistent checklists; the site must never render a missing or incomplete human checklist as a zero.
 
 ## Adapter and source boundary
 
