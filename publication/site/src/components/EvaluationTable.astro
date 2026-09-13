@@ -74,8 +74,9 @@ const prospective = occurrences.some((item) => item.mode === 'prospective');
 const retrospectiveContext = forkContext !== null && !prospective;
 const hasReruns = rows.some((row) => row.rerun);
 const counts = {
-  llm: rows.filter((row) => row.evaluator === 'llm' && !row.rerun).length,
+  llm: rows.filter((row) => row.evaluator === 'llm' && !row.rerun && row.status !== 'not_applicable').length,
   human: rows.filter((row) => row.evaluator === 'human').length,
+  notApplicable: rows.filter((row) => row.status === 'not_applicable').length,
 };
 const pendingHuman = occurrences.filter((item) => item.mode === 'prospective' && item.human.status === 'not_available').length;
 const tableCaption = caption ?? 'Every complexity assessment in the study, one row per evaluator. LLM totals are the study scores; Human rows are STEEL checklists and do not enter fork totals. Click an EIP for its complete assessment.';
@@ -85,7 +86,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
   <fieldset class="evaluator-filter" data-filter-group="evaluator">
     <legend>{EVALUATOR_LABEL}</legend>
     <label><input type="radio" name={`${tableId}-evaluator`} value="" checked data-filter="evaluator" /> {EVALUATOR_FILTER_LABELS.both}</label>
-    <label><input type="radio" name={`${tableId}-evaluator`} value="llm" data-filter="evaluator" /> {EVALUATOR_FILTER_LABELS.llm} <span class="count">({counts.llm})</span></label>
+    <label><input type="radio" name={`${tableId}-evaluator`} value="llm" data-filter="evaluator" /> {EVALUATOR_FILTER_LABELS.llm} <span class="count">({counts.llm + counts.notApplicable})</span></label>
     <label><input type="radio" name={`${tableId}-evaluator`} value="human" data-filter="evaluator" disabled={counts.human === 0} /> {EVALUATOR_FILTER_LABELS.human} <span class="count">({counts.human})</span></label>
   </fieldset>
   <label>Search <input type="search" name="q" data-filter="q" placeholder="EIP number or title" /></label>
@@ -119,7 +120,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
   {hasReruns && <label class="checkbox"><input type="checkbox" name="reruns" value="1" data-filter="reruns" /> Show same-rubric LLM re-runs</label>}
   <button type="reset" class="button-secondary">Clear filters</button>
   <span class="muted filter-summary" aria-live="polite">
-    <span data-result-count>{counts.llm + counts.human} assessments: {counts.llm} LLM, {counts.human} Human</span>
+    <span data-result-count>{counts.llm + counts.human} assessments: {counts.llm} LLM, {counts.human} Human{counts.notApplicable > 0 ? ` · ${counts.notApplicable} not applicable to the EL rubric` : ''}</span>
     {pendingHuman > 0 && <span data-pending-count>· {pendingHuman} Hegotá candidate{pendingHuman === 1 ? ' has' : 's have'} a pending human checklist</span>}
   </span>
 </form>
@@ -276,6 +277,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
       const reruns = value('reruns') === '1';
       let llm = 0;
       let human = 0;
+      let notApplicable = 0;
       for (const row of table.tBodies[0].rows) {
         const data = row.dataset;
         const matches =
@@ -290,10 +292,11 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
         row.hidden = !matches;
         if (matches) {
           if (data.evaluator === 'human') human += 1;
+          else if (data.status === 'not_applicable') notApplicable += 1;
           else llm += 1;
         }
       }
-      count.textContent = `${llm + human} assessments: ${llm} LLM, ${human} Human`;
+      count.textContent = `${llm + human} assessments: ${llm} LLM, ${human} Human${notApplicable ? ` · ${notApplicable} not applicable to the EL rubric` : ''}`;
       const next = new URLSearchParams();
       for (const [key, current] of [['q', query], ['fork', fork], ['band', band], ['status', status], ['evaluator', evaluator], ['under', under ? '1' : ''], ['mode', retrospective ? 'retrospective' : ''], ['reruns', reruns ? '1' : '']] as const) {
         if (current) next.set(key, current);
