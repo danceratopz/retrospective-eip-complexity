@@ -323,23 +323,6 @@ def validate() -> dict[str, int]:
         "Amsterdam shipping summaries include a late-scope EIP",
     )
 
-    fork_totals = json.loads((DIST / "generated/charts/fork-totals.json").read_text(encoding="utf-8"))
-    require(len(fork_totals["data"]["values"]) == 10, "fork totals must contain two scope-timing rows per fork")
-    require(
-        {
-            (row["fork"], row["scope"]): (row["eips"], row["score"])
-            for row in fork_totals["data"]["values"]
-        }
-        == {
-            (fork, "Included by cutoff"): expected["included_at_cutoff"]
-            for fork, expected in expected_scope_totals.items()
-        }
-        | {
-            (fork, "Added after cutoff"): expected["added_after_cutoff"]
-            for fork, expected in expected_scope_totals.items()
-        },
-        "stacked fork-total chart does not preserve the cutoff split",
-    )
     human_llm = data["human_llm"]["rows"]
     require(len(human_llm) == 12, "human–LLM comparison must contain 12 Amsterdam EIPs")
     require(
@@ -443,11 +426,21 @@ def validate() -> dict[str, int]:
     for label in ["Score at cutoff", "Added-later score", "Final-scope score"]:
         require(label in association_html, f"association page omits {label.lower()}")
     require(
-        association_html.count('data-sort-key="') == 14,
-        "results fork-total and shipping columns must all be sortable",
+        association_html.count('data-sort-key="') == 8,
+        "results shipping columns must all be sortable",
     )
+    require("generated/charts/fork-totals.json" not in association_html, "superseded fork-totals Vega chart remains")
+    require(association_html.count('data-scope-fork="') == 5, "scope-timing values table must list five forks")
+    scope_start = association_html.index('class="scope-timing"')
+    require(scope_start < association_html.index("Which Kinds of Complexity Made Each Fork Heavy?"), "scope-timing bars must precede the composition section")
+    for fork, expected in expected_scope_totals.items():
+        included, added = expected["included_at_cutoff"][1], expected["added_after_cutoff"][1]
+        require(
+            f'data-tip-title="Included by cutoff — {included}"' in association_html and f'data-tip-title="Added after cutoff — {added}"' in association_html,
+            f"scope-timing bars omit the {fork} split",
+        )
     require("Which Kinds of Complexity Made Each Fork Heavy?" in association_html, "results fork composition section is missing")
-    require(association_html.count('class="stack stack-large') == 10, "results composition must show five forks in absolute and normalized views")
+    require(association_html.count('class="stack stack-large') == 15, "results must show five scope-timing bars plus five composition bars in each of two views")
     require(association_html.count("Contributed by ") >= 10, "results composition tooltips must name contributing EIP counts")
     composition_start = association_html.index("Which Kinds of Complexity Made Each Fork Heavy?")
     require(association_html.index("Composition table") > composition_start, "results composition must carry a semantic table")
@@ -510,9 +503,8 @@ def validate() -> dict[str, int]:
     require("data-ranked-search" in hegota_html and 'data-filter="q"' in hegota_html, "Hegotá page must offer search on the ranked bars and the table")
     require('data-filter="q"' in osaka_html, "fork pages must offer table search")
     require(
-        association_html.index("generated/charts/fork-totals.json")
-        < association_html.index("generated/charts/fork-shipping.json"),
-        "fork totals must be the first Results plot",
+        association_html.index('class="scope-timing"') < association_html.index("generated/charts/fork-shipping.json"),
+        "scope-timing bars must be the first Results visual",
     )
     for chart in ["fork-shipping", "fork-shipping-high-tier", "fork-shipping-hardest-eip"]:
         require(f"generated/charts/{chart}.json" in association_html, f"{chart} chart is missing")

@@ -8,6 +8,10 @@ export interface BarSegment {
   id: string;
   score: number;
   detail?: string | null;
+  /** Overrides for stacks that are not criterion stacks (for example scope timing). */
+  color?: string;
+  ink?: string;
+  abbreviation?: string;
 }
 
 export interface StackedBarOptions {
@@ -40,10 +44,13 @@ export function stackedBarHtml(options: StackedBarOptions): string {
   const readout = ordered.map((segment) => `${name(segment.id)} ${segment.score}`).join(', ');
   const accessibleName = `${label}: ${sum} ${unit}${ordered.length ? `. ${readout}.` : '.'}`;
   const body = ordered.map((segment) => `${name(segment.id)}: ${segment.score} (${percent(segment.score)})`).join('\n');
+  const fill = (segment: BarSegment) => (segment.color ? escapeHtml(segment.color) : `var(--criterion-${escapeHtml(segment.id)})`);
+  const ink = (segment: BarSegment) => (segment.ink ? escapeHtml(segment.ink) : segment.color ? '#ffffff' : `var(--criterion-ink-${escapeHtml(segment.id)})`);
+  const abbreviation = (segment: BarSegment) => escapeHtml(segment.abbreviation ?? criterionAbbreviation(segment.id));
   const segmentsHtml = ordered
     .map(
       (segment) =>
-        `<span class="stack-segment" style="flex-grow:${segment.score};--fill:var(--criterion-${escapeHtml(segment.id)});--ink:var(--criterion-ink-${escapeHtml(segment.id)})" data-tip data-tip-title="${escapeHtml(`${name(segment.id)} — ${segment.score}`)}" data-tip-body="${escapeHtml([`${percent(segment.score)} of ${sum} ${unit}`, segment.detail ?? ''].filter(Boolean).join('\n'))}" aria-hidden="true"><span class="stack-abbr">${escapeHtml(criterionAbbreviation(segment.id))}</span></span>`,
+        `<span class="stack-segment" style="flex-grow:${segment.score};--fill:${fill(segment)};--ink:${ink(segment)}" data-tip data-tip-title="${escapeHtml(`${name(segment.id)} — ${segment.score}`)}" data-tip-body="${escapeHtml([`${percent(segment.score)} of ${sum} ${unit}`, segment.detail ?? ''].filter(Boolean).join('\n'))}" aria-hidden="true"><span class="stack-abbr">${abbreviation(segment)}</span></span>`,
     )
     .join('');
   const classes = ['stack', `stack-${size}`, className].filter(Boolean).join(' ');

@@ -12,7 +12,7 @@ import { stackedBarHtml, type BarSegment } from '../lib/stacked-bar';
 
 interface Props {
   segments: BarSegment[];
-  definitions: Record<string, CriterionDefinition> | Map<string, CriterionDefinition>;
+  definitions: Record<string, CriterionDefinition | string> | Map<string, CriterionDefinition | string>;
   total?: number;
   max?: number;
   normalized?: boolean;
@@ -25,7 +25,7 @@ interface Props {
 
 const { segments, definitions, total, max, normalized = false, size = 'regular', label, unit = 'points', showTotal = false, class: className } = Astro.props as Props;
 const labels = new Map<string, string>();
-for (const [id, definition] of definitions instanceof Map ? definitions.entries() : Object.entries(definitions)) labels.set(id, definition.label);
+for (const [id, definition] of definitions instanceof Map ? definitions.entries() : Object.entries(definitions)) labels.set(id, typeof definition === 'string' ? definition : definition.label);
 const html = stackedBarHtml({ segments, labels, total, max, normalized, size, label, unit, showTotal, className });
 ---
 <Fragment set:html={html} />
