@@ -4,7 +4,7 @@
  * breakdown, and collapsed provenance. Used identically for LLM and Human sources.
  */
 import type { Assessment, CriterionDefinition, Occurrence, Rubric } from '../lib/domain';
-import { SOURCE_LABELS } from '../lib/labels';
+import { EVALUATOR_LABELS } from '../lib/labels';
 import { truncate } from '../lib/format';
 import AssessmentSummary from './AssessmentSummary.astro';
 import CriterionTable from './CriterionTable.astro';
@@ -26,7 +26,7 @@ const { assessment, occurrence, rubric, definitions } = Astro.props as Props;
 const segments = assessment.criteria
   .filter((criterion) => (criterion.score ?? 0) > 0)
   .map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 180) }));
-const sourceLabel = SOURCE_LABELS[assessment.source];
+const sourceLabel = EVALUATOR_LABELS[assessment.source];
 const checklist = assessment.checklist;
 ---
 <article class="assessment-view" data-assessment={assessment.id}>

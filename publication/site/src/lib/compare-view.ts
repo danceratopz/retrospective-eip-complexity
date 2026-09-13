@@ -5,7 +5,7 @@
  */
 import { DISPLAY_INDEX, criterionAbbreviation } from './criteria';
 import type { Source, Status, Tier } from './domain';
-import { SOURCE_LABELS, TIER_LABELS, rubricLabel, statusLabel } from './labels';
+import { EVALUATOR_LABELS, TIER_LABELS, rubricLabel, statusLabel } from './labels';
 import { COMPARE_LIMIT, compareRoute, eipRoute, parseCompareState, type CompareState } from './routes';
 import { stackedBarHtml } from './stacked-bar';
 
@@ -68,7 +68,7 @@ export function resolveLegacy(index: CompareIndex, state: CompareState): string[
 export function assessmentLabel(index: CompareIndex, assessment: IndexAssessment): string {
   const entry = index.eips.find((item) => item.eip === assessment.eip);
   const fork = index.forks.find((item) => item.fork === assessment.fork);
-  return `EIP-${assessment.eip} · ${SOURCE_LABELS[assessment.source]} r${assessment.rubric_revision} · ${fork?.short_name ?? assessment.fork} — ${entry?.title ?? ''}`;
+  return `EIP-${assessment.eip} · ${EVALUATOR_LABELS[assessment.source]} r${assessment.rubric_revision} · ${fork?.short_name ?? assessment.fork} — ${entry?.title ?? ''}`;
 }
 
 function statusBadge(status: Status, mode: 'retrospective' | 'prospective'): HTMLElement {
@@ -79,8 +79,8 @@ function statusBadge(status: Status, mode: 'retrospective' | 'prospective'): HTM
 }
 
 function sourceBadge(assessment: IndexAssessment): HTMLElement {
-  const badge = el('span', { class: `source source-${assessment.source} source-small` });
-  badge.append(el('span', { class: 'source-glyph', 'aria-hidden': 'true' }, assessment.source === 'human' ? '⚇' : '⌬'), el('span', {}, SOURCE_LABELS[assessment.source]), el('span', { class: 'source-revision' }, rubricLabel(assessment.rubric_revision)));
+  const badge = el('span', { class: `evaluator evaluator-${assessment.source} evaluator-small` });
+  badge.append(el('span', { class: 'evaluator-glyph', 'aria-hidden': 'true' }, assessment.source === 'human' ? '⚇' : '⌬'), el('span', {}, EVALUATOR_LABELS[assessment.source]), el('span', { class: 'evaluator-revision' }, rubricLabel(assessment.rubric_revision)));
   return badge;
 }
 
@@ -109,7 +109,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
     for (const column of columns) {
       const counterpart = index.assessments.find((item) => item.eip === column.eip && item.fork === column.fork && item.source === column.source && item.scored && item.rubric_revision !== column.rubric_revision && !columns.includes(item));
       if (!counterpart) continue;
-      const button = el('button', { type: 'button', class: 'button-secondary swap-button' }, `Use the ${SOURCE_LABELS[column.source]} ${rubricLabel(counterpart.rubric_revision).toLowerCase()} assessment of EIP-${column.eip} instead`);
+      const button = el('button', { type: 'button', class: 'button-secondary swap-button' }, `Use the ${EVALUATOR_LABELS[column.source]} ${rubricLabel(counterpart.rubric_revision).toLowerCase()} assessment of EIP-${column.eip} instead`);
       button.addEventListener('click', () => onSwap(column.id, counterpart.id));
       const holder = el('div');
       holder.append(button);
@@ -140,7 +140,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
     if (column.scored) {
       const segments = index.criteria.map((criterion, position) => ({ id: criterion.id, score: column.scores[position] ?? 0 })).filter((segment) => segment.score > 0);
       const holder = el('div', { class: 'compare-bar-holder' });
-      holder.innerHTML = stackedBarHtml({ segments, labels, total: column.score ?? 0, max: scale, size: 'large', showTotal: true, label: `EIP-${column.eip} ${SOURCE_LABELS[column.source]} complexity` });
+      holder.innerHTML = stackedBarHtml({ segments, labels, total: column.score ?? 0, max: scale, size: 'large', showTotal: true, label: `EIP-${column.eip} ${EVALUATOR_LABELS[column.source]} complexity` });
       card.append(holder, el('p', { class: 'muted compare-bar-meta' }, `${TIER_LABELS[column.tier!]}${column.under_specified ? ' · under-specified at cutoff' : ''}`));
     } else {
       card.append(statusBadge(column.status, mode(column)));
@@ -175,7 +175,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
   headRow.append(el('th', { scope: 'col' }, 'Criterion'));
   for (const column of columns) {
     const cell = el('th', { scope: 'col', class: 'number' });
-    cell.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source }) }, `EIP-${column.eip}`), el('span', { class: 'matrix-fork' }, `${SOURCE_LABELS[column.source]} r${column.rubric_revision} · ${forkName.get(column.fork) ?? column.fork}`));
+    cell.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source }) }, `EIP-${column.eip}`), el('span', { class: 'matrix-fork' }, `${EVALUATOR_LABELS[column.source]} r${column.rubric_revision} · ${forkName.get(column.fork) ?? column.fork}`));
     headRow.append(cell);
   }
   if (pairDelta) headRow.append(el('th', { scope: 'col', class: 'number' }, 'Δ'));

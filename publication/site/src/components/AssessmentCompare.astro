@@ -4,9 +4,9 @@
  */
 import type { Assessment, Comparison, CriterionDefinition, Occurrence, Rubric } from '../lib/domain';
 import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
-import { AGREEMENT_LABELS, SOURCE_LABELS, TIER_LABELS, rubricLabel } from '../lib/labels';
+import { AGREEMENT_LABELS, EVALUATOR_LABELS, TIER_LABELS, rubricLabel } from '../lib/labels';
 import { domId, plural, signed, truncate } from '../lib/format';
-import SourceBadge from './SourceBadge.astro';
+import EvaluatorBadge from './EvaluatorBadge.astro';
 import StackedBar from './StackedBar.astro';
 import TierBadge from './TierBadge.astro';
 
@@ -31,8 +31,8 @@ const confounds = comparison.confounds;
 <section class="compare" data-compare={comparison.id}>
   <p class="muted">Both assessments applied {rubricLabel(comparison.rubric_revision)} ({rubric.criterion_count} criteria) to EIP-{comparison.eip} in {occurrence.fork_name}. Δ is LLM minus Human.</p>
   <div class="compare-totals">
-    <div class="compare-total compare-llm"><SourceBadge source="llm" /><span class="stat">{comparison.llm_total}</span><TierBadge tier={comparison.llm_tier} thresholds={rubric.tier_thresholds} /></div>
-    <div class="compare-total compare-human"><SourceBadge source="human" /><span class="stat">{comparison.human_total}</span><TierBadge tier={comparison.human_tier} thresholds={rubric.tier_thresholds} /></div>
+    <div class="compare-total compare-llm"><EvaluatorBadge source="llm" /><span class="stat">{comparison.llm_total}</span><TierBadge tier={comparison.llm_tier} thresholds={rubric.tier_thresholds} /></div>
+    <div class="compare-total compare-human"><EvaluatorBadge source="human" /><span class="stat">{comparison.human_total}</span><TierBadge tier={comparison.human_tier} thresholds={rubric.tier_thresholds} /></div>
     <div class="compare-total compare-delta"><span class="muted">Δ total</span><span class:list={['stat', comparison.delta > 0 && 'delta-pos', comparison.delta < 0 && 'delta-neg']}>{signed(comparison.delta)}</span><span class="muted">{comparison.tier_agreement ? 'Same tier' : `Tiers differ: ${TIER_LABELS[comparison.llm_tier]} vs ${TIER_LABELS[comparison.human_tier]}`}</span></div>
     <div class="compare-total compare-agreement"><span class="muted">Criteria</span><span class="stat">{comparison.agreement_counts.exact}<span class="stat-unit">/{rows.length}</span></span><span class="muted">agree exactly · {comparison.agreement_counts.minor} differ by 1 · {comparison.agreement_counts.major} differ by 2+</span></div>
   </div>
@@ -46,8 +46,8 @@ const confounds = comparison.confounds;
   )}
   <h3>Complexity profiles side by side</h3>
   <div class="compare-bars">
-    <div class="compare-bar-row"><span class="compare-bar-label">{SOURCE_LABELS.llm}</span><StackedBar segments={segmentsFor(llm)} definitions={definitions} total={comparison.llm_total} max={scale} size="large" showTotal={true} label={`EIP-${comparison.eip} LLM complexity`} /></div>
-    <div class="compare-bar-row"><span class="compare-bar-label">{SOURCE_LABELS.human}</span><StackedBar segments={segmentsFor(human)} definitions={definitions} total={comparison.human_total} max={scale} size="large" showTotal={true} label={`EIP-${comparison.eip} Human complexity`} /></div>
+    <div class="compare-bar-row"><span class="compare-bar-label">{EVALUATOR_LABELS.llm}</span><StackedBar segments={segmentsFor(llm)} definitions={definitions} total={comparison.llm_total} max={scale} size="large" showTotal={true} label={`EIP-${comparison.eip} LLM complexity`} /></div>
+    <div class="compare-bar-row"><span class="compare-bar-label">{EVALUATOR_LABELS.human}</span><StackedBar segments={segmentsFor(human)} definitions={definitions} total={comparison.human_total} max={scale} size="large" showTotal={true} label={`EIP-${comparison.eip} Human complexity`} /></div>
   </div>
   {comparison.largest_disagreements.length > 0 && (
     <p><strong>Largest disagreements:</strong> {comparison.largest_disagreements.map((id, index) => <>{index > 0 && ', '}<a href={`#${prefix}-${id}`}>{definitions.get(id).label}</a> ({signed(rows.find((row) => row.id === id).delta)})</>)}</p>
@@ -73,8 +73,8 @@ const confounds = comparison.confounds;
               {(rationale(llm, row.id) || rationale(human, row.id)) ? (
                 <details>
                   <summary>Show rationale</summary>
-                  <p><SourceBadge source="llm" size="small" /> {rationale(llm, row.id) ?? <span class="muted">No rationale recorded.</span>}</p>
-                  <p><SourceBadge source="human" size="small" /> {rationale(human, row.id) ?? <span class="muted">No rationale recorded.</span>}</p>
+                  <p><EvaluatorBadge source="llm" size="small" /> {rationale(llm, row.id) ?? <span class="muted">No rationale recorded.</span>}</p>
+                  <p><EvaluatorBadge source="human" size="small" /> {rationale(human, row.id) ?? <span class="muted">No rationale recorded.</span>}</p>
                 </details>
               ) : <span class="muted">—</span>}
             </td>

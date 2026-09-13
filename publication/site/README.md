@@ -20,7 +20,7 @@ publication.json (schema 2.0.0)
   criteria[]      29 rubric criteria with labels, definitions, anchors, rubric membership
   rubrics{1,2}    criterion order, nominal maximum, tier thresholds per checklist revision
   eips[]          EIP -> occurrences[] (one per fork) -> llm/human summaries, assessment_ids, comparison_ids
-  assessments{}   one object per (fork, EIP, source, rubric revision): status, scored, score, tier,
+  assessments{}   one object per (fork, EIP, evaluator, rubric revision): status, scored, score, tier,
                   criteria[] with rationale/evidence/uncertainty, under_specification, provenance
   comparisons{}   same-rubric Human vs LLM pairs with per-criterion deltas and agreement classes
   forks[]         totals, cutoff split, criterion composition blocks, human coverage
@@ -35,9 +35,9 @@ compare-index.json  compact per-assessment criterion scores for the client-side 
 | Criterion identity | `src/lib/criteria.ts` | Group, colour, abbreviation, and display order per criterion; emits the CSS custom properties |
 | Routing and view state | `src/lib/routes.ts` | Base-aware URL builders and query codecs for the EIP page and the comparison |
 | Stacked bars | `src/lib/stacked-bar.ts`, `components/StackedBar.astro` | One HTML renderer used server-side and client-side |
-| Assessment views | `AssessmentView`, `AssessmentSummary`, `TopDrivers`, `UncertaintySection`, `CriterionTable`, `ProvenanceDetails` | Explain one assessment; identical for Human and LLM sources |
+| Assessment views | `AssessmentView`, `AssessmentSummary`, `TopDrivers`, `UncertaintySection`, `CriterionTable`, `ProvenanceDetails` | Explain one assessment; identical for Human and LLM evaluators |
 | Comparison | `AssessmentCompare.astro` (Human vs LLM on one EIP), `lib/compare-view.ts` + `pages/eips/compare.astro` (up to four EIPs) | Difference-oriented comparison |
-| Status | `StatusBadge`, `SourceBadge`, `TierBadge` | Shared badges so missing, incomplete, and not-applicable states never look like zero |
+| Status | `StatusBadge`, `EvaluatorBadge`, `TierBadge` | Shared badges so missing, incomplete, and not-applicable states never look like zero |
 | Pages | `pages/eips/[eip].astro` → `EipDetail`; `pages/forks/[fork].astro` and `pages/prospective/hegota.astro` → `ForkPage`; `pages/eips/index.astro` → `OccurrenceTable`; `pages/results/…` → `ForkComposition` | Thin page files over shared components |
 
 ### URL state

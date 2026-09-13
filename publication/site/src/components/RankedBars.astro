@@ -5,10 +5,10 @@
  */
 import type { Assessment, Occurrence, Publication } from '../lib/domain';
 import { primaryAssessment, humanAssessment } from '../lib/domain';
-import { SNAPSHOT_STATUS_LABELS, SOURCE_LABELS, rubricLabel } from '../lib/labels';
+import { SNAPSHOT_STATUS_LABELS, EVALUATOR_LABELS, rubricLabel } from '../lib/labels';
 import { eipRoute } from '../lib/routes';
 import { truncate } from '../lib/format';
-import SourceBadge from './SourceBadge.astro';
+import EvaluatorBadge from './EvaluatorBadge.astro';
 import StackedBar from './StackedBar.astro';
 import StatusBadge from './StatusBadge.astro';
 
@@ -28,9 +28,9 @@ const scale = Math.max(...entries.flatMap((entry) => [entry.llm?.score ?? 0, ent
 const byLlm = entries.filter((entry) => entry.llm).sort((a, b) => b.llm.score - a.llm.score || a.occurrence.eip - b.occurrence.eip);
 const byHuman = entries.filter((entry) => entry.human?.scored).sort((a, b) => b.human.score - a.human.score || a.occurrence.eip - b.occurrence.eip);
 const views = [
-  { key: 'llm', label: `${SOURCE_LABELS.llm} (${byLlm.length})`, rows: byLlm, paired: false },
-  { key: 'human', label: `${SOURCE_LABELS.human} (${byHuman.length})`, rows: byHuman, paired: false },
-  { key: 'both', label: `Both, ranked by ${SOURCE_LABELS.llm}`, rows: byLlm, paired: true },
+  { key: 'llm', label: `${EVALUATOR_LABELS.llm} (${byLlm.length})`, rows: byLlm, paired: false },
+  { key: 'human', label: `${EVALUATOR_LABELS.human} (${byHuman.length})`, rows: byHuman, paired: false },
+  { key: 'both', label: `Both, ranked by ${EVALUATOR_LABELS.llm}`, rows: byLlm, paired: true },
 ];
 ---
 <div class="ranked" id={id} data-ranked>
@@ -58,16 +58,16 @@ const views = [
             <div class="ranked-bars">
               {view.paired ? (
                 <>
-                  <div class="ranked-pair"><SourceBadge source="llm" revision={llm.rubric_revision} size="small" /><StackedBar segments={segments(llm)} definitions={definitions} total={llm.score} max={scale} size="regular" showTotal={true} label={`EIP-${occurrence.eip} LLM complexity`} /></div>
+                  <div class="ranked-pair"><EvaluatorBadge source="llm" revision={llm.rubric_revision} size="small" /><StackedBar segments={segments(llm)} definitions={definitions} total={llm.score} max={scale} size="regular" showTotal={true} label={`EIP-${occurrence.eip} LLM complexity`} /></div>
                   <div class="ranked-pair">
-                    <SourceBadge source="human" revision={human?.rubric_revision ?? null} size="small" />
+                    <EvaluatorBadge source="human" revision={human?.rubric_revision ?? null} size="small" />
                     {human?.scored
                       ? <StackedBar segments={segments(human)} definitions={definitions} total={human.score} max={scale} size="regular" showTotal={true} label={`EIP-${occurrence.eip} Human complexity`} />
                       : <StatusBadge status={occurrence.human.status} mode={occurrence.mode} size="small" href={occurrence.human.source_record?.pull_request?.url ?? occurrence.human.source_record?.immutable_url ?? null} />}
                   </div>
                 </>
               ) : (
-                <StackedBar segments={segments(lead)} definitions={definitions} total={lead.score} max={scale} size="large" showTotal={true} label={`EIP-${occurrence.eip} ${SOURCE_LABELS[lead.source]} complexity`} />
+                <StackedBar segments={segments(lead)} definitions={definitions} total={lead.score} max={scale} size="large" showTotal={true} label={`EIP-${occurrence.eip} ${EVALUATOR_LABELS[lead.source]} complexity`} />
               )}
             </div>
           </li>

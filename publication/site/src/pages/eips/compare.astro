@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import CriterionLegend from '../../components/CriterionLegend.astro';
 import { loadPublication, basePath } from '../../lib/data.js';
 import type { Publication } from '../../lib/domain';
-import { SOURCE_LABELS } from '../../lib/labels';
+import { EVALUATOR_LABELS } from '../../lib/labels';
 import { COMPARE_LIMIT } from '../../lib/routes';
 
 const data = loadPublication() as Publication;
@@ -11,7 +11,7 @@ const forkShort = new Map(data.forks.map((fork) => [fork.fork, fork.short_name])
 const options = Object.values(data.assessments)
   .filter((assessment) => assessment.scored)
   .sort((a, b) => a.eip - b.eip || a.fork.localeCompare(b.fork) || (a.source === 'llm' ? -1 : 1) - (b.source === 'llm' ? -1 : 1) || b.rubric_revision - a.rubric_revision)
-  .map((assessment) => ({ id: assessment.id, label: `EIP-${assessment.eip} · ${SOURCE_LABELS[assessment.source]} r${assessment.rubric_revision} · ${forkShort.get(assessment.fork)} — ${assessment.title}` }));
+  .map((assessment) => ({ id: assessment.id, label: `EIP-${assessment.eip} · ${EVALUATOR_LABELS[assessment.source]} r${assessment.rubric_revision} · ${forkShort.get(assessment.fork)} — ${assessment.title}` }));
 ---
 <Layout title="Compare assessments" description="Compare the Execution Layer complexity profiles of up to six assessments side by side and criterion by criterion, mixing Human and LLM evaluators and EIPs as needed.">
   <p class="eyebrow">Shared comparison</p>

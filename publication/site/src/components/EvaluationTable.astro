@@ -13,7 +13,7 @@ import {
   MODE_LABELS,
   SCOPE_TIMING_LABELS,
   SNAPSHOT_STATUS_LABELS,
-  SOURCE_LABELS,
+  EVALUATOR_LABELS,
   STATUS_LABELS,
   TIER_LABELS,
   UNDER_SPECIFIED_SHORT,
@@ -21,7 +21,7 @@ import {
 } from '../lib/labels';
 import { eipRoute, forkRoute, COMPARE_LIMIT } from '../lib/routes';
 import { isoDate, shortCommit, truncate } from '../lib/format';
-import SourceBadge from './SourceBadge.astro';
+import EvaluatorBadge from './EvaluatorBadge.astro';
 import StackedBar from './StackedBar.astro';
 import StatusBadge from './StatusBadge.astro';
 import TierBadge from './TierBadge.astro';
@@ -167,7 +167,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
             data-status={status}
             data-band={assessment?.tier ?? ''}
             data-under={assessment?.under_specification?.present ? '1' : '0'}
-            data-search={`eip-${occurrence.eip} ${occurrence.eip} ${occurrence.title} ${occurrence.fork} ${occurrence.fork_name} ${SOURCE_LABELS[evaluator]}`.toLowerCase()}
+            data-search={`eip-${occurrence.eip} ${occurrence.eip} ${occurrence.title} ${occurrence.fork} ${occurrence.fork_name} ${EVALUATOR_LABELS[evaluator]}`.toLowerCase()}
             data-sort-eip={occurrence.eip}
             data-sort-fork={`${forkIndex(occurrence.fork)} ${occurrence.eip}`}
             data-sort-snapshot={occurrence.snapshot_status ?? ''}
@@ -180,7 +180,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
             data-sort-assessment={revision?.committed_at ?? record?.committed_at ?? record?.pull_request?.updated_at ?? ''}
           >
             <td class="select-col">
-              {assessment && scored && <input type="checkbox" data-select-assessment={assessment.id} aria-label={`Select the ${SOURCE_LABELS[evaluator]} assessment of EIP-${occurrence.eip} (${occurrence.fork_name}) for comparison`} />}
+              {assessment && scored && <input type="checkbox" data-select-assessment={assessment.id} aria-label={`Select the ${EVALUATOR_LABELS[evaluator]} assessment of EIP-${occurrence.eip} (${occurrence.fork_name}) for comparison`} />}
             </td>
             <td class="eip-cell"><a href={eipRoute(occurrence.eip, { fork: occurrence.fork, view: evaluator, rubric: rerun ? assessment.rubric_revision : null })}><strong>EIP-{occurrence.eip}</strong> {occurrence.title}</a></td>
             {forkContext === null && (
@@ -195,7 +195,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
             )}
             {forkContext !== null && prospective && <td><span class="pill pill-small" title={occurrence.snapshot_status ? SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status] : undefined}>{occurrence.snapshot_status}</span></td>}
             {retrospectiveContext && <td>{occurrence.scope_timing ? SCOPE_TIMING_LABELS[occurrence.scope_timing] : '—'}</td>}
-            <td class="evaluator-cell"><SourceBadge source={evaluator} revision={assessment?.rubric_revision ?? null} size="small" />{rerun && <div class="muted">re-run for the human comparison</div>}</td>
+            <td class="evaluator-cell"><EvaluatorBadge source={evaluator} revision={assessment?.rubric_revision ?? null} size="small" />{rerun && <div class="muted">re-run for the human comparison</div>}</td>
             <td><StatusBadge status={status} mode={occurrence.mode} size="small" href={statusHref} detail={status === 'not_applicable' ? occurrence.llm.rationale : null} /></td>
             <td class="number score-cell">
               {scored
@@ -207,7 +207,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
             <td>{scored ? <TierBadge tier={assessment.tier} thresholds={assessment.rubric_revision === 2 ? thresholds : data.rubrics['1'].tier_thresholds} size="small" /> : <span class="muted">—</span>}</td>
             <td class="profile-col">
               {scored
-                ? <StackedBar segments={assessment.criteria.filter((criterion) => (criterion.score ?? 0) > 0).map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 140) }))} definitions={definitions} total={assessment.score} max={maxScore} size="compact" label={`EIP-${occurrence.eip} ${occurrence.fork_name} ${SOURCE_LABELS[evaluator]} complexity`} />
+                ? <StackedBar segments={assessment.criteria.filter((criterion) => (criterion.score ?? 0) > 0).map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 140) }))} definitions={definitions} total={assessment.score} max={maxScore} size="compact" label={`EIP-${occurrence.eip} ${occurrence.fork_name} ${EVALUATOR_LABELS[evaluator]} complexity`} />
                 : <span class="muted stack-empty">{status === 'not_applicable' ? 'No execution-layer score' : 'Published total and cells disagree; not scored'}</span>}
             </td>
             <td>{assessment?.under_specification ? (assessment.under_specification.present ? 'Yes' : 'No') : <span class="muted">—</span>}</td>

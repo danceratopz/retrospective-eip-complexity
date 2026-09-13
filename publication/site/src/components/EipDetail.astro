@@ -5,13 +5,13 @@
  */
 import type { Eip, Publication } from '../lib/domain';
 import { assessmentsFor, comparisonsFor, defaultView, humanAssessment, primaryAssessment, rubricFor, viewModes } from '../lib/domain';
-import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, SOURCE_LABELS, VIEW_LABELS, forkContextLabel, rubricLabel, statusLabel } from '../lib/labels';
+import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, EVALUATOR_LABELS, VIEW_LABELS, forkContextLabel, rubricLabel, statusLabel } from '../lib/labels';
 import { compareRoute, eipRoute, forkRoute } from '../lib/routes';
 import { domId, isoDate } from '../lib/format';
 import AssessmentCompare from './AssessmentCompare.astro';
 import AssessmentView from './AssessmentView.astro';
 import CriterionLegend from './CriterionLegend.astro';
-import SourceBadge from './SourceBadge.astro';
+import EvaluatorBadge from './EvaluatorBadge.astro';
 import StatusBadge from './StatusBadge.astro';
 
 interface Props {
@@ -86,10 +86,10 @@ const contextLine = (panel) => {
           <span class="muted">Layers: {occurrence.layers.join(', ')}</span>
         </div>
 
-        <div class="source-availability" aria-label="Assessment sources">
-          <div class="source-line"><SourceBadge source="llm" /> <StatusBadge status={occurrence.llm.status} mode={occurrence.mode} size="small" href={primary ? `#${domId(primary.id)}` : null} />{occurrence.llm.status === 'complete' && <span class="muted">score {occurrence.llm.score}</span>}</div>
+        <div class="source-availability" aria-label="Evaluators">
+          <div class="source-line"><EvaluatorBadge source="llm" /> <StatusBadge status={occurrence.llm.status} mode={occurrence.mode} size="small" href={primary ? `#${domId(primary.id)}` : null} />{occurrence.llm.status === 'complete' && <span class="muted">score {occurrence.llm.score}</span>}</div>
           <div class="source-line">
-            <SourceBadge source="human" /> <StatusBadge status={humanStatus} mode={occurrence.mode} size="small" href={humanPull?.url ?? humanRecord?.immutable_url ?? null} />
+            <EvaluatorBadge source="human" /> <StatusBadge status={humanStatus} mode={occurrence.mode} size="small" href={humanPull?.url ?? humanRecord?.immutable_url ?? null} />
             {occurrence.human.assessment_id && occurrence.human.score !== null && <span class="muted">score {occurrence.human.score} · {rubricLabel(occurrence.human.rubric_revision)}</span>}
             {humanPull && <span class="muted">· <a href={humanPull.url}>ethspecs/pm #{humanPull.number}</a>{humanPull.draft ? ' (draft)' : ''}</span>}
             {!humanPull && humanRecord?.immutable_url && <span class="muted">· <a href={humanRecord.immutable_url}>merged checklist</a></span>}
@@ -129,13 +129,13 @@ const contextLine = (panel) => {
                 data-view-tab="llm"
                 data-rubric-tab={panel.llm.length > 1 ? String(assessment.rubric_revision) : undefined}
               >
-                <span class="tab-title">{SOURCE_LABELS.llm} · {rubricLabel(assessment.rubric_revision)}</span>
+                <span class="tab-title">{EVALUATOR_LABELS.llm} · {rubricLabel(assessment.rubric_revision)}</span>
                 <span class="tab-meta">{assessment.role === 'primary' ? 'Primary study score' : 'Re-run for the human comparison'} · {assessment.score}</span>
               </a>
             ))}
             {panel.human && (
               <a role="tab" id={`tab-${occurrence.fork}-human`} href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'human' }, `#panel-${occurrence.fork}-human`)} aria-controls={`panel-${occurrence.fork}-human`} aria-selected={panel.defaultView === 'human' ? 'true' : 'false'} data-view-tab="human">
-                <span class="tab-title">{SOURCE_LABELS.human} · {rubricLabel(panel.human.rubric_revision)}</span>
+                <span class="tab-title">{EVALUATOR_LABELS.human} · {rubricLabel(panel.human.rubric_revision)}</span>
                 <span class="tab-meta">{statusLabel(panel.human.status, occurrence.mode)}{panel.human.scored ? ` · ${panel.human.score}` : ''}</span>
               </a>
             )}
@@ -150,7 +150,7 @@ const contextLine = (panel) => {
 
         {panel.llm.length > 0 && (
           <div class="view-panel" id={`panel-${occurrence.fork}-llm`} role={panel.views.length > 1 ? 'tabpanel' : undefined} aria-labelledby={panel.views.length > 1 ? `tab-${occurrence.fork}-llm` : undefined} data-view-panel="llm">
-            {panel.views.length === 1 && panel.llm.length === 1 && <h2>{SOURCE_LABELS.llm} assessment</h2>}
+            {panel.views.length === 1 && panel.llm.length === 1 && <h2>{EVALUATOR_LABELS.llm} assessment</h2>}
             {panel.llm.map((assessment) => (
               <div id={domId(assessment.id)} class="rubric-panel" data-rubric-panel={String(assessment.rubric_revision)} role={panel.llm.length > 1 ? 'tabpanel' : undefined}>
                 <AssessmentView assessment={assessment} occurrence={occurrence} rubric={rubricFor(data, assessment.rubric_revision)} definitions={definitions} />
@@ -161,7 +161,7 @@ const contextLine = (panel) => {
 
         {panel.human && (
           <div class="view-panel" id={`panel-${occurrence.fork}-human`} role={panel.views.length > 1 ? 'tabpanel' : undefined} aria-labelledby={panel.views.length > 1 ? `tab-${occurrence.fork}-human` : undefined} data-view-panel="human">
-            {panel.views.length === 1 && <h2>{SOURCE_LABELS.human} assessment</h2>}
+            {panel.views.length === 1 && <h2>{EVALUATOR_LABELS.human} assessment</h2>}
             <AssessmentView assessment={panel.human} occurrence={occurrence} rubric={rubricFor(data, panel.human.rubric_revision)} definitions={definitions} />
           </div>
         )}

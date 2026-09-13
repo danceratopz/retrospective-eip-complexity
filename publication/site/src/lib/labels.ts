@@ -5,8 +5,8 @@ import type { Confidence, Mode, Source, Status, Tier, ViewMode } from './domain'
 
 export const SITE_TITLE = 'Retrospective LLM-Based Complexity Evaluations';
 
-export const SOURCE_LABELS: Record<Source, string> = { llm: 'LLM', human: 'Human' };
-export const SOURCE_DESCRIPTIONS: Record<Source, string> = {
+export const EVALUATOR_LABELS: Record<Source, string> = { llm: 'LLM', human: 'Human' };
+export const EVALUATOR_DESCRIPTIONS: Record<Source, string> = {
   llm: 'Automated assessment by an LLM working from a sealed EIP revision and the pinned rubric.',
   human: 'Checklist published by STEEL team reviewers in the ethspecs/pm repository.',
 };

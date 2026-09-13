@@ -86,7 +86,7 @@ Exact display text, applicability, minimum caveats, allowed chart/table treatmen
 - **Canonical** means the originating research task owns the frozen input or approved result.
 - **Derived** means the record is reproducible from named canonical sources but is not itself the source of truth.
 - **Observed-effort proxy** means a descriptive metric derived from recorded public artifacts. It is not person-hours, engineering cost, or causal effort.
-- **Human** and **LLM** are the two assessment sources and are shown as first-class badges wherever a score appears. A Human checklist is the STEEL team's published `ethspecs/pm` checklist; an LLM assessment is the study's isolated automated assessment.
+- **Human** and **LLM** are the two evaluators and are shown as first-class badges wherever a score appears; the reader-facing term is always *Evaluator*. A Human checklist is the STEEL team's published `ethspecs/pm` checklist; an LLM assessment is the study's isolated automated assessment.
 - **Assessment status** takes exactly one of `Complete`, `Available in open PR`, `In progress`, `Incomplete`, `Not applicable to EL rubric`, or `Not available` (`Not yet available` for prospective data). Zero complexity, an unavailable assessment, and an incomplete assessment must always look different.
 - **Under-specified at assessment cutoff** is the required long form of the under-specification indicator; it must link to the affected criteria, the uncertainty summary, and the plausible score range.
 - **Checklist revision** names the rubric revision (1 or 2) an assessment applied. Human and LLM totals are compared per criterion only under the same revision.
@@ -131,12 +131,12 @@ The record types are study metadata, fork, global EIP, retrospective fork–EIP 
 The adapter projects research records into one domain model that every page consumes:
 
 - an **EIP** has one or more **occurrences**, one per fork context;
-- an occurrence has zero or more **assessments**, each identified by its **source** (`llm` or `human`) and its **rubric checklist revision** (1 or 2);
+- an occurrence has zero or more **assessments**, each identified by its **evaluator** (`llm` or `human`, stored as `source`) and its **rubric checklist revision** (1 or 2);
 - an assessment has an explicit **status** (`complete`, `available_in_open_pr`, `in_progress`, `incomplete`, `not_applicable`, `not_available`) and a `scored` flag; an unscored assessment never carries a total or tier;
 - a **comparison** exists only for a Human and an LLM assessment of the same occurrence under the same rubric revision, and stores per-criterion deltas;
 - one **criterion registry** (29 identifiers across both revisions) and per-revision **tier thresholds** are emitted once and shared by every page.
 
-Assessment source is first-class presentation state, not collapsed metadata. The primary study score remains the revision-2 LLM assessment; the Amsterdam revision-1 LLM re-run from Task 05c is published only as the like-for-like counterpart of the published human checklist. Payload `schema_version` is `2.0.0`.
+The evaluator is first-class presentation state, not collapsed metadata: every table row, badge, and tab names it. The primary study score remains the revision-2 LLM assessment; the Amsterdam revision-1 LLM re-run from Task 05c is published only as the like-for-like counterpart of the published human checklist. Payload `schema_version` is `2.0.0`.
 
 Human checklists are STEEL-authored content from `ethspecs/pm`, which is licensed CC0-1.0. Their published score cells and rationale text are projected verbatim with an immutable permalink to the source blob. Hegotá human checklists come from the Task 09 snapshot, which distinguishes merged files, open pull requests, draft pull requests, and inconsistent checklists; the site must never render a missing or incomplete human checklist as a zero.
 
