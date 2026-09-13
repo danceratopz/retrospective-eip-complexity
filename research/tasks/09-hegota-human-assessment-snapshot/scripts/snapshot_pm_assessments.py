@@ -422,16 +422,16 @@ def parse_checklist(text: str) -> dict[str, Any]:
     recomputed_total = sum(row["numeric_contribution"] for row in rows) if numeric_complete else None
     recomputed_tier = tier_for(recomputed_total, revision) if recomputed_total is not None else None
     if published_total is not None and recomputed_total is not None and published_total != recomputed_total:
-        notes.append("Published and recomputed totals differ.")
+        notes.append(
+            f"The published total {published_total} differs from the cell sum {recomputed_total}; the cells are the primary record, so the cell sum is used."
+        )
     missing_rows = [identifier for identifier in RUBRICS[revision]["order"] if identifier not in order]
     if missing_rows:
         notes.append("Checklist rows missing for this revision: " + ", ".join(missing_rows))
-    complete = (
-        numeric_complete
-        and not missing_rows
-        and published_total is not None
-        and published_total == recomputed_total
-    )
+    # The cells are the checklist's primary record: when every row is present and every cell parses, the
+    # checklist is complete and its total is the cell sum. Blank cells were already resolved above only when
+    # the published total proves they are zero.
+    complete = numeric_complete and not missing_rows
     return {
         "parse_state": "complete" if complete else "incomplete",
         "rubric_revision": revision,

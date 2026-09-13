@@ -61,6 +61,11 @@ inventory. Score cells must be additive integers. Published totals, the Final
 Assessment total, and the tier symbol are recorded as written; a recomputed total
 and tier are recorded separately.
 
+The cells are the checklist's primary record. When every row is present and
+every cell parses, the checklist is complete and its total is the cell sum; a
+published total that differs is kept as a parser note, never used as the score.
+A blank cell is read as zero only when the published total proves it.
+
 ## Status vocabulary
 
 Each EIP receives exactly one `human_assessment_status`, chosen from the smallest
@@ -75,7 +80,7 @@ does not count as a distinct source.
 | `complete` | A complete checklist is merged on the default branch. |
 | `available_in_open_pr` | A complete checklist exists only in an open, non-draft pull request. |
 | `in_progress` | The most advanced checklist is in an open draft pull request. |
-| `incomplete` | A checklist exists but has unresolved cells, missing rows, or inconsistent totals. |
+| `incomplete` | A checklist exists but has unresolved blank cells, unparsable cells, or missing rows. |
 | `not_yet_available` | No checklist exists on the default branch or in any open pull request. |
 
 None of these states is a score. A consensus-only Task 08 disposition remains
@@ -100,6 +105,8 @@ and must be reviewed before the publication adapter is pointed at it.
 - Snapshot `hegota-human-2026-09-13-3d8c012`: upstream head
   `3d8c0128c5543dd3146341ef395aa344e4abea30`, 4 default-branch checklists, 24
   open pull requests touching population checklists.
-- Status counts: 2 complete, 14 available in open pull requests, 8 in progress,
-  1 incomplete, 21 not yet available (7 of the 21 are Task 08 not-applicable
-  dispositions).
+- Status counts: 2 complete, 15 available in open pull requests, 8 in progress,
+  0 incomplete, 21 not yet available (7 of the 21 are Task 08 not-applicable
+  dispositions). Two checklists (EIP-7862 and EIP-8250) publish totals that
+  differ from their cell sums; both are scored from their cells with the
+  difference recorded.

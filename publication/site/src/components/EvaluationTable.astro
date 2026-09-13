@@ -199,7 +199,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
             <td><StatusBadge status={status} mode={occurrence.mode} size="small" href={statusHref} detail={status === 'not_applicable' ? occurrence.llm.rationale : null} /></td>
             <td class="number score-cell">
               {scored
-                ? assessment.score
+                ? <>{assessment.score}{assessment.checklist && assessment.checklist.published_total !== null && assessment.checklist.published_total !== assessment.score && <><br /><span class="flag flag-under" title={`The checklist publishes a total of ${assessment.checklist.published_total}; the cells are the primary record and sum to ${assessment.score}.`}>published {assessment.checklist.published_total}</span></>}</>
                 : assessment?.checklist?.published_total != null
                   ? <span class="score-inconsistent" title={`The checklist publishes a total of ${assessment.checklist.published_total}, but its cells sum to ${assessment.checklist.recomputed_total ?? 'an unresolved value'}. No score is used until they agree.`}><span class="muted">published</span> {assessment.checklist.published_total}<br /><span class="flag flag-unresolved">cells sum to {assessment.checklist.recomputed_total ?? '?'}</span></span>
                   : <span class="muted">—</span>}

@@ -57,7 +57,7 @@ Task 02 is independent supporting research and is not required to choose the Tas
 | Task 06 | Not yet defined |
 | Task 07 | Candidate metrics computed for all 49 rows (`observed-metrics-v0`); 5 metrics + composite selected via score-blind redundancy analysis; prediction join and interactive charts rendered |
 | Task 08 | Complete: original 44-entry PFI freeze retained (37 scored); append-only SFI/CFI extension adds EIP-7805 and EIP-8141; combined 2026-08-26 visibility view contains 46 status-labelled entries and 39 validated assessments |
-| Task 09 | Snapshot `hegota-human-2026-09-13-3d8c012` of STEEL human checklists for the 46 Hegotá candidates: 2 merged, 14 in open pull requests, 8 in draft pull requests, 1 incomplete, 21 not yet available |
+| Task 09 | Snapshot `hegota-human-2026-09-13-3d8c012` of STEEL human checklists for the 46 Hegotá candidates: 2 merged, 15 in open pull requests, 8 in draft pull requests, 21 not yet available |
 
 ## Published and local site
 

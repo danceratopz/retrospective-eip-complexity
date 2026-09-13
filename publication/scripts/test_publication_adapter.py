@@ -240,9 +240,12 @@ class GeneratedPayloadTests(unittest.TestCase):
         hegota = [item["human"]["status"] for item in self.occurrences if item["fork"] == "hegota"]
         self.assertEqual(
             {status: hegota.count(status) for status in set(hegota)},
-            {STATUS_COMPLETE: 2, STATUS_AVAILABLE_IN_OPEN_PR: 14, STATUS_IN_PROGRESS: 8, STATUS_INCOMPLETE: 1, STATUS_NOT_AVAILABLE: 21},
+            {STATUS_COMPLETE: 2, STATUS_AVAILABLE_IN_OPEN_PR: 15, STATUS_IN_PROGRESS: 8, STATUS_NOT_AVAILABLE: 21},
         )
         self.assertEqual(sum(1 for item in self.occurrences if item["fork"] == "amsterdam" and item["human"]["status"] == STATUS_COMPLETE), 12)
+        cell_sum_rule = self.data["assessments"]["hegota:8250:human:r2"]
+        self.assertTrue(cell_sum_rule["scored"])
+        self.assertEqual((cell_sum_rule["score"], cell_sum_rule["checklist"]["published_total"]), (22, 20))
 
     def test_comparisons_are_same_rubric_and_reproducible(self) -> None:
         for comparison in self.data["comparisons"].values():

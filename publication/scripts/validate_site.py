@@ -121,7 +121,7 @@ def validate_domain_model(data: dict, rows: list[dict]) -> None:
     """Invariants of the schema 2.0.0 domain model that the pages depend on."""
     assessments = data["assessments"]
     require(len(assessments) == 137, f"expected 137 assessments, found {len(assessments)}")
-    require(len(data["comparisons"]) == 32, "expected 32 same-rubric Human/LLM comparisons")
+    require(len(data["comparisons"]) == 34, "expected 34 same-rubric Human/LLM comparisons")
     require(len(data["criteria"]) == 29, "criterion registry must contain 29 criteria")
     require(set(data["rubrics"]) == {"1", "2"}, "both rubric revisions must be published")
     for assessment in assessments.values():
@@ -134,7 +134,7 @@ def validate_domain_model(data: dict, rows: list[dict]) -> None:
     hegota_human = [row["human_status"] for row in rows if row["fork"] == "hegota"]
     require(
         {status: hegota_human.count(status) for status in set(hegota_human)}
-        == {"complete": 2, "available_in_open_pr": 14, "in_progress": 8, "incomplete": 1, "not_available": 21},
+        == {"complete": 2, "available_in_open_pr": 15, "in_progress": 8, "not_available": 21},
         "Hegotá human-assessment status distribution changed",
     )
     for row in rows:
@@ -477,12 +477,12 @@ def validate() -> dict[str, int]:
     require(hegota_html.count('status status-not_applicable') >= 7, "Hegotá N/A rows must carry status badges")
     require("Human checklists" in hegota_html and hegota_html.count("data-compare-selection") == 2, "Hegotá page must show human coverage and comparison selection above and below the table")
     require("Open the comparison view" not in hegota_html, "misleading comparison link must not remain on fork pages")
-    for status in ["status-complete", "status-available_in_open_pr", "status-in_progress", "status-incomplete", "status-not_available"]:
+    for status in ["status-complete", "status-available_in_open_pr", "status-in_progress", "status-not_available"]:
         require(status in hegota_html, f"Hegotá page omits the {status} state")
     require("Pending" in hegota_html and "Not yet available" not in hegota_html, "Hegotá missing human checklists must read as pending")
     require("Draft PR" in hegota_html and "In progress" not in hegota_html, "draft pull-request checklists must be flagged as Draft PR")
     require(hegota_html.count('data-status="in_progress"') == 8, "Hegotá page must list the eight draft-PR checklists as rows")
-    require("cells sum to 22" in hegota_html and ">published</span> 20" in hegota_html, "inconsistent checklists must show the published total and the cell sum")
+    require("published 20" in hegota_html, "a checklist scored from its cells must still show its differing published total")
     require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
     require("Snapshot status" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
