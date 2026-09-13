@@ -1,0 +1,86 @@
+---
+/**
+ * Difference-oriented Human-versus-LLM comparison of two same-rubric assessments.
+ */
+import type { Assessment, Comparison, CriterionDefinition, Occurrence, Rubric } from '../lib/domain';
+import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
+import { AGREEMENT_LABELS, EVALUATOR_LABELS, TIER_LABELS, rubricLabel } from '../lib/labels';
+import { domId, plural, signed, truncate } from '../lib/format';
+import EvaluatorBadge from './EvaluatorBadge.astro';
+import StackedBar from './StackedBar.astro';
+import TierBadge from './TierBadge.astro';
+
+interface Props {
+  comparison: Comparison;
+  human: Assessment;
+  llm: Assessment;
+  occurrence: Occurrence;
+  rubric: Rubric;
+  definitions: Map<string, CriterionDefinition>;
+}
+
+const { comparison, human, llm, occurrence, rubric, definitions } = Astro.props as Props;
+const prefix = domId(comparison.id);
+const rows = [...comparison.rows].sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || (DISPLAY_INDEX.get(a.id) ?? 99) - (DISPLAY_INDEX.get(b.id) ?? 99));
+const rationale = (assessment: Assessment, id: string) => assessment.criteria.find((item) => item.id === id)?.rationale ?? null;
+const segmentsFor = (assessment: Assessment) => assessment.criteria.filter((item) => (item.score ?? 0) > 0).map((item) => ({ id: item.id, score: item.score, detail: truncate(item.rationale, 160) }));
+const scale = Math.max(comparison.human_total, comparison.llm_total);
+const differing = rows.filter((row) => row.delta !== 0).length;
+const confounds = comparison.confounds;
+---
+<section class="compare" data-compare={comparison.id}>
+  <p class="muted">Both assessments applied {rubricLabel(comparison.rubric_revision)} ({rubric.criterion_count} criteria) to EIP-{comparison.eip} in {occurrence.fork_name}. Δ is LLM minus Human.</p>
+  <div class="compare-totals">
+    <div class="compare-total compare-llm"><EvaluatorBadge source="llm" /><span class="stat">{comparison.llm_total}</span><TierBadge tier={comparison.llm_tier} thresholds={rubric.tier_thresholds} /></div>
+    <div class="compare-total compare-human"><EvaluatorBadge source="human" /><span class="stat">{comparison.human_total}</span><TierBadge tier={comparison.human_tier} thresholds={rubric.tier_thresholds} /></div>
+    <div class="compare-total compare-delta"><span class="muted">Δ total</span><span class:list={['stat', comparison.delta > 0 && 'delta-pos', comparison.delta < 0 && 'delta-neg']}>{signed(comparison.delta)}</span><span class="muted">{comparison.tier_agreement ? 'Same tier' : `Tiers differ: ${TIER_LABELS[comparison.llm_tier]} vs ${TIER_LABELS[comparison.human_tier]}`}</span></div>
+    <div class="compare-total compare-agreement"><span class="muted">Criteria</span><span class="stat">{comparison.agreement_counts.exact}<span class="stat-unit">/{rows.length}</span></span><span class="muted">agree exactly · {comparison.agreement_counts.minor} differ by 1 · {comparison.agreement_counts.major} differ by 2+</span></div>
+  </div>
+  {confounds && (
+    <div class:list={['notice', confounds.clean_comparison ? 'notice-clean' : 'notice-confounded']}>
+      <strong>{confounds.clean_comparison ? 'Clean same-rubric comparison.' : 'Confounded comparison.'}</strong>
+      {' '}The human checklist evaluated the EIP as it stood when the checklist was written; the LLM evaluated the sealed historical revision. Input alignment: <em>{confounds.input_alignment.replaceAll('_', ' ')}</em>; human hindsight exposure: <em>{confounds.human_timing_exposure.replaceAll('_', ' ')}</em>.
+      {confounds.primary_llm_total !== undefined && <> The study's primary LLM score under checklist revision 2 is <strong>{confounds.primary_llm_total}</strong>; it uses a different criterion inventory and thresholds and is not directly comparable to either total here.</>}
+      {confounds.human_timing_exposure_rationale && <details><summary>Exposure evidence</summary><p>{confounds.human_timing_exposure_rationale}</p>{confounds.input_alignment_summary && <p class="muted">{truncate(confounds.input_alignment_summary, 600)}</p>}</details>}
+    </div>
+  )}
+  <h3>Complexity profiles side by side</h3>
+  <div class="compare-bars">
+    <div class="compare-bar-row"><span class="compare-bar-label">{EVALUATOR_LABELS.llm}</span><StackedBar segments={segmentsFor(llm)} definitions={definitions} total={comparison.llm_total} max={scale} size="large" showTotal={true} label={`EIP-${comparison.eip} LLM complexity`} /></div>
+    <div class="compare-bar-row"><span class="compare-bar-label">{EVALUATOR_LABELS.human}</span><StackedBar segments={segmentsFor(human)} definitions={definitions} total={comparison.human_total} max={scale} size="large" showTotal={true} label={`EIP-${comparison.eip} Human complexity`} /></div>
+  </div>
+  {comparison.largest_disagreements.length > 0 && (
+    <p><strong>Largest disagreements:</strong> {comparison.largest_disagreements.map((id, index) => <>{index > 0 && ', '}<a href={`#${prefix}-${id}`}>{definitions.get(id).label}</a> ({signed(rows.find((row) => row.id === id).delta)})</>)}</p>
+  )}
+  <div class="table-tools">
+    <label class="checkbox"><input type="checkbox" data-diff-only /> Show differences only ({plural(differing, 'criterion', 'criteria')})</label>
+  </div>
+  <div class="table-region" role="region" aria-label={`Criterion comparison for EIP-${comparison.eip}`} tabindex="0">
+    <table class="compare-table" data-compare-table>
+      <caption>Per-criterion scores, Human versus LLM, ordered by the size of the difference</caption>
+      <thead>
+        <tr><th scope="col">Criterion</th><th scope="col" class="number">LLM</th><th scope="col" class="number">Human</th><th scope="col" class="number">Δ</th><th scope="col">Agreement</th><th scope="col">Rationale from each source</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr id={`${prefix}-${row.id}`} class:list={['compare-row', `agreement-${row.agreement}`]} data-diff={row.delta === 0 ? '0' : '1'}>
+            <th scope="row"><span class="swatch" style={`--fill:var(--criterion-${row.id});--ink:var(--criterion-ink-${row.id})`} aria-hidden="true">{criterionAbbreviation(row.id)}</span> <span class="criterion-name">{definitions.get(row.id).label}</span></th>
+            <td class="number">{row.llm}</td>
+            <td class="number">{row.human}</td>
+            <td class:list={['number', 'delta', row.delta > 0 && 'delta-pos', row.delta < 0 && 'delta-neg']}>{signed(row.delta)}</td>
+            <td><span class:list={['agreement', `agreement-${row.agreement}`]}>{AGREEMENT_LABELS[row.agreement]}</span></td>
+            <td class="compare-rationale">
+              {(rationale(llm, row.id) || rationale(human, row.id)) ? (
+                <details>
+                  <summary>Show rationale</summary>
+                  <p><EvaluatorBadge source="llm" size="small" /> {rationale(llm, row.id) ?? <span class="muted">No rationale recorded.</span>}</p>
+                  <p><EvaluatorBadge source="human" size="small" /> {rationale(human, row.id) ?? <span class="muted">No rationale recorded.</span>}</p>
+                </details>
+              ) : <span class="muted">—</span>}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>

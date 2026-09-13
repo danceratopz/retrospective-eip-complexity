@@ -1,0 +1,574 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 7862
+  title: Delayed State Root
+human_assessment_status: available_in_open_pr
+preferred_candidate: pr-124@1dc6a162915c
+candidates:
+- candidate_id: pr-124@1dc6a162915c
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 124
+    pull_request_title: Add EIP-7862 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/124
+    draft: false
+    head_sha: 1dc6a162915c5d1dba92ba64efa8d8bef9981bcb
+    created_at: '2026-08-24T06:38:06Z'
+    updated_at: '2026-08-24T06:38:06Z'
+    path: complexity_assessments/EIPs/EIP-7862.md
+    git_blob_sha: 440aa59d0d7596a119a93e1c99fbd48a6cc174ed
+    content_sha256: 40f8fb876f968f42545bcde3f802e5f9eb45989df8a8ee720c2bcdf9fed3025c
+    immutable_url: https://github.com/ethspecs/pm/blob/1dc6a162915c5d1dba92ba64efa8d8bef9981bcb/complexity_assessments/EIPs/EIP-7862.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-124/EIP-7862.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No gas accounting is touched.
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No opcode's state-access site or gas-charge ordering changes. Although the EIP leverages the BAL
+      to parallelize root computation, it neither modifies what the BAL records nor when it records it.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No interaction with blob gas.
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No state gas charging site, rate or budget is touched.
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No refund mechanism.
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Every blockchain-test fixture for this fork must be regenerated: each header now commits a different
+      state_root, causing all block hashes and downstream parent_hash values to be re-derived. Two categories require
+      redesign: (1) tests with deliberately wrong state_root now expect rejection on the successor rather than the
+      offending block, and (2) state_test-derived fixtures no longer commit their post-state root anywhere since
+      they execute as single-block chains. Affects state, blockchain, transition, and benchmark fixtures.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Every test in the fork, regardless of its purpose, requires two additional assertions: that its
+      header''s state_root matches the parent''s post-state root, and that its own post-state root is not established
+      by its header. Fork-transition vectors must be re-derived, as block F repeats F-1''s root—a configuration
+      no pre-fork vector exhibits.'
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'The t8n tool is per-block and stateless, but the delayed root requires chain-level state across
+      invocations. Two approaches: (1) thread invocation n''s stateRoot output into block n+1''s header, or (2)
+      have the tool take an explicit lastComputedStateRoot env input to validate headers and detect faults. Either
+      way requires a new mechanism, not a field addition.'
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Header assembly is framework-level. Block n''s root comes from block n-1''s execution, changing
+      data flow globally. New primitives needed: (1) final post-state validation (sealing block or fixture-level
+      field), (2) consume simulators modeling valid-then-invalidated payloads. Permanent framework change.'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No cryptography introduced or modified. The state root is computed by the same trie machinery as
+      before.
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Deferred detection means invalid post-states surface only on successors, crossed with cases where
+      the successor is absent, also invalid, or reorged away. Fork activation has distinctive edge cases: block
+      F repeats state_root with its predecessor, and header.number < 1 must be handled at genesis. Empty blocks
+      and reorgs allow stale last_computed_state_root values to pass undetected.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: No RLP or encoding changes, but the header's state-root validation becomes stateful across blocks.
+      A syncing client must accept a block with mismatched state_root, retain its computed root, and apply it to
+      the successor. This cannot be tested with t8n alone—it requires a real client syncing a multi-block chain,
+      including chains ending on unvalidated tips.
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new fields and no new endpoints
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new system contracts.
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No system contract's code, state or invocation is affected, directly or indirectly.
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new opcodes.
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No changes to the opcode
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new precompiles.
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No precompiles modified.
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No encoding changes
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new transaction type.
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Transaction validity rules and intrinsic gas are entirely unchanged.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The `state_root` field semantics change but no new fields are added.
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new mechanism introduced
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'The performance benefit (root off critical path, parallelized) is a pipeline property under ePBS,
+      not isolatable for benchmarking. Secondary cost: parent pre-state held one slot longer.'
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Detection latency ripples through attestations, fork choice, builders, light clients, and tips. Mis-attributing
+      faults is consensus-critical. Needs extensive review and fuzzing.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'which block is invalid when state roots disagree? The pseudocode marks n+1, but the defect is in
+      n. Fork choice, newPayload, and peer scoring lack attribution guidance. Unsettled: genesis handling, RPC state
+      root reporting, tip root exposure.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: EIP-7928 (BAL) enables parallel root computation; header includes block_access_list_hash. EIP-7732
+      (ePBS) provides builder-timing and introduces CL-side state_root needing coordinated testing.
+    blank_interpretation: null
+  published_total: 26
+  published_tier_raw: 🔴
+  published_tier: high
+  recomputed_total: 19
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - The checklist total and the Final Assessment total differ.
+  - The published total 26 differs from the cell sum 19; the cells are the primary record, so the cell sum is used.
+  duplicates_merged_scores: false
+- candidate_id: pr-125@042096dd3deb
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 125
+    pull_request_title: Add EIP-8188 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/125
+    draft: false
+    head_sha: 042096dd3debf88e51204bbf341c35c8527f6228
+    created_at: '2026-08-24T06:59:51Z'
+    updated_at: '2026-08-24T06:59:51Z'
+    path: complexity_assessments/EIPs/EIP-7862.md
+    git_blob_sha: 440aa59d0d7596a119a93e1c99fbd48a6cc174ed
+    content_sha256: 40f8fb876f968f42545bcde3f802e5f9eb45989df8a8ee720c2bcdf9fed3025c
+    immutable_url: https://github.com/ethspecs/pm/blob/042096dd3debf88e51204bbf341c35c8527f6228/complexity_assessments/EIPs/EIP-7862.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-125/EIP-7862.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No gas accounting is touched.
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No opcode's state-access site or gas-charge ordering changes. Although the EIP leverages the BAL
+      to parallelize root computation, it neither modifies what the BAL records nor when it records it.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No interaction with blob gas.
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No state gas charging site, rate or budget is touched.
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No refund mechanism.
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Every blockchain-test fixture for this fork must be regenerated: each header now commits a different
+      state_root, causing all block hashes and downstream parent_hash values to be re-derived. Two categories require
+      redesign: (1) tests with deliberately wrong state_root now expect rejection on the successor rather than the
+      offending block, and (2) state_test-derived fixtures no longer commit their post-state root anywhere since
+      they execute as single-block chains. Affects state, blockchain, transition, and benchmark fixtures.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Every test in the fork, regardless of its purpose, requires two additional assertions: that its
+      header''s state_root matches the parent''s post-state root, and that its own post-state root is not established
+      by its header. Fork-transition vectors must be re-derived, as block F repeats F-1''s root—a configuration
+      no pre-fork vector exhibits.'
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'The t8n tool is per-block and stateless, but the delayed root requires chain-level state across
+      invocations. Two approaches: (1) thread invocation n''s stateRoot output into block n+1''s header, or (2)
+      have the tool take an explicit lastComputedStateRoot env input to validate headers and detect faults. Either
+      way requires a new mechanism, not a field addition.'
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Header assembly is framework-level. Block n''s root comes from block n-1''s execution, changing
+      data flow globally. New primitives needed: (1) final post-state validation (sealing block or fixture-level
+      field), (2) consume simulators modeling valid-then-invalidated payloads. Permanent framework change.'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No cryptography introduced or modified. The state root is computed by the same trie machinery as
+      before.
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Deferred detection means invalid post-states surface only on successors, crossed with cases where
+      the successor is absent, also invalid, or reorged away. Fork activation has distinctive edge cases: block
+      F repeats state_root with its predecessor, and header.number < 1 must be handled at genesis. Empty blocks
+      and reorgs allow stale last_computed_state_root values to pass undetected.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: No RLP or encoding changes, but the header's state-root validation becomes stateful across blocks.
+      A syncing client must accept a block with mismatched state_root, retain its computed root, and apply it to
+      the successor. This cannot be tested with t8n alone—it requires a real client syncing a multi-block chain,
+      including chains ending on unvalidated tips.
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new fields and no new endpoints
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new system contracts.
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No system contract's code, state or invocation is affected, directly or indirectly.
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new opcodes.
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No changes to the opcode
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new precompiles.
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No precompiles modified.
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No encoding changes
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new transaction type.
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Transaction validity rules and intrinsic gas are entirely unchanged.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The `state_root` field semantics change but no new fields are added.
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new mechanism introduced
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'The performance benefit (root off critical path, parallelized) is a pipeline property under ePBS,
+      not isolatable for benchmarking. Secondary cost: parent pre-state held one slot longer.'
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Detection latency ripples through attestations, fork choice, builders, light clients, and tips. Mis-attributing
+      faults is consensus-critical. Needs extensive review and fuzzing.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'which block is invalid when state roots disagree? The pseudocode marks n+1, but the defect is in
+      n. Fork choice, newPayload, and peer scoring lack attribution guidance. Unsettled: genesis handling, RPC state
+      root reporting, tip root exposure.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: EIP-7928 (BAL) enables parallel root computation; header includes block_access_list_hash. EIP-7732
+      (ePBS) provides builder-timing and introduces CL-side state_root needing coordinated testing.
+    blank_interpretation: null
+  published_total: 26
+  published_tier_raw: 🔴
+  published_tier: high
+  recomputed_total: 19
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - The checklist total and the Final Assessment total differ.
+  - The published total 26 differs from the cell sum 19; the cells are the primary record, so the cell sum is used.
+  duplicates_merged_scores: false

@@ -1,0 +1,27 @@
+---
+/**
+ * Legacy fork-scoped assessment route. Every assessment now lives on the canonical EIP page; this stub
+ * redirects there with the fork preselected so old links keep working.
+ */
+import Layout from '../../../../layouts/Layout.astro';
+import { loadPublication } from '../../../../lib/data.js';
+import type { Publication } from '../../../../lib/domain';
+import { allOccurrences, findOccurrence } from '../../../../lib/domain';
+import { eipRoute } from '../../../../lib/routes';
+
+export function getStaticPaths() {
+  const data = loadPublication() as Publication;
+  return allOccurrences(data)
+    .filter((occurrence) => occurrence.mode === 'retrospective')
+    .map((occurrence) => ({ params: { fork: occurrence.fork, eip: String(occurrence.eip) }, props: { fork: occurrence.fork, eip: occurrence.eip } }));
+}
+
+const data = loadPublication() as Publication;
+const occurrence = findOccurrence(data, Number(Astro.props.eip), Astro.props.fork);
+const target = eipRoute(occurrence.eip, { fork: occurrence.fork });
+---
+<Layout title={`EIP-${occurrence.eip}: ${occurrence.title}`} redirect={target}>
+  <p class="eyebrow">Assessment moved</p>
+  <h1>EIP-{occurrence.eip}: {occurrence.title}</h1>
+  <p class="lede">Every assessment of an EIP now lives on one page. Continue to <a href={target}>EIP-{occurrence.eip} in {occurrence.fork_name}</a>.</p>
+</Layout>

@@ -1,0 +1,269 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 7645
+  title: Alias ORIGIN to SENDER
+human_assessment_status: available_in_open_pr
+preferred_candidate: pr-113@2f541d3e66f7
+candidates:
+- candidate_id: pr-113@2f541d3e66f7
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 113
+    pull_request_title: Add EIP-7645 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/113
+    draft: false
+    head_sha: 2f541d3e66f737d089c3a3e89707988637af2948
+    created_at: '2026-08-18T16:39:57Z'
+    updated_at: '2026-08-18T16:39:57Z'
+    path: complexity_assessments/EIPs/EIP-7645.md
+    git_blob_sha: 3e6403a4b06ef577fecd83e870f54f48ae721187
+    content_sha256: ea15e0e024f426a7ef02284d2c13239f19716fdf6c56f3110182fa358016ffae
+    immutable_url: https://github.com/ethspecs/pm/blob/2f541d3e66f737d089c3a3e89707988637af2948/complexity_assessments/EIPs/EIP-7645.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-113/EIP-7645.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Considerable, but one contrived category — tests that read ORIGIN. `Op.ORIGIN` appears in **9 hand-written
+      test files**, and ORIGIN in **121 files under `tests/ported_static/`**. Unlike CALLCODE or SELFDESTRUCT, ORIGIN
+      is not woven through call-graph or state-lifecycle tests; the affected set is precisely the tests that assert
+      on the transaction initiator. This row also absorbs the cost of re-baselining tests that exercise ORIGIN alongside
+      other features.
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: A single boundary-prone mechanism. The cases are the top-level frame (where ORIGIN and SENDER already
+      agree, so the change is invisible), then one frame-entry variant each for CALL, CALLCODE, DELEGATECALL and
+      STATICCALL, plus an EIP-7702 delegated frame. Small and fixed — the EIP's own Test Cases section says exactly
+      this.
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'ORIGIN (0x32) keeps its opcode and cost but returns the current frame''s caller instead of the transaction
+      initiator. Scored 1 rather than the anchor''s binary 3 because the change is a one-line substitution with
+      no new mechanism: the value pushed comes from a field the frame already carries. See Special Considerations
+      — this row is defined as 0/3 with no intermediate level, which over-scores trivial opcode changes.'
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'The blast radius is unknown and has to be determined before this can ship. The EIP asserts that
+      for existing misuse affected negatively "a clear example has yet to be identified" — but `require(tx.origin
+      == msg.sender)` is the standard idiom for "the caller is an EOA, not a contract", and aliasing makes it unconditionally
+      true. Every contract using that guard silently loses it, and it fails **open**: the contract-caller patterns
+      it was written to block (flash-loan and reentrancy shapes) become reachable again. Nobody has measured how
+      many deployed contracts depend on it, in what value, or what each one gates. That is a substantial change
+      to the security assumptions of an unquantified set of live contracts, and it needs on-chain analysis plus
+      extensive review before the change can be judged safe — not a test-suite exercise.'
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'A few details unspecified but with an obvious intended reading. "Return the same value as CALLER"
+      fully determines the pushed value in every frame type, including DELEGATECALL. The one genuine omission is
+      that **the EIP does not state a gas cost at all** — not that it is unchanged, not what it becomes. Left at
+      1 rather than 2 because either answer is trivial on both the specs and the testing side: ORIGIN and CALLER
+      are both fixed-cost, and settling it needs no back-and-forth with clients.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Not scored. ORIGIN is read by EIP-7702 delegated frames and is load-bearing in the ERC-4337 bundler-authority
+      example the EIP cites, but in every case the consequence is only that existing tests need updating — which
+      is already counted under "Patterns affecting pre-existing tests". There is no coordinated cross-EIP design
+      question and no other EIP's vectors need re-deriving, so scoring here would double-count.
+    blank_interpretation: null
+  published_total: 8
+  published_tier_raw: 🟢
+  published_tier: low
+  recomputed_total: 8
+  recomputed_tier: low
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - 22 blank score cells are interpreted as zero only because the published total equals the sum of every nonblank
+    cell.
+  duplicates_merged_scores: false

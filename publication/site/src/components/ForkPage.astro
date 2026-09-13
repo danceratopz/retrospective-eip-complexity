@@ -1,0 +1,128 @@
+---
+/**
+ * Shared fork page for retrospective forks and the prospective Hegotá snapshot.
+ */
+import type { ForkSummary, Publication } from '../lib/domain';
+import { allOccurrences } from '../lib/domain';
+import { STATUS_LABELS, UNDER_SPECIFIED_SHORT, statusLabel } from '../lib/labels';
+import { forkRoute } from '../lib/routes';
+import { basePath } from '../lib/data.js';
+import { isoDate, plural } from '../lib/format';
+import Chart from './Chart.astro';
+import CriterionLegend from './CriterionLegend.astro';
+import ForkComposition from './ForkComposition.astro';
+import EvaluationTable from './EvaluationTable.astro';
+import RankedBars from './RankedBars.astro';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  data: Publication;
+  fork: ForkSummary;
+}
+
+const { data, fork } = Astro.props as Props;
+const occurrences = allOccurrences(data).filter((item) => item.fork === fork.fork);
+const prospective = fork.mode === 'prospective';
+const hegota = data.hegota;
+const human = fork.human_coverage;
+const humanStatuses = (['complete', 'available_in_open_pr', 'in_progress', 'incomplete', 'not_available'] as const).filter((status) => human.status_counts[status] > 0);
+const humanAny = occurrences.some((item) => item.human.status !== 'not_available');
+const lateRows = occurrences.filter((item) => item.scope_timing === 'added_after_cutoff');
+const underCount = occurrences.filter((item) => item.llm.under_specified).length;
+const tierCounts = { low: 0, medium: 0, high: 0 };
+for (const item of occurrences) if (item.llm.tier) tierCounts[item.llm.tier] += 1;
+const snapshot = hegota.human_snapshot;
+---
+<p class:list={['eyebrow', prospective && 'prospective-text']}>{prospective ? `Prospective · frozen ${hegota.captured_on} snapshot` : 'Retrospective Fork Evaluation'}</p>
+<h1>{prospective ? 'Hegotá candidate complexity assessment' : fork.name}</h1>
+{prospective ? (
+  <p class="lede">Original PFI result: {hegota.pfi_score_sum} across {hegota.pfi_scored} scored EIPs. The SFI/CFI extension adds {hegota.sfi_cfi_score_sum} across {hegota.sfi_cfi_scored} scored EIPs, producing a combined visibility view of {hegota.score_sum} across {hegota.scored} scored Execution Layer surfaces. {hegota.not_applicable} PFI entries remain not applicable or explicitly excluded.</p>
+) : (
+  <p class="lede">{fork.at_cutoff_count} Execution Layer EIPs were included by the evaluation cutoff, with a predicted complexity score sum of {fork.at_cutoff_score_sum}. Another {fork.late_addition_count} EIP{fork.late_addition_count === 1 ? ' was' : 's were'} added later, contributing {fork.late_addition_score_sum} to the final-scope total of {fork.final_scope_score_sum}.</p>
+)}
+<nav class="fork-nav" aria-label="Fork Navigation" data-fork-nav>
+  <span class="fork-nav-label">Forks</span>
+  {data.forks.map((item) => <a href={forkRoute(item.fork)} aria-current={item.fork === fork.fork ? 'page' : undefined} data-fork-link>{item.name}</a>)}
+</nav>
+{fork.fork === 'amsterdam' && <div class="caveat"><strong>Right-censored and potentially in-sample.</strong> Amsterdam’s observation window ends before its final outcome.</div>}
+{prospective && (
+  <>
+    <div class="notice"><strong>Independent LLM Evaluation.</strong> These scores were produced with an LLM using the same Execution Layer complexity-assignment rubric, independently of the STEEL team’s ongoing manual assessment work. The Human column below records where that manual work stands for each candidate.</div>
+    <div class="notice"><strong>Common information cutoff:</strong> {hegota.information_cutoff_at}. The assessment covers Execution Layer and execution-client networking surfaces only. It does not predict final fork scope or include observed outcomes.</div>
+  </>
+)}
+{!prospective && (
+  <div class="source-note"><strong>Scope timing:</strong> The primary retrospective prediction includes only EIPs present by the evaluation cutoff. The later additions remain assessed and reported separately: {lateRows.map((row, index) => <>{index > 0 && ', '}<a href={basePath(`eips/${row.eip}/?fork=${fork.fork}`)}>EIP-{row.eip}</a> (+{row.llm.score})</>)}.</div>
+)}
+
+<div class="grid coverage-grid">
+  {prospective ? (
+    <>
+      <div class="card"><span class="muted">Scored EL surfaces</span><div class="stat">{fork.scored_count}</div><span class="muted">{fork.not_applicable_count} not applicable</span></div>
+      <div class="card"><span class="muted">Low / Medium / High</span><div class="stat">{tierCounts.low} / {tierCounts.medium} / {tierCounts.high}</div></div>
+      <div class="card"><span class="muted">{UNDER_SPECIFIED_SHORT} at snapshot</span><div class="stat">{underCount} / {fork.scored_count}</div></div>
+    </>
+  ) : (
+    <>
+      <div class="card"><span class="muted">EIPs by cutoff</span><div class="stat">{fork.at_cutoff_count}</div><span class="muted">score {fork.at_cutoff_score_sum}</span></div>
+      <div class="card"><span class="muted">Added after cutoff</span><div class="stat">{fork.late_addition_count}</div><span class="muted">+{fork.late_addition_score_sum} · final scope {fork.final_scope_score_sum}</span></div>
+      <div class="card"><span class="muted">{UNDER_SPECIFIED_SHORT} at cutoff</span><div class="stat">{underCount} / {fork.scored_count}</div></div>
+    </>
+  )}
+  <div class="card human-coverage">
+    <span class="muted">Human checklists</span>
+    {humanAny ? (
+      <>
+        <div class="stat">{human.scored_count} <span class="stat-unit">of {fork.eip_count}</span></div>
+        <ul class="coverage-statuses">{humanStatuses.map((status) => <li><StatusBadge status={status} mode={fork.mode} size="small" /> <span class="number">{human.status_counts[status]}</span></li>)}</ul>
+        <span class="muted">{human.comparable_count} same-rubric Human/LLM comparisons</span>
+      </>
+    ) : (
+      <><div class="stat"><StatusBadge status="not_available" /></div><span class="muted">No human complexity assessments were produced for this fork.</span></>
+    )}
+  </div>
+</div>
+
+{prospective && snapshot && (
+  <details class="source-snapshot">
+    <summary>Human checklist sources: ethspecs/pm at {isoDate(snapshot.upstream.head_committed_at)} plus {plural(snapshot.open_pull_requests.length, 'open pull request')} (captured {isoDate(snapshot.captured_at)})</summary>
+    <p class="muted">Statuses follow the real source state. <strong>{STATUS_LABELS.complete}</strong> is merged on <code>{snapshot.upstream.default_branch}</code>; <strong>{STATUS_LABELS.available_in_open_pr}</strong> exists only in an open pull request; <strong>{STATUS_LABELS.in_progress}</strong> is in a draft pull request; <strong>{STATUS_LABELS.incomplete}</strong> has unresolved cells or inconsistent totals and carries no score; <strong>{statusLabel('not_available', 'prospective')}</strong> has no checklist anywhere. A missing checklist is never a zero.</p>
+    <ul class="pr-list">
+      {snapshot.open_pull_requests.map((pull) => <li><a href={pull.url}>#{pull.number}</a> {pull.title}{pull.draft ? ' (draft)' : ''} <span class="muted">· {pull.eips.map((eip) => `EIP-${eip}`).join(', ')} · updated {isoDate(pull.updated_at)}</span></li>)}
+    </ul>
+  </details>
+)}
+
+<h2 id="composition">Where the Complexity Comes From</h2>
+<p class="muted">Each segment sums one criterion across the fork's scored LLM assessments. Hover or focus a segment for its points, share, and the number of contributing EIPs.</p>
+{prospective ? (
+  <ForkComposition data={data} forks={[fork]} block={(item) => item.composition.all_scored} blockLabel="combined snapshot complexity" id={`composition-${fork.fork}`} caption={`${fork.name}: criterion points across ${fork.scored_count} scored candidates`} />
+) : (
+  <ForkComposition data={data} forks={[{ ...fork, short_name: 'By cutoff' }, { ...fork, short_name: 'Added later' }].map((item, index) => ({ ...item, composition: index === 0 ? { at_cutoff: fork.composition.at_cutoff } : { at_cutoff: fork.composition.added_after_cutoff } }))} block={(item) => item.composition.at_cutoff} blockLabel="complexity" id={`composition-${fork.fork}`} caption={`${fork.name}: criterion points included by the cutoff and added afterward`} />
+)}
+
+<h2 id="complexity-assessments">Complexity Assessments</h2>
+<p>LLM rows were automated using the GPT-5.6 Sol LLM at xhigh reasoning effort, evaluating the EIP revision linked in the Assessment Input column against <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">version 2 of STEEL’s complexity-assignment template</a>. Human rows are STEEL reviewers’ published checklists; their status badge links to the pull request or merged report. Select rows from either evaluator to compare them, or open an EIP for its full assessment.</p>
+<EvaluationTable data={data} occurrences={occurrences} fork={fork.fork} caption={prospective ? `Hegotá ${hegota.captured_on} candidate snapshot: one row per LLM and Human assessment, with not-applicable entries and pending human checklists counted above` : `${fork.name} complexity assessments, one row per evaluator`} tableId={`evaluations-${fork.fork}`} />
+
+{prospective ? (
+  <>
+    <h2 id="scored-proposals">Scored proposals</h2>
+    <p class="muted">Every scored assessment as a stacked complexity bar, ranked by total on one shared scale. Switch evaluator to rank the human checklists, or show both per EIP. The seven not-applicable entries remain in the table above.</p>
+    <RankedBars data={data} occurrences={occurrences} id="scored-proposals-ranked" title="Hegotá scored proposals" />
+    <h2>Caveats</h2><ul>{hegota.caveats.map((caveat) => <li>{caveat}</li>)}</ul>
+    <div class="actions"><a class="button" href={basePath('generated/downloads/complexity-assessments.csv')}>Download all assessments</a><a href={basePath('generated/publication.json')}>Publication JSON</a></div>
+  </>
+) : (
+  <>
+    <h2 id="historical-refs">How the Historical Refs Were Selected</h2>
+    <p>These timelines support the assessment table by showing the fork chronology and the revision and inclusion history used to choose each input. They are process evidence, not additional complexity results. Each chart has its own time axis; horizontal positions should only be compared within a chart.</p>
+    <h3 id="fork-milestones">Fork Milestones and Relevant Devnets</h3>
+    <Chart spec={data.charts[`fork-milestones-${fork.fork}`]} label={`Fork milestones and relevant devnets for ${fork.name}`} description="Fork-level scope, devnet, testnet, and activation milestones on an independent time axis." fit={true} />
+    <h3 id="eip-revision-histories">EIP Revision Histories and Selected Assessment Refs</h3>
+    <p>The main purpose of this panel is to show where the selected assessment ref (REF) falls in each EIP’s revision history. The other traces and markers provide context for that selection. Every EIP row uses the same date scale, shown once above the panel.</p>
+    <ul><li><strong>Revision traces:</strong> the dark line counts substantive post-creation revisions; the faint line counts all revisions.</li><li><strong>REF:</strong> the immutable EIP revision used for assessment. The amber rule is its proposal anchor.</li><li><strong>PFI, CFI, and SFI:</strong> recorded fork-inclusion state transitions; open markers retain repeated same-state records.</li><li><strong>CUTOFF:</strong> the fork-level initial-evaluation horizon. Triangles identify relevant devnets or testnets.</li></ul>
+    <Chart spec={data.charts[`timeline-${fork.fork}`]} label={`EIP revision histories supporting historical assessment-ref selection for ${fork.name}`} description="Aligned EIP revision histories, inclusion-state transitions, selected assessment refs, and the fork evaluation cutoff on one shared time axis." fit={true} />
+  </>
+)}
+<CriterionLegend criteria={data.criteria} compact={true} />

@@ -1,0 +1,61 @@
+---
+/**
+ * Collapsed technical provenance. The assessment source itself is shown prominently elsewhere.
+ */
+import type { Assessment } from '../lib/domain';
+import { rubricLabel } from '../lib/labels';
+import { isoDate, shortCommit } from '../lib/format';
+
+interface Props {
+  assessment: Assessment;
+}
+
+const { assessment } = Astro.props as Props;
+const { assessed_revision: revision, rubric, assessor, source_record: record, research_record: research, supporting_documents: supporting } = assessment.provenance;
+const pull = record.pull_request;
+---
+<details class="provenance">
+  <summary>Assessment provenance</summary>
+  <dl class="provenance-list">
+    {revision && (
+      <>
+        <dt>Assessed EIP revision</dt>
+        <dd>
+          <a href={revision.immutable_url}><code>{revision.repository}@{shortCommit(revision.commit)}</code> {revision.path}</a> committed {isoDate(revision.committed_at)}
+          {revision.information_cutoff_at && <> · information cutoff {revision.information_cutoff_at}</>}
+          {revision.note && <div class="muted">{revision.note}</div>}
+          <div><a href={revision.current_revision_url}>Current master</a> · <a href={revision.revision_history_url}>File history</a>{revision.git_blob_sha && <> · blob <code>{shortCommit(revision.git_blob_sha)}</code></>}{revision.content_sha256 && <> · sha256 <code>{shortCommit(revision.content_sha256, 12)}</code></>}</div>
+        </dd>
+      </>
+    )}
+    <dt>Rubric</dt>
+    <dd><a href={rubric.immutable_url}>{rubricLabel(rubric.revision)} · <code>{rubric.repository}@{shortCommit(rubric.commit)}</code></a></dd>
+    <dt>Evaluator</dt>
+    <dd>
+      {assessor.kind === 'llm'
+        ? <>{assessor.model} at {assessor.reasoning_effort} reasoning effort{assessor.isolation_method && <> · isolation <code>{assessor.isolation_method}</code></>}</>
+        : <>{assessor.organization} · {assessor.publication}</>}
+    </dd>
+    <dt>Source record</dt>
+    <dd>
+      {record.kind === 'research_record' && <>Frozen research record <code>{record.path}</code> · sha256 <code>{shortCommit(record.sha256, 12)}</code></>}
+      {record.kind === 'merged' && <>Merged checklist <a href={record.immutable_url}><code>{record.repository}@{shortCommit(record.commit)}</code> {record.path}</a>{record.committed_at && <> · committed {isoDate(record.committed_at)}</>}</>}
+      {(record.kind === 'open_pull_request' || record.kind === 'open_draft_pull_request') && pull && (
+        <>Open {pull.draft ? 'draft ' : ''}pull request <a href={pull.url}>#{pull.number}: {pull.title}</a> · <a href={record.immutable_url}>checklist at <code>{shortCommit(record.commit)}</code></a>{pull.updated_at && <> · updated {isoDate(pull.updated_at)}</>}</>
+      )}
+      {record.git_blob_sha && <div class="muted">blob <code>{shortCommit(record.git_blob_sha)}</code> · sha256 <code>{shortCommit(record.content_sha256, 12)}</code></div>}
+    </dd>
+    {research && (
+      <>
+        <dt>Research record</dt>
+        <dd><code>{research.path}</code> · sha256 <code>{shortCommit(research.sha256, 12)}</code></dd>
+      </>
+    )}
+    {supporting.length > 0 && (
+      <>
+        <dt>Supporting documents in the sealed package</dt>
+        <dd>{supporting.map((item) => <code>{item}</code>).reduce((acc, item, index) => (index ? [...acc, ', ', item] : [item]), [])}</dd>
+      </>
+    )}
+  </dl>
+</details>

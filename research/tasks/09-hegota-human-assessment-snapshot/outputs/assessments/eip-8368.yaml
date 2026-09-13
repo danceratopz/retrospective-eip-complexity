@@ -1,0 +1,281 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8368
+  title: CPSB Recalibration for New Gas Limit
+human_assessment_status: in_progress
+preferred_candidate: pr-129@e47b8d0d35ef
+candidates:
+- candidate_id: pr-129@e47b8d0d35ef
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 129
+    pull_request_title: Add EIP-8368 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/129
+    draft: true
+    head_sha: e47b8d0d35ef9a949f193f202564e32e128460cc
+    created_at: '2026-08-24T13:42:18Z'
+    updated_at: '2026-08-24T13:45:56Z'
+    path: complexity_assessments/EIPs/EIP-8368.md
+    git_blob_sha: c5097f7fc61a6202a89e36d392d0d1b3dfe322aa
+    content_sha256: 8163ff2c35ea114f8526bb337db11d383351da6fce7e2b5f168d313041c3326c
+    immutable_url: https://github.com/ethspecs/pm/blob/e47b8d0d35ef9a949f193f202564e32e128460cc/complexity_assessments/EIPs/EIP-8368.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-129/EIP-8368.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: 'Execution gas schedule untouched. The change is confined to state gas, scored on its own row. Measured:
+      zero execution-gas flips outside state-charging paths.'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No ordering changes, only the size of a charge.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'The definitional anchor-1 case: `COST_PER_STATE_BYTE` is adjusted (1530 to a provisional 3060).
+      Byte rates, charging sites, reservoir mechanics, and the spill path are untouched.'
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '4'
+    parsed_terms:
+    - 4
+    numeric_contribution: 4
+    rationale: 'Measured blast radius: 1,614 executions / 314 functions of 65,756 collected, spanning ported static
+      plus tangerine, byzantium, osaka, prague, and amsterdam suites. 300 files parked, 8 sibling suites re-derived
+      to fork-correct budgets. Scored above anchor 3 because the impact recurs: the value is TBD, so every parked
+      boundary and re-derived budget moves again when the final value lands.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new assertion lands on unrelated tests.
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The constant flows through the existing interface.
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The EIP-8037 fork API (`cost_per_state_byte`) already exists; activation is one override.
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Exact-fit and one-short OOG boundaries at every charging site, plus the funding-regime boundary (reservoir
+      vs spill vs the block gas limit, which a max-size deposit now exceeds). Multiple prone surfaces, none with
+      elevated case counts.
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The system-transaction reservoir re-derives from the constant; contract code unchanged.
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No result changes, only prices.
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Intrinsic rules and the gas limit cap are unchanged; only charged amounts shift.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: No new mechanism, but the recalibrated value can only be validated against state-growth benchmarks,
+      and the benchmark suite sits outside the measured blast radius (excluded from default fills) while its state-heavy
+      compositions halve in per-block capacity.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: A self-contained parameter change, validated in isolation. It doubles the economic cost of state
+      creation, an economics shift rather than a mechanism risk.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Scored from the EIP''s state at assessment time: the entire Specification section is TBD (reference
+      limit, value, rationale, rounding rule), there are no client implementations, and it has never been on a devnet.
+      Every amendment round re-baselines every fixture that creates state. The prototype''s ceiling rounding reproduces
+      the published 1530 at 150M, but nothing in the EIP confirms it.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '4'
+    parsed_terms:
+    - 4
+    numeric_contribution: 4
+    rationale: 'Directly modifies EIP-8037. Coordinated testing needed with EIP-7954 (a 2x CPSB puts a max-size
+      deposit above ~201M gas, undeployable below that block limit), EIP-7825 (cap-funded state creation capacity
+      halves to ~5.5 KiB per transaction), EIP-7702 (per-authorization state gas), EIP-7928 (BAL scenario budgets),
+      and EIP-8038 (companion access-gas schedule). Six interacting EIPs: anchor 3 plus one increment.'
+    blank_interpretation: null
+  published_total: 16
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 16
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false

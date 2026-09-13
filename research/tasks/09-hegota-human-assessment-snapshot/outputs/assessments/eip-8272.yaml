@@ -1,0 +1,270 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8272
+  title: Recent Roots for Frame Transactions
+human_assessment_status: available_in_open_pr
+preferred_candidate: pr-133@d54b36561f34
+candidates:
+- candidate_id: pr-133@d54b36561f34
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 133
+    pull_request_title: Add EIP-8272 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/133
+    draft: false
+    head_sha: d54b36561f34f0f870426e6fd826a510035014c8
+    created_at: '2026-08-24T21:19:45Z'
+    updated_at: '2026-08-25T12:17:26Z'
+    path: complexity_assessments/EIPs/EIP-8272.md
+    git_blob_sha: 81aae13863d54958fdf424a4d4f92ed97b92d7aa
+    content_sha256: 9164c943cf8ab14ea92ca26794a2c54b07bfa38fd6ada199b48544c6576a1c4c
+    immutable_url: https://github.com/ethspecs/pm/blob/d54b36561f34f0f870426e6fd826a510035014c8/complexity_assessments/EIPs/EIP-8272.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-133/EIP-8272.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Minimal changes to EIP-8141 gas rules, adding new rules to the data pricing of the roots included,
+      and cost of the hashing required to get the entry hash/storage key.
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: The frame transaction now conditionally accesses the storage of `RECENT_ROOT_ADDRESS` before execution
+      of any of the frames.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: New helpers required to construct the `recent_root_references` embedded in the transactions. Also
+      to register them in the `RECENT_ROOT_ADDRESS` contract.
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Elevated case counts. Window at both ends (`current_slot - slot` of 0, 1, 8191, 8192), index wraparound
+      at `slot mod 8192`, the 16-reference (per-tx) cap, zero references (intrinsic gas 0, not the address cost),
+      duplicate references (charged independently but deduplicated in access sets), last-write-wins within a slot.
+      Calls to `RECENT_ROOT_ADDRESS`: writes rejected in static context and via `DELEGATECALL`/`CALLCODE`, calldata
+      exactly 64 bytes with zero value. `RECENTROOTREFLOAD` opcode: `field > 2` and `index >= len` halts, with multiple
+      combinations of different `recent_root_references` in each tx'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: A single new stateful system contract at `0x…8272`. One write operation (64-byte calldata, zero value),
+      but no read operation is exposed. Lower score because it involves no novel testing methodologies.
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'One simple new opcode: `RECENTROOTREFLOAD` (0xB5), constant 3 gas, two stack pops, one push, three
+      valid `field` values. It reads only the signed envelope, never contract storage.'
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Although `recent_root_references` is inserted into the EIP-8141 transaction type, it's not an optional
+      field and it's easy to add to the encoder.
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Multiple new tx rejection schemes: window `1 <= current_slot - slot <= 8191`, and `RECENT_ROOT_ADDRESS[storage_key]
+      == entry_hash`. One invalid reference invalidates the transaction and the containing block. Can be independently
+      tested to EIP-8141 other rejection mechanisms.'
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'EIP states that an irregular state transition is required, but this is complex and potentially it
+      is not necessary: We probably can simply deploy using the well known system contract deployment methods used
+      for previous forks. Worth pushing back on the deployment method as it is probably an outdated specification
+      requirement.'
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Requires testing worst-case block filled with transactions consuming block limit using `MAX_RECENT_ROOT_REFERENCES`.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No major underspecification identified.
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: '**EIP-8141**: this EIP is a delta against it, altering its payload and signature hash; untestable
+      without it. **EIP-7623**: calldata floor is affected. **EIP-7928**: testing is required to ensure that the
+      BAL items are added at the appropriate spot. **EIP-7702**: a delegated EOA may be a source address.'
+    blank_interpretation: null
+  published_total: 14
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 14
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - 15 blank score cells are interpreted as zero only because the published total equals the sum of every nonblank
+    cell.
+  duplicates_merged_scores: false

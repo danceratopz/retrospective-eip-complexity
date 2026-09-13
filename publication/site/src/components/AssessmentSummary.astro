@@ -1,0 +1,87 @@
+---
+/**
+ * Compact summary strip shown at the top of every assessment view.
+ */
+import type { Assessment, Occurrence, Rubric } from '../lib/domain';
+import { scoreBands } from '../lib/domain';
+import { CONFIDENCE_LABELS, CONFIDENCE_NOT_RECORDED, TIER_LABELS, UNDER_SPECIFIED_LABEL, forkContextLabel, rubricLabel } from '../lib/labels';
+import { domId, isoDate, plural, shortCommit } from '../lib/format';
+import EvaluatorBadge from './EvaluatorBadge.astro';
+import StatusBadge from './StatusBadge.astro';
+import TierBadge from './TierBadge.astro';
+
+interface Props {
+  assessment: Assessment;
+  occurrence: Occurrence;
+  rubric: Rubric;
+}
+
+const { assessment, occurrence, rubric } = Astro.props as Props;
+const bands = scoreBands(rubric.tier_thresholds);
+const under = assessment.under_specification;
+const uncertaintyId = `uncertainty-${domId(assessment.id)}`;
+const revision = assessment.provenance.assessed_revision;
+const record = assessment.provenance.source_record;
+const pull = record.pull_request;
+const cutoff = occurrence.mode === 'prospective' ? occurrence.llm.information_cutoff_at : revision?.information_cutoff_at;
+---
+<div class="summary" aria-label="Assessment summary">
+  <div class="summary-headline">
+    {assessment.scored ? (
+      <>
+        <span class="summary-score">{assessment.score}</span>
+        <span class="summary-sep" aria-hidden="true">·</span>
+        <span class="summary-tier">{TIER_LABELS[assessment.tier]}</span>
+        <TierBadge tier={assessment.tier} thresholds={rubric.tier_thresholds} />
+      </>
+    ) : (
+      <StatusBadge status={assessment.status} mode={assessment.mode} />
+    )}
+  </div>
+  <dl class="summary-facts">
+    <div><dt>Evaluator</dt><dd><EvaluatorBadge source={assessment.source} revision={assessment.rubric_revision} /></dd></div>
+    <div><dt>Confidence</dt><dd>{assessment.confidence ? CONFIDENCE_LABELS[assessment.confidence] : CONFIDENCE_NOT_RECORDED}</dd></div>
+    <div>
+      <dt>{UNDER_SPECIFIED_LABEL}</dt>
+      <dd>
+        {under ? (
+          under.present
+            ? <a href={`#${uncertaintyId}`}>Yes — {plural(under.affected_criteria.length, 'criterion', 'criteria')} affected</a>
+            : 'No'
+        ) : (
+          <span class="muted">Not recorded in the checklist</span>
+        )}
+      </dd>
+    </div>
+    {under?.plausible_total_range && (
+      <div><dt>Plausible range</dt><dd>{under.plausible_total_range.minimum}–{under.plausible_total_range.maximum}{under.plausible_tiers.length ? ` (${under.plausible_tiers.map((tier) => TIER_LABELS[tier]).join('–')})` : ''}</dd></div>
+    )}
+    <div>
+      <dt>{assessment.source === 'human' ? 'Checklist published' : forkContextLabel(occurrence.mode)}</dt>
+      <dd>
+        {assessment.source === 'human'
+          ? <>{isoDate(record.committed_at ?? pull?.updated_at)}{revision && <span class="muted"> · EIP at <a href={revision.immutable_url}><code>{shortCommit(revision.commit)}</code></a></span>}</>
+          : <>{isoDate(cutoff)}{revision && <span class="muted"> · EIP revision <a href={revision.immutable_url}><code>{shortCommit(revision.commit)}</code></a> ({isoDate(revision.committed_at)})</span>}</>}
+      </dd>
+    </div>
+    {assessment.source === 'human' && (
+      <div>
+        <dt>Source</dt>
+        <dd>
+          {pull
+            ? <><a href={pull.url}>open ethspecs/pm pull request #{pull.number}</a>{pull.draft ? ' (draft)' : ''}</>
+            : <><a href={record.immutable_url}>merged ethspecs/pm checklist</a></>}
+        </dd>
+      </div>
+    )}
+  </dl>
+  <details class="bands">
+    <summary>Score bands · {rubricLabel(rubric.revision)}</summary>
+    <ul>
+      <li><span class="pill low">Low</span> {bands.low}</li>
+      <li><span class="pill medium">Medium</span> {bands.medium}</li>
+      <li><span class="pill high">High</span> {bands.high}</li>
+    </ul>
+    <p class="muted">{rubric.criterion_count} criteria scored 0–3 (4 in exceptional cases; cross-EIP interactions is uncapped); nominal maximum {rubric.nominal_maximum}.</p>
+  </details>
+</div>

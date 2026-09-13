@@ -1,0 +1,341 @@
+---
+/**
+ * Shared evaluation table: one row per assessment, whichever evaluator produced it.
+ *
+ * Used by the global index (every fork, full filters) and by the fork pages (one fork, assessment-input
+ * links). Rows can be selected for the shared comparison view.
+ */
+import type { Assessment, Occurrence, Publication, Status } from '../lib/domain';
+import { allOccurrences } from '../lib/domain';
+import {
+  EVALUATOR_FILTER_LABELS,
+  EVALUATOR_LABEL,
+  MODE_LABELS,
+  SCOPE_TIMING_LABELS,
+  SNAPSHOT_STATUS_LABELS,
+  EVALUATOR_LABELS,
+  STATUS_LABELS,
+  TIER_LABELS,
+  UNDER_SPECIFIED_SHORT,
+  rubricLabel,
+} from '../lib/labels';
+import { eipRoute, forkRoute, COMPARE_LIMIT } from '../lib/routes';
+import { isoDate, shortCommit, truncate } from '../lib/format';
+import EvaluatorBadge from './EvaluatorBadge.astro';
+import StackedBar from './StackedBar.astro';
+import StatusBadge from './StatusBadge.astro';
+import TierBadge from './TierBadge.astro';
+
+interface Props {
+  data: Publication;
+  occurrences?: Occurrence[];
+  /** Show the full filter row (global index). The evaluator filter is always shown. */
+  filters?: boolean;
+  /** One-fork context: hide the fork column and show the assessment-input column. */
+  fork?: string | null;
+  caption?: string;
+  tableId?: string;
+}
+
+interface Row {
+  occurrence: Occurrence;
+  assessment: Assessment | null;
+  evaluator: 'llm' | 'human';
+  status: Status;
+  rerun: boolean;
+  statusHref: string | null;
+}
+
+const { data, occurrences: given, filters = false, fork: forkContext = null, caption, tableId = 'evaluations' } = Astro.props as Props;
+const definitions = new Map(data.criteria.map((item) => [item.id, item]));
+const occurrences = given ?? allOccurrences(data);
+const rows: Row[] = [];
+for (const occurrence of occurrences) {
+  const assessments = occurrence.assessment_ids.map((id) => data.assessments[id]);
+  const llm = assessments.filter((item) => item.source === 'llm').sort((a, b) => b.rubric_revision - a.rubric_revision);
+  if (!llm.length) {
+    rows.push({ occurrence, assessment: null, evaluator: 'llm', status: occurrence.llm.status, rerun: false, statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork }) });
+  }
+  for (const assessment of llm) {
+    rows.push({ occurrence, assessment, evaluator: 'llm', status: assessment.status, rerun: assessment.role === 'historical_rubric_rerun', statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork, view: 'llm', rubric: llm.length > 1 ? assessment.rubric_revision : null }) });
+  }
+  for (const assessment of assessments.filter((item) => item.source === 'human')) {
+    const record = assessment.provenance.source_record;
+    rows.push({ occurrence, assessment, evaluator: 'human', status: assessment.status, rerun: false, statusHref: record.pull_request?.url ?? record.immutable_url ?? null });
+  }
+}
+const maxScore = Math.max(...rows.map((row) => row.assessment?.score ?? 0));
+const thresholds = data.rubrics['2'].tier_thresholds;
+const levelSort = (value: string | null) => ({ low: '1', medium: '2', high: '3' })[value ?? ''] ?? '4';
+const statusOrder = ['complete', 'available_in_open_pr', 'in_progress', 'incomplete', 'not_applicable', 'not_available'];
+const statusSort = (value: string) => statusOrder.indexOf(value);
+const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incomplete'] as const;
+const prospective = occurrences.some((item) => item.mode === 'prospective');
+const retrospectiveContext = forkContext !== null && !prospective;
+const hasReruns = rows.some((row) => row.rerun);
+const counts = {
+  llm: rows.filter((row) => row.evaluator === 'llm' && !row.rerun && row.status !== 'not_applicable').length,
+  human: rows.filter((row) => row.evaluator === 'human').length,
+  notApplicable: rows.filter((row) => row.status === 'not_applicable').length,
+};
+const pendingHuman = occurrences.filter((item) => item.mode === 'prospective' && item.human.status === 'not_available').length;
+const tableCaption = caption ?? 'Every complexity assessment in the study, one row per evaluator. LLM totals are the study scores; Human rows are STEEL checklists and do not enter fork totals. Click an EIP for its complete assessment.';
+const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.fork === fork)).padStart(2, '0');
+---
+<form class="table-tools index-filters" data-evaluation-filters aria-label="Filter assessments">
+  <fieldset class="evaluator-filter" data-filter-group="evaluator">
+    <legend>{EVALUATOR_LABEL}</legend>
+    <label><input type="radio" name={`${tableId}-evaluator`} value="" checked data-filter="evaluator" /> {EVALUATOR_FILTER_LABELS.both}</label>
+    <label><input type="radio" name={`${tableId}-evaluator`} value="llm" data-filter="evaluator" /> {EVALUATOR_FILTER_LABELS.llm} <span class="count">({counts.llm + counts.notApplicable})</span></label>
+    <label><input type="radio" name={`${tableId}-evaluator`} value="human" data-filter="evaluator" disabled={counts.human === 0} /> {EVALUATOR_FILTER_LABELS.human} <span class="count">({counts.human})</span></label>
+  </fieldset>
+  <label>Search <input type="search" name="q" data-filter="q" placeholder="EIP number or title" /></label>
+  {filters && (
+    <>
+      <label>Fork
+        <select name="fork" data-filter="fork">
+          <option value="">All forks</option>
+          {data.forks.map((fork) => <option value={fork.fork}>{fork.name}</option>)}
+        </select>
+      </label>
+      <label>Complexity band
+        <select name="band" data-filter="band">
+          <option value="">Any</option>
+          <option value="low">{TIER_LABELS.low}</option>
+          <option value="medium">{TIER_LABELS.medium}</option>
+          <option value="high">{TIER_LABELS.high}</option>
+        </select>
+      </label>
+      <label>Checklist status
+        <select name="status" data-filter="status">
+          <option value="">Any</option>
+          {humanStatuses.map((status) => <option value={status}>{STATUS_LABELS[status]}</option>)}
+          <option value="not_applicable">{STATUS_LABELS.not_applicable}</option>
+        </select>
+      </label>
+      <label class="checkbox"><input type="checkbox" name="under" value="1" data-filter="under" /> {UNDER_SPECIFIED_SHORT} only</label>
+      <label class="checkbox"><input type="checkbox" name="mode" value="retrospective" data-filter="mode" /> Retrospective only</label>
+    </>
+  )}
+  {hasReruns && <label class="checkbox"><input type="checkbox" name="reruns" value="1" data-filter="reruns" /> Show same-rubric LLM re-runs</label>}
+  <button type="reset" class="button-secondary">Clear filters</button>
+  <span class="muted filter-summary" aria-live="polite">
+    <span data-result-count>{counts.llm + counts.human} assessments: {counts.llm} LLM, {counts.human} Human{counts.notApplicable > 0 ? ` · ${counts.notApplicable} not applicable to the EL rubric` : ''}</span>
+    {pendingHuman > 0 && <span data-pending-count>· {pendingHuman} Hegotá candidate{pendingHuman === 1 ? ' has' : 's have'} a pending human checklist</span>}
+  </span>
+</form>
+
+<div class="compare-bar" data-compare-selection data-compare-for={tableId} hidden>
+  <span data-compare-count>0 selected</span>
+  <a class="button" data-compare-link href="#" aria-disabled="true">Compare selected</a>
+  <button type="button" class="button-secondary" data-compare-clear>Clear selection</button>
+  <span class="muted">Up to {COMPARE_LIMIT} assessments, from any evaluator.</span>
+</div>
+
+<div class="table-region" role="region" aria-label={caption ?? 'Complexity assessments'} tabindex="0">
+  <table class="index-table evaluation-table" data-evaluation-table data-sortable-table id={tableId}>
+    <caption>{tableCaption}</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="select-col"><span class="visually-hidden">Select for comparison</span></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEip" data-sort-kind="number">EIP</button></th>
+        {forkContext === null && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortFork">Fork</button></th>}
+        {forkContext !== null && prospective && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortSnapshot">Snapshot status</button></th>}
+        {retrospectiveContext && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScope">Scope timing</button></th>}
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEvaluator">{EVALUATOR_LABEL}</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortStatus">Status</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScore" data-sort-kind="number">Score</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortBand">Band</button></th>
+        <th scope="col" class="profile-col">Complexity profile</th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortUnder">{UNDER_SPECIFIED_SHORT}</button></th>
+        {retrospectiveContext && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortAssessment">Assessment input</button></th>}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(({ occurrence, assessment, evaluator, status, rerun, statusHref }) => {
+        const scored = Boolean(assessment?.scored);
+        const revision = assessment?.provenance.assessed_revision ?? null;
+        const record = assessment?.provenance.source_record ?? null;
+        return (
+          <tr
+            id={assessment ? `assessment-${assessment.id.replaceAll(':', '-')}` : `occurrence-${occurrence.fork}-${occurrence.eip}`}
+            data-eip={occurrence.eip}
+            data-fork={occurrence.fork}
+            data-mode={occurrence.mode}
+            data-evaluator={evaluator}
+            data-rerun={rerun ? '1' : '0'}
+            data-status={status}
+            data-band={assessment?.tier ?? ''}
+            data-under={assessment?.under_specification?.present ? '1' : '0'}
+            data-search={`eip-${occurrence.eip} ${occurrence.eip} ${occurrence.title} ${occurrence.fork} ${occurrence.fork_name} ${EVALUATOR_LABELS[evaluator]}`.toLowerCase()}
+            data-sort-eip={occurrence.eip}
+            data-sort-fork={`${forkIndex(occurrence.fork)} ${occurrence.eip}`}
+            data-sort-snapshot={occurrence.snapshot_status ?? ''}
+            data-sort-scope={occurrence.scope_timing ?? ''}
+            data-sort-evaluator={`${evaluator === 'llm' ? '0' : '1'}-${rerun ? '1' : '0'}-${String(occurrence.eip).padStart(5, '0')}`}
+            data-sort-status={statusSort(status)}
+            data-sort-score={assessment?.score ?? ''}
+            data-sort-band={assessment?.tier ? levelSort(assessment.tier) : ''}
+            data-sort-under={assessment?.under_specification ? (assessment.under_specification.present ? 'yes' : 'no') : ''}
+            data-sort-assessment={revision?.committed_at ?? record?.committed_at ?? record?.pull_request?.updated_at ?? ''}
+          >
+            <td class="select-col">
+              {assessment && scored && <input type="checkbox" data-select-assessment={assessment.id} aria-label={`Select the ${EVALUATOR_LABELS[evaluator]} assessment of EIP-${occurrence.eip} (${occurrence.fork_name}) for comparison`} />}
+            </td>
+            <td class="eip-cell"><a href={eipRoute(occurrence.eip, { fork: occurrence.fork, view: evaluator, rubric: rerun ? assessment.rubric_revision : null })}><strong>EIP-{occurrence.eip}</strong> {occurrence.title}</a></td>
+            {forkContext === null && (
+              <td class="fork-cell">
+                <a href={forkRoute(occurrence.fork)}>{occurrence.fork_name}</a>
+                <div class="fork-meta">
+                  <span class:list={['pill', 'pill-small', occurrence.mode === 'prospective' && 'prospective']}>{MODE_LABELS[occurrence.mode]}</span>
+                  {occurrence.snapshot_status && <span class="pill pill-small" title={SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status]}>{occurrence.snapshot_status}</span>}
+                  {occurrence.scope_timing && <span class="muted">{SCOPE_TIMING_LABELS[occurrence.scope_timing]}</span>}
+                </div>
+              </td>
+            )}
+            {forkContext !== null && prospective && <td><span class="pill pill-small" title={occurrence.snapshot_status ? SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status] : undefined}>{occurrence.snapshot_status}</span></td>}
+            {retrospectiveContext && <td>{occurrence.scope_timing ? SCOPE_TIMING_LABELS[occurrence.scope_timing] : '—'}</td>}
+            <td class="evaluator-cell"><EvaluatorBadge source={evaluator} revision={assessment?.rubric_revision ?? null} size="small" />{rerun && <div class="muted">re-run for the human comparison</div>}</td>
+            <td><StatusBadge status={status} mode={occurrence.mode} size="small" href={statusHref} detail={status === 'not_applicable' ? occurrence.llm.rationale : null} /></td>
+            <td class="number score-cell">
+              {scored
+                ? <>{assessment.score}{assessment.checklist && assessment.checklist.published_total !== null && assessment.checklist.published_total !== assessment.score && <><br /><span class="flag flag-under" title={`The checklist publishes a total of ${assessment.checklist.published_total}; the cells are the primary record and sum to ${assessment.score}.`}>published {assessment.checklist.published_total}</span></>}</>
+                : assessment?.checklist?.published_total != null
+                  ? <span class="score-inconsistent" title={`The checklist publishes a total of ${assessment.checklist.published_total}, but its cells sum to ${assessment.checklist.recomputed_total ?? 'an unresolved value'}. No score is used until they agree.`}><span class="muted">published</span> {assessment.checklist.published_total}<br /><span class="flag flag-unresolved">cells sum to {assessment.checklist.recomputed_total ?? '?'}</span></span>
+                  : <span class="muted">—</span>}
+            </td>
+            <td>{scored ? <TierBadge tier={assessment.tier} thresholds={assessment.rubric_revision === 2 ? thresholds : data.rubrics['1'].tier_thresholds} size="small" /> : <span class="muted">—</span>}</td>
+            <td class="profile-col">
+              {scored
+                ? <StackedBar segments={assessment.criteria.filter((criterion) => (criterion.score ?? 0) > 0).map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 140) }))} definitions={definitions} total={assessment.score} max={maxScore} size="compact" label={`EIP-${occurrence.eip} ${occurrence.fork_name} ${EVALUATOR_LABELS[evaluator]} complexity`} />
+                : <span class="muted stack-empty">{status === 'not_applicable' ? 'No execution-layer score' : 'Published total and cells disagree; not scored'}</span>}
+            </td>
+            <td>{assessment?.under_specification ? (assessment.under_specification.present ? 'Yes' : 'No') : <span class="muted">—</span>}</td>
+            {retrospectiveContext && (
+              <td class="revision-links">
+                {evaluator === 'llm' && revision ? (
+                  <>
+                    <a href={revision.immutable_url}>Assessed <code>{shortCommit(revision.commit)}</code></a>
+                    <span class="muted">{isoDate(revision.committed_at)}</span>
+                    <a href={revision.current_revision_url}>Current master</a>
+                    <a href={revision.revision_history_url}>File history</a>
+                  </>
+                ) : record ? (
+                  <>
+                    <a href={record.pull_request?.url ?? record.immutable_url}>{record.pull_request ? `Pull request #${record.pull_request.number}` : 'Merged checklist'}</a>
+                    <span class="muted">{isoDate(record.committed_at ?? record.pull_request?.updated_at)}</span>
+                    {revision && <a href={revision.immutable_url}>EIP at <code>{shortCommit(revision.commit)}</code></a>}
+                  </>
+                ) : <span class="muted">—</span>}
+              </td>
+            )}
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+<div class="compare-bar compare-bar-bottom" data-compare-selection data-compare-for={tableId} hidden>
+  <span data-compare-count>0 selected</span>
+  <a class="button" data-compare-link href="#" aria-disabled="true">Compare selected</a>
+  <button type="button" class="button-secondary" data-compare-clear>Clear selection</button>
+  <span class="muted">Up to {COMPARE_LIMIT} assessments, from any evaluator.</span>
+</div>
+
+<script>
+  import { compareRoute, COMPARE_LIMIT } from '../lib/routes';
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-evaluation-filters]')) {
+    const table = form.parentElement?.querySelector<HTMLTableElement>('[data-evaluation-table]');
+    if (!table) continue;
+    const count = form.querySelector<HTMLElement>('[data-result-count]')!;
+    const controls = Array.from(form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-filter]'));
+    const value = (name: string): string => {
+      const items = controls.filter((item) => item.dataset.filter === name);
+      if (!items.length) return '';
+      const first = items[0];
+      if (first instanceof HTMLInputElement && first.type === 'radio') return (items.find((item) => (item as HTMLInputElement).checked) as HTMLInputElement | undefined)?.value ?? '';
+      if (first instanceof HTMLInputElement && first.type === 'checkbox') return first.checked ? first.value : '';
+      return first.value;
+    };
+    const params = new URLSearchParams(window.location.search);
+    for (const item of controls) {
+      const wanted = params.get(item.dataset.filter!);
+      if (wanted === null) continue;
+      if (item instanceof HTMLInputElement && (item.type === 'checkbox' || item.type === 'radio')) item.checked = item.value === wanted && !item.disabled;
+      else item.value = wanted;
+    }
+
+    const apply = () => {
+      const query = value('q').trim().toLowerCase();
+      const fork = value('fork');
+      const band = value('band');
+      const status = value('status');
+      const evaluator = value('evaluator');
+      const under = value('under') === '1';
+      const retrospective = value('mode') === 'retrospective';
+      const reruns = value('reruns') === '1';
+      let llm = 0;
+      let human = 0;
+      let notApplicable = 0;
+      for (const row of table.tBodies[0].rows) {
+        const data = row.dataset;
+        const matches =
+          (!query || data.search!.includes(query)) &&
+          (!fork || data.fork === fork) &&
+          (!band || data.band === band) &&
+          (!status || data.status === status) &&
+          (!evaluator || data.evaluator === evaluator) &&
+          (!under || data.under === '1') &&
+          (!retrospective || data.mode === 'retrospective') &&
+          (reruns || data.rerun !== '1');
+        row.hidden = !matches;
+        if (matches) {
+          if (data.evaluator === 'human') human += 1;
+          else if (data.status === 'not_applicable') notApplicable += 1;
+          else llm += 1;
+        }
+      }
+      count.textContent = `${llm + human} assessments: ${llm} LLM, ${human} Human${notApplicable ? ` · ${notApplicable} not applicable to the EL rubric` : ''}`;
+      const next = new URLSearchParams();
+      for (const [key, current] of [['q', query], ['fork', fork], ['band', band], ['status', status], ['evaluator', evaluator], ['under', under ? '1' : ''], ['mode', retrospective ? 'retrospective' : ''], ['reruns', reruns ? '1' : '']] as const) {
+        if (current) next.set(key, current);
+      }
+      const search = next.toString();
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`);
+    };
+    for (const item of controls) item.addEventListener(item instanceof HTMLInputElement && item.type === 'search' ? 'input' : 'change', apply);
+    form.addEventListener('reset', () => setTimeout(apply, 0));
+    form.addEventListener('submit', (event) => event.preventDefault());
+    apply();
+
+    // Selection for the shared comparison view: one bar above and one below the table, kept in sync ------
+    const bars = Array.from(document.querySelectorAll<HTMLElement>(`[data-compare-selection][data-compare-for="${table.id}"]`));
+    if (!bars.length) continue;
+    const boxes = Array.from(table.querySelectorAll<HTMLInputElement>('[data-select-assessment]'));
+    const updateSelection = () => {
+      const selected = boxes.filter((box) => box.checked).map((box) => box.dataset.selectAssessment!);
+      const enabled = selected.length >= 1 && selected.length <= COMPARE_LIMIT;
+      for (const bar of bars) {
+        bar.hidden = selected.length === 0;
+        bar.querySelector<HTMLElement>('[data-compare-count]')!.textContent = `${selected.length} selected`;
+        const link = bar.querySelector<HTMLAnchorElement>('[data-compare-link]')!;
+        link.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+        link.href = enabled ? compareRoute({ assessments: selected }) : '#';
+      }
+      for (const box of boxes) box.disabled = !box.checked && selected.length >= COMPARE_LIMIT;
+    };
+    for (const box of boxes) box.addEventListener('change', updateSelection);
+    for (const bar of bars) {
+      bar.querySelector<HTMLButtonElement>('[data-compare-clear]')!.addEventListener('click', () => {
+        for (const box of boxes) box.checked = false;
+        updateSelection();
+      });
+      const link = bar.querySelector<HTMLAnchorElement>('[data-compare-link]')!;
+      link.addEventListener('click', (event) => {
+        if (link.getAttribute('aria-disabled') === 'true') event.preventDefault();
+      });
+    }
+    updateSelection();
+  }
+</script>

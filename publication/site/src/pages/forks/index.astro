@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CriterionLegend from '../../components/CriterionLegend.astro';
+import StackedBar from '../../components/StackedBar.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import { loadPublication } from '../../lib/data.js';
+import type { Publication } from '../../lib/domain';
+import { MODE_LABELS } from '../../lib/labels';
+import { forkRoute } from '../../lib/routes';
+import { plural } from '../../lib/format';
+
+const data = loadPublication() as Publication;
+const definitions = new Map(data.criteria.map((item) => [item.id, item]));
+const blocks = data.forks.map((fork) => ({ fork, composition: fork.mode === 'prospective' ? fork.composition.all_scored : fork.composition.at_cutoff }));
+---
+<Layout title="Forks" description="Five retrospective fork evaluations and one prospective Hegotá evaluation of Execution Layer complexity, with each fork's criterion composition.">
+  <p class="eyebrow">Complexity Evaluations</p>
+  <h1>Forks</h1>
+  <p class="lede">Five retrospective fork evaluations of Execution Layer complexity and one forward-looking Execution Layer complexity evaluation for Hegotá. Each retrospective bar is normalized to its fork's total and shows what kind of complexity dominated; the totals differ in scale and are printed beside each bar. Hegotá is still being assessed, so its total is not shown here.</p>
+  <div class="grid fork-grid">
+    {blocks.map(({ fork, composition }) => (
+      <article class="card fork-card">
+        <span class:list={['pill', fork.mode === 'prospective' && 'prospective']}>{MODE_LABELS[fork.mode]}</span>
+        <h2><a href={forkRoute(fork.fork)}>{fork.name}</a></h2>
+        {fork.mode === 'retrospective' ? (
+          <>
+            <p><strong>{fork.at_cutoff_count}</strong> EIPs by cutoff · score <strong>{fork.at_cutoff_score_sum}</strong><br /><span class="muted">{fork.late_addition_count} added later (+{fork.late_addition_score_sum})</span></p>
+            <StackedBar segments={composition.criteria.filter((item) => item.score_sum > 0).map((item) => ({ id: item.id, score: item.score_sum, detail: `${Math.round((item.score_sum / composition.score_sum) * 100)}% of fork complexity\nContributed by ${plural(item.eip_count, 'EIP')}` }))} definitions={definitions} total={composition.score_sum} normalized={true} size="regular" showTotal={true} label={`${fork.name} at-cutoff complexity`} />
+          </>
+        ) : (
+          <p><strong>{fork.eip_count}</strong> candidates at the {data.hegota.captured_on} snapshot · score <strong>TBD</strong><br /><span class="muted">Fork scope and assessments are still in progress; totals are not final.</span></p>
+        )}
+        <p class="fork-card-human">
+          {fork.mode === 'prospective'
+            ? <><span class="pill pill-small prospective">In progress</span> <span class="muted">Human checklists scored for {fork.human_coverage.scored_count} of {fork.eip_count} EIPs so far · <a href="https://github.com/ethspecs/pm/pulls?q=is%3Apr+state%3Aopen+complexity+assessment">open assessment pull requests</a></span></>
+            : fork.human_coverage.scored_count > 0
+              ? <><span class="pill pill-small">{fork.human_coverage.scored_count} of {fork.eip_count}</span> <span class="muted">EIPs have a scored Human checklist</span></>
+              : <><StatusBadge status="not_available" mode={fork.mode} size="small" /> <span class="muted">No human checklists</span></>}
+        </p>
+        <a href={forkRoute(fork.fork)}>View fork →</a>
+      </article>
+    ))}
+  </div>
+  <CriterionLegend criteria={data.criteria} compact={true} />
+</Layout>

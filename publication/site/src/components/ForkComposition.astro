@@ -1,0 +1,101 @@
+---
+/**
+ * One stacked bar per fork showing where the fork's complexity comes from: each segment is the sum of one
+ * criterion across the fork's EIPs. Absolute mode keeps a shared scale; composition mode normalizes.
+ */
+import type { CompositionBlock, ForkSummary, Publication } from '../lib/domain';
+import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
+import { forkRoute } from '../lib/routes';
+import { plural } from '../lib/format';
+import StackedBar from './StackedBar.astro';
+
+interface Props {
+  data: Publication;
+  forks: ForkSummary[];
+  /** Which composition block to plot per fork. */
+  block: (fork: ForkSummary) => CompositionBlock;
+  blockLabel: string;
+  id?: string;
+  caption: string;
+}
+
+const { data, forks, block, blockLabel, id = 'fork-composition', caption } = Astro.props as Props;
+const definitions = new Map(data.criteria.map((item) => [item.id, item]));
+const blocks = forks.map((fork) => ({ fork, composition: block(fork) }));
+const maxTotal = Math.max(...blocks.map((item) => item.composition.score_sum));
+const segmentsFor = (composition: CompositionBlock) =>
+  composition.criteria
+    .filter((item) => item.score_sum > 0)
+    .map((item) => ({
+      id: item.id,
+      score: item.score_sum,
+      detail: `${Math.round((item.score_sum / composition.score_sum) * 100)}% of fork complexity\nContributed by ${plural(item.eip_count, 'EIP')}`,
+    }));
+const criteriaPresent = [...new Set(blocks.flatMap((item) => item.composition.criteria.filter((criterion) => criterion.score_sum > 0).map((criterion) => criterion.id)))].sort(
+  (a, b) => (DISPLAY_INDEX.get(a) ?? 99) - (DISPLAY_INDEX.get(b) ?? 99),
+);
+const cell = (composition: CompositionBlock, criterionId: string) => composition.criteria.find((item) => item.id === criterionId);
+---
+<div class="composition" id={id} data-composition>
+  <fieldset class="composition-modes">
+    <legend>View</legend>
+    <label><input type="radio" name={`${id}-mode`} value="absolute" checked data-composition-mode /> Absolute complexity <span class="muted">(bar length is the fork total)</span></label>
+    <label><input type="radio" name={`${id}-mode`} value="normalized" data-composition-mode /> Composition <span class="muted">(each fork normalized to 100%)</span></label>
+  </fieldset>
+  {['absolute', 'normalized'].map((mode) => (
+    <div class="composition-bars" data-composition-view={mode} hidden={mode === 'normalized'}>
+      {blocks.map(({ fork, composition }) => (
+        <div class="composition-row">
+          <div class="composition-label">
+            <a href={forkRoute(fork.fork)}>{fork.short_name}</a>
+            <span class="muted">{composition.score_sum} points · {plural(composition.assessment_count, 'EIP')}</span>
+          </div>
+          <StackedBar segments={segmentsFor(composition)} definitions={definitions} total={composition.score_sum} max={maxTotal} normalized={mode === 'normalized'} size="large" showTotal={mode === 'absolute'} label={`${fork.name} ${blockLabel}`} />
+        </div>
+      ))}
+    </div>
+  ))}
+  <details class="composition-table">
+    <summary>Composition table: points per criterion and fork</summary>
+    <div class="table-region" role="region" aria-label={caption} tabindex="0">
+      <table>
+        <caption>{caption}</caption>
+        <thead>
+          <tr><th scope="col">Criterion</th>{blocks.map(({ fork }) => <th scope="col" class="number">{fork.short_name}</th>)}</tr>
+        </thead>
+        <tbody>
+          {criteriaPresent.map((criterionId) => (
+            <tr>
+              <th scope="row"><span class="swatch" style={`--fill:var(--criterion-${criterionId});--ink:var(--criterion-ink-${criterionId})`} aria-hidden="true">{criterionAbbreviation(criterionId)}</span> {definitions.get(criterionId).label}</th>
+              {blocks.map(({ composition }) => {
+                const value = cell(composition, criterionId);
+                return <td class="number">{value && value.score_sum > 0 ? <>{value.score_sum}<span class="muted composition-share"> · {Math.round((value.score_sum / composition.score_sum) * 100)}% · {plural(value.eip_count, 'EIP')}</span></> : <span class="muted">0</span>}</td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+        <tfoot><tr><th scope="row">Total</th>{blocks.map(({ composition }) => <td class="number">{composition.score_sum}</td>)}</tr></tfoot>
+      </table>
+    </div>
+  </details>
+</div>
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-composition]')) {
+    const radios = Array.from(root.querySelectorAll<HTMLInputElement>('[data-composition-mode]'));
+    const views = Array.from(root.querySelectorAll<HTMLElement>('[data-composition-view]'));
+    const key = root.id === 'fork-composition' ? 'composition' : `${root.id}-view`;
+    const apply = (mode: string, sync: boolean) => {
+      for (const view of views) view.hidden = view.dataset.compositionView !== mode;
+      for (const radio of radios) radio.checked = radio.value === mode;
+      if (!sync) return;
+      const params = new URLSearchParams(window.location.search);
+      if (mode === 'normalized') params.set(key, mode);
+      else params.delete(key);
+      const search = params.toString();
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`);
+    };
+    const initial = new URLSearchParams(window.location.search).get(key);
+    apply(initial === 'normalized' ? 'normalized' : 'absolute', false);
+    for (const radio of radios) radio.addEventListener('change', () => apply(radio.value, true));
+  }
+</script>

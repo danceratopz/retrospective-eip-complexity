@@ -90,13 +90,118 @@ def local_target(url: str) -> Path | None:
     return target
 
 
+def occurrence_rows(data: dict) -> list[dict]:
+    """Flatten EIP occurrences into one row per fork–EIP relationship with the primary LLM summary."""
+    rows = []
+    for eip in data["eips"]:
+        for occurrence in eip["occurrences"]:
+            primary = data["assessments"].get(occurrence["llm"]["assessment_id"]) if occurrence["llm"]["assessment_id"] else None
+            revision = primary["provenance"]["assessed_revision"] if primary else {}
+            rows.append(
+                {
+                    "assessed_revision": revision.get("commit"),
+                    "assessed_revision_url": revision.get("immutable_url"),
+                    "current_revision_url": revision.get("current_revision_url"),
+                    "revision_history_url": revision.get("revision_history_url"),
+                    "eip": occurrence["eip"],
+                    "fork": occurrence["fork"],
+                    "human_status": occurrence["human"]["status"],
+                    "mode": occurrence["mode"],
+                    "score": occurrence["llm"]["score"],
+                    "scope_timing": occurrence["scope_timing"],
+                    "snapshot_status": occurrence["snapshot_status"],
+                    "status": "scored" if primary else "not_applicable",
+                    "tier": occurrence["llm"]["tier"],
+                }
+            )
+    return rows
+
+
+def validate_domain_model(data: dict, rows: list[dict]) -> None:
+    """Invariants of the schema 2.0.0 domain model that the pages depend on."""
+    assessments = data["assessments"]
+    require(len(assessments) == 137, f"expected 137 assessments, found {len(assessments)}")
+    require(len(data["comparisons"]) == 34, "expected 34 same-rubric Human/LLM comparisons")
+    require(len(data["criteria"]) == 29, "criterion registry must contain 29 criteria")
+    require(set(data["rubrics"]) == {"1", "2"}, "both rubric revisions must be published")
+    for assessment in assessments.values():
+        order = data["rubrics"][str(assessment["rubric_revision"])]["criteria"]
+        require([item["id"] for item in assessment["criteria"]] == order, f"{assessment['id']}: criterion order")
+        if assessment["scored"]:
+            require(sum(item["score"] for item in assessment["criteria"]) == assessment["score"], f"{assessment['id']}: total")
+        else:
+            require(assessment["score"] is None and assessment["tier"] is None, f"{assessment['id']}: unscored assessments carry no score")
+    hegota_human = [row["human_status"] for row in rows if row["fork"] == "hegota"]
+    require(
+        {status: hegota_human.count(status) for status in set(hegota_human)}
+        == {"complete": 2, "available_in_open_pr": 15, "in_progress": 8, "not_available": 21},
+        "Hegotá human-assessment status distribution changed",
+    )
+    for row in rows:
+        if row["status"] == "not_applicable":
+            require(row["score"] is None and row["tier"] is None, "N/A rows must not have score or tier")
+    for comparison in data["comparisons"].values():
+        human = assessments[comparison["human_assessment_id"]]
+        llm = assessments[comparison["llm_assessment_id"]]
+        require(human["rubric_revision"] == llm["rubric_revision"], f"{comparison['id']}: cross-rubric comparison")
+        require(comparison["delta"] == llm["score"] - human["score"], f"{comparison['id']}: delta")
+
+
+def validate_eip_pages(data: dict) -> None:
+    """Every EIP page carries every occurrence, every source view, and the shared components."""
+    for eip in data["eips"]:
+        html = (DIST / f"eips/{eip['eip']}/index.html").read_text(encoding="utf-8")
+        require(html.count("<h1>") == 1, f"EIP-{eip['eip']}: one h1")
+        for occurrence in eip["occurrences"]:
+            require(f'data-fork-panel="{occurrence["fork"]}"' in html, f"EIP-{eip['eip']}: missing {occurrence['fork']} panel")
+            if occurrence["llm"]["assessment_id"]:
+                require(f'data-assessment="{occurrence["llm"]["assessment_id"]}"' in html, f"EIP-{eip['eip']}: missing LLM view")
+            else:
+                require('class="status status-not_applicable' in html, f"EIP-{eip['eip']}: N/A disposition must be badged")
+            if occurrence["human"]["assessment_id"]:
+                require(f'data-assessment="{occurrence["human"]["assessment_id"]}"' in html, f"EIP-{eip['eip']}: missing Human view")
+            require(f'status status-{occurrence["human"]["status"]}' in html, f"EIP-{eip['eip']}: human status badge missing")
+            for comparison_id in occurrence["comparison_ids"]:
+                require(f'data-compare="{comparison_id}"' in html, f"EIP-{eip['eip']}: missing comparison {comparison_id}")
+                require("data-diff-only" in html, f"EIP-{eip['eip']}: differences-only toggle missing")
+        if len(eip["occurrences"]) > 1:
+            require(html.count('data-fork-tab="') == len(eip["occurrences"]), f"EIP-{eip['eip']}: fork tabs")
+            for occurrence in eip["occurrences"]:
+                require(
+                    f'href="{BASE}eips/{eip["eip"]}/?fork={occurrence["fork"]}#fork-{occurrence["fork"]}"' in html,
+                    f"EIP-{eip['eip']}: fork tab for {occurrence['fork']} must carry URL view state",
+                )
+        for occurrence in eip["occurrences"]:
+            if len(occurrence["comparison_ids"]) and occurrence["human"]["assessment_id"]:
+                require(
+                    f'href="{BASE}eips/{eip["eip"]}/?fork={occurrence["fork"]}&amp;view=compare#panel-{occurrence["fork"]}-compare"' in html,
+                    f"EIP-{eip['eip']}: compare tab must carry URL view state",
+                )
+        require('class="stack stack-large' in html or 'status-not_applicable' in html, f"EIP-{eip['eip']}: stacked complexity bar missing")
+        require("Criterion legend and glossary" in html, f"EIP-{eip['eip']}: legend missing")
+        if any(occurrence["llm"]["assessment_id"] for occurrence in eip["occurrences"]):
+            require("eips/compare/?a=" in html, f"EIP-{eip['eip']}: comparison entry point missing")
+        require("Under-specified at assessment cutoff" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: under-specification wording missing")
+        require("Assessment provenance" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: provenance section missing")
+    scored_rows = sum(1 for item in data["assessments"].values() if item["scored"])
+    compare_html = (DIST / "eips/compare/index.html").read_text(encoding="utf-8")
+    require("data-compare-root" in compare_html and "data-compare-output" in compare_html, "compare page shell missing")
+    require("<noscript>" in compare_html, "compare page must explain the JavaScript requirement")
+    require((DIST / "generated/compare-index.json").is_file(), "compare index missing")
+    index = json.loads((DIST / "generated/compare-index.json").read_text(encoding="utf-8"))
+    require(len(index["assessments"]) == len(data["assessments"]), "compare index must mirror the assessments")
+    require(all("label" in item for item in index["criteria"]), "compare index criteria must carry labels")
+    require(compare_html.count('<option value="EIP-') == scored_rows, "compare page must list every scored assessment in the picker")
+
+
 def validate() -> dict[str, int]:
     require(DIST.is_dir(), "site dist directory is missing; run npm run build")
     data_path = DIST / "generated/publication.json"
     data = json.loads(data_path.read_text(encoding="utf-8"))
-    require(data["schema_version"] == "1.1.0", "publication schema mismatch")
+    require(data["schema_version"] == "2.0.0", "publication schema mismatch")
     require(data["release_state"] == "public", "release state mismatch")
-    rows = data["assessments"]
+    rows = occurrence_rows(data)
+    validate_domain_model(data, rows)
     historical = [row for row in rows if row["mode"] == "retrospective"]
     prospective = [row for row in rows if row["mode"] == "prospective"]
     scored_hegota = [row for row in prospective if row["status"] == "scored"]
@@ -218,40 +323,25 @@ def validate() -> dict[str, int]:
         "Amsterdam shipping summaries include a late-scope EIP",
     )
 
-    fork_totals = json.loads((DIST / "generated/charts/fork-totals.json").read_text(encoding="utf-8"))
-    require(len(fork_totals["data"]["values"]) == 10, "fork totals must contain two scope-timing rows per fork")
-    require(
-        {
-            (row["fork"], row["scope"]): (row["eips"], row["score"])
-            for row in fork_totals["data"]["values"]
-        }
-        == {
-            (fork, "Included by cutoff"): expected["included_at_cutoff"]
-            for fork, expected in expected_scope_totals.items()
-        }
-        | {
-            (fork, "Added after cutoff"): expected["added_after_cutoff"]
-            for fork, expected in expected_scope_totals.items()
-        },
-        "stacked fork-total chart does not preserve the cutoff split",
-    )
     human_llm = data["human_llm"]["rows"]
     require(len(human_llm) == 12, "human–LLM comparison must contain 12 Amsterdam EIPs")
     require(
-        [(row["eip"], row["human_score"], row["llm_v1_score"], row["llm_v2_score"]) for row in human_llm[:3]]
+        [(row["eip"], row["human_total"], row["llm_total"], row["primary_llm_total"]) for row in human_llm[:3]]
         == [(7928, 29, 26, 40), (8037, 28, 21, 35), (8038, 20, 17, 17)],
         "human–LLM score ordering changed",
     )
     require(sum(row["clean"] for row in human_llm) == 2, "human–LLM clean comparison count changed")
+    require(len(data["human_llm"]["criteria"]) == 24, "human–LLM per-criterion aggregate must cover the revision-1 checklist")
 
-    serialized = data_path.read_text(encoding="utf-8")
-    forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key"]
-    for term in forbidden:
-        require(term not in serialized, f"forbidden public-data term: {term}")
+    forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key", "assessment-run-"]
+    for generated in [data_path, DIST / "generated/compare-index.json", *sorted((DIST / "generated/downloads").glob("*.csv"))]:
+        serialized = generated.read_text(encoding="utf-8")
+        for term in forbidden:
+            require(term not in serialized, f"forbidden public-data term in {generated.name}: {term}")
 
     manifest_path = DIST / "generated/provenance.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    require(manifest["schema_version"] == "1.1.0", "provenance schema mismatch")
+    require(manifest["schema_version"] == "2.0.0", "provenance schema mismatch")
     for item in manifest["generated_files"]:
         path = DIST / "generated" / item["path"]
         require(path.is_file(), f"manifest output is missing: {item['path']}")
@@ -259,7 +349,7 @@ def validate() -> dict[str, int]:
     require(manifest["source_records"] == sorted(manifest["source_records"], key=lambda item: item["path"]), "source records are not stable-sorted")
 
     html_files = sorted(DIST.rglob("*.html"))
-    require(len(html_files) == 155, f"expected 155 static pages, found {len(html_files)}")
+    require(len(html_files) == 156, f"expected 156 static pages, found {len(html_files)}")
     broken: list[str] = []
     chart_pages = 0
     for html_path in html_files:
@@ -289,6 +379,7 @@ def validate() -> dict[str, int]:
     association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
     home_html = (DIST / "index.html").read_text(encoding="utf-8")
     eip_index_html = (DIST / "eips/index.html").read_text(encoding="utf-8")
+    scored_rows = sum(1 for item in data["assessments"].values() if item["scored"])
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
     human_llm_html = (DIST / "human-vs-llm/index.html").read_text(encoding="utf-8")
     osaka_html = (DIST / "forks/osaka/index.html").read_text(encoding="utf-8")
@@ -317,6 +408,7 @@ def validate() -> dict[str, int]:
     require("id=\"limitations\"" in study_html, "study limitations are missing")
     require("Method before results" not in study_html, "obsolete study eyebrow remains")
     require("Evaluation-first research publication" not in home_html, "obsolete landing-page eyebrow remains")
+    require("Local review preview" not in home_html, "preview footer text remains")
     require("How much complexity did an EIP imply before implementation?" not in home_html, "obsolete landing page remains")
     require(
         'href="/retrospective-eip-complexity/">Study</a>' in home_html,
@@ -335,9 +427,24 @@ def validate() -> dict[str, int]:
     for label in ["Score at cutoff", "Added-later score", "Final-scope score"]:
         require(label in association_html, f"association page omits {label.lower()}")
     require(
-        association_html.count('data-sort-key="') == 14,
-        "results fork-total and shipping columns must all be sortable",
+        association_html.count('data-sort-key="') == 8,
+        "results shipping columns must all be sortable",
     )
+    require("generated/charts/fork-totals.json" not in association_html, "superseded fork-totals Vega chart remains")
+    require(association_html.count('data-scope-fork="') == 5, "scope-timing values table must list five forks")
+    scope_start = association_html.index('class="scope-timing"')
+    require(scope_start < association_html.index("Which Kinds of Complexity Made Each Fork Heavy?"), "scope-timing bars must precede the composition section")
+    for fork, expected in expected_scope_totals.items():
+        included, added = expected["included_at_cutoff"][1], expected["added_after_cutoff"][1]
+        require(
+            f'data-tip-title="Included by cutoff — {included}"' in association_html and f'data-tip-title="Added after cutoff — {added}"' in association_html,
+            f"scope-timing bars omit the {fork} split",
+        )
+    require("Which Kinds of Complexity Made Each Fork Heavy?" in association_html, "results fork composition section is missing")
+    require(association_html.count('class="stack stack-large') == 15, "results must show five scope-timing bars plus five composition bars in each of two views")
+    require(association_html.count("Contributed by ") >= 10, "results composition tooltips must name contributing EIP counts")
+    composition_start = association_html.index("Which Kinds of Complexity Made Each Fork Heavy?")
+    require(association_html.index("Composition table") > composition_start, "results composition must carry a semantic table")
     for removed_route in [
         "data",
         "limitations",
@@ -349,18 +456,39 @@ def validate() -> dict[str, int]:
         "study/workflow",
     ]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
-    require(eip_index_html.count('data-mode="') == 95, "EIP index relationship row count mismatch")
-    require('data-table-search' in eip_index_html, "EIP index substring search is missing")
-    require('data-table-fork' in eip_index_html, "EIP index fork filter is missing")
-    require(eip_index_html.count('data-sort-key="') == 8, "EIP index columns must all be sortable")
+    require(eip_index_html.count('data-mode="') == len(data["assessments"]) + 7, "EIP index must show one row per assessment plus the seven N/A dispositions")
+    for control in ["q", "fork", "band", "status", "evaluator", "under", "mode", "reruns"]:
+        require(f'data-filter="{control}"' in eip_index_html, f"EIP index filter {control} is missing")
+    require(eip_index_html.count('data-sort-key="') == 7, "EIP index sortable columns changed")
+    require(eip_index_html.count('class="stack stack-compact') == scored_rows, "EIP index must show one compact stacked bar per scored assessment")
+    require(eip_index_html.count('data-select-assessment="') == scored_rows, "EIP index must offer comparison selection for every scored assessment")
+    require(eip_index_html.count('data-evaluator="human"') == sum(1 for item in data["assessments"].values() if item["source"] == "human"), "EIP index must show one row per Human assessment")
+    require(eip_index_html.count('data-rerun="1"') == 12, "EIP index must carry the twelve Amsterdam re-runs as hidden-by-default rows")
+    require(eip_index_html.count("data-compare-selection") == 2, "EIP index must show the comparison selection bar above and below the table")
+    require(eip_index_html.count('status status-not_applicable') == 7, "EIP index must badge the seven N/A rows")
+    require("pending human checklist" in eip_index_html, "EIP index must report pending Hegotá human checklists")
+    require('href="https://github.com/ethspecs/pm/pull/118"' in eip_index_html, "Human status badges must link to their pull request")
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
-    require(hegota_html.count('data-mode="prospective"') == 46, "Hegotá HTML table row count mismatch")
+    require(hegota_html.count('data-mode="prospective"') == 46 + 25, "Hegotá HTML table must show 46 LLM rows plus 25 Human rows")
     require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
-    require(hegota_html.count('data-sort-key="') == 9, "Hegotá assessment columns must all be sortable")
+    require(hegota_html.count('data-sort-key="') == 7, "Hegotá assessment columns must all be sortable")
+    require(hegota_html.count('data-evaluator="human"') == 25, "Hegotá page must list every human checklist as its own row")
+    require(hegota_html.count('status status-not_applicable') >= 7, "Hegotá N/A rows must carry status badges")
+    require("Human checklists" in hegota_html and hegota_html.count("data-compare-selection") == 2, "Hegotá page must show human coverage and comparison selection above and below the table")
+    require("Open the comparison view" not in hegota_html, "misleading comparison link must not remain on fork pages")
+    for status in ["status-complete", "status-available_in_open_pr", "status-in_progress", "status-not_available"]:
+        require(status in hegota_html, f"Hegotá page omits the {status} state")
+    require("Pending" in hegota_html and "Not yet available" not in hegota_html, "Hegotá missing human checklists must read as pending")
+    require("Draft PR" in hegota_html and "In progress" not in hegota_html, "draft pull-request checklists must be flagged as Draft PR")
+    require(hegota_html.count('data-status="in_progress"') == 8, "Hegotá page must list the eight draft-PR checklists as rows")
+    require("published 20" in hegota_html, "a checklist scored from its cells must still show its differing published total")
+    require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
     require("Snapshot status" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
-        "Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot" in hegota_html,
+        "EIP-7805 was SFI and EIP-8141 was CFI, rather than PFI, at the frozen 2026-08-26 snapshot." in hegota_html
+        and hegota_html.count(">SFI</span>") >= 1
+        and hegota_html.count(">CFI</span>") >= 1,
         "Hegotá SFI/CFI snapshot disclosure is missing",
     )
     require(
@@ -372,25 +500,14 @@ def validate() -> dict[str, int]:
         "Execution Layer and execution-client networking surfaces only" in hegota_html,
         "Hegotá Execution Layer scope is missing",
     )
-    require("data-retrospective-only" in eip_index_html, "retrospective-only filter is missing")
-    hegota_chart = json.loads((DIST / "generated/charts/hegota-scores.json").read_text(encoding="utf-8"))
+    require("generated/charts/hegota-scores.json" not in hegota_html, "superseded Hegotá bar chart remains")
+    require('data-ranked-view="llm"' in hegota_html and 'data-ranked-view="human"' in hegota_html and 'data-ranked-view="both"' in hegota_html, "Hegotá ranked stacked bars are missing")
+    require(hegota_html.count('class="stack stack-large') >= 39 + 23, "Hegotá ranked bars must cover every scored LLM and Human assessment")
+    require("data-ranked-search" in hegota_html and 'data-filter="q"' in hegota_html, "Hegotá page must offer search on the ranked bars and the table")
+    require('data-filter="q"' in osaka_html, "fork pages must offer table search")
     require(
-        len(hegota_chart["data"]["values"]) == 39
-        and all(row.get("title") for row in hegota_chart["data"]["values"]),
-        "Hegotá chart must carry every scored EIP title",
-    )
-    require(
-        {row["snapshot_status"] for row in hegota_chart["data"]["values"]} == {"PFI", "SFI", "CFI"},
-        "Hegotá chart snapshot statuses are incomplete",
-    )
-    require(
-        any(item.get("field") == "title" and item.get("title") == "EIP name" for item in hegota_chart["encoding"]["tooltip"]),
-        "Hegotá chart tooltip is missing EIP names",
-    )
-    require(
-        association_html.index("generated/charts/fork-totals.json")
-        < association_html.index("generated/charts/fork-shipping.json"),
-        "fork totals must be the first Results plot",
+        association_html.index('class="scope-timing"') < association_html.index("generated/charts/fork-shipping.json"),
+        "scope-timing bars must be the first Results visual",
     )
     for chart in ["fork-shipping", "fork-shipping-high-tier", "fork-shipping-hardest-eip"]:
         require(f"generated/charts/{chart}.json" in association_html, f"{chart} chart is missing")
@@ -428,9 +545,12 @@ def validate() -> dict[str, int]:
     require("counts substantive revisions" in association_html, "specification-rework proxy is unexplained")
     require("counts distinct <code>requires</code> or <code>interacts_with</code>" in association_html, "EIP-interaction proxy is unexplained")
     require("Emergent coupling" not in association_html, "jargon-heavy proxy label remains")
-    require("generated/charts/human-alignment.json" in human_llm_html, "human–LLM chart is missing")
+    require("generated/charts/human-alignment.json" not in human_llm_html, "superseded human–LLM Vega chart remains")
+    require(human_llm_html.count('data-comparison-eip="') == 12, "human–LLM paired bars must cover twelve EIPs")
+    require(human_llm_html.count('class="stack stack-regular') == 24, "human–LLM page must show one Human and one LLM bar per EIP")
     require(human_llm_html.count('data-human-llm-eip="') == 12, "human–LLM table row count mismatch")
-    require(human_llm_html.count('data-sort-key="') == 6, "human–LLM columns must all be sortable")
+    require(human_llm_html.count('data-sort-key="') == 14, "human–LLM columns must all be sortable")
+    require("Where the Evaluators Differ by Criterion" in human_llm_html and human_llm_html.count("aggregate-notable") >= 4, "human–LLM per-criterion aggregate is missing")
     require(">Block-Level Access Lists</td>" in human_llm_html, "human–LLM proposal titles are missing")
     require("The LLM applied a “risk-review tax.”" in human_llm_html, "human–LLM systematic difference is missing")
     require("currently the only fork with a completed human complexity evaluation" in human_llm_html, "Amsterdam comparison rationale is missing")
@@ -463,7 +583,10 @@ def validate() -> dict[str, int]:
     require(osaka_html.count("data-fit-chart") == 2, "Osaka timelines must opt into responsive fitting")
     require(osaka_html.count("data-fork-link") == 6, "Osaka quick navigation must include every fork")
     require('aria-current="page"' in osaka_html, "Osaka quick navigation must identify the current fork")
-    require(osaka_html.count('data-sort-key="') == 7, "Osaka assessment columns must all be sortable")
+    require(osaka_html.count('data-sort-key="') == 8, "Osaka assessment columns must all be sortable")
+    require(osaka_html.count('class="stack stack-compact') == 12, "Osaka table must show one stacked profile per EIP")
+    require('data-composition-view="absolute"' in osaka_html and 'data-composition-view="normalized"' in osaka_html, "Osaka fork composition views are missing")
+    require(osaka_html.count("Contributed by ") >= 12, "fork composition tooltips must name contributing EIP counts")
     require("GPT-5.6 Sol LLM at xhigh reasoning effort" in osaka_html, "fork assessment method is missing")
     require(
         "https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md"
@@ -474,6 +597,14 @@ def validate() -> dict[str, int]:
     require("timeline-guide" not in osaka_html, "timeline key must use a simple list")
     require("The main purpose of this panel" in osaka_html, "EIP-history purpose is unexplained")
 
+    forks_index_html = (DIST / "forks/index.html").read_text(encoding="utf-8")
+    require(forks_index_html.count('class="stack stack-regular') == 5, "forks index must show one composition bar per retrospective fork only")
+    require("score <strong>TBD</strong>" in forks_index_html and "856" not in forks_index_html, "forks index must not present a Hegotá total")
+    require(">In progress</span>" in forks_index_html, "forks index must mark Hegotá human checklists as in progress")
+    require(
+        'href="https://github.com/ethspecs/pm/pulls?q=is%3Apr+state%3Aopen+complexity+assessment"' in forks_index_html,
+        "forks index must link the open complexity-assessment pull requests",
+    )
     fork_links = {}
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
         document = Document()
@@ -481,12 +612,17 @@ def validate() -> dict[str, int]:
         fork_links[fork] = set(document.links)
     for row in historical:
         detail = Document()
-        detail.feed(
-            (DIST / f"forks/{row['fork']}/eips/{row['eip']}/index.html").read_text(encoding="utf-8")
-        )
+        detail.feed((DIST / f"eips/{row['eip']}/index.html").read_text(encoding="utf-8"))
         for url in [row["assessed_revision_url"], row["current_revision_url"], row["revision_history_url"]]:
             require(url in fork_links[row["fork"]], f"fork page omits EIP-{row['eip']} revision link")
-            require(url in detail.links, f"assessment page omits EIP-{row['eip']} revision link")
+            require(url in detail.links, f"canonical EIP page omits EIP-{row['eip']} revision link")
+        legacy = (DIST / f"forks/{row['fork']}/eips/{row['eip']}/index.html").read_text(encoding="utf-8")
+        canonical = f"{BASE}eips/{row['eip']}/?fork={row['fork']}"
+        require(
+            f'http-equiv="refresh" content="0; url={canonical}"' in legacy and '<meta name="robots" content="noindex">' in legacy,
+            f"legacy assessment route for EIP-{row['eip']} must redirect to the canonical EIP page",
+        )
+    validate_eip_pages(data)
 
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
         milestone_path = DIST / f"generated/charts/fork-milestones-{fork}.json"

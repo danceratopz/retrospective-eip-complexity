@@ -1,0 +1,284 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8304
+  title: Trustless log and transaction index
+human_assessment_status: available_in_open_pr
+preferred_candidate: pr-127@ec861017c000
+candidates:
+- candidate_id: pr-127@ec861017c000
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 127
+    pull_request_title: Add EIP-8304 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/127
+    draft: false
+    head_sha: ec861017c0006c353bdab4a9f3e910e40609495c
+    created_at: '2026-08-24T13:22:36Z'
+    updated_at: '2026-08-24T13:22:36Z'
+    path: complexity_assessments/EIPs/EIP-8304.md
+    git_blob_sha: d4ccf1a464a005c07cb98694dc5303c61a9b8439
+    content_sha256: 8a57b185f6573a462a85f1154debe156f506b9eb0593351f47197792ebb95d10
+    immutable_url: https://github.com/ethspecs/pm/blob/ec861017c0006c353bdab4a9f3e910e40609495c/complexity_assessments/EIPs/EIP-8304.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-127/EIP-8304.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No opcode gas schedule or gas-calculation rule is modified.
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No changes to State-access ordering within opcode execution
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Blob gas is not involved.
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No state gas cost changes.
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Refunds are not involved.
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Every test executed under the new fork must account for the additional index-root state transition.
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Every post-fork block must generate and publish at least its single-block table root. Therefore,
+      the expected post-state of every post-fork fixture depends on the index-contract update, regardless of the
+      behavior the test was originally written to exercise.
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The transition tool needs a new index-table construction mechanism. A level-0 table can be derived
+      from the current block and its receipts, but publishing delayed higher-level tables requires prior index entries,
+      historical blocks, or equivalent persistent context that is not available in an ordinary single-block transition
+      input.
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Permanent framework primitives are needed for entry extraction, canonical binary encoding, lexicographic
+      sorting, SHA-256 hashing, SSZ merkleization, table merging, delayed publication, and ring-buffer addressing.
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Adds SHA-256 entry hashing and SSZ merkleization, but both are mature mechanisms with abundant existing
+      test resources.
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Covers the fork boundary, genesis, the parent-block hash offset, table alignment, five table sizes,
+      delay deadlines, ring-buffer wraparound, invalid/zero table size, zero root, empty blocks, topic count, duplicate
+      values, lexicographic byte ordering, reorgs, and sync initialization. A large combinatorial test set is required.
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No block RLP validation rule or synchronization protocol is modified.
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No execution-payload field, Engine API endpoint changes.
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: One new stateful system contract is introduced. It receives a protocol-generated update every block
+      and may receive multiple updates when several table levels become publishable at the same block.
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No pre-existing system contract is modified.
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new opcodes.
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: LOG0–LOG4 and all other opcodes retain their existing execution semantics.
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new precompiles.
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No precompiles are modified.
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The proposal defines an internal encoding for index entries and uses SSZ for table commitments, but
+      it does not alter transaction, receipt, block, header, or protocol-interface encoding.
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new transaction type.
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Transaction validity, intrinsic gas, and transaction encoding are all unchanged.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No header field is added;
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Fork activation requires deploying/initializing the new system-contract account. In addition, a table
+      is only generated when the EIP was already active at its `first_block`, so each table level starts appearing
+      progressively after the fork. Explicit fork-boundary state-transition tests are required.
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Every block must build, encode, sort, and hash all transaction and log entries, and merge the 4/16/64/256-block
+      tables before their deadlines. The cost interacts with tx count, log count, topics, reorgs, disk layout, and
+      sync state, and cannot be fully validated by isolated microbenchmarks alone.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Incorrect entry generation, ordering, SSZ root, delay timing, or ring-buffer slot all produce a different
+      state root and therefore consensus divergence.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The EIP is still Draft with no client implementations and no devnet. `INDEX_CONTRACT_ADDRESS` and
+      the synthetic deployment transaction are TBD, and the `List[Hash32, entry_count]` SSZ type admits more than
+      one reading that yields different Merkle roots. These points are localized and need client agreement before
+      vectors can be baselined; reorg handling is likewise left to clients.
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Explicitly depends on EIP-4788's system-call and deployment convention.
+    blank_interpretation: null
+  published_total: 26
+  published_tier_raw: 🔴 **High Complexity**
+  published_tier: high
+  recomputed_total: 26
+  recomputed_tier: high
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false

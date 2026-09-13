@@ -1,0 +1,260 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 7923
+  title: Linear, Page-Based Memory Costing
+human_assessment_status: available_in_open_pr
+preferred_candidate: pr-134@5f85492e0855
+candidates:
+- candidate_id: pr-134@5f85492e0855
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 134
+    pull_request_title: Add EIP-7923 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/134
+    draft: false
+    head_sha: 5f85492e085509e32602538d721e23fc11be6323
+    created_at: '2026-08-25T00:42:59Z'
+    updated_at: '2026-08-25T00:42:59Z'
+    path: complexity_assessments/EIPs/EIP-7923.md
+    git_blob_sha: 77392502f74959d36064a9446a01a6b56f33e13b
+    content_sha256: e6260a5df1ebe00699afa03d1d74c7ec8e7837742cbaa37f9531e81e3a14f0ec
+    immutable_url: https://github.com/ethspecs/pm/blob/5f85492e085509e32602538d721e23fc11be6323/complexity_assessments/EIPs/EIP-7923.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-134/EIP-7923.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Deletes the linear and quadratic memory terms and replaces them with a 100-gas charge per newly touched
+      4 KiB page. Repricing reaches all 18 memory-expanding opcodes, and page 0 being free makes `MSTORE(0, x)`
+      cost 3 instead of 6.
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: '1982 test files pair a memory-expanding opcode with an exact-gas expectation: 1831 in `tests/ported_static/`,
+      151 hand-written across 14 forks plus `tests/benchmark/`. Also, a single MSTORE(x, 1) can no longer cause
+      an OOG, which is one of the go-to ways that tests use to produce one.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: '`MemoryExpansionGasCalculator` is `(new_bytes, previous_bytes) -> int`, a pure function of sizes.
+      Page cost depends on which offsets are touched and on what the frame touched before, so the protocol, the
+      `new_memory_size`/`old_memory_size` opcode metadata and its six per-EIP consumers all need a page-aware replacement
+      that stays fork-scoped.'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Memory allocation change from continuous to sparse: an instruction pays only for the pages its own
+      range covers, so touching page 1000 leaves pages 1-999 unallocated. On top of that, page-crossing reads and
+      writes on 18 opcodes, free page 0 against paid page 1, first touch against re-touch, the 2**32 address halt,
+      the 16384-page transaction halt, and `MCOPY` with source and destination straddling different pages.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Row excludes gas changes, accounted for in the first row.
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Memory benchmark tests need to be written from the ground up to cover the new memory allocation mechanism.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Small risk: contracts that previously ran out of gas by memory allocation, potentially now will
+      not, therefore it''s worth exploring if this could be an issue with currently existing contracts.'
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  published_total: 15
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 15
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - 18 blank score cells are interpreted as zero only because the published total equals the sum of every nonblank
+    cell.
+  duplicates_merged_scores: false

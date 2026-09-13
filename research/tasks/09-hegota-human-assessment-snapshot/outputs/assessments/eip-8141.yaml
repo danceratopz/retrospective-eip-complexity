@@ -1,0 +1,513 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8141
+  title: Frame Transaction
+human_assessment_status: complete
+preferred_candidate: main@3d8c0128c554
+candidates:
+- candidate_id: main@3d8c0128c554
+  availability: merged
+  source:
+    kind: default_branch
+    repository: ethspecs/pm
+    branch: main
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    last_commit: 51a8e5c15144a96f088e1e1c2261e9cc87c80ac2
+    last_committed_at: '2026-08-11T15:30:34Z'
+    path: complexity_assessments/EIPs/EIP-8141.md
+    git_blob_sha: c00d071cd8754c2f35214dd5d5cf34d3c80f8ff6
+    content_sha256: 5ee8d6adab64a924d9f86f45cd35263d062fc1fc73723894c24d4f698f9c5cd3
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/complexity_assessments/EIPs/EIP-8141.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/main/EIP-8141.md
+  parse_state: complete
+  rubric_revision: 1
+  declared_revision: null
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: New per-frame gas isolation (`gas_limit` allocated per frame, not carried forward across frames)
+      and new opcode gas costs (TXPARAM/FRAMEPARAM/SIGPARAM = 2, FRAMEDATALOAD = 3, FRAMEDATACOPY = 3 + word copy
+      + mem expansion, APPROVE = 0). New mechanism, but applies only to type 0x06 frames and does not modify legacy
+      tx gas accounting.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Frame tx carries EIP-4844 blob fields (`max_fee_per_blob_gas`, `blob_versioned_hashes`) but reuses
+      existing blob gas accounting unmodified.
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'New complex refund mechanism: post-execution refund of gas to a designated `payer` resolved at runtime,
+      plus full refund of skipped frames in failed atomic batches. Multiple refund paths; forces rework of existing
+      refund-flow test infrastructure.'
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: New tx type is self-contained; legacy/1559/blob/7702 tx flows unchanged. Only minor impact on pre-existing
+      opcode tests (new opcodes APPROVE/TXPARAM/FRAMEPARAM/SIGPARAM/FRAMEDATALOAD/FRAMEDATACOPY are globally available
+      in the EVM regardless of tx type, so their behavior must be defined when invoked from legacy txs).
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'No new block-environment fields, header inputs. Frame txs flow through standard EIP-2718 typed-tx
+      dispatch. The one interface-side change is the receipt output schema, which gains a new shape for type 0x06:
+      `[cumulative_gas_used, payer, [frame_receipt, ...]]` with a top-level `payer` field (resolved at runtime).'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Introduces P256 as a tx-authentication primitive for the first time via a scheme dispatcher (0x0
+      = SECP256K1, 0x1 = P256). Verification is defined as the P256VERIFY cryptographic operation.
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '4'
+    parsed_terms:
+    - 4
+    numeric_contribution: 4
+    rationale: 'Exceeds defined anchors: combinatorial explosion across mechanisms rather than a single elevated-case
+      mechanism. Frame modes × flags × atomic-batch state × signature schemes × APPROVE scope matrix × default-code
+      branches; further compounded by atomic batching, and cross-frame access.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Two new RLP validation mechanisms that affect syncing clients: (1) the type 0x06 tx-RLP envelope;
+      (2) the corresponding new receipt-RLP shape (important for receipts root).'
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new or modified Engine API endpoints, fields, or communication mechanisms.
+    blank_interpretation: null
+  - id: engine_api_encoding_changes
+    label: Engine API encoding changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: '`EXPIRY_VERIFIER` at address `0x8141`, installed by clients at fork activation.'
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '4'
+    parsed_terms:
+    - 4
+    numeric_contribution: 4
+    rationale: 'Exceeds defined anchors: six new opcodes in a single EIP (~2-3× typical precedent of 1-2). Frame
+      introspection. Signature metadata access. Testing will involve interaction with legacy txs types as well.'
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Behavior of some opcodes like `ORIGIN` changes under the new transaction type.
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: All encodings remain RLP — no format migration.
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: New tx type 0x06 (frame transaction).
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: New intrinsic gas formula (mixed per-frame + per-signature + sum-of-frame-limits + calldata over
+      two separate RLP streams), upfront multi-signature validation, frame-level constraints (mode/value/flags/count),
+      runtime payer-designation and sender-approval. Introduces a post execution validity check which is totally
+      new to EELS. Requires extensive test-infrastructure rework (filler intrinsic-gas computation, multi-scheme
+      signing helpers etc).
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Clients install `EXPIRY_VERIFIER` runtime code at address `0x8141` at fork activation — a state modification
+      at the activation block.
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Per-tx cost scales with frame count (≤64) and signature count, but is bounded and parameterizable.
+      New opcodes individually benchmarkable. Main new concern is mempool DoS surface from validation-prefix work
+      on rejected txs. This however is capped. Doesn't materially change existing performance baselines for legacy/1559/blob/7702
+      txs.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Interacts with multiple critical subsystems: tx authentication (new multi-sig + scheme based dispatch),
+      mempool relay policy, the EOA-vs-contract invariant (EIP-3607 relaxation lets contracts execute under SENDER
+      mode), and ORIGIN semantics. The EIP itself enumerates non-trivial attack vectors: timestamp-dependency attack,
+      deploy-frame front-running, state-read amplification via explicit sender, cross-frame privacy leakage, paymaster
+      griefing, and mempool DoS via invalid `tx.sender` probing. Requires extensive review and fuzzing across protocol
+      and mempool layers.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Strong interaction with FOCIL: FOCIL relies on attesters performing lightweight static validity
+      checks (nonce + balance) on inclusion-list transactions without executing them. Frame transactions break this
+      assumption.'
+    blank_interpretation: null
+  published_total: 38
+  published_tier_raw: 🔴
+  published_tier: high
+  recomputed_total: 38
+  recomputed_tier: high
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false
+- candidate_id: pr-122@0330c11ba99a
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 122
+    pull_request_title: Rename checklist "anchors" to "criteria"
+    pull_request_url: https://github.com/ethspecs/pm/pull/122
+    draft: true
+    head_sha: 0330c11ba99afc90e7c1afba6bcb0237bcf7d4d5
+    created_at: '2026-08-20T09:34:26Z'
+    updated_at: '2026-08-20T09:54:08Z'
+    path: complexity_assessments/EIPs/EIP-8141.md
+    git_blob_sha: 6adf4c678f863e63f4c9a5c48f8b3747dfb5d32a
+    content_sha256: e63653e554f24e55763d39d321f57224df4ccdac82e1a787972392aa0762a7f4
+    immutable_url: https://github.com/ethspecs/pm/blob/0330c11ba99afc90e7c1afba6bcb0237bcf7d4d5/complexity_assessments/EIPs/EIP-8141.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-122/EIP-8141.md
+  parse_state: complete
+  rubric_revision: 1
+  declared_revision: null
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: New per-frame gas isolation (`gas_limit` allocated per frame, not carried forward across frames)
+      and new opcode gas costs (TXPARAM/FRAMEPARAM/SIGPARAM = 2, FRAMEDATALOAD = 3, FRAMEDATACOPY = 3 + word copy
+      + mem expansion, APPROVE = 0). New mechanism, but applies only to type 0x06 frames and does not modify legacy
+      tx gas accounting.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Frame tx carries EIP-4844 blob fields (`max_fee_per_blob_gas`, `blob_versioned_hashes`) but reuses
+      existing blob gas accounting unmodified.
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'New complex refund mechanism: post-execution refund of gas to a designated `payer` resolved at runtime,
+      plus full refund of skipped frames in failed atomic batches. Multiple refund paths; forces rework of existing
+      refund-flow test infrastructure.'
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: New tx type is self-contained; legacy/1559/blob/7702 tx flows unchanged. Only minor impact on pre-existing
+      opcode tests (new opcodes APPROVE/TXPARAM/FRAMEPARAM/SIGPARAM/FRAMEDATALOAD/FRAMEDATACOPY are globally available
+      in the EVM regardless of tx type, so their behavior must be defined when invoked from legacy txs).
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'No new block-environment fields, header inputs. Frame txs flow through standard EIP-2718 typed-tx
+      dispatch. The one interface-side change is the receipt output schema, which gains a new shape for type 0x06:
+      `[cumulative_gas_used, payer, [frame_receipt, ...]]` with a top-level `payer` field (resolved at runtime).'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Introduces P256 as a tx-authentication primitive for the first time via a scheme dispatcher (0x0
+      = SECP256K1, 0x1 = P256). Verification is defined as the P256VERIFY cryptographic operation.
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '4'
+    parsed_terms:
+    - 4
+    numeric_contribution: 4
+    rationale: 'Exceeds defined levels: combinatorial explosion across mechanisms rather than a single elevated-case
+      mechanism. Frame modes × flags × atomic-batch state × signature schemes × APPROVE scope matrix × default-code
+      branches; further compounded by atomic batching, and cross-frame access.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Two new RLP validation mechanisms that affect syncing clients: (1) the type 0x06 tx-RLP envelope;
+      (2) the corresponding new receipt-RLP shape (important for receipts root).'
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new or modified Engine API endpoints, fields, or communication mechanisms.
+    blank_interpretation: null
+  - id: engine_api_encoding_changes
+    label: Engine API encoding changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: '`EXPIRY_VERIFIER` at address `0x8141`, installed by clients at fork activation.'
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '4'
+    parsed_terms:
+    - 4
+    numeric_contribution: 4
+    rationale: 'Exceeds defined levels: six new opcodes in a single EIP (~2-3× typical precedent of 1-2). Frame
+      introspection. Signature metadata access. Testing will involve interaction with legacy txs types as well.'
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Behavior of some opcodes like `ORIGIN` changes under the new transaction type.
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: All encodings remain RLP — no format migration.
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: New tx type 0x06 (frame transaction).
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: New intrinsic gas formula (mixed per-frame + per-signature + sum-of-frame-limits + calldata over
+      two separate RLP streams), upfront multi-signature validation, frame-level constraints (mode/value/flags/count),
+      runtime payer-designation and sender-approval. Introduces a post execution validity check which is totally
+      new to EELS. Requires extensive test-infrastructure rework (filler intrinsic-gas computation, multi-scheme
+      signing helpers etc).
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: None
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Clients install `EXPIRY_VERIFIER` runtime code at address `0x8141` at fork activation — a state modification
+      at the activation block.
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Per-tx cost scales with frame count (≤64) and signature count, but is bounded and parameterizable.
+      New opcodes individually benchmarkable. Main new concern is mempool DoS surface from validation-prefix work
+      on rejected txs. This however is capped. Doesn't materially change existing performance baselines for legacy/1559/blob/7702
+      txs.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Interacts with multiple critical subsystems: tx authentication (new multi-sig + scheme based dispatch),
+      mempool relay policy, the EOA-vs-contract invariant (EIP-3607 relaxation lets contracts execute under SENDER
+      mode), and ORIGIN semantics. The EIP itself enumerates non-trivial attack vectors: timestamp-dependency attack,
+      deploy-frame front-running, state-read amplification via explicit sender, cross-frame privacy leakage, paymaster
+      griefing, and mempool DoS via invalid `tx.sender` probing. Requires extensive review and fuzzing across protocol
+      and mempool layers.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Strong interaction with FOCIL: FOCIL relies on attesters performing lightweight static validity
+      checks (nonce + balance) on inclusion-list transactions without executing them. Frame transactions break this
+      assumption.'
+    blank_interpretation: null
+  published_total: 38
+  published_tier_raw: 🔴
+  published_tier: high
+  recomputed_total: 38
+  recomputed_tier: high
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: true

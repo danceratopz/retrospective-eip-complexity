@@ -24,6 +24,22 @@
   ],
   "page_templates": [
     {
+      "key": "canonical_eip_detail",
+      "purpose": "One detail page per EIP that pre-renders every fork occurrence and assessment source; fork, view, and rubric selection live in the URL query. Never collapses distinct fork cutoffs into one score."
+    },
+    {
+      "key": "canonical_redirect",
+      "purpose": "Legacy fork-scoped assessment route that redirects to the canonical EIP page with the fork preselected."
+    },
+    {
+      "key": "eip_comparison",
+      "purpose": "Shared client-rendered comparison of up to four EIPs under one assessment source, reconstructed entirely from the URL."
+    },
+    {
+      "key": "fork_detail",
+      "purpose": "Fork scope, maturity, timeline, EIP list, results, and caveats."
+    },
+    {
       "key": "landing",
       "purpose": "Research question, study scope, maturity, and methodology reading path."
     },
@@ -36,24 +52,12 @@
       "purpose": "Filterable fork or EIP index with a semantic static list."
     },
     {
-      "key": "fork_detail",
-      "purpose": "Fork scope, maturity, timeline, EIP list, results, and caveats."
-    },
-    {
-      "key": "global_eip_detail",
-      "purpose": "Cross-fork occurrence index without a collapsed cross-cutoff score."
-    },
-    {
-      "key": "fork_eip_assessment",
-      "purpose": "Authoritative reader-facing assessment for one fork cutoff and EIP revision."
+      "key": "prospective_status",
+      "purpose": "Reserved prospective namespace that currently renders only the approved empty state."
     },
     {
       "key": "result_explainer",
       "purpose": "Method, caveats, chart, semantic table, and approved data download."
-    },
-    {
-      "key": "prospective_status",
-      "purpose": "Reserved prospective namespace that currently renders only the approved empty state."
     }
   ],
   "release_state": "public",
@@ -102,55 +106,15 @@
   "route_families": [
     {
       "allowed_cross_links": [
-        "study",
-        "result_predicted_vs_observed",
-        "human_llm_comparison"
-      ],
-      "key": "landing",
-      "parameters": [],
-      "path_pattern": "/",
-      "required_labels": [
-        "historical_retrospective"
-      ],
-      "required_provenance": [
-        "source_commit",
-        "source_records",
-        "limitations"
-      ],
-      "source_record_type": "study_metadata",
-      "template": "landing"
-    },
-    {
-      "allowed_cross_links": [
-        "fork_index",
-        "result_predicted_vs_observed",
-        "human_llm_comparison"
-      ],
-      "key": "study",
-      "parameters": [],
-      "path_pattern": "/study/",
-      "required_labels": [
-        "historical_retrospective",
-        "canonical",
-        "derived"
-      ],
-      "required_provenance": [
-        "source_commit",
-        "source_records",
-        "limitations"
-      ],
-      "source_record_type": "study_metadata",
-      "template": "narrative_study"
-    },
-    {
-      "allowed_cross_links": [
-        "fork_detail",
+        "global_eip_detail",
         "global_eip_index",
-        "result_predicted_vs_observed"
+        "fork_detail",
+        "prospective_hegota",
+        "study"
       ],
-      "key": "fork_index",
+      "key": "eip_comparison",
       "parameters": [],
-      "path_pattern": "/forks/",
+      "path_pattern": "/eips/compare/",
       "required_labels": [
         "historical_retrospective"
       ],
@@ -158,13 +122,15 @@
         "source_commit",
         "source_records"
       ],
-      "source_record_type": "fork",
-      "template": "object_index"
+      "source_record_type": "global_eip",
+      "template": "eip_comparison"
     },
     {
       "allowed_cross_links": [
-        "fork_index",
+        "eip_comparison",
         "fork_eip_assessment",
+        "fork_index",
+        "global_eip_detail",
         "result_predicted_vs_observed",
         "study"
       ],
@@ -208,12 +174,57 @@
         "assessment_ref"
       ],
       "source_record_type": "fork_eip_assessment",
-      "template": "fork_eip_assessment"
+      "template": "canonical_redirect"
     },
     {
       "allowed_cross_links": [
+        "fork_detail",
+        "global_eip_index",
+        "result_predicted_vs_observed"
+      ],
+      "key": "fork_index",
+      "parameters": [],
+      "path_pattern": "/forks/",
+      "required_labels": [
+        "historical_retrospective"
+      ],
+      "required_provenance": [
+        "source_commit",
+        "source_records"
+      ],
+      "source_record_type": "fork",
+      "template": "object_index"
+    },
+    {
+      "allowed_cross_links": [
+        "eip_comparison",
+        "fork_detail",
+        "fork_eip_assessment",
+        "global_eip_index",
+        "prospective_hegota"
+      ],
+      "key": "global_eip_detail",
+      "parameters": [
+        "eip"
+      ],
+      "path_pattern": "/eips/{eip}/",
+      "required_labels": [
+        "historical_retrospective"
+      ],
+      "required_provenance": [
+        "source_commit",
+        "source_records",
+        "limitations"
+      ],
+      "source_record_type": "global_eip",
+      "template": "canonical_eip_detail"
+    },
+    {
+      "allowed_cross_links": [
+        "eip_comparison",
+        "fork_index",
         "global_eip_detail",
-        "fork_index"
+        "prospective_hegota"
       ],
       "key": "global_eip_index",
       "parameters": [],
@@ -230,15 +241,34 @@
     },
     {
       "allowed_cross_links": [
-        "global_eip_index",
-        "fork_eip_assessment",
-        "fork_detail"
+        "study",
+        "result_predicted_vs_observed"
       ],
-      "key": "global_eip_detail",
-      "parameters": [
-        "eip"
+      "key": "human_llm_comparison",
+      "parameters": [],
+      "path_pattern": "/human-vs-llm/",
+      "required_labels": [
+        "historical_retrospective",
+        "derived",
+        "potentially_in_sample"
       ],
-      "path_pattern": "/eips/{eip}/",
+      "required_provenance": [
+        "source_commit",
+        "source_records",
+        "limitations"
+      ],
+      "source_record_type": "result_summary",
+      "template": "result_explainer"
+    },
+    {
+      "allowed_cross_links": [
+        "study",
+        "result_predicted_vs_observed",
+        "human_llm_comparison"
+      ],
+      "key": "landing",
+      "parameters": [],
+      "path_pattern": "/",
       "required_labels": [
         "historical_retrospective"
       ],
@@ -247,8 +277,29 @@
         "source_records",
         "limitations"
       ],
-      "source_record_type": "global_eip",
-      "template": "global_eip_detail"
+      "source_record_type": "study_metadata",
+      "template": "landing"
+    },
+    {
+      "allowed_cross_links": [
+        "eip_comparison",
+        "fork_index",
+        "global_eip_detail",
+        "study"
+      ],
+      "key": "prospective_hegota",
+      "parameters": [],
+      "path_pattern": "/prospective/hegota/",
+      "required_labels": [
+        "prospective"
+      ],
+      "required_provenance": [
+        "source_commit",
+        "source_records",
+        "limitations"
+      ],
+      "source_record_type": "prospective_cohort_summary",
+      "template": "prospective_status"
     },
     {
       "allowed_cross_links": [
@@ -274,42 +325,25 @@
     },
     {
       "allowed_cross_links": [
-        "study",
-        "result_predicted_vs_observed"
+        "fork_index",
+        "result_predicted_vs_observed",
+        "human_llm_comparison"
       ],
-      "key": "human_llm_comparison",
+      "key": "study",
       "parameters": [],
-      "path_pattern": "/human-vs-llm/",
+      "path_pattern": "/study/",
       "required_labels": [
         "historical_retrospective",
-        "derived",
-        "potentially_in_sample"
+        "canonical",
+        "derived"
       ],
       "required_provenance": [
         "source_commit",
         "source_records",
         "limitations"
       ],
-      "source_record_type": "result_summary",
-      "template": "result_explainer"
-    },
-    {
-      "allowed_cross_links": [
-        "study"
-      ],
-      "key": "prospective_hegota",
-      "parameters": [],
-      "path_pattern": "/prospective/hegota/",
-      "required_labels": [
-        "prospective"
-      ],
-      "required_provenance": [
-        "source_commit",
-        "source_records",
-        "limitations"
-      ],
-      "source_record_type": "prospective_cohort_summary",
-      "template": "prospective_status"
+      "source_record_type": "study_metadata",
+      "template": "narrative_study"
     }
   ],
   "schema_version": "1.1.0"

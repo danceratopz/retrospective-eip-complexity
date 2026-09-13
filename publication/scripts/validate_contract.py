@@ -39,6 +39,7 @@ ROUTE_FAMILIES = {
     "fork_eip_assessment",
     "global_eip_index",
     "global_eip_detail",
+    "eip_comparison",
     "result_predicted_vs_observed",
     "human_llm_comparison",
     "prospective_hegota",
@@ -87,6 +88,7 @@ TASK_FAMILIES = {
     "05c-amsterdam-human-assessment-alignment",
     "07-observed-effort-metrics",
     "08-hegota-prospective-complexity-assessment",
+    "09-hegota-human-assessment-snapshot",
 }
 EXPECTED_JSON_FILES = {
     "contract/adapter-boundary.json",

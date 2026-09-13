@@ -1,0 +1,283 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8250
+  title: Keyed Nonces for Frame Transactions
+human_assessment_status: in_progress
+preferred_candidate: pr-111@b0886dc0692d
+candidates:
+- candidate_id: pr-111@b0886dc0692d
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 111
+    pull_request_title: Add EIP-8250 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/111
+    draft: true
+    head_sha: b0886dc0692db6e860765458d757d36ca5156a8e
+    created_at: '2026-08-18T08:32:19Z'
+    updated_at: '2026-08-18T08:32:19Z'
+    path: complexity_assessments/EIPs/EIP-8250.md
+    git_blob_sha: 3dd95224ea1f64cc1740bc98d182c26bf6fe60f6
+    content_sha256: 09679e4e48025ecc7ecd2e2e86691591cef47feacec24fea7b20f31507cc47c3
+    immutable_url: https://github.com/ethspecs/pm/blob/b0886dc0692db6e860765458d757d36ca5156a8e/complexity_assessments/EIPs/EIP-8250.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-111/EIP-8250.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: null
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Two additions to existing accounting: the nonce encodings priced as EIP-7623 calldata (intrinsic
+      and floor), and the per-first-use keyed-nonce surcharge charged from the approving frame''s gas. Measured
+      impact on existing tests is small (eleven executions, all boundary cases).'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Measured: 11 of 541 EIP-8141 suite executions flip — exact-gas boundaries and the introspection
+      probe — and all were updated fork-correctly rather than parked.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The transaction interface gains two fields (`nonceKeys`, `nonceSeq`) replacing the frame transaction's
+      `nonce` across the loader and serialization paths.
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The transaction model gains the keyed fields with legacy-aliasing defaults, the frame gas calculators
+      gain an extra-charged-bytes term, and a nonce-encoding fork accessor keeps sibling tests fork-correct — reusable
+      within the suite.
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Structural key-set rules (bounds, strict ordering, the zero-key aliasing exception), the sequence-exhaustion
+      bound, first-use versus reuse surcharges and their out-of-gas boundary, revert-immune consumption, and atomic-batch
+      unroll persistence — several mechanisms, and the approval-atomicity surface needs an elevated case count.
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: '`NONCE_MANAGER` is a stateful system contract: the protocol writes its keyed slots while ordinary
+      calls revert.'
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: '`TXPARAM` changes semantics (`0x01` becomes the keyed sequence) and gains four indices, but the
+      opcode ships in the same fork as its EIP-8141 substrate — no deployed behavior is modified.'
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The frame transaction payload changes (`nonce` becomes `nonce_keys`, `nonce_seq`), but the type never
+      exists on mainnet without this EIP — the tooling cost is scored under the interface and framework rows.
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Stateful validity becomes per-key sequence equality against protocol storage, plus structural key-set
+      rules at decode time; existing validity tests need limited updates.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: '`NONCE_MANAGER` is initialized at the activation boundary (code, nonce, storage rules for pre-existing
+      accounts) — a state modification at the fork block.'
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Replay protection is redesigned: disjoint-key independence, nullifier-style spent-once atomicity
+      through payment approval, and consumption that must survive reverts and batch rollback — application-facing
+      security guarantees that need targeted adversarial tests.'
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: The specification is unusually complete (ordered approval steps, journaling rules, overflow halts);
+      the prototype needed no interpretation disputes, and the open mempool-concurrency amendment is non-consensus.
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: A delta on EIP-8141 (full coordination with the frames suite, measured), the EIP-7623/7976 floor
+      family (nonce bytes priced as calldata), and EIP-7825 (gas-cap boundaries flip) — coordinated but mechanical.
+    blank_interpretation: null
+  published_total: 20
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 22
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - The published total 20 differs from the cell sum 22; the cells are the primary record, so the cell sum is used.
+  duplicates_merged_scores: false

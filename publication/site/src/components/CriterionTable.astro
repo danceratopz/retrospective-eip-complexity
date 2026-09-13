@@ -1,0 +1,97 @@
+---
+/**
+ * Full criterion breakdown: non-zero criteria first (highest first), zero-score criteria collapsed.
+ */
+import type { Assessment, CriterionDefinition } from '../lib/domain';
+import { partitionCriteria } from '../lib/domain';
+import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
+import { CONFIDENCE_LABELS, UNDER_SPECIFIED_SHORT, rubricLabel } from '../lib/labels';
+import { domId, plural } from '../lib/format';
+
+interface Props {
+  assessment: Assessment;
+  definitions: Map<string, CriterionDefinition>;
+  caption: string;
+}
+
+const { assessment, definitions, caption } = Astro.props as Props;
+const { nonZero, zero, unresolved } = partitionCriteria(assessment, DISPLAY_INDEX);
+const prefix = domId(assessment.id);
+const isHuman = assessment.source === 'human';
+const rowClass = (criterion) => [
+  'criterion-row',
+  criterion.under_specified && 'criterion-under',
+  criterion.score === null && 'criterion-unresolved',
+];
+---
+<div class="table-region" role="region" aria-label={caption} tabindex="0">
+  <table class="criterion-table">
+    <caption>{caption}</caption>
+    <thead>
+      <tr>
+        <th scope="col">Criterion</th>
+        <th scope="col" class="number">Score</th>
+        <th scope="col">Why this score</th>
+        <th scope="col">{isHuman ? 'Notes' : 'Evidence / uncertainty'}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[...unresolved, ...nonZero].map((criterion) => (
+        <tr id={`${prefix}-${criterion.id}`} class:list={rowClass(criterion)}>
+          <th scope="row">
+            <span class="swatch" style={`--fill:var(--criterion-${criterion.id});--ink:var(--criterion-ink-${criterion.id})`} aria-hidden="true">{criterionAbbreviation(criterion.id)}</span>
+            <span class="criterion-name">{definitions.get(criterion.id).label}</span>
+            {criterion.under_specified && <span class="flag flag-under" title="Listed among the criteria affected by under-specification at the assessment cutoff">{UNDER_SPECIFIED_SHORT}</span>}
+            {criterion.score !== null && criterion.score > 3 && <span class="flag flag-exceptional" title="Above the 0–3 anchor range">Exceptional</span>}
+          </th>
+          <td class="number score-cell">
+            {criterion.score === null ? <span class="flag flag-unresolved" title={`Checklist cell reads “${criterion.raw_score_cell ?? ''}”`}>Unresolved</span> : criterion.score}
+          </td>
+          <td>{criterion.rationale ?? <span class="muted">No rationale recorded.</span>}{criterion.exceptional_score_justification && <p class="muted"><strong>Exceptional score:</strong> {criterion.exceptional_score_justification}</p>}</td>
+          <td class="evidence-cell">
+            {criterion.evidence.length > 0 && (
+              <ul class="evidence">
+                {criterion.evidence.map((item) => <li><span class="evidence-locator">{item.source} · {item.locator}</span> {item.summary}</li>)}
+              </ul>
+            )}
+            {criterion.confidence && <div class="muted"><strong>Confidence:</strong> {CONFIDENCE_LABELS[criterion.confidence]}</div>}
+            {criterion.uncertainty_note && criterion.uncertainty_note !== 'None identified.' && <div class="muted"><strong>Uncertainty:</strong> {criterion.uncertainty_note}</div>}
+            {criterion.interacting_eips && criterion.interacting_eips.length > 0 && <div class="muted"><strong>Interacting EIPs:</strong> {criterion.interacting_eips.map((item) => `EIP-${item}`).join(', ')}</div>}
+            {criterion.blank_interpretation && <div class="muted">Blank cell read as zero because the published total proves it.</div>}
+            {isHuman && !criterion.evidence.length && !criterion.blank_interpretation && <span class="muted">—</span>}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+{zero.length > 0 && (
+  <details class="zero-criteria">
+    <summary>Show {plural(zero.length, 'zero-score criterion', 'zero-score criteria')}</summary>
+    <div class="table-region" role="region" aria-label={`${caption}: zero-score criteria`} tabindex="0">
+      <table class="criterion-table criterion-table-zero">
+        <caption>Zero-score criteria ({rubricLabel(assessment.rubric_revision)})</caption>
+        <thead><tr><th scope="col">Criterion</th><th scope="col" class="number">Score</th><th scope="col">Why this score</th><th scope="col">{isHuman ? 'Notes' : 'Evidence / uncertainty'}</th></tr></thead>
+        <tbody>
+          {zero.map((criterion) => (
+            <tr id={`${prefix}-${criterion.id}`} class:list={rowClass(criterion)}>
+              <th scope="row">
+                <span class="swatch" style={`--fill:var(--criterion-${criterion.id});--ink:var(--criterion-ink-${criterion.id})`} aria-hidden="true">{criterionAbbreviation(criterion.id)}</span>
+                <span class="criterion-name">{definitions.get(criterion.id).label}</span>
+                {criterion.under_specified && <span class="flag flag-under">{UNDER_SPECIFIED_SHORT}</span>}
+              </th>
+              <td class="number">0</td>
+              <td>{criterion.rationale ?? <span class="muted">No rationale recorded.</span>}</td>
+              <td class="evidence-cell">
+                {criterion.evidence.length > 0 && <ul class="evidence">{criterion.evidence.map((item) => <li><span class="evidence-locator">{item.source} · {item.locator}</span> {item.summary}</li>)}</ul>}
+                {criterion.uncertainty_note && criterion.uncertainty_note !== 'None identified.' && <div class="muted"><strong>Uncertainty:</strong> {criterion.uncertainty_note}</div>}
+                {criterion.blank_interpretation && <div class="muted">Blank cell read as zero because the published total proves it.</div>}
+                {isHuman && !criterion.blank_interpretation && <span class="muted">—</span>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </details>
+)}

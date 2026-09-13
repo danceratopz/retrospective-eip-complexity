@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CriterionLegend from '../../components/CriterionLegend.astro';
+import EvaluationTable from '../../components/EvaluationTable.astro';
+import { loadPublication, basePath } from '../../lib/data.js';
+import type { Publication } from '../../lib/domain';
+import { allOccurrences } from '../../lib/domain';
+
+const data = loadPublication() as Publication;
+const occurrences = allOccurrences(data);
+const assessments = Object.values(data.assessments).filter((item) => item.role !== 'historical_rubric_rerun');
+const humanRows = assessments.filter((item) => item.source === 'human').length;
+---
+<Layout title="EIPs" description="Every EIP in the study with its fork context, LLM complexity score and band, criterion composition, and Human assessment status. Filter, sort, and select EIPs to compare.">
+  <p class="eyebrow">Cross-fork index</p>
+  <h1>EIPs</h1>
+  <p class="lede">{data.eips.length} proposals across {occurrences.length} fork–EIP relationships and {assessments.length} assessments. Every assessment is one row, whether the evaluator was the LLM or a STEEL reviewer ({humanRows} Human checklists). Filter by evaluator, open an EIP for its complete assessment, or select rows from any evaluator to compare them.</p>
+  <EvaluationTable data={data} filters={true} />
+  <CriterionLegend criteria={data.criteria} compact={true} />
+  <div class="actions"><a class="button" href={basePath('eips/compare/')}>Open the comparison view</a><a href={basePath('generated/downloads/complexity-assessments.csv')}>Download all assessments (CSV)</a><a href={basePath('generated/downloads/criterion-scores.csv')}>Download criterion scores (CSV)</a></div>
+</Layout>

@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css';
 import SortableTables from '../components/SortableTables.astro';
+import Tooltip from '../components/Tooltip.astro';
 import { basePath } from '../lib/data.js';
+import { criterionCss } from '../lib/criteria';
 
 const { title, description = 'A reproducible evaluation of EIP complexity and observed development history.', redirect } = Astro.props;
 const nav = [
@@ -21,6 +23,7 @@ const nav = [
     {redirect && <meta name="robots" content="noindex" />}
     {redirect && <meta http-equiv="refresh" content={`0; url=${redirect}`} />}
     <title>{title} · Retrospective LLM-Based Complexity Evaluations</title>
+    <style set:html={criterionCss()}></style>
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
@@ -41,7 +44,8 @@ const nav = [
       </div>
     </header>
     <main id="content"><slot /></main>
-    <footer>Local review preview · Static, reproducible, and served without analytics or external assets.</footer>
+    <footer>Static and reproducible · Built from frozen research records, served without analytics or external assets · <a href="https://github.com/danceratopz/retrospective-eip-complexity">Source repository</a></footer>
     <SortableTables />
+    <Tooltip />
   </body>
 </html>

@@ -1,0 +1,284 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 7819
+  title: SETDELEGATE instruction
+human_assessment_status: in_progress
+preferred_candidate: pr-128@664f62e0e0ac
+candidates:
+- candidate_id: pr-128@664f62e0e0ac
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 128
+    pull_request_title: Add EIP-7819 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/128
+    draft: true
+    head_sha: 664f62e0e0ac2db5426796bd76ffca420e491bf0
+    created_at: '2026-08-24T13:25:20Z'
+    updated_at: '2026-08-24T13:25:20Z'
+    path: complexity_assessments/EIPs/EIP-7819.md
+    git_blob_sha: a34cb992641aba1c4db15cd39466d50ad056d359
+    content_sha256: 7202736865a996ab705d8ecaecaed8b635aeba4422add03ea74bb18e48e5646b
+    immutable_url: https://github.com/ethspecs/pm/blob/664f62e0e0ac2db5426796bd76ffca420e491bf0/complexity_assessments/EIPs/EIP-7819.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-128/EIP-7819.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: '`SETDELEGATE` introduces a dynamic schedule composed of cold/warm access and an account-write charge.
+      It does not change another opcode''s schedule, but exact and repeat-write cases need dedicated accounting
+      tests.'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: A new state-accessing opcode must check state-independent access gas before reading the location,
+      then calculate and charge state-dependent costs. BAL output changes at those boundaries.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No blob gas behavior changes.
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The prototype adds a new `NEW_ACCOUNT`/`AUTH_BASE` state-gas charging site and a journaled designation
+      refill on clear or frame rollback. It reuses the reservoir and spill mechanism rather than changing it.
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: The current EIP text specifies a simple existence-based global refund. The Amsterdam prototype replaces
+      it with EIP-8037 state-gas accounting, so the normative disposition of that refund still needs agreement.
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Three fixture executions of one existing constant-gas opcode-sweep function flipped because `SETDELEGATE`
+      is dynamic; the sweep now excludes it. No other existing test was reworked or parked.
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Tests unrelated to EIP-7819 gain no new assertion.
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The transition-tool request and result interfaces are unchanged.
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: The framework gains one opcode definition with dynamic metadata and a reusable address-derivation
+      helper; existing fillers and expectation types suffice.
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Address derivation reuses existing Keccak-256 and introduces no new cryptographic primitive.
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Testing spans target truncation/padding, salt/address order, zero-target clearing, nonce zero/nonzero,
+      exact and malformed collision code, cold/warm access, fresh/existing leaves and designations, exact/one-short
+      gas, static mode, call contexts, and success/revert interactions. Several axes combine in elevated gas/state
+      matrices.
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Block encoding and RLP validation are unchanged.
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No Engine API field or endpoint changes.
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No system contract is added.
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No existing system contract is modified directly or indirectly.
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'One complex opcode is added: it has dynamic access, write, and state-gas costs and mutates another
+      account while returning its derived address.'
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No pre-existing opcode's result changes.
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No precompile is added.
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No precompile logic or gas schedule changes.
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No transaction, block, or interface encoding changes.
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No transaction type is introduced.
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Transaction validity and intrinsic gas rules are unchanged.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No block or header field is added.
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Activation only makes the opcode valid; it does not mutate state at the fork block.
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: The opcode adds account reads and code/nonce writes, but it can be benchmarked in isolation and does
+      not alter existing benchmark behavior.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The opcode creates and upgrades immediately effective EIP-7702 designations and interacts with collision,
+      nonce, delegation-resolution, and `SELFDESTRUCT` invariants. These interactions are limited but warrant targeted
+      review and fuzzing.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The current EIP leaves localized consensus questions around post-EIP-8037 gas, operand order, prefix-only
+      versus exact designation collisions, and the state point used for trie existence. The prototype records assumptions,
+      but clients need agreement before production vectors are baselined.
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Coordinated cases cover EIP-7702 designation semantics, EIP-2929 warming, EIP-7523 nonce persistence,
+      EIP-3541 collision reachability, EIP-6780 `SELFDESTRUCT`, EIP-7928 BAL observability, EIP-8037 state gas,
+      and EIP-8038 access/write pricing. The base interaction level is 2; eight interacting EIPs add 1 for the five
+      beyond the first three.
+    blank_interpretation: null
+  published_total: 22
+  published_tier_raw: 🟡 **Medium Complexity**
+  published_tier: medium
+  recomputed_total: 22
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false

@@ -1,0 +1,124 @@
+---
+/**
+ * Ranked stacked complexity bars: one bar per assessment, sorted by total, on one shared scale.
+ * An evaluator toggle switches between LLM, Human, and paired views; the choice lives in the URL.
+ */
+import type { Assessment, Occurrence, Publication } from '../lib/domain';
+import { primaryAssessment, humanAssessment } from '../lib/domain';
+import { SNAPSHOT_STATUS_LABELS, EVALUATOR_LABELS, rubricLabel } from '../lib/labels';
+import { eipRoute } from '../lib/routes';
+import { truncate } from '../lib/format';
+import EvaluatorBadge from './EvaluatorBadge.astro';
+import StackedBar from './StackedBar.astro';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  data: Publication;
+  occurrences: Occurrence[];
+  id?: string;
+  title: string;
+}
+
+const { data, occurrences, id = 'ranked', title } = Astro.props as Props;
+const definitions = new Map(data.criteria.map((item) => [item.id, item]));
+const entries = occurrences.map((occurrence) => ({ occurrence, llm: primaryAssessment(data, occurrence), human: humanAssessment(data, occurrence) }));
+const scoredHuman = entries.filter((entry) => entry.human?.scored).length;
+const segments = (assessment: Assessment) => assessment.criteria.filter((criterion) => (criterion.score ?? 0) > 0).map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 140) }));
+const scale = Math.max(...entries.flatMap((entry) => [entry.llm?.score ?? 0, entry.human?.scored ? entry.human.score : 0]));
+const byLlm = entries.filter((entry) => entry.llm).sort((a, b) => b.llm.score - a.llm.score || a.occurrence.eip - b.occurrence.eip);
+const byHuman = entries.filter((entry) => entry.human?.scored).sort((a, b) => b.human.score - a.human.score || a.occurrence.eip - b.occurrence.eip);
+const views = [
+  { key: 'llm', label: `${EVALUATOR_LABELS.llm} (${byLlm.length})`, rows: byLlm, paired: false },
+  { key: 'human', label: `${EVALUATOR_LABELS.human} (${byHuman.length})`, rows: byHuman, paired: false },
+  { key: 'both', label: `Both, ranked by ${EVALUATOR_LABELS.llm}`, rows: byLlm, paired: true },
+];
+---
+<div class="ranked" id={id} data-ranked>
+  <div class="table-tools ranked-tools">
+    <fieldset class="evaluator-filter ranked-modes">
+      <legend>Evaluator</legend>
+      {views.map((view) => <label><input type="radio" name={`${id}-view`} value={view.key} checked={view.key === 'llm'} data-ranked-mode disabled={view.key !== 'llm' && scoredHuman === 0} /> {view.label}</label>)}
+    </fieldset>
+    <label>Search <input type="search" name={`${id}-q`} data-ranked-search placeholder="EIP number or title" /></label>
+    <span class="muted" data-ranked-count aria-live="polite"></span>
+  </div>
+  {views.map((view) => (
+    <ol class="ranked-list" data-ranked-view={view.key} hidden={view.key !== 'llm'} aria-label={`${title}: ${view.label}`}>
+      {view.rows.map(({ occurrence, llm, human }) => {
+        const lead = view.key === 'human' ? human : llm;
+        return (
+          <li class="ranked-row" data-search={`eip-${occurrence.eip} ${occurrence.eip} ${occurrence.title}`.toLowerCase()}>
+            <div class="ranked-label">
+              <a href={eipRoute(occurrence.eip, { fork: occurrence.fork, view: view.key === 'human' ? 'human' : 'llm' })}><strong>EIP-{occurrence.eip}</strong> <span class="ranked-title">{truncate(occurrence.title, 48)}</span></a>
+              <span class="ranked-meta">
+                {occurrence.snapshot_status && <span class="pill pill-small" title={SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status]}>{occurrence.snapshot_status}</span>}
+                {!view.paired && <span class="muted">{rubricLabel(lead.rubric_revision)}</span>}
+              </span>
+            </div>
+            <div class="ranked-bars">
+              {view.paired ? (
+                <>
+                  <div class="ranked-pair"><EvaluatorBadge source="llm" revision={llm.rubric_revision} size="small" /><StackedBar segments={segments(llm)} definitions={definitions} total={llm.score} max={scale} size="regular" showTotal={true} label={`EIP-${occurrence.eip} LLM complexity`} /></div>
+                  <div class="ranked-pair">
+                    <EvaluatorBadge source="human" revision={human?.rubric_revision ?? null} size="small" />
+                    {human?.scored
+                      ? <StackedBar segments={segments(human)} definitions={definitions} total={human.score} max={scale} size="regular" showTotal={true} label={`EIP-${occurrence.eip} Human complexity`} />
+                      : <StatusBadge status={occurrence.human.status} mode={occurrence.mode} size="small" href={occurrence.human.source_record?.pull_request?.url ?? occurrence.human.source_record?.immutable_url ?? null} />}
+                  </div>
+                </>
+              ) : (
+                <StackedBar segments={segments(lead)} definitions={definitions} total={lead.score} max={scale} size="large" showTotal={true} label={`EIP-${occurrence.eip} ${EVALUATOR_LABELS[lead.source]} complexity`} />
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  ))}
+</div>
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-ranked]')) {
+    const radios = Array.from(root.querySelectorAll<HTMLInputElement>('[data-ranked-mode]'));
+    const views = Array.from(root.querySelectorAll<HTMLElement>('[data-ranked-view]'));
+    const search = root.querySelector<HTMLInputElement>('[data-ranked-search]')!;
+    const count = root.querySelector<HTMLElement>('[data-ranked-count]')!;
+    const viewKey = `${root.id}-view`;
+    const searchKey = `${root.id}-q`;
+    const params = new URLSearchParams(window.location.search);
+    const sync = () => {
+      const next = new URLSearchParams(window.location.search);
+      const mode = radios.find((radio) => radio.checked)?.value ?? 'llm';
+      if (mode === 'llm') next.delete(viewKey);
+      else next.set(viewKey, mode);
+      if (search.value.trim()) next.set(searchKey, search.value.trim());
+      else next.delete(searchKey);
+      const encoded = next.toString();
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}${encoded ? `?${encoded}` : ''}${window.location.hash}`);
+    };
+    const apply = () => {
+      const mode = radios.find((radio) => radio.checked)?.value ?? 'llm';
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      let total = 0;
+      for (const view of views) {
+        const active = view.dataset.rankedView === mode;
+        view.hidden = !active;
+        if (!active) continue;
+        for (const row of Array.from(view.children) as HTMLElement[]) {
+          total += 1;
+          const matches = !query || (row.dataset.search ?? '').includes(query);
+          row.hidden = !matches;
+          if (matches) visible += 1;
+        }
+      }
+      count.textContent = query ? `${visible} of ${total} shown` : `${total} shown`;
+    };
+    const initialMode = params.get(viewKey);
+    const allowed = radios.filter((radio) => !radio.disabled).map((radio) => radio.value);
+    for (const radio of radios) radio.checked = radio.value === (initialMode && allowed.includes(initialMode) ? initialMode : 'llm');
+    search.value = params.get(searchKey) ?? '';
+    apply();
+    for (const radio of radios) radio.addEventListener('change', () => { apply(); sync(); });
+    search.addEventListener('input', () => { apply(); sync(); });
+  }
+</script>

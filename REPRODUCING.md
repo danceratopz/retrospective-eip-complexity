@@ -199,6 +199,22 @@ uv run --project research/tasks/05-retrospective-complexity-assignment --locked 
   --summarize
 ```
 
+## Task 09: Hegotá human-assessment snapshot
+
+Read `research/tasks/09-hegota-human-assessment-snapshot/TASK.md`. The task records where each of the 46 Hegotá candidates' STEEL human checklists lives in `ethspecs/pm` (merged on the default branch, in an open pull request, in a draft pull request, incomplete, or not yet available) and parses the published cells. It never scores anything and Task 08 never reads it.
+
+Capturing a new snapshot needs network access and an authenticated `gh` CLI; parsing is offline and deterministic:
+
+```bash
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/09-hegota-human-assessment-snapshot/scripts/snapshot_pm_assessments.py capture
+uv run --project research/tasks/05-retrospective-complexity-assignment --locked \
+  python research/tasks/09-hegota-human-assessment-snapshot/scripts/snapshot_pm_assessments.py parse \
+  --snapshot-id hegota-human-2026-09-13-3d8c012
+```
+
+Re-running `parse` on the archived snapshot must reproduce `outputs/` byte-for-byte. A new capture creates a new snapshot identifier and must be reviewed before the publication adapter is pointed at it.
+
 The original PFI aggregate remains 776 across 37 scored EIPs. The extension adds 80 across two scored EIPs, for a combined visibility view of 856 across 39 scored EIPs. The combined table, including all 46 entries and their snapshot statuses, is `research/tasks/08-hegota-prospective-complexity-assessment/outputs/summary-all-candidates.md`.
 
 ## Deterministic rerender check

@@ -1,0 +1,281 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8115
+  title: Batch priority fees at end of block
+human_assessment_status: in_progress
+preferred_candidate: pr-126@39f6dc729d08
+candidates:
+- candidate_id: pr-126@39f6dc729d08
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 126
+    pull_request_title: Add EIP-8115 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/126
+    draft: true
+    head_sha: 39f6dc729d089e0c81279774cbf8f3e0c6731a4a
+    created_at: '2026-08-24T09:58:13Z'
+    updated_at: '2026-08-24T09:58:13Z'
+    path: complexity_assessments/EIPs/EIP-8115.md
+    git_blob_sha: 2613a7f40549fff5318d15b4c82672f41d1ad3e7
+    content_sha256: 5f31c7f4ff291f696709ab15cf636b28e5b2f94c5a7cad41936e5be874eca969
+    immutable_url: https://github.com/ethspecs/pm/blob/39f6dc729d089e0c81279774cbf8f3e0c6731a4a/complexity_assessments/EIPs/EIP-8115.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-126/EIP-8115.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: 'No charge, refund, or schedule changes: `gas_used`, receipts, and sender debits are byte-identical;
+      only the credit''s timing moves. Measured: zero gas-value flips in a full fill.'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No opcode's internal access or charge order moves; the credit relocates at the block level, outside
+      opcode execution.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The fee credit is not state-gas charged; rates, reservoir, and spill untouched.
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Measured blast radius: 14 executions / 6 functions out of 65,709 — EIP-7928 fee-recipient balance-change
+      pins (index and withdrawal-merge) plus one mid-block coinbase read; all updated mechanically behind one fork
+      predicate, none parked.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: No new assertion lands on unrelated tests; the credit folds into BAL entries those tests already
+      assert.
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: No wire fields, but both t8n modes need the end-of-block settlement step, and state-test mode needs
+      a shared convention (credit after the single transaction) for fixtures to match across fillers.
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: One identity-default fork predicate (`batched_priority_fees`) keeps fee-recipient expectations fork-correct;
+      minor extension.
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'One edge-prone surface: zero-fee and empty-block touch semantics (EIP-161 destruction of an empty
+      fee recipient, BAL accessed-listing) plus fee-recipient-as-sender solvency boundaries; single mechanism, moderate
+      case count.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: State-root/BAL-visible only; no payload shape change.
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: '`BALANCE`/`SELFBALANCE` semantics unchanged; only the state they observe mid-block differs.'
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: The balance-at-execution rule is textually unchanged, but block validity flips for a fee recipient
+      spending fees accrued earlier in the same block; no pre-existing validity tests flipped in the full fill.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Removes per-transaction coinbase writes — the EIP's stated purpose; nothing new to benchmark.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Self-contained fee-flow change; alters builder/MEV liquidity assumptions (fees spendable only in
+      the next block) — application-layer and testable in isolation.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Two consensus-critical details are unspecified and need client agreement before fixtures can be
+      baselined, both localized: the credit''s EIP-7928 BAL representation (index; merge with a same-account withdrawal)
+      and zero-fee touch semantics (EIP-161 destruction of an empty recipient; BAL accessed-listing).'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Modifies EIP-7928 BAL content (coordinated re-derivation of fee-recipient vectors) and interacts
+      with EIP-4895 (credit ordering and merge), EIP-7708 (fee flows stay log-silent — a stated motivation), EIP-8037
+      (fee settlement path), and EIP-7799 (refers to 8115 parts). Limited in scope and not complex; five interacting
+      EIPs, no +1 increment.
+    blank_interpretation: null
+  published_total: 10
+  published_tier_raw: 🟢
+  published_tier: low
+  recomputed_total: 10
+  recomputed_tier: low
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false

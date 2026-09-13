@@ -1,0 +1,52 @@
+---
+/**
+ * Predicted complexity per fork split by scope timing: points from EIPs included by the evaluation
+ * cutoff and points from EIPs added afterward, as one stacked bar per fork on a shared scale.
+ */
+import type { ForkSummary } from '../lib/domain';
+import { SCOPE_TIMING_LABELS } from '../lib/labels';
+import { forkRoute } from '../lib/routes';
+import { plural } from '../lib/format';
+import StackedBar from './StackedBar.astro';
+
+interface Props {
+  forks: ForkSummary[];
+  id?: string;
+}
+
+const { forks, id = 'scope-timing' } = Astro.props as Props;
+export const SCOPE_COLORS = { included_at_cutoff: '#3457d5', added_after_cutoff: '#e67e22' } as const;
+const labels = new Map(Object.entries(SCOPE_TIMING_LABELS));
+const maxTotal = Math.max(...forks.map((fork) => fork.final_scope_score_sum));
+const segmentsFor = (fork: ForkSummary) => [
+  { id: 'included_at_cutoff', score: fork.at_cutoff_score_sum, abbreviation: String(fork.at_cutoff_score_sum), color: SCOPE_COLORS.included_at_cutoff, detail: `${plural(fork.at_cutoff_count, 'EIP')} present by the evaluation cutoff; this subtotal is the fork's primary prediction.` },
+  { id: 'added_after_cutoff', score: fork.late_addition_score_sum, abbreviation: String(fork.late_addition_score_sum), color: SCOPE_COLORS.added_after_cutoff, detail: `${plural(fork.late_addition_count, 'EIP')} added to the fork after the cutoff; reported separately because they could not inform the initial prediction.` },
+];
+---
+<div class="scope-timing" id={id}>
+  <ul class="scope-legend" aria-label="Scope timing">
+    <li><span class="swatch swatch-plain" style={`--fill:${SCOPE_COLORS.included_at_cutoff}`} aria-hidden="true"></span> {SCOPE_TIMING_LABELS.included_at_cutoff} <span class="muted">(primary prediction)</span></li>
+    <li><span class="swatch swatch-plain" style={`--fill:${SCOPE_COLORS.added_after_cutoff}`} aria-hidden="true"></span> {SCOPE_TIMING_LABELS.added_after_cutoff}</li>
+  </ul>
+  <div class="composition-bars">
+    {forks.map((fork) => (
+      <div class="composition-row">
+        <div class="composition-label">
+          <a href={forkRoute(fork.fork)}>{fork.short_name}</a>
+          <span class="muted">{fork.at_cutoff_count} by cutoff · {fork.late_addition_count} added later</span>
+        </div>
+        <StackedBar segments={segmentsFor(fork)} definitions={labels as any} total={fork.final_scope_score_sum} max={maxTotal} size="large" showTotal={true} label={`${fork.name} predicted complexity by scope timing`} />
+      </div>
+    ))}
+  </div>
+  <details class="composition-table">
+    <summary>Values: score at cutoff, added-later score, and final-scope score per fork</summary>
+    <div class="table-region" role="region" aria-label="Predicted Execution Layer complexity at and after each fork’s evaluation cutoff" tabindex="0">
+      <table>
+        <caption>Predicted Execution Layer complexity at and after each fork’s evaluation cutoff</caption>
+        <thead><tr><th scope="col">Fork</th><th scope="col" class="number">EIPs by cutoff</th><th scope="col" class="number">Score at cutoff</th><th scope="col" class="number">EIPs added later</th><th scope="col" class="number">Added-later score</th><th scope="col" class="number">Final-scope score</th></tr></thead>
+        <tbody>{forks.map((fork) => <tr data-scope-fork={fork.fork}><th scope="row"><a href={forkRoute(fork.fork)}>{fork.name}</a></th><td class="number">{fork.at_cutoff_count}</td><td class="number">{fork.at_cutoff_score_sum}</td><td class="number">{fork.late_addition_count}</td><td class="number">{fork.late_addition_score_sum}</td><td class="number">{fork.final_scope_score_sum}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+</div>

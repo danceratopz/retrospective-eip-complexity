@@ -2,9 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const dataPath = path.resolve(process.cwd(), 'public/generated/publication.json');
+let cached = null;
 
 export function loadPublication() {
-  return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  if (!cached) cached = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  return cached;
 }
 
 export function basePath(value = '') {

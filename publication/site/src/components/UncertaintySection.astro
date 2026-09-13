@@ -1,0 +1,61 @@
+---
+/**
+ * Connects the under-specification indicator to its explanation, affected criteria, and plausible range.
+ */
+import type { Assessment, CriterionDefinition } from '../lib/domain';
+import { criterionAbbreviation, sortByDisplayOrder } from '../lib/criteria';
+import { TIER_LABELS, UNDER_SPECIFIED_DEFINITION, UNDER_SPECIFIED_LABEL } from '../lib/labels';
+import { domId } from '../lib/format';
+
+interface Props {
+  assessment: Assessment;
+  definitions: Map<string, CriterionDefinition>;
+}
+
+const { assessment, definitions } = Astro.props as Props;
+const under = assessment.under_specification;
+const prefix = domId(assessment.id);
+const affected = under ? sortByDisplayOrder(under.affected_criteria.map((id) => ({ id }))) : [];
+const scoreById = new Map(assessment.criteria.map((item) => [item.id, item.score]));
+---
+{under && (
+  <section class:list={['uncertainty', under.present ? 'uncertainty-present' : 'uncertainty-absent']} id={`uncertainty-${prefix}`} aria-labelledby={`uncertainty-${prefix}-heading`}>
+    <h3 id={`uncertainty-${prefix}-heading`}>{UNDER_SPECIFIED_LABEL}: {under.present ? 'Yes' : 'No'}</h3>
+    <p class="muted">{UNDER_SPECIFIED_DEFINITION}</p>
+    {under.present ? (
+      <>
+        {under.summary && <p><strong>Why:</strong> {under.summary}</p>}
+        <div class="uncertainty-grid">
+          {under.plausible_total_range && (
+            <div>
+              <h4>Plausible total</h4>
+              <p><span class="stat">{under.plausible_total_range.minimum}–{under.plausible_total_range.maximum}</span><br /><span class="muted">recorded score {assessment.score}{under.plausible_tiers.length ? ` · plausible tiers ${under.plausible_tiers.map((tier) => TIER_LABELS[tier]).join(', ')}` : ''}</span></p>
+            </div>
+          )}
+          <div>
+            <h4>Affected criteria ({affected.length})</h4>
+            <ul class="affected">
+              {affected.map(({ id }) => (
+                <li><a href={`#${prefix}-${id}`}><span class="swatch" style={`--fill:var(--criterion-${id});--ink:var(--criterion-ink-${id})`} aria-hidden="true">{criterionAbbreviation(id)}</span> {definitions.get(id).label} <span class="muted">({scoreById.get(id)})</span></a></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        {under.unresolved_questions.length > 0 && (
+          <details>
+            <summary>Unresolved questions at the cutoff ({under.unresolved_questions.length})</summary>
+            <ul>{under.unresolved_questions.map((question) => <li>{question}</li>)}</ul>
+          </details>
+        )}
+      </>
+    ) : (
+      <p>The assessor found no material behavior left unresolved by the EIP text at the cutoff.</p>
+    )}
+    {assessment.notable_ambiguities.length > 0 && (
+      <details>
+        <summary>Notable ambiguities noted by the assessor ({assessment.notable_ambiguities.length})</summary>
+        <ul>{assessment.notable_ambiguities.map((item) => <li>{item}</li>)}</ul>
+      </details>
+    )}
+  </section>
+)}

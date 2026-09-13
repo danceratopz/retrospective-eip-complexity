@@ -1,0 +1,132 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CriterionLegend from '../../components/CriterionLegend.astro';
+import { loadPublication, basePath } from '../../lib/data.js';
+import type { Publication } from '../../lib/domain';
+import { EVALUATOR_LABELS } from '../../lib/labels';
+import { COMPARE_LIMIT } from '../../lib/routes';
+
+const data = loadPublication() as Publication;
+const forkShort = new Map(data.forks.map((fork) => [fork.fork, fork.short_name]));
+const options = Object.values(data.assessments)
+  .filter((assessment) => assessment.scored)
+  .sort((a, b) => a.eip - b.eip || a.fork.localeCompare(b.fork) || (a.source === 'llm' ? -1 : 1) - (b.source === 'llm' ? -1 : 1) || b.rubric_revision - a.rubric_revision)
+  .map((assessment) => ({ id: assessment.id, label: `EIP-${assessment.eip} · ${EVALUATOR_LABELS[assessment.source]} r${assessment.rubric_revision} · ${forkShort.get(assessment.fork)} — ${assessment.title}` }));
+---
+<Layout title="Compare assessments" description="Compare the Execution Layer complexity profiles of up to six assessments side by side and criterion by criterion, mixing Human and LLM evaluators and EIPs as needed.">
+  <p class="eyebrow">Shared comparison</p>
+  <h1>Compare assessments</h1>
+  <p class="lede">Select up to {COMPARE_LIMIT} assessments, from either evaluator and any EIP, to compare their complexity profiles side by side and criterion by criterion. The selection lives in this page's URL, so the view can be shared and reproduced.</p>
+  <noscript><div class="caveat"><strong>This view needs JavaScript.</strong> It reconstructs the comparison from the URL and the <a href={basePath('generated/compare-index.json')}>compare index</a>. Every EIP page still shows the complete assessments without scripts.</div></noscript>
+
+  <div class="compare-page" data-compare-root data-index-url={basePath('generated/compare-index.json')}>
+    <form class="compare-controls" data-compare-form aria-label="Comparison controls">
+      <div class="compare-picker">
+        <label for="compare-add">Add an assessment</label>
+        <input id="compare-add" type="text" list="compare-options" placeholder="Type an EIP number, title, or evaluator" autocomplete="off" data-compare-add />
+        <datalist id="compare-options">{options.map((option) => <option value={option.label} data-id={option.id}></option>)}</datalist>
+        <ul class="compare-chips" data-compare-chips aria-label="Selected assessments"></ul>
+        <p class="muted" data-compare-limit hidden>At most {COMPARE_LIMIT} assessments can be compared at once; remove one to add another.</p>
+      </div>
+      <label>Order criteria by
+        <select data-compare-order>
+          <option value="score">Highest score</option>
+          <option value="spread">Largest difference</option>
+          <option value="stable">Stable criterion order</option>
+        </select>
+      </label>
+    </form>
+    <p class="muted" data-compare-empty>Nothing selected yet. Add assessments above, or select rows on the <a href={basePath('eips/')}>EIP index</a> or any fork page.</p>
+    <div data-compare-output aria-live="polite"></div>
+    <p class="muted" data-compare-status hidden></p>
+  </div>
+
+  <CriterionLegend criteria={data.criteria} compact={true} />
+  <div class="actions"><a href={basePath('eips/')}>Browse all assessments</a><a href={basePath('generated/compare-index.json')}>Download the compare index</a></div>
+</Layout>
+
+<script>
+  import { COMPARE_LIMIT } from '../../lib/routes';
+  import type { CompareState } from '../../lib/routes';
+  import { assessmentLabel, readState, render, resolveLegacy, writeState, type CompareIndex } from '../../lib/compare-view';
+
+  const root = document.querySelector<HTMLElement>('[data-compare-root]');
+  if (root) {
+    const form = root.querySelector<HTMLFormElement>('[data-compare-form]')!;
+    const add = root.querySelector<HTMLInputElement>('[data-compare-add]')!;
+    const datalist = document.getElementById('compare-options') as HTMLDataListElement;
+    const chips = root.querySelector<HTMLElement>('[data-compare-chips]')!;
+    const limit = root.querySelector<HTMLElement>('[data-compare-limit]')!;
+    const orderSelect = root.querySelector<HTMLSelectElement>('[data-compare-order]')!;
+    const status = root.querySelector<HTMLElement>('[data-compare-status]')!;
+    const idByLabel = new Map(Array.from(datalist.options).map((option) => [option.value, option.dataset.id!]));
+    let index: CompareIndex | null = null;
+    let state: CompareState = readState();
+
+    const renderChips = () => {
+      chips.replaceChildren();
+      for (const id of state.assessments) {
+        const assessment = index?.assessments.find((item) => item.id === id);
+        const chip = document.createElement('li');
+        chip.className = 'compare-chip';
+        const text = document.createElement('span');
+        text.textContent = assessment && index ? assessmentLabel(index, assessment) : id;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.setAttribute('aria-label', `Remove ${text.textContent}`);
+        remove.textContent = '×';
+        remove.addEventListener('click', () => update({ ...state, assessments: state.assessments.filter((item) => item !== id) }));
+        chip.append(text, remove);
+        chips.append(chip);
+      }
+      limit.hidden = state.assessments.length < COMPARE_LIMIT;
+      add.disabled = state.assessments.length >= COMPARE_LIMIT;
+    };
+
+    const swap = (from: string, to: string) => update({ ...state, assessments: state.assessments.map((item) => (item === from ? to : item)) });
+    const update = (next: CompareState) => {
+      state = { assessments: [...new Set(next.assessments)].slice(0, COMPARE_LIMIT), order: next.order ?? null };
+      writeState(state);
+      orderSelect.value = state.order ?? 'score';
+      renderChips();
+      if (index) render(root, index, state, swap);
+    };
+
+    form.addEventListener('submit', (event) => event.preventDefault());
+    add.addEventListener('change', () => {
+      const typed = add.value.trim();
+      add.value = '';
+      if (!typed) return;
+      let id = idByLabel.get(typed) ?? null;
+      if (!id) {
+        const match = typed.match(/(\d{1,5})/);
+        const eip = match ? Number.parseInt(match[1], 10) : null;
+        const wantsHuman = /human/i.test(typed);
+        const candidate = index?.assessments.find((item) => item.eip === eip && item.scored && item.source === (wantsHuman ? 'human' : 'llm') && (wantsHuman || item.role === 'primary'));
+        id = candidate?.id ?? null;
+      }
+      if (!id) {
+        status.hidden = false;
+        status.textContent = `No assessment matches “${typed}”. Pick one of the suggestions.`;
+        return;
+      }
+      status.hidden = true;
+      update({ ...state, assessments: [...state.assessments, id] });
+    });
+    orderSelect.addEventListener('change', () => update({ ...state, order: orderSelect.value as CompareState['order'] }));
+
+    fetch(root.dataset.indexUrl!)
+      .then((response) => {
+        if (!response.ok) throw new Error(`Compare index request failed: ${response.status}`);
+        return response.json();
+      })
+      .then((payload: CompareIndex) => {
+        index = payload;
+        update({ ...state, assessments: resolveLegacy(index, state) });
+      })
+      .catch((error: Error) => {
+        status.hidden = false;
+        status.textContent = `Comparison unavailable: ${error.message}`;
+      });
+  }
+</script>

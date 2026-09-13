@@ -1,0 +1,53 @@
+<div class="viz-tooltip" role="tooltip" id="viz-tooltip" hidden><strong class="viz-tooltip-title"></strong><pre class="viz-tooltip-body"></pre></div>
+<script>
+  // One shared tooltip for every [data-tip] element: pointer hover on the mark, keyboard focus on its
+  // container. Text is inserted with textContent only.
+  const tooltip = document.getElementById('viz-tooltip') as HTMLElement | null;
+  if (tooltip) {
+    const title = tooltip.querySelector<HTMLElement>('.viz-tooltip-title')!;
+    const body = tooltip.querySelector<HTMLElement>('.viz-tooltip-body')!;
+    let current: HTMLElement | null = null;
+
+    const show = (element: HTMLElement, x: number, y: number) => {
+      current = element;
+      title.textContent = element.dataset.tipTitle ?? '';
+      body.textContent = element.dataset.tipBody ?? '';
+      body.hidden = !body.textContent;
+      tooltip.hidden = false;
+      const width = tooltip.offsetWidth;
+      const height = tooltip.offsetHeight;
+      const left = Math.min(Math.max(8, x + 12), window.innerWidth - width - 8);
+      const top = y + height + 20 > window.innerHeight ? y - height - 12 : y + 16;
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+    };
+    const hide = () => {
+      tooltip.hidden = true;
+      current = null;
+    };
+    const target = (event: Event) => (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-tip]') ?? null;
+
+    document.addEventListener('pointermove', (event) => {
+      const element = target(event);
+      if (!element) {
+        if (current && !current.matches(':focus')) hide();
+        return;
+      }
+      show(element, event.clientX, event.clientY);
+    });
+    document.addEventListener('pointerleave', hide);
+    document.addEventListener('focusin', (event) => {
+      const element = target(event);
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      show(element, rect.left, rect.bottom);
+    });
+    document.addEventListener('focusout', (event) => {
+      if (target(event)) hide();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') hide();
+    });
+    document.addEventListener('scroll', hide, { passive: true });
+  }
+</script>

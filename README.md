@@ -38,6 +38,8 @@ Task 01: fork membership and EIP histories
                                     +--> Task 07: observed-effort metrics and prediction join
                                     |
                                     +--> Task 08: Hegotá prospective candidate snapshot
+                                    |
+                                    +--> Task 09: Hegotá human-assessment snapshot (publication attribution only)
 ```
 
 Task 02 is independent supporting research and is not required to choose the Task 04 historical assessment ref. Tasks 03 and 04 provide the timeline-based human review used to freeze that ref. Task 04b separately defines which final EIPs were forecastable at the initial fork-scoping horizon; it never changes an EIP's assessment ref or score. Task 05 consumes only approved Task 04 records and then seals each EIP into a hindsight-controlled, one-EIP assessment package. Task 07 derives observed-effort metrics score-blind from Tasks 01/03/04/04b, then — only once all 49 original assessments exist — joins them against the Task 05 predictions and renders the comparison charts. Task 08 reuses Task 05's rubric and isolated assessment engine for a separate prospective snapshot of Hegotá candidates; its original PFI study and append-only SFI/CFI extension never enter the 49-row retrospective dataset.
@@ -55,10 +57,11 @@ Task 02 is independent supporting research and is not required to choose the Tas
 | Task 06 | Not yet defined |
 | Task 07 | Candidate metrics computed for all 49 rows (`observed-metrics-v0`); 5 metrics + composite selected via score-blind redundancy analysis; prediction join and interactive charts rendered |
 | Task 08 | Complete: original 44-entry PFI freeze retained (37 scored); append-only SFI/CFI extension adds EIP-7805 and EIP-8141; combined 2026-08-26 visibility view contains 46 status-labelled entries and 39 validated assessments |
+| Task 09 | Snapshot `hegota-human-2026-09-13-3d8c012` of STEEL human checklists for the 46 Hegotá candidates: 2 merged, 15 in open pull requests, 8 in draft pull requests, 21 not yet available |
 
 ## Published and local site
 
-The publication adapter and Astro site under `publication/` project the committed research outputs into the [GitHub Pages site](https://danceratopz.github.io/retrospective-eip-complexity/). The site contains 49 retrospective assessments plus all 46 Hegotá candidates recorded as PFI, SFI, or CFI at the 2026-08-26 snapshot. Snapshot status is shown inline, the original 37-assessment PFI subtotal remains explicit, and all prospective data stays out of the Task 07 outcome analysis. Pushes to `main` rebuild, validate, and deploy the site through [the Pages workflow](.github/workflows/pages.yml).
+The publication adapter and Astro site under `publication/` project the committed research outputs into the [GitHub Pages site](https://danceratopz.github.io/retrospective-eip-complexity/). The site contains 49 retrospective assessments plus all 46 Hegotá candidates recorded as PFI, SFI, or CFI at the 2026-08-26 snapshot. Every EIP has one detail page that explains its score criterion by criterion, shows the Human and LLM assessments side by side where both exist, and links into a shareable comparison of up to four EIPs; fork and Results pages show which criteria made each fork heavy. Snapshot status and the status of the STEEL team's human checklists are shown inline, the original 37-assessment PFI subtotal remains explicit, and all prospective data stays out of the Task 07 outcome analysis. Pushes to `main` rebuild, validate, and deploy the site through [the Pages workflow](.github/workflows/pages.yml). The site's internal architecture is described in [`publication/site/README.md`](publication/site/README.md).
 
 To build and preview the same artifact locally:
 

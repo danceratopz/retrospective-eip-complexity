@@ -1,0 +1,59 @@
+---
+/**
+ * Complete view of one assessment: summary, complexity profile, top drivers, uncertainty, criterion
+ * breakdown, and collapsed provenance. Used identically for LLM and Human sources.
+ */
+import type { Assessment, CriterionDefinition, Occurrence, Rubric } from '../lib/domain';
+import { EVALUATOR_LABELS } from '../lib/labels';
+import { truncate } from '../lib/format';
+import AssessmentSummary from './AssessmentSummary.astro';
+import CriterionTable from './CriterionTable.astro';
+import ProvenanceDetails from './ProvenanceDetails.astro';
+import StackedBar from './StackedBar.astro';
+import StatusBadge from './StatusBadge.astro';
+import TopDrivers from './TopDrivers.astro';
+import UncertaintySection from './UncertaintySection.astro';
+
+interface Props {
+  assessment: Assessment;
+  occurrence: Occurrence;
+  rubric: Rubric;
+  definitions: Map<string, CriterionDefinition>;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { assessment, occurrence, rubric, definitions } = Astro.props as Props;
+const segments = assessment.criteria
+  .filter((criterion) => (criterion.score ?? 0) > 0)
+  .map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 180) }));
+const sourceLabel = EVALUATOR_LABELS[assessment.source];
+const checklist = assessment.checklist;
+---
+<article class="assessment-view" data-assessment={assessment.id}>
+  {assessment.summary && <p class="assessment-scope"><strong>Scope at the cutoff.</strong> {assessment.summary}</p>}
+  <AssessmentSummary assessment={assessment} occurrence={occurrence} rubric={rubric} />
+  {!assessment.scored && checklist && (
+    <div class="caveat">
+      <StatusBadge status={assessment.status} mode={assessment.mode} />
+      <p>This checklist does not yet yield a usable total. {checklist.published_total !== null && <>The published total is {checklist.published_total}{checklist.recomputed_total !== null && <> while the cells that parse sum to {checklist.recomputed_total}</>}.</>}{checklist.published_total === null && <>No published total was found.</>}</p>
+      {checklist.parser_notes.length > 0 && <ul>{checklist.parser_notes.map((note) => <li>{note}</li>)}</ul>}
+      <p class="muted">Unresolved cells are shown below without a score. They are never counted as zero.</p>
+    </div>
+  )}
+  {assessment.scored && checklist && checklist.published_total !== null && checklist.published_total !== assessment.score && (
+    <div class="caveat"><strong>Total taken from the cells.</strong> The checklist publishes a total of {checklist.published_total}, but its {assessment.criteria.length} cells sum to {assessment.score}. The cells are the primary record, so the cell sum is used here and in every comparison.</div>
+  )}
+  {assessment.scored && (
+    <>
+      <h3>Complexity profile</h3>
+      <p class="muted">Each segment is one criterion's contribution to the {sourceLabel} total. Hover or focus a segment for its score and rationale.</p>
+      <StackedBar segments={segments} definitions={definitions} total={assessment.score} size="large" showTotal={true} label={`EIP-${assessment.eip} ${sourceLabel} complexity`} />
+      <h3>Top complexity drivers</h3>
+      <TopDrivers assessment={assessment} definitions={definitions} />
+    </>
+  )}
+  <UncertaintySection assessment={assessment} definitions={definitions} />
+  <h3>Criterion breakdown</h3>
+  <CriterionTable assessment={assessment} definitions={definitions} caption={`EIP-${assessment.eip} ${occurrence.fork_name}: ${sourceLabel} criterion scores and rationale`} />
+  <ProvenanceDetails assessment={assessment} />
+</article>
