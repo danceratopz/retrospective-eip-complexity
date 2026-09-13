@@ -1,0 +1,286 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8279
+  title: Block Access List Byte Floor
+human_assessment_status: in_progress
+preferred_candidate: pr-108@9674b1fd589a
+candidates:
+- candidate_id: pr-108@9674b1fd589a
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 108
+    pull_request_title: Add EIP-8279 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/108
+    draft: true
+    head_sha: 9674b1fd589add3ab86713f95c4967de244c94e5
+    created_at: '2026-08-17T16:49:56Z'
+    updated_at: '2026-08-17T19:27:21Z'
+    path: complexity_assessments/EIPs/EIP-8279.md
+    git_blob_sha: 7c3e42a49ad1a3f52742fa13e647909bd79b78ba
+    content_sha256: a26230f73a4662f5baed3d53e904106fde38b00c09b1a7d1d8ae00ac7667241c
+    immutable_url: https://github.com/ethspecs/pm/blob/9674b1fd589add3ab86713f95c4967de244c94e5/complexity_assessments/EIPs/EIP-8279.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-108/EIP-8279.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'A new floor mechanism folded into `tx.gasUsed = max(execution_gas_used, floor_gas_used)`, extending
+      the floor family that the eip7623/eip7976/eip7981 suites actively test. Measured: an EELS prototype flips
+      384 fixture executions across the eip7623/7976/2780/8037/7778/7934/7954 gas suites.'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'One uniform new abort point sits before every recordable access, and its position had to be settled
+      (an access that aborts on the floor check must not commit its bytes, or settlement exceeds the gas limit).
+      Measured: no existing BAL vectors change at all, so the re-derivation that anchors a 3 never materializes.'
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: The −32-byte meter refund for restored slots is deliberately distinct from the EIP-3529 gas refund
+      and never touches the refund counter; a simple mechanism whose complexity is already scored under the gas-rule
+      and ordering rows.
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'The floor rarely binds for typical transactions. Measured: 384 of ~61,800 fixture executions fail,
+      but they collapse to 11 test functions, all in floor/gas-boundary suites — a considerable but contrived category,
+      dominated (336) by the two calldata-floor `test_transaction_validity` functions whose exact-boundary transactions
+      now abort.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'The intrinsic/data-floor calculators already model the EIP-7623 floor family; they gain the per-authorization
+      static seed term and byte-floor constants. Measured: the prototype suite needed only a small test-local scaffold
+      helper beyond those extensions.'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Nine runtime trigger rows x cold/warm x revert behavior x slot charge/refund toggling x the exact
+      floor-binding boundary (`tx.gas == floor`) x the 7702 static seed — at least one mechanism with an elevated
+      case count.
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Validation becomes `tx.gas >= max(intrinsic, static_floor)` with the new per-auth BAL term; existing
+      validity tests in the 8131/7981 family need limited updates.
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: The meter itself is cheap, but the EIP redefines worst-case block composition — the bloatnet/worst-case
+      benchmark suites that target exactly these vectors must be re-derived.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'A DoS-bound mechanism: an implementation error either reopens the 1.5 MB block-size bypass or aborts
+      valid transactions; interacts with core gas metering; targeted review and fuzzing.'
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Two details are unwritten — the fit with EIP-8037's two gas dimensions, and whether an aborting access
+      counts its bytes — but both have an obvious intended reading that held up in the prototype (the byte floor
+      extends the calldata floor inside the existing settlement `max`; the aborted access never commits).
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Four coordination targets: EIP-7928 (the substrate being priced), the EIP-7623/7976/8131 calldata-floor
+      chain (one mechanism), EIP-7702 (the static seed), and EIP-8037 (the gas-dimension split) — short of the six
+      needed for an increment. EIP-2929 cold tracking and EIP-4758''s trigger change are touchpoints, not coordinated
+      test matrices.'
+    blank_interpretation: null
+  published_total: 22
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 22
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false

@@ -1,0 +1,271 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 2488
+  title: Deprecate the CALLCODE opcode
+human_assessment_status: available_in_open_pr
+preferred_candidate: pr-114@db669a2c21a1
+candidates:
+- candidate_id: pr-114@db669a2c21a1
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 114
+    pull_request_title: Add EIP-2488 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/114
+    draft: false
+    head_sha: db669a2c21a168ced78bd4de56db3870f1ac0c58
+    created_at: '2026-08-18T16:56:16Z'
+    updated_at: '2026-08-18T16:56:16Z'
+    path: complexity_assessments/EIPs/EIP-2488.md
+    git_blob_sha: a62792dae10fa120cbde67976efd7739e642da8c
+    content_sha256: 66c8591d137a8d41fff1dd0af5d8f822d8ef11f418c9261f648e8045125397c1
+    immutable_url: https://github.com/ethspecs/pm/blob/db669a2c21a168ced78bd4de56db3870f1ac0c58/complexity_assessments/EIPs/EIP-2488.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-114/EIP-2488.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Existing gas accounting mechanism is updated. CALLCODE today carries the full CALL-family dynamic
+      cost: base, cold/warm account access under EIP-2929, the value-transfer and new-account surcharges, memory
+      expansion for the argument and return regions, and the 63/64 stipend reservation. The assumed behaviour is
+      that **the target is never warmed and no gas is consumed at all** — the opcode pops its arguments, pushes
+      0, and charges nothing. That is the reading to specify, and it needs stating exactly, because the EIP''s one-line
+      specification says only that the instruction "always returns 0".'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: A single opcode's state access changes — it disappears. Under the assumed behaviour above, CALLCODE
+      stops touching the target account entirely, so the target is no longer warmed for subsequent opcodes under
+      EIP-2929 and no longer contributes an entry to the block-level access list. Both are observable, so the removal
+      has to be tested rather than assumed.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Major subset across diverse categories. CALLCODE appears in **63 hand-written test files** and **353
+      files under `tests/ported_static/`** in `execution-specs`. The ported static corpus is exactly the "static,
+      multiple forks" case level 3 names: those tests were ported to run across every fork, so each one needs a
+      fork-gated expectation once CALLCODE stops working.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'One boundary-prone mechanism: the always-fail path. Cases are that the opcode still pops the correct
+      number of stack items and pushes 0, that memory arguments are not expanded, that the target stays cold, and
+      that gas is unchanged across the call. Small, fixed set.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'CALLCODE (0xf2) is deprecated: its behaviour is replaced with an unconditional failure return.'
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Self-contained and validatable in isolation. Contracts that still call CALLCODE will break, but the
+      failure is a returned 0 rather than an exceptional halt, so callers retain the chance to handle it. No existing
+      invariant outside the opcode itself is altered.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Left undetermined by the specification: whether gas is charged for the no-op call, whether the target
+      is warmed under EIP-2929, whether value is transferred, whether the target appears in the block-level access
+      list, whether memory arguments are still expanded, and whether the 1024 call-frame depth limit is still checked
+      or a depth level still consumed. Clients must agree on all of these before tests can be baselined. Localized
+      to one opcode, so 2 rather than 3.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Interacts with one other EIP in a limited way, and can be tested independently for the most part:
+      **EIP-7928** (block-level access lists) — whether a failed CALLCODE still contributes the target to the BAL
+      is consensus-observable and needs settling, but CALLCODE''s own cases can be written independently with a
+      BAL expectation attached. EIP-7 (DELEGATECALL) and EIP-2929 (warm/cold) are also in play conceptually, but
+      both have been stable for years and their only consequence here is updating tests, which is already counted
+      under "Patterns affecting pre-existing tests".'
+    blank_interpretation: null
+  published_total: 13
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 13
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - 20 blank score cells are interpreted as zero only because the published total equals the sum of every nonblank
+    cell.
+  duplicates_merged_scores: false

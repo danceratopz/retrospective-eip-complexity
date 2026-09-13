@@ -1,0 +1,279 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 7906
+  title: Transaction Assertions via State Diff Opcode
+human_assessment_status: available_in_open_pr
+preferred_candidate: pr-132@18cfcab5e295
+candidates:
+- candidate_id: pr-132@18cfcab5e295
+  availability: open_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 132
+    pull_request_title: Add EIP-7906 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/132
+    draft: false
+    head_sha: 18cfcab5e295ad9e544c8bf8b57f998defaa7b31
+    created_at: '2026-08-24T18:46:05Z'
+    updated_at: '2026-08-24T18:46:05Z'
+    path: complexity_assessments/EIPs/EIP-7906.md
+    git_blob_sha: e2bc9d7fc5c9666952f06054ddb3a82f0fa4f15d
+    content_sha256: 34e1b22f395fbbc4059ecfad790448556206aedd716763d5e6aa31a806fdabd1
+    immutable_url: https://github.com/ethspecs/pm/blob/18cfcab5e295ad9e544c8bf8b57f998defaa7b31/complexity_assessments/EIPs/EIP-7906.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-132/EIP-7906.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'EIP-2929 access-list accounting is extended to a new class of read: `TXDIFF` params 0x00–0x05 fall
+      back to live state, priced warm/cold, and add the slot or address to the access list afterwards.'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: New state-accessing operations whose position must be settled per param. `TXDIFF` 0x00–0x05 read
+      live state and record in the EIP-7928 BAL; 0x06–0x0A answer from the diff and touch neither. Each of the 11
+      params needs its access-list and BAL behaviour verified.
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: Additive. The three opcodes halt outside a `POST_TX` frame, so legacy and EIP-1559 transactions are
+      unaffected.
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: New primitives needed to build `POST_TX` frames and to express an expected transaction diff and event
+      enumeration. The BAL expectation types are the closest existing analogue but do not cover balances, codehashes
+      or event ordering.
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography-related testing
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Elevated case counts. `TXTRACE` has 22 params and `TXDIFF` 11, each with index bounds; every *must
+      be 0* operand halts on non-zero; `event_topic0`–`3` halt past `event_topic_count`; `EVENTDATACOPY` halts on
+      both out-of-range index and `dataOffset + length`. Plus net-zero collapsing (modified-then-restored sets no
+      entry and no flag bit), canonical uint160/uint256 sort order, `CREATE` leaving empty code, and EIP-7702 designators
+      excluded from `contracts_deployed`.
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Three new opcodes, at least one complex: `TXTRACE` (22 params), `TXDIFF` (11 params, dynamic warm/cold
+      gas), `EVENTDATACOPY` (4 stack inputs, memory expansion, `CALLDATACOPY` semantics).'
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Amends EIP-8141''s structural rules: `assert frame.mode < 3` becomes `< 4`, and `POST_TX` frames
+      must form a contiguous trailing suffix or the transaction is invalid. Coordinated with EIP-8141 but no existing
+      vectors to redesign.'
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: ''
+    parsed_terms: []
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: explicit_zero_by_published_arithmetic
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: '`TXDIFF` 0x00–0x05 take an arbitrary address, so this is the first mechanism by which execution
+      can read another account''s storage slot. Those reads enter the BAL, so an assertion can populate the BAL
+      with `(address, slot)` pairs the owning contract never touched, which breaks the assumption that a BAL entry
+      implies interaction by that contract.'
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Introspection is inert: `POST_TX` is a `STATICCALL` that cannot modify state. But `TXDIFF` can still
+      add arbitrary storage keys to the BAL reads, and we need to prove that this does not affect present usecases
+      or future EIPs (the witness generation is affected by this).'
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Previously unobservable behaviour becomes consensus-critical and has to be settled by discussion
+      before vectors can be baselined: what counts as a change, how net-zero writes collapse, and the canonical
+      enumeration order. Localized to the diff model.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: 3 + 1
+    parsed_terms:
+    - 3
+    - 1
+    numeric_contribution: 4
+    rationale: 'Strong interdependencies. **EIP-8141** is a hard dependency that this EIP *amends* — nothing here
+      is testable without it, and EIP-8141 is itself Draft and assessed 🔴 38. **EIP-2929** (pricing, and `TXDIFF`
+      mutates the access list), **EIP-7928** (BAL recording for live-state reads), **EIP-7702** (designators excluded
+      from `contracts_deployed`), **EIP-4844** (blob fees folded into `gas_pre_charge`). <br><br>The "valid only
+      inside a `POST_TX` frame" restriction then pulls in every transaction type as a negative case: the three opcodes
+      must be shown to halt in legacy, **EIP-2930**, **EIP-1559**, **EIP-4844** and **EIP-7702** transactions, and
+      in the `DEFAULT`, `VERIFY` and `SENDER` frame modes — roughly 3 x 8 coordinated cases, each owned by a different
+      EIP''s transaction format. With **EIP-2718** framing those types, 8 interacting EIPs gives +1 for 5 beyond
+      the first 3.'
+    blank_interpretation: null
+  published_total: 23
+  published_tier_raw: 🔴
+  published_tier: high
+  recomputed_total: 23
+  recomputed_tier: high
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes:
+  - 17 blank score cells are interpreted as zero only because the published total equals the sum of every nonblank
+    cell.
+  duplicates_merged_scores: false

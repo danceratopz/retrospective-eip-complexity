@@ -1,0 +1,283 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 7666
+  title: EVM-ify the identity precompile
+human_assessment_status: in_progress
+preferred_candidate: pr-112@4a25f38a8f36
+candidates:
+- candidate_id: pr-112@4a25f38a8f36
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 112
+    pull_request_title: Add EIP-7666 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/112
+    draft: true
+    head_sha: 4a25f38a8f36442fdb10dcae447a51a85f82c7e8
+    created_at: '2026-08-18T08:55:08Z'
+    updated_at: '2026-08-18T08:55:08Z'
+    path: complexity_assessments/EIPs/EIP-7666.md
+    git_blob_sha: 7e1838587c5e474282b381c5a899eab09fd3b0d3
+    content_sha256: 28cc3069dff9b777a277374637afd8c47c3c75b35f6c83ac8bc922888f9c8d44
+    immutable_url: https://github.com/ethspecs/pm/blob/4a25f38a8f36442fdb10dcae447a51a85f82c7e8/complexity_assessments/EIPs/EIP-7666.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-112/EIP-7666.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: 'No gas accounting mechanism changes: the identity price constants disappear with the precompile,
+      and the pricing shift is the "Modified precompiles" row''s substance.'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Measured: an EELS prototype flips 141 fixture executions across 11 functions — a minor, well-scoped
+      subset, every flip diagnosed. Notably, several ported static fillers use the identity precompile as a memory-copy
+      *primitive* inside unrelated harnesses (the MODEXP boundary suites), so the flips reach slightly beyond nominal
+      identity tests.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Existing primitives suffice with minor extension: a fork precompile-list subtraction and code pre-allocation
+      at the retired address.'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: The identity function is a memory copy; nothing cryptographic is touched.
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'A single boundary-prone mechanism: equivalence of the replacement code across calldata lengths,
+      gas boundaries, and call contexts (STATICCALL, DELEGATECALL, EIP-7702 delegation with precompiles disabled).
+      The 7-byte program keeps the surface small.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: One stateless code deposit at the retired address; nothing in the protocol invokes it as a system
+      actor. The deployment act is scored under "New fork activation mechanism".
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'A single pre-existing precompile''s behavior changes: identity pricing moves from the precompile
+      schedule to ordinary EVM execution, and EIP-2929 pre-warming at `0x04` is silently lost (unstated by the EIP)
+      — first access in a transaction becomes cold.'
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: Code is written to `0x04` at the start of the activation block — a protocol-mandated install with
+      no deploying transaction, implemented in the prototype through the spec's irregular-state-transition hook
+      (code only, nonce and balance preserved) plus a genesis pre-allocation for test fixtures.
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: A seven-opcode copy program with gas scaling identical in shape to the precompile it replaces; nothing
+      requires performance validation.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Consensus-critical bytecode replaces a native implementation, but the program is seven bytes, specified
+      verbatim in the EIP, and validated in isolation by differential runs against the retired implementation.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'The bytecode itself is pinned by the EIP, but deployment-account details are not: nonce/balance
+      handling and interaction with any pre-existing state at `0x04` at the activation block (the prototype preserves
+      both, installing code only), and the EIP-2929 warm-set consequence is unstated. All have an obvious intended
+      reading.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Limited, independently testable interactions: EIP-2929 (warm-set membership at the retired address)
+      and EIP-8200 (the shared retire-and-install mechanism, whose deployment semantics should be specified identically).'
+    blank_interpretation: null
+  published_total: 12
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 12
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false

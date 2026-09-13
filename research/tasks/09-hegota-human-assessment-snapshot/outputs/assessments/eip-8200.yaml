@@ -1,0 +1,293 @@
+schema_version: 1
+task_id: 09-hegota-human-assessment-snapshot
+snapshot_id: hegota-human-2026-09-13-3d8c012
+fork_id: hegota
+eip:
+  number: 8200
+  title: EVMification
+human_assessment_status: in_progress
+preferred_candidate: pr-109@6a3be712b937
+candidates:
+- candidate_id: pr-109@6a3be712b937
+  availability: open_draft_pull_request
+  source:
+    kind: open_pull_request
+    repository: ethspecs/pm
+    pull_request: 109
+    pull_request_title: Add EIP-8200 complexity assessment
+    pull_request_url: https://github.com/ethspecs/pm/pull/109
+    draft: true
+    head_sha: 6a3be712b937ad5d7ecfa7bf4f0afaf0ee25e922
+    created_at: '2026-08-18T07:33:24Z'
+    updated_at: '2026-08-18T08:08:34Z'
+    path: complexity_assessments/EIPs/EIP-8200.md
+    git_blob_sha: f83f82beeccd929d5e20512c9f7d711f73e63260
+    content_sha256: d41a30af85354e7c175da20effcb31f9fa8b7aa46553c377489f6a48d949688c
+    immutable_url: https://github.com/ethspecs/pm/blob/6a3be712b937ad5d7ecfa7bf4f0afaf0ee25e922/complexity_assessments/EIPs/EIP-8200.md
+    archive_path: research/tasks/09-hegota-human-assessment-snapshot/raw/hegota-human-2026-09-13-3d8c012/pr-109/EIP-8200.md
+  parse_state: complete
+  rubric_revision: 2
+  declared_revision: 2
+  scores:
+  - id: evm_gas_rule_changes
+    label: EVM Gas rule changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: 'No gas accounting mechanism changes: the precompile-specific price tables disappear with the precompiles,
+      and the pricing shift is the "Modified precompiles" row''s substance.'
+    blank_interpretation: null
+  - id: state_access_ordering_within_opcode_execution
+    label: State-access ordering within opcode execution
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: blob_gas_accounting_changes
+    label: Blob gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: state_gas_accounting_changes
+    label: State gas accounting changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_evm_gas_refund
+    label: New EVM gas refund
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: patterns_affecting_pre_existing_tests
+    label: Patterns affecting pre-existing tests
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: 'Measured: an EELS prototype flips 948 fixture executions across 40 functions — spread from byzantium
+      through osaka plus the ported static suites, but all within one well-scoped category: tests that exercise
+      the three retired precompiles. Every flip has been diagnosed (gas drift in both directions, invalid-input
+      semantics, warm-set loss): none is unexplained.'
+    blank_interpretation: null
+  - id: new_invariant_on_pre_existing_tests
+    label: New invariant on pre-existing tests
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: transition_tool_interface_changes
+    label: Transition-tool interface changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_test_framework_primitives
+    label: New test-framework primitives
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Existing primitives suffice with minor extension: a fork precompile-list subtraction and code pre-allocation
+      at the retired addresses.'
+    blank_interpretation: null
+  - id: cryptography
+    label: Cryptography
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: 'Nothing cryptographically new enters consensus: three well-known functions are reimplemented, and
+      vast existing vector sets make the reimplementations differentially provable; the proving burden itself is
+      scored under "Edge/boundary conditions".'
+    blank_interpretation: null
+  - id: edge_boundary_conditions
+    label: Edge/boundary conditions
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'The equivalence surface is the full input domain of three functions: lengths, invalid encodings,
+      and gas boundaries. Measured: the prototype bytecode already diverges on one edge — BLAKE2f''s final-block
+      flag `0x02` is accepted where EIP-152 requires rejection — and invalid inputs revert with `Error(string)`
+      where the precompiles return empty revert data.'
+    blank_interpretation: null
+  - id: block_syncing_changes
+    label: Block syncing changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: engine_api_changes
+    label: Engine API changes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_system_contracts
+    label: Added system contracts
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Three stateless code deposits appear at the retired addresses, but nothing in the protocol ever invokes
+      them as system actors; the deployment act is scored under "New fork activation mechanism" and their behavioral
+      surface under "Edge/boundary conditions".
+    blank_interpretation: null
+  - id: modified_system_contracts
+    label: Modified system contracts
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_opcodes
+    label: Added opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_opcodes
+    label: Modified opcodes
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: added_precompiles
+    label: Added precompiles
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: modified_precompiles
+    label: Modified precompiles
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'The behavior of three pre-existing precompiles changes: ordinary EVM pricing (measured: small-input
+      MODEXP ~6.6×, `rounds`-priced BLAKE2f callers out-of-gas, and an inverse case where the EIP-7883 formula exceeds
+      the transaction gas cap but the EVM version succeeds), different invalid-input returndata, and loss of EIP-2929
+      pre-warming at the retired addresses — the last unstated by the EIP and measured as 198 flipped executions.'
+    blank_interpretation: null
+  - id: encoding_changes_rlp_ssz
+    label: Encoding changes (RLP/SSZ)
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_transaction_types
+    label: New transaction types
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_or_modified_transaction_validity_mechanisms
+    label: New or modified transaction validity mechanisms
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_block_header_fields
+    label: New block / header fields
+    raw_score_cell: '0'
+    parsed_terms:
+    - 0
+    numeric_contribution: 0
+    rationale: ''
+    blank_interpretation: null
+  - id: new_fork_activation_mechanism
+    label: New fork activation mechanism
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'Code is written to three addresses at the start of the activation block — a protocol-mandated install
+      with no deploying transaction, implemented in the prototype through the spec''s irregular-state-transition
+      hook (the EIP-8141 expiry-verifier pattern: code only, nonce and balance preserved) plus a genesis pre-allocation
+      for test fixtures.'
+    blank_interpretation: null
+  - id: performance_risks
+    label: Performance risks
+    raw_score_cell: '1'
+    parsed_terms:
+    - 1
+    numeric_contribution: 1
+    rationale: Three pure functions, fully benchmarkable in isolation; gas now scales with actual work (large-input
+      MODEXP prices itself out rather than underpricing compute), and the benchmark-suite re-derivation is test
+      rework, not client performance risk.
+    blank_interpretation: null
+  - id: security_risks
+    label: Security risks
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Consensus-critical bytecode replaces natively audited implementations; an implementation error is
+      a consensus split. The measured BLAKE2f flag divergence is this risk realized in the current candidate bytecode
+      — differential fuzzing against the retired implementations is mandatory.
+    blank_interpretation: null
+  - id: unspecified_behavior_requiring_cross_client_consensus
+    label: Unspecified behavior requiring cross-client consensus
+    raw_score_cell: '3'
+    parsed_terms:
+    - 3
+    numeric_contribution: 3
+    rationale: 'The consensus artifact itself is unspecified: the EIP ships without the deployment bytecode, with
+      TODO gas tables and TODO test cases. The prototype pins the runtime artifacts from eth-act/evmification''s
+      own CI; an independent compile reproduced every executable byte but differed in the CBOR metadata trailer
+      — precisely the divergence that becomes a consensus split unless the EIP pins the exact bytes by hash. Every
+      revision of the eventual bytecode re-baselines the whole differential corpus.'
+    blank_interpretation: null
+  - id: cross_eip_interactions
+    label: Cross-EIP interactions
+    raw_score_cell: '2'
+    parsed_terms:
+    - 2
+    numeric_contribution: 2
+    rationale: Three coordination targets — EIP-7666 (the shared deployment mechanism), the EIP-7883/7823 MODEXP
+      pricing cluster (whose suites flip mechanically), and EIP-2929 (warm-set membership) — each limited in scope;
+      EIP-152 is the substance being replaced, not a cross-EIP axis.
+    blank_interpretation: null
+  published_total: 22
+  published_tier_raw: 🟡
+  published_tier: medium
+  recomputed_total: 22
+  recomputed_tier: medium
+  unresolved_blank_rows: []
+  invalid_score_rows: []
+  missing_rows: []
+  parser_notes: []
+  duplicates_merged_scores: false
