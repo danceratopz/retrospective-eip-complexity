@@ -1,50 +1,94 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Chart from '../components/Chart.astro';
-import StatusBadge from '../components/StatusBadge.astro';
+import ComparisonBars from '../components/ComparisonBars.astro';
+import CriterionLegend from '../components/CriterionLegend.astro';
 import { loadPublication, basePath } from '../lib/data.js';
 import type { Publication } from '../lib/domain';
+import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
+import { TIER_LABELS } from '../lib/labels';
 import { eipRoute } from '../lib/routes';
+import { signed } from '../lib/format';
 
 const data = loadPublication() as Publication;
+const alignment = data.human_llm;
+const summary = alignment.summary;
+const definitions = new Map(data.criteria.map((item) => [item.id, item]));
 const hegota = data.forks.find((item) => item.fork === 'hegota');
 const hegotaHuman = hegota.human_coverage;
+const criteria = [...alignment.criteria].sort((a, b) => Math.abs(b.mean_delta) - Math.abs(a.mean_delta) || (DISPLAY_INDEX.get(a.id) ?? 99) - (DISPLAY_INDEX.get(b.id) ?? 99));
+const format = (value: number) => (Math.abs(value) < 0.005 ? '0' : (value > 0 ? '+' : '−') + Math.abs(value).toFixed(2));
 ---
-<Layout title="Human versus LLM evaluations" description="Descriptive comparison of published STEEL human complexity checklists with blinded LLM assessments for Amsterdam, and the status of human checklists for Hegotá candidates.">
-    <p class="eyebrow">Amsterdam Comparison</p><h1>Human and LLM Complexity Evaluations</h1>
-    <p class="lede">A descriptive comparison of published human assessments and blinded LLM assessments for 12 Amsterdam Execution Layer EIPs.</p>
-    <div class="source-note"><strong>Why Amsterdam?</strong> It is currently the only fork with a completed human complexity evaluation; the separate manual evaluation for Hegotá is still underway (<a href={basePath('prospective/hegota/')}>{hegotaHuman.scored_count} of {hegota.eip_count} Hegotá candidates</a> have a scored human checklist, and each Hegotá EIP page shows its Human status and a same-rubric comparison where one exists). This page compares the Amsterdam LLM-based and human assessments to examine how closely they align and whether their disagreements reflect systematic differences in how the complexity criteria were interpreted. It is a structured sanity check, not evidence that the LLM is calibrated to human judgment.</div>
-    <div class="notice"><strong>The two LLM evaluations differ only in the template.</strong> Both used the same pinned EIP and supporting inputs under the same blinded LLM procedure. <strong>LLM v1</strong> used the historical <a href="https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md">complexity-assessment template v1</a>; <strong>LLM v2</strong> used <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">complexity-assessment template v2</a>. No proposal revision or implementation evidence changed between them.</div>
-    <p>Every Amsterdam EIP page carries the complete Human and LLM assessments and a difference-oriented <strong>Compare</strong> view with per-criterion deltas; the table below links straight to it.</p>
-    <h2>Three Evaluations Per EIP</h2>
-    <ul>
-      <li><strong>Human v1</strong> and <strong>LLM v1</strong> use the same historical <a href="https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md">24-criterion template v1</a> and are the primary human–LLM comparison.</li>
-      <li><strong>LLM v2</strong> applies the expanded <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">28-criterion template v2</a> to the same inputs. It shows sensitivity to the template revision, not a directly comparable raw-score error.</li>
-      <li>Rows are ordered by the human v1 score, from highest to lowest.</li>
-    </ul>
-    <Chart spec={data.charts['human-alignment']} label="Human and blinded LLM complexity scores for 12 Amsterdam EIPs" description="Three scores per EIP: the published historical human evaluation, a blinded LLM evaluation using the same historical rubric, and a blinded LLM evaluation using rubric v2." fit="standard" compact={true} />
-    <div class="table-region" role="region" aria-label="Human and LLM complexity scores" tabindex="0">
-      <table data-sortable-table>
-        <caption>Amsterdam three-way complexity evaluations</caption>
-        <thead><tr>
-          <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEip" data-sort-kind="number">EIP</button></th>
-          <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortTitle">Proposal</button></th>
-          <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortHuman" data-sort-kind="number">Human v1</button></th>
-          <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortLlmV1" data-sort-kind="number">LLM v1 blinded</button></th>
-          <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortLlmV2" data-sort-kind="number">LLM v2 blinded</button></th>
-          <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortClean">Clean v1 comparison</button></th>
-          <th scope="col">Per-criterion view</th>
-        </tr></thead>
-        <tbody>{data.human_llm.rows.map((row) => <tr data-human-llm-eip={row.eip} data-sort-eip={row.eip} data-sort-title={row.title} data-sort-human={row.human_score} data-sort-llm-v1={row.llm_v1_score} data-sort-llm-v2={row.llm_v2_score} data-sort-clean={row.clean ? 'yes' : 'no'}><td><a href={eipRoute(row.eip, { fork: 'amsterdam', view: 'compare' })}>EIP-{row.eip}</a></td><td>{row.title}</td><td class="number">{row.human_score}</td><td class="number">{row.llm_v1_score}</td><td class="number">{row.llm_v2_score}</td><td>{row.clean ? 'Yes' : 'No'}</td><td><a href={eipRoute(row.eip, { fork: 'amsterdam', view: 'compare' })}>Compare criteria</a></td></tr>)}</tbody>
-      </table>
-    </div>
-    <h2>What Differed Systematically?</h2>
-    <ul>
-      <li><strong>Low human scores were pulled toward the middle.</strong> Under the shared v1 rubric, all seven EIPs rated Low by humans were rated Medium by the LLM, usually through a larger number of small nonzero scores.</li>
-      <li><strong>The LLM applied a “risk-review tax.”</strong> Much of the excess came from security review, cross-EIP dependencies, edge cases, and performance testing where human assessors more often required evidence of substantial additional work.</li>
-      <li><strong>High-end misses had a different shape.</strong> The LLM sometimes undercounted concrete gas-accounting, Engine API, validity, or additive per-mechanism burdens while still adding risk-oriented points elsewhere.</li>
-      <li><strong>V2 shifted scores upward.</strong> Its apparent improvement in tier agreement cannot be separated from the expanded rubric and changed thresholds.</li>
-    </ul>
-    <p>The strongest supported use is as a structured second opinion: retain the LLM’s criterion-level flags and ranking signal, then have a human approve the evidence, aggregation, and final score.</p>
-    <div class="actions"><a href={basePath('generated/charts/human-alignment.json')}>Download chart specification and values</a><a href={basePath()}>Read the methodology and limitations</a></div>
+<Layout title="Human versus LLM evaluations" description="Descriptive comparison of published STEEL human complexity checklists with blinded LLM assessments for Amsterdam under the same checklist revision, per EIP and per criterion, and the status of human checklists for Hegotá candidates.">
+  <p class="eyebrow">Amsterdam Comparison</p><h1>Human and LLM Complexity Evaluations</h1>
+  <p class="lede">A descriptive comparison of published human assessments and blinded LLM assessments for 12 Amsterdam Execution Layer EIPs, evaluated under the same checklist revision so criteria and totals are directly comparable.</p>
+  <div class="source-note"><strong>Why Amsterdam?</strong> It is currently the only fork with a completed human complexity evaluation; the separate manual evaluation for Hegotá is still underway (<a href={basePath('prospective/hegota/')}>{hegotaHuman.scored_count} of {hegota.eip_count} Hegotá candidates</a> have a scored human checklist, and each Hegotá EIP page shows its Human status and a same-rubric comparison where one exists). This page compares the Amsterdam LLM-based and human assessments to examine how closely they align and whether their disagreements reflect systematic differences in how the complexity criteria were interpreted. It is a structured sanity check, not evidence that the LLM is calibrated to human judgment.</div>
+  <div class="notice"><strong>The two LLM evaluations differ only in the template.</strong> Both used the same pinned EIP and supporting inputs under the same blinded LLM procedure. <strong>LLM v1</strong> used the historical <a href="https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md">complexity-assessment template v1</a>, the same 24-criterion checklist the human reviewers used, and is the evaluator compared here; <strong>LLM v2</strong> used <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">complexity-assessment template v2</a> and is the study's primary score. No proposal revision or implementation evidence changed between them.</div>
+
+  <div class="grid">
+    <div class="card"><span class="muted">Same-rubric comparisons</span><div class="stat">{summary.comparison_count}</div><span class="muted">{summary.clean_count} clean, {summary.comparison_count - summary.clean_count} confounded</span></div>
+    <div class="card"><span class="muted">Mean Δ total (LLM − Human)</span><div class="stat">{format(summary.mean_signed_delta)}</div><span class="muted">mean |Δ| {summary.mean_absolute_delta.toFixed(2)} · median |Δ| {summary.median_absolute_delta}</span></div>
+    <div class="card"><span class="muted">Who scored higher</span><div class="stat">{summary.llm_higher_count} <span class="stat-unit">LLM</span> · {summary.human_higher_count} <span class="stat-unit">Human</span></div><span class="muted">{summary.equal_total_count} equal totals</span></div>
+    <div class="card"><span class="muted">Same tier</span><div class="stat">{summary.tier_agreement_count} <span class="stat-unit">of {summary.comparison_count}</span></div><span class="muted">revision-1 tiers: <span class="pill pill-small low">Low</span> &lt;10 · <span class="pill pill-small medium">Medium</span> 10–19 · <span class="pill pill-small high">High</span> ≥20</span></div>
+  </div>
+
+  <h2 id="per-eip">Complexity profiles per EIP</h2>
+  <p class="muted">Human and LLM revision-1 profiles for each EIP on one shared scale, ranked by the Human total. Δ is LLM minus Human. Open an EIP for its per-criterion comparison with the rationale from both evaluators.</p>
+  <ComparisonBars data={data} rows={alignment.rows} fork="amsterdam" />
+
+  <h2 id="per-criterion">Where the Evaluators Differ by Criterion</h2>
+  <p class="muted">Mean per-criterion difference across the 12 EIPs, LLM minus Human, under the shared revision-1 checklist. Positive values mean the LLM scored the criterion higher on average.</p>
+  <div class="table-region" role="region" aria-label="Per-criterion Human versus LLM differences" tabindex="0">
+    <table class="criterion-table criterion-aggregate" data-sortable-table>
+      <caption>Per-criterion differences across 12 Amsterdam EIPs (checklist revision 1)</caption>
+      <thead><tr>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortCriterion">Criterion</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortMean" data-sort-kind="number">Mean Δ</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortAbs" data-sort-kind="number">Mean |Δ|</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortLlmHigher" data-sort-kind="number">LLM higher</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortHumanHigher" data-sort-kind="number">Human higher</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortExact" data-sort-kind="number">Agree</button></th>
+      </tr></thead>
+      <tbody>
+        {criteria.map((row) => (
+          <tr class:list={[Math.abs(row.mean_delta) >= 0.5 && 'aggregate-notable']} data-sort-criterion={String(DISPLAY_INDEX.get(row.id) ?? 99).padStart(2, '0')} data-sort-mean={row.mean_delta} data-sort-abs={row.mean_absolute_delta} data-sort-llm-higher={row.llm_higher_count} data-sort-human-higher={row.human_higher_count} data-sort-exact={row.exact_count}>
+            <th scope="row"><span class="swatch" style={`--fill:var(--criterion-${row.id});--ink:var(--criterion-ink-${row.id})`} aria-hidden="true">{criterionAbbreviation(row.id)}</span><span class="criterion-name">{definitions.get(row.id).label}</span></th>
+            <td class:list={['number', 'delta', row.mean_delta > 0 && 'delta-pos', row.mean_delta < 0 && 'delta-neg']}>{format(row.mean_delta)}</td>
+            <td class="number">{row.mean_absolute_delta.toFixed(2)}</td>
+            <td class="number">{row.llm_higher_count}</td>
+            <td class="number">{row.human_higher_count}</td>
+            <td class="number">{row.exact_count}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="totals">Totals per EIP</h2>
+  <div class="table-region" role="region" aria-label="Human and LLM complexity totals" tabindex="0">
+    <table data-sortable-table>
+      <caption>Amsterdam totals per EIP: Human and LLM under checklist revision 1, and the study's primary revision-2 LLM score</caption>
+      <thead><tr>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEip" data-sort-kind="number">EIP</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortTitle">Proposal</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortHuman" data-sort-kind="number">Human r1</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortLlm" data-sort-kind="number">LLM r1</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortDelta" data-sort-kind="number">Δ</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortTier">Tiers</button></th>
+        <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortPrimary" data-sort-kind="number">LLM r2 (primary)</button></th>
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortClean">Clean comparison</button></th>
+      </tr></thead>
+      <tbody>{alignment.rows.map((row) => <tr data-human-llm-eip={row.eip} data-sort-eip={row.eip} data-sort-title={row.title} data-sort-human={row.human_total} data-sort-llm={row.llm_total} data-sort-delta={row.delta} data-sort-tier={row.tier_agreement ? '0' : '1'} data-sort-primary={row.primary_llm_total ?? ''} data-sort-clean={row.clean ? 'yes' : 'no'}><td><a href={eipRoute(row.eip, { fork: 'amsterdam', view: 'compare' })}>EIP-{row.eip}</a></td><td>{row.title}</td><td class="number">{row.human_total}</td><td class="number">{row.llm_total}</td><td class:list={['number', 'delta', row.delta > 0 && 'delta-pos', row.delta < 0 && 'delta-neg']}>{signed(row.delta)}</td><td>{row.tier_agreement ? <span class:list={['pill', 'pill-small', row.human_tier]}>{TIER_LABELS[row.human_tier]}</span> : <><span class:list={['pill', 'pill-small', row.human_tier]}>{TIER_LABELS[row.human_tier]}</span> <span class="muted">vs</span> <span class:list={['pill', 'pill-small', row.llm_tier]}>{TIER_LABELS[row.llm_tier]}</span></>}</td><td class="number">{row.primary_llm_total ?? '—'}</td><td>{row.clean ? 'Yes' : 'No'}</td></tr>)}</tbody>
+    </table>
+  </div>
+
+  <h2>What Differed Systematically?</h2>
+  <ul>
+    <li><strong>Low human scores were pulled toward the middle.</strong> Under the shared v1 rubric, all seven EIPs rated Low by humans were rated Medium by the LLM, usually through a larger number of small nonzero scores.</li>
+    <li><strong>The LLM applied a “risk-review tax.”</strong> Much of the excess came from security review, cross-EIP dependencies, edge cases, and performance testing where human assessors more often required evidence of substantial additional work.</li>
+    <li><strong>High-end misses had a different shape.</strong> The LLM sometimes undercounted concrete gas-accounting, Engine API, validity, or additive per-mechanism burdens while still adding risk-oriented points elsewhere.</li>
+    <li><strong>V2 shifted scores upward.</strong> Its apparent improvement in tier agreement cannot be separated from the expanded rubric and changed thresholds.</li>
+  </ul>
+  <p>The strongest supported use is as a structured second opinion: retain the LLM’s criterion-level flags and ranking signal, then have a human approve the evidence, aggregation, and final score.</p>
+  <CriterionLegend criteria={data.criteria} revision={1} compact={true} summary="Criterion legend for the revision-1 checklist" />
+  <div class="actions"><a href={basePath('generated/downloads/criterion-scores.csv')}>Download criterion scores (CSV)</a><a href={basePath('eips/compare/?a=amsterdam:7928:llm:r1,amsterdam:7928:human:r1')}>Open a Human vs LLM pair in the comparison view</a><a href={basePath()}>Read the methodology and limitations</a></div>
 </Layout>

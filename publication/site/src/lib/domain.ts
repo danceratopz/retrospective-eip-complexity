@@ -284,7 +284,40 @@ export interface Publication {
   forks: ForkSummary[];
   hegota: any;
   fork_shipping: any;
-  human_llm: { rows: any[] };
+  human_llm: {
+    fork: string;
+    rubric_revision: RubricRevision;
+    rows: Array<{
+      eip: number;
+      title: string;
+      comparison_id: string;
+      human_assessment_id: string;
+      llm_assessment_id: string;
+      human_total: number;
+      llm_total: number;
+      delta: number;
+      human_tier: Tier;
+      llm_tier: Tier;
+      tier_agreement: boolean;
+      clean: boolean;
+      primary_llm_assessment_id: string | null;
+      primary_llm_total: number | null;
+      input_alignment: string | null;
+      human_timing_exposure: string | null;
+    }>;
+    summary: {
+      comparison_count: number;
+      clean_count: number;
+      mean_signed_delta: number;
+      mean_absolute_delta: number;
+      median_absolute_delta: number;
+      llm_higher_count: number;
+      human_higher_count: number;
+      equal_total_count: number;
+      tier_agreement_count: number;
+    };
+    criteria: Array<{ id: string; mean_delta: number; mean_absolute_delta: number; llm_higher_count: number; human_higher_count: number; exact_count: number; nonzero_count: number }>;
+  };
   charts: Record<string, string>;
 }
 

@@ -1,0 +1,58 @@
+---
+/**
+ * Paired Human and LLM stacked bars for same-rubric comparisons, ranked by the Human total.
+ */
+import type { Assessment, Publication } from '../lib/domain';
+import { EVALUATOR_LABELS, rubricLabel } from '../lib/labels';
+import { eipRoute } from '../lib/routes';
+import { signed, truncate } from '../lib/format';
+import EvaluatorBadge from './EvaluatorBadge.astro';
+import StackedBar from './StackedBar.astro';
+
+interface Row {
+  eip: number;
+  title: string;
+  human_assessment_id: string;
+  llm_assessment_id: string;
+  human_total: number;
+  llm_total: number;
+  delta: number;
+  clean: boolean;
+  primary_llm_total: number | null;
+  input_alignment: string | null;
+  human_timing_exposure: string | null;
+}
+
+interface Props {
+  data: Publication;
+  rows: Row[];
+  fork: string;
+}
+
+const { data, rows, fork } = Astro.props as Props;
+const definitions = new Map(data.criteria.map((item) => [item.id, item]));
+const scale = Math.max(...rows.flatMap((row) => [row.human_total, row.llm_total]));
+const segments = (assessment: Assessment) => assessment.criteria.filter((criterion) => (criterion.score ?? 0) > 0).map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 140) }));
+const humanize = (value: string | null) => (value ?? '').replaceAll('_', ' ');
+---
+<ol class="ranked-list comparison-bars" aria-label="Human and LLM complexity profiles per EIP">
+  {rows.map((row) => {
+    const human = data.assessments[row.human_assessment_id];
+    const llm = data.assessments[row.llm_assessment_id];
+    return (
+      <li class="ranked-row" data-comparison-eip={row.eip}>
+        <div class="ranked-label">
+          <a href={eipRoute(row.eip, { fork, view: 'compare' })}><strong>EIP-{row.eip}</strong> <span class="ranked-title">{truncate(row.title, 48)}</span></a>
+          <span class="ranked-meta">
+            <span class:list={['pill', 'pill-small', row.delta > 0 ? 'delta-pos' : row.delta < 0 ? 'delta-neg' : '']} title="LLM total minus Human total under the same checklist revision">Δ {signed(row.delta)}</span>
+            {row.clean ? <span class="pill pill-small low" title="Same EIP text, same template, unambiguous totals">Clean</span> : <span class="muted" title={`Input alignment: ${humanize(row.input_alignment)} · human hindsight exposure: ${humanize(row.human_timing_exposure)}`}>confounded</span>}
+          </span>
+        </div>
+        <div class="ranked-bars">
+          <div class="ranked-pair"><EvaluatorBadge source="human" revision={human.rubric_revision} size="small" /><StackedBar segments={segments(human)} definitions={definitions} total={human.score} max={scale} size="regular" showTotal={true} label={`EIP-${row.eip} ${EVALUATOR_LABELS.human} complexity (${rubricLabel(human.rubric_revision)})`} /></div>
+          <div class="ranked-pair"><EvaluatorBadge source="llm" revision={llm.rubric_revision} size="small" /><StackedBar segments={segments(llm)} definitions={definitions} total={llm.score} max={scale} size="regular" showTotal={true} label={`EIP-${row.eip} ${EVALUATOR_LABELS.llm} complexity (${rubricLabel(llm.rubric_revision)})`} /></div>
+        </div>
+      </li>
+    );
+  })}
+</ol>

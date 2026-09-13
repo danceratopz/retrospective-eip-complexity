@@ -16,14 +16,12 @@ from .common import (
     PUBLIC,
     TASK03_INPUTS as TIMELINE_INPUTS,
     TASK04B_TIMELINES as TIMELINES,
-    TASK05C,
     TASK07_JOIN as TASK07,
     load_yaml,
     source,
     write_json,
 )
 
-ALIGNMENT = TASK05C / "outputs/comparisons"
 
 
 def read_csv(path: Path) -> list[dict[str, Any]]:
@@ -229,7 +227,7 @@ def publication_timelines(
 
 def charts(
     assessment_rows: list[dict[str, Any]],
-) -> tuple[dict[str, str], dict[str, Any], list[dict[str, Any]], list[dict[str, str]]]:
+) -> tuple[dict[str, str], dict[str, Any], list[dict[str, str]]]:
     chart_dir = PUBLIC / "charts"
     chart_dir.mkdir(parents=True, exist_ok=True)
     sources: list[dict[str, str]] = []
@@ -300,94 +298,6 @@ def charts(
     specs["fork-shipping-hardest-eip"] = shipping_specs[2]
     sources.extend(shipping_sources)
 
-    alignment_rows = []
-    for path in sorted(ALIGNMENT.glob("eip-*.yaml")):
-        item = load_yaml(path)
-        observations = item["observations"]
-        alignment_rows.append(
-            {
-                "clean": item["clean_comparison"]["eligible"],
-                "eip": item["eip"]["number"],
-                "human_score": observations["C_historical_human"]["recomputed_total"],
-                "human_tier": observations["C_historical_human"]["recomputed_tier"],
-                "llm_v1_score": observations["B_historical_rubric_automated"]["total"],
-                "llm_v1_tier": observations["B_historical_rubric_automated"]["tier"],
-                "llm_v2_score": observations["A_current_rubric_automated"]["total"],
-                "llm_v2_tier": observations["A_current_rubric_automated"]["tier"],
-                "title": item["eip"]["title"],
-            }
-        )
-        sources.append(source(path))
-    alignment_rows.sort(key=lambda row: (-row["human_score"], row["eip"]))
-    eip_order = [f"EIP-{row['eip']}" for row in alignment_rows]
-    alignment_values = []
-    for row in alignment_rows:
-        for evaluation, score, tier in [
-            ("Human · v1 rubric", row["human_score"], row["human_tier"]),
-            ("LLM · v1 rubric", row["llm_v1_score"], row["llm_v1_tier"]),
-            ("LLM · v2 rubric", row["llm_v2_score"], row["llm_v2_tier"]),
-        ]:
-            alignment_values.append(
-                {
-                    "clean": row["clean"],
-                    "eip": f"EIP-{row['eip']}",
-                    "evaluation": evaluation,
-                    "score": score,
-                    "tier": tier,
-                    "title": row["title"],
-                }
-            )
-    specs["human-alignment"] = {
-        "data": {"values": alignment_values},
-        "description": "Three complexity-evaluation scores for each of 12 Amsterdam EIPs, ordered by the historical human score.",
-        "height": 460,
-        "layer": [
-            {
-                "encoding": {
-                    "x": {"aggregate": "min", "field": "score", "type": "quantitative"},
-                    "x2": {"aggregate": "max", "field": "score"},
-                    "y": {"field": "eip", "sort": eip_order, "title": None, "type": "nominal"},
-                },
-                "mark": {"color": "#d9d7cf", "strokeWidth": 2, "type": "rule"},
-            },
-            {
-                "encoding": {
-                    "color": {
-                        "field": "evaluation",
-                        "legend": {"orient": "top", "title": None},
-                        "scale": {
-                            "domain": ["Human · v1 rubric", "LLM · v1 rubric", "LLM · v2 rubric"],
-                            "range": ["#17202a", "#3457d5", "#b52e31"],
-                        },
-                        "type": "nominal",
-                    },
-                    "shape": {"field": "evaluation", "legend": None, "type": "nominal"},
-                    "tooltip": [
-                        {"field": "eip", "title": "EIP", "type": "nominal"},
-                        {"field": "title", "title": "Title", "type": "nominal"},
-                        {"field": "evaluation", "title": "Evaluation", "type": "nominal"},
-                        {"field": "score", "title": "Score", "type": "quantitative"},
-                        {"field": "tier", "title": "Tier", "type": "nominal"},
-                        {"field": "clean", "title": "Clean same-rubric comparison", "type": "nominal"},
-                    ],
-                    "x": {
-                        "field": "score",
-                        "scale": {"domain": [0, 42]},
-                        "title": "Complexity score (rubric-specific scale)",
-                        "type": "quantitative",
-                    },
-                    "y": {"field": "eip", "sort": eip_order, "title": None, "type": "nominal"},
-                },
-                "mark": {"filled": True, "size": 120, "stroke": "white", "strokeWidth": 1, "type": "point"},
-            },
-        ],
-        "title": {
-            "subtitle": "V2 uses a different rubric; compare ordering rather than raw distance.",
-            "text": "Amsterdam Human and Blinded LLM Scores",
-        },
-        "width": 680,
-    }
-
     for fork in FORK_ORDER[:-1]:
         path = TIMELINES / fork / "el-evaluation-cutoff-review.vl.json"
         spec = json.loads(path.read_text(encoding="utf-8"))
@@ -400,4 +310,4 @@ def charts(
         path = chart_dir / f"{name}.json"
         write_json(path, spec)
         outputs[name] = f"generated/charts/{name}.json"
-    return outputs, shipping_analysis, alignment_rows, sources
+    return outputs, shipping_analysis, sources

@@ -256,6 +256,16 @@ class GeneratedPayloadTests(unittest.TestCase):
         by_eip = {item["eip"]: item for item in amsterdam}
         self.assertEqual((by_eip[7928]["human_total"], by_eip[7928]["llm_total"], by_eip[7928]["confounds"]["primary_llm_total"]), (29, 26, 40))
 
+    def test_human_llm_alignment_matches_task05c(self) -> None:
+        alignment = self.data["human_llm"]
+        self.assertEqual(alignment["summary"]["comparison_count"], 12)
+        self.assertEqual([row["eip"] for row in alignment["rows"][:3]], [7928, 8037, 8038])
+        self.assertEqual((alignment["summary"]["mean_absolute_delta"], alignment["summary"]["mean_signed_delta"]), (5.3333, 2.8333))
+        by_id = {item["id"]: item for item in alignment["criteria"]}
+        self.assertEqual(by_id["security_risks"]["mean_delta"], 1.5)
+        self.assertEqual(by_id["evm_gas_rule_changes"]["mean_delta"], -0.9167)
+        self.assertEqual(sum(1 for row in alignment["rows"] if row["clean"]), 2)
+
     def test_compare_index_mirrors_assessments(self) -> None:
         self.assertEqual([item["id"] for item in self.index["criteria"]], REGISTRY_ORDER)
         rows = {item["id"]: item for item in self.index["assessments"]}

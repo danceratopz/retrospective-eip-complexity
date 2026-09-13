@@ -31,7 +31,7 @@ from publication_adapter.common import (  # noqa: E402
     digest,
     write_json,
 )
-from publication_adapter.comparisons import build_comparisons  # noqa: E402
+from publication_adapter.comparisons import amsterdam_alignment, build_comparisons  # noqa: E402
 from publication_adapter.rubric import build_rubrics  # noqa: E402
 from publication_adapter.sources import (  # noqa: E402
     load_amsterdam_human,
@@ -143,7 +143,8 @@ def build() -> dict[str, Any]:
         }
         for item in occurrences
     ]
-    chart_paths, shipping_analysis, alignment_rows, chart_sources = charts(chart_rows)
+    chart_paths, shipping_analysis, chart_sources = charts(chart_rows)
+    human_llm, alignment_sources = amsterdam_alignment(comparisons, assessments)
     write_downloads(occurrences, assessments)
 
     payload = {
@@ -155,7 +156,7 @@ def build() -> dict[str, Any]:
         "fork_shipping": shipping_analysis,
         "forks": forks,
         "hegota": hegota_summary,
-        "human_llm": {"rows": alignment_rows},
+        "human_llm": human_llm,
         "release_state": "public",
         "rubrics": rubrics,
         "schema_version": VERSION,
@@ -167,7 +168,7 @@ def build() -> dict[str, Any]:
     write_json(PUBLIC / "publication.json", payload)
     write_json(PUBLIC / "compare-index.json", index)
 
-    all_sources = rubric_sources + retro_sources + pro_sources + amsterdam_sources + hegota_human_sources + chart_sources
+    all_sources = rubric_sources + retro_sources + pro_sources + amsterdam_sources + hegota_human_sources + chart_sources + alignment_sources
     unique_sources = {item["path"]: item for item in all_sources}
     manifest = {
         "generated_files": [],

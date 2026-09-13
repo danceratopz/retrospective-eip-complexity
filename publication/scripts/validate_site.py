@@ -326,11 +326,12 @@ def validate() -> dict[str, int]:
     human_llm = data["human_llm"]["rows"]
     require(len(human_llm) == 12, "human–LLM comparison must contain 12 Amsterdam EIPs")
     require(
-        [(row["eip"], row["human_score"], row["llm_v1_score"], row["llm_v2_score"]) for row in human_llm[:3]]
+        [(row["eip"], row["human_total"], row["llm_total"], row["primary_llm_total"]) for row in human_llm[:3]]
         == [(7928, 29, 26, 40), (8037, 28, 21, 35), (8038, 20, 17, 17)],
         "human–LLM score ordering changed",
     )
     require(sum(row["clean"] for row in human_llm) == 2, "human–LLM clean comparison count changed")
+    require(len(data["human_llm"]["criteria"]) == 24, "human–LLM per-criterion aggregate must cover the revision-1 checklist")
 
     forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key", "assessment-run-"]
     for generated in [data_path, DIST / "generated/compare-index.json", *sorted((DIST / "generated/downloads").glob("*.csv"))]:
@@ -544,9 +545,12 @@ def validate() -> dict[str, int]:
     require("counts substantive revisions" in association_html, "specification-rework proxy is unexplained")
     require("counts distinct <code>requires</code> or <code>interacts_with</code>" in association_html, "EIP-interaction proxy is unexplained")
     require("Emergent coupling" not in association_html, "jargon-heavy proxy label remains")
-    require("generated/charts/human-alignment.json" in human_llm_html, "human–LLM chart is missing")
+    require("generated/charts/human-alignment.json" not in human_llm_html, "superseded human–LLM Vega chart remains")
+    require(human_llm_html.count('data-comparison-eip="') == 12, "human–LLM paired bars must cover twelve EIPs")
+    require(human_llm_html.count('class="stack stack-regular') == 24, "human–LLM page must show one Human and one LLM bar per EIP")
     require(human_llm_html.count('data-human-llm-eip="') == 12, "human–LLM table row count mismatch")
-    require(human_llm_html.count('data-sort-key="') == 6, "human–LLM columns must all be sortable")
+    require(human_llm_html.count('data-sort-key="') == 14, "human–LLM columns must all be sortable")
+    require("Where the Evaluators Differ by Criterion" in human_llm_html and human_llm_html.count("aggregate-notable") >= 4, "human–LLM per-criterion aggregate is missing")
     require(">Block-Level Access Lists</td>" in human_llm_html, "human–LLM proposal titles are missing")
     require("The LLM applied a “risk-review tax.”" in human_llm_html, "human–LLM systematic difference is missing")
     require("currently the only fork with a completed human complexity evaluation" in human_llm_html, "Amsterdam comparison rationale is missing")
