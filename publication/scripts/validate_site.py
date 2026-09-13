@@ -166,6 +166,17 @@ def validate_eip_pages(data: dict) -> None:
                 require("data-diff-only" in html, f"EIP-{eip['eip']}: differences-only toggle missing")
         if len(eip["occurrences"]) > 1:
             require(html.count('data-fork-tab="') == len(eip["occurrences"]), f"EIP-{eip['eip']}: fork tabs")
+            for occurrence in eip["occurrences"]:
+                require(
+                    f'href="{BASE}eips/{eip["eip"]}/?fork={occurrence["fork"]}#fork-{occurrence["fork"]}"' in html,
+                    f"EIP-{eip['eip']}: fork tab for {occurrence['fork']} must carry URL view state",
+                )
+        for occurrence in eip["occurrences"]:
+            if len(occurrence["comparison_ids"]) and occurrence["human"]["assessment_id"]:
+                require(
+                    f'href="{BASE}eips/{eip["eip"]}/?fork={occurrence["fork"]}&amp;view=compare#panel-{occurrence["fork"]}-compare"' in html,
+                    f"EIP-{eip['eip']}: compare tab must carry URL view state",
+                )
         require('class="stack stack-large' in html or 'status-not_applicable' in html, f"EIP-{eip['eip']}: stacked complexity bar missing")
         require("Criterion legend and glossary" in html, f"EIP-{eip['eip']}: legend missing")
         if any(occurrence["llm"]["assessment_id"] for occurrence in eip["occurrences"]):

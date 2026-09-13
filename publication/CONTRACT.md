@@ -13,7 +13,7 @@ The following decisions are fixed:
 - Astro 7.2.7 on Node 22.22.1 is the selected static site shell. No UI framework, server adapter, database, analytics, or telemetry is approved. Client-side scripts may only enhance pre-rendered HTML, and any view state they hold (selected fork, assessment source, comparison set, filters) must be reproducible from the page URL.
 - Python/YAML research outputs remain authoritative and read-only.
 - A one-way Python adapter will emit sanitized, schema-versioned JSON and CSV.
-- Vega-Lite 6.4.1 remains the visualization grammar, with Vega 6.4.0 and Vega-Embed 7.1.0 bundled as one local runtime.
+- Vega-Lite 6.4.1 remains the visualization grammar for timelines and scatter plots, with Vega 6.4.0 and Vega-Embed 7.1.0 bundled as one local runtime. Stacked criterion bars are rendered at build time as accessible HTML from one shared renderer, because they appear on every table row and must share one criterion colour, abbreviation, and order registry.
 - The site explains method before results and supports both fork and EIP browsing.
 - Retrospective and prospective records remain structurally separate.
 - A minimal project-owned Python generator is a fallback only if the owner later rejects Node/npm or limits the site to a fixed snapshot.
@@ -57,15 +57,17 @@ The required route families are:
 | Landing | `/` | Question, study scope, current maturity, caveats, and reading path |
 | Study | `/study/` | Background, research question, scope, method, evidence controls, scoring rubric, design decisions, and limitations |
 | Forks | `/forks/`, `/forks/{fork}/` | Fork inventory, maturity, timeline, scope, totals, EIPs, and caveats |
-| EIPs | `/eips/`, `/eips/{eip}/` | Global occurrence index; never a collapsed cross-cutoff score |
-| Assessments | `/forks/{fork}/eips/{eip}/` | The scoring authority shown to readers for one fork cutoff and EIP revision |
+| EIPs | `/eips/`, `/eips/{eip}/`, `/eips/compare/` | Filterable occurrence index; the canonical EIP page carrying every fork occurrence and assessment source; the shared comparison view |
+| Assessments | `/forks/{fork}/eips/{eip}/` | Legacy route that redirects to the canonical EIP page with the fork preselected |
 | Results | `/results/predicted-vs-observed/` | Fork complexity totals, shipping-time comparisons, observed-effort associations, mandatory caveats, and semantic tables |
 | Human vs LLM | `/human-vs-llm/` | Descriptive Amsterdam comparison of published human and blinded LLM complexity evaluations |
 | Prospective | `/prospective/hegota/` | Approved frozen Task 08 summary, plot, semantic table, downloads, provenance, and caveats |
 
 Approved downloads remain linked from the relevant results and assessment pages. Canonical research records and reproduction instructions remain repository documentation rather than standalone publication routes.
 
-One EIP may have different assessment refs and information cutoffs in different forks. The fork-specific assessment page is therefore the reader-facing score authority. A global EIP page may aggregate occurrences and cross-links, but it must never replace distinct fork cutoffs with one score.
+One EIP may have different assessment refs and information cutoffs in different forks. The canonical EIP page therefore pre-renders one panel per fork occurrence, each with its own cutoff, EIP revision, and assessment sources; the selected fork, view (`LLM`, `Human`, `Compare`), and rubric revision are encoded in the URL query so every view is shareable. The page never replaces distinct fork cutoffs with one score, and the legacy fork-scoped route redirects into it.
+
+The comparison view at `/eips/compare/` is reconstructed entirely from its URL (`eips`, `fork`, `source`) and the sanitized compare index. It compares at most four EIPs under one assessment source and renders unavailable or not-applicable assessments as statuses, never as zeros.
 
 The Hegotá route accepts the owner-approved `hegota-candidates-2026-08-26-ac450a4` combined view only: the unchanged 44-entry PFI freeze plus the append-only SFI/CFI extension from the same source snapshot. It contains 46 status-labelled entries, 39 validated assessments, 7 not-applicable dispositions, and an EL-rubric score sum of 856. The page must retain the original PFI subtotal of 776 across 37 assessments and identify EIP-7805 and EIP-8141 as Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot. `prospective_cohort_summary` owns the page and `prospective_eip_assessment` owns its table rows. These records remain structurally separate from Task 05 and never enter Task 07 correlations or observed-effort plots.
 
@@ -84,6 +86,10 @@ Exact display text, applicability, minimum caveats, allowed chart/table treatmen
 - **Canonical** means the originating research task owns the frozen input or approved result.
 - **Derived** means the record is reproducible from named canonical sources but is not itself the source of truth.
 - **Observed-effort proxy** means a descriptive metric derived from recorded public artifacts. It is not person-hours, engineering cost, or causal effort.
+- **Human** and **LLM** are the two assessment sources and are shown as first-class badges wherever a score appears. A Human checklist is the STEEL team's published `ethspecs/pm` checklist; an LLM assessment is the study's isolated automated assessment.
+- **Assessment status** takes exactly one of `Complete`, `Available in open PR`, `In progress`, `Incomplete`, `Not applicable to EL rubric`, or `Not available` (`Not yet available` for prospective data). Zero complexity, an unavailable assessment, and an incomplete assessment must always look different.
+- **Under-specified at assessment cutoff** is the required long form of the under-specification indicator; it must link to the affected criteria, the uncertainty summary, and the plausible score range.
+- **Checklist revision** names the rubric revision (1 or 2) an assessment applied. Human and LLM totals are compared per criterion only under the same revision.
 
 Labels are structured data, not prose decoration. The adapter fails if a mandatory label is absent, if mutually exclusive labels coexist, if consensus-only work receives a numeric EL score, if a proposed Task 04b cohort loses `provisional`, or if an Amsterdam observed-effort record loses `right_censored` or `potentially_in_sample` where its source requires them.
 
@@ -206,6 +212,7 @@ The validator passing proves internal consistency of this contract and artifact 
 | Structured contract area | Owning file |
 | --- | --- |
 | Route families, parameters, templates, navigation, cross-links, provenance requirements, and release states | [`contract/routes.json`](contract/routes.json) |
+| Site-side criterion presentation registry (group, colour, abbreviation, display order) and reader-facing terminology | [`site/src/lib/criteria.ts`](site/src/lib/criteria.ts), [`site/src/lib/labels.ts`](site/src/lib/labels.ts) |
 | Exact display labels, definitions, applicability, caveats, treatments, exclusions, and substitutions | [`contract/labels.json`](contract/labels.json) |
 | Allowed input roots/classes, output types, identity fields, serialization, allowlist, deny rules, build failures, and prospective gate | [`contract/adapter-boundary.json`](contract/adapter-boundary.json) |
 | Per-source redistribution state, snapshot policy, proposed disposition, rationale, known notice, and blocker | [`contract/source-dispositions.json`](contract/source-dispositions.json) |
