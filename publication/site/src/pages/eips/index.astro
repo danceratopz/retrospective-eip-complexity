@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import CriterionLegend from '../../components/CriterionLegend.astro';
-import EipIndex from '../../components/EipIndex.astro';
+import OccurrenceTable from '../../components/OccurrenceTable.astro';
 import { loadPublication, basePath } from '../../lib/data.js';
 import type { Publication } from '../../lib/domain';
 import { allOccurrences } from '../../lib/domain';
@@ -14,7 +14,7 @@ const humanScored = occurrences.filter((item) => item.human.assessment_id && ite
   <p class="eyebrow">Cross-fork index</p>
   <h1>EIPs</h1>
   <p class="lede">{data.eips.length} proposals across {occurrences.length} fork–EIP relationships. Each row is one EIP in one fork context with its own EIP revision and cutoff; {humanScored} rows also have a scored Human checklist. Open an EIP for its complete assessment, or select up to four rows to compare them.</p>
-  <EipIndex data={data} />
+  <OccurrenceTable data={data} filters={true} />
   <CriterionLegend criteria={data.criteria} compact={true} />
   <div class="actions"><a class="button" href={basePath('eips/compare/')}>Open the comparison view</a><a href={basePath('generated/downloads/complexity-assessments.csv')}>Download all assessments (CSV)</a><a href={basePath('generated/downloads/criterion-scores.csv')}>Download criterion scores (CSV)</a></div>
 </Layout>

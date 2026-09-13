@@ -1,31 +1,42 @@
 ---
 /**
- * Global EIP exploration and comparison surface: one row per fork occurrence, filterable by fork, band,
- * source availability, under-specification, and status; rows can be selected for the shared comparison.
+ * Shared table of fork–EIP occurrences: the global index (every fork, with filters) and the fork pages
+ * (one fork, with assessment-input links) render through this one component.
  */
-import type { Publication } from '../lib/domain';
+import type { Occurrence, Publication } from '../lib/domain';
 import { allOccurrences, primaryAssessment } from '../lib/domain';
-import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, STATUS_LABELS, TIER_LABELS, UNDER_SPECIFIED_SHORT, statusLabel } from '../lib/labels';
+import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, STATUS_LABELS, TIER_LABELS, UNDER_SPECIFIED_SHORT } from '../lib/labels';
 import { eipRoute, forkRoute } from '../lib/routes';
-import { truncate } from '../lib/format';
+import { isoDate, shortCommit, truncate } from '../lib/format';
 import StackedBar from './StackedBar.astro';
 import StatusBadge from './StatusBadge.astro';
 import TierBadge from './TierBadge.astro';
 
 interface Props {
   data: Publication;
+  occurrences?: Occurrence[];
+  /** Show the filter row (global index). */
+  filters?: boolean;
+  /** One-fork context: hide the fork column, show the assessment-input column, preselect the fork for comparison. */
+  fork?: string | null;
+  caption?: string;
+  tableId?: string;
 }
 
-const { data } = Astro.props as Props;
+const { data, occurrences: given, filters = false, fork: forkContext = null, caption, tableId = 'occurrences' } = Astro.props as Props;
 const definitions = new Map(data.criteria.map((item) => [item.id, item]));
-const rows = allOccurrences(data).map((occurrence) => ({ occurrence, primary: primaryAssessment(data, occurrence) }));
+const rows = (given ?? allOccurrences(data)).map((occurrence) => ({ occurrence, primary: primaryAssessment(data, occurrence) }));
 const maxScore = Math.max(...rows.map((row) => row.primary?.score ?? 0));
 const forks = data.forks;
 const thresholds = data.rubrics['2'].tier_thresholds;
 const levelSort = (value: string | null) => ({ low: '1', medium: '2', high: '3' })[value ?? ''] ?? '4';
 const statusSort = (value: string) => ['complete', 'available_in_open_pr', 'in_progress', 'incomplete', 'not_applicable', 'not_available'].indexOf(value);
 const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incomplete', 'not_available'] as const;
+const prospective = rows.some((row) => row.occurrence.mode === 'prospective');
+const retrospectiveContext = forkContext !== null && !prospective;
+const tableCaption = caption ?? 'EIP complexity assessments across all forks. Scores are the LLM revision-2 assessment; the Human column shows the STEEL checklist status. Click an EIP for its complete assessment.';
 ---
+{filters && (
 <form class="table-tools index-filters" data-index-filters aria-label="Filter EIP assessments">
   <label>Search <input type="search" name="q" data-filter="q" placeholder="EIP number or title" /></label>
   <label>Fork
@@ -61,8 +72,9 @@ const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incom
   <button type="reset" class="button-secondary">Clear filters</button>
   <span class="muted" data-result-count aria-live="polite">{rows.length} fork–EIP relationships</span>
 </form>
+)}
 
-<div class="compare-bar" data-compare-selection hidden>
+<div class="compare-bar" data-compare-selection data-compare-fork={forkContext ?? ""} hidden>
   <span data-compare-count>0 selected</span>
   <a class="button" data-compare-link href="#" aria-disabled="true">Compare selected</a>
   <button type="button" class="button-secondary" data-compare-clear>Clear selection</button>
@@ -70,19 +82,22 @@ const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incom
 </div>
 
 <div class="table-region" role="region" aria-label="EIP complexity assessments" tabindex="0">
-  <table class="index-table" data-assessment-table data-sortable-table>
-    <caption>EIP complexity assessments across all forks. Scores are the LLM revision-2 assessment; the Human column shows the STEEL checklist status. Click an EIP for its complete assessment.</caption>
+  <table class="index-table" data-assessment-table data-sortable-table id={tableId}>
+    <caption>{tableCaption}</caption>
     <thead>
       <tr>
         <th scope="col" class="select-col"><span class="visually-hidden">Select for comparison</span></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEip" data-sort-kind="number">EIP</button></th>
-        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortFork">Fork</button></th>
+        {forkContext === null && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortFork">Fork</button></th>}
+        {forkContext !== null && prospective && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortSnapshot">Snapshot status</button></th>}
+        {retrospectiveContext && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScope">Scope timing</button></th>}
         <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScore" data-sort-kind="number">Score</button></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortBand">Band</button></th>
         <th scope="col" class="profile-col">Complexity profile</th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortHuman">Human</button></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortUnder">{UNDER_SPECIFIED_SHORT}</button></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortStatus">LLM status</button></th>
+        {retrospectiveContext && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortAssessment">Assessment input</button></th>}
       </tr>
     </thead>
     <tbody>
@@ -105,19 +120,26 @@ const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incom
           data-sort-human={`${statusSort(occurrence.human.status)}-${String(occurrence.human.score ?? 0).padStart(3, '0')}`}
           data-sort-under={occurrence.llm.under_specified === null ? '' : occurrence.llm.under_specified ? 'yes' : 'no'}
           data-sort-status={statusSort(occurrence.llm.status)}
+          data-sort-snapshot={occurrence.snapshot_status ?? ''}
+          data-sort-scope={occurrence.scope_timing ?? ''}
+          data-sort-assessment={primary?.provenance.assessed_revision?.committed_at ?? ''}
         >
           <td class="select-col">
             {primary && <input type="checkbox" data-select-eip={occurrence.eip} data-select-fork={occurrence.fork} aria-label={`Select EIP-${occurrence.eip} (${occurrence.fork_name}) for comparison`} />}
           </td>
           <td class="eip-cell"><a href={eipRoute(occurrence.eip, { fork: occurrence.fork })}><strong>EIP-{occurrence.eip}</strong> {occurrence.title}</a></td>
-          <td class="fork-cell">
-            <a href={forkRoute(occurrence.fork)}>{occurrence.fork_name}</a>
-            <div class="fork-meta">
-              <span class:list={['pill', 'pill-small', occurrence.mode === 'prospective' && 'prospective']}>{MODE_LABELS[occurrence.mode]}</span>
-              {occurrence.snapshot_status && <span class="pill pill-small" title={SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status]}>{occurrence.snapshot_status}</span>}
-              {occurrence.scope_timing && <span class="muted">{SCOPE_TIMING_LABELS[occurrence.scope_timing]}</span>}
-            </div>
-          </td>
+          {forkContext === null && (
+            <td class="fork-cell">
+              <a href={forkRoute(occurrence.fork)}>{occurrence.fork_name}</a>
+              <div class="fork-meta">
+                <span class:list={['pill', 'pill-small', occurrence.mode === 'prospective' && 'prospective']}>{MODE_LABELS[occurrence.mode]}</span>
+                {occurrence.snapshot_status && <span class="pill pill-small" title={SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status]}>{occurrence.snapshot_status}</span>}
+                {occurrence.scope_timing && <span class="muted">{SCOPE_TIMING_LABELS[occurrence.scope_timing]}</span>}
+              </div>
+            </td>
+          )}
+          {forkContext !== null && prospective && <td><span class="pill pill-small" title={occurrence.snapshot_status ? SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status] : undefined}>{occurrence.snapshot_status}</span></td>}
+          {retrospectiveContext && <td>{occurrence.scope_timing ? SCOPE_TIMING_LABELS[occurrence.scope_timing] : '—'}</td>}
           <td class="number score-cell">{primary ? primary.score : <span class="muted">—</span>}</td>
           <td>{primary ? <TierBadge tier={primary.tier} thresholds={thresholds} size="small" /> : <span class="muted">—</span>}</td>
           <td class="profile-col">
@@ -131,6 +153,18 @@ const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incom
           </td>
           <td>{occurrence.llm.under_specified === null ? <span class="muted">—</span> : occurrence.llm.under_specified ? 'Yes' : 'No'}</td>
           <td><StatusBadge status={occurrence.llm.status} mode={occurrence.mode} size="small" /></td>
+          {retrospectiveContext && (
+            <td class="revision-links">
+              {primary?.provenance.assessed_revision ? (
+                <>
+                  <a href={primary.provenance.assessed_revision.immutable_url}>Assessed <code>{shortCommit(primary.provenance.assessed_revision.commit)}</code></a>
+                  <span class="muted">{isoDate(primary.provenance.assessed_revision.committed_at)}</span>
+                  <a href={primary.provenance.assessed_revision.current_revision_url}>Current master</a>
+                  <a href={primary.provenance.assessed_revision.revision_history_url}>File history</a>
+                </>
+              ) : <span class="muted">—</span>}
+            </td>
+          )}
         </tr>
       ))}
     </tbody>
@@ -192,9 +226,11 @@ const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incom
     form.addEventListener('reset', () => setTimeout(apply, 0));
     form.addEventListener('submit', (event) => event.preventDefault());
     apply();
+  }
 
-    // Selection for the shared comparison view -------------------------------------------------------
-    const selectionBar = document.querySelector<HTMLElement>('[data-compare-selection]')!;
+  // Selection for the shared comparison view ---------------------------------------------------------
+  const selectionBar = document.querySelector<HTMLElement>('[data-compare-selection]');
+  if (table && selectionBar) {
     const selectionCount = selectionBar.querySelector<HTMLElement>('[data-compare-count]')!;
     const compareLink = selectionBar.querySelector<HTMLAnchorElement>('[data-compare-link]')!;
     const clear = selectionBar.querySelector<HTMLButtonElement>('[data-compare-clear]')!;
@@ -207,7 +243,7 @@ const humanStatuses = ['complete', 'available_in_open_pr', 'in_progress', 'incom
       selectionCount.textContent = `${eips.length} selected`;
       const enabled = eips.length >= 1 && eips.length <= 4;
       compareLink.setAttribute('aria-disabled', enabled ? 'false' : 'true');
-      compareLink.href = enabled ? compareRoute({ eips, fork: forks.size === 1 ? [...forks][0] : null, source: 'llm' }) : '#';
+      compareLink.href = enabled ? compareRoute({ eips, fork: selectionBar.dataset.compareFork || (forks.size === 1 ? [...forks][0] : null), source: 'llm' }) : '#';
       for (const box of boxes) box.disabled = !box.checked && eips.length >= 4;
     };
     for (const box of boxes) box.addEventListener('change', updateSelection);

@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ForkPage from '../../components/ForkPage.astro';
+import { loadPublication } from '../../lib/data.js';
+import type { Publication } from '../../lib/domain';
+import { forkSummary } from '../../lib/domain';
+
+export function getStaticPaths() {
+  const data = loadPublication() as Publication;
+  return data.forks.filter((fork) => fork.mode === 'retrospective').map((fork) => ({ params: { fork: fork.fork }, props: { fork: fork.fork } }));
+}
+
+const data = loadPublication() as Publication;
+const fork = forkSummary(data, Astro.props.fork);
+---
+<Layout title={fork.name} description={`Execution Layer complexity assessments of the ${fork.name} EIPs: fork totals by criterion, per-EIP scores and profiles, and the historical revisions assessed.`}>
+  <ForkPage data={data} fork={fork} />
+</Layout>

@@ -432,6 +432,11 @@ def validate() -> dict[str, int]:
         association_html.count('data-sort-key="') == 14,
         "results fork-total and shipping columns must all be sortable",
     )
+    require("Which Kinds of Complexity Made Each Fork Heavy?" in association_html, "results fork composition section is missing")
+    require(association_html.count('class="stack stack-large') == 10, "results composition must show five forks in absolute and normalized views")
+    require(association_html.count("Contributed by ") >= 10, "results composition tooltips must name contributing EIP counts")
+    composition_start = association_html.index("Which Kinds of Complexity Made Each Fork Heavy?")
+    require(association_html.index("Composition table") > composition_start, "results composition must carry a semantic table")
     for removed_route in [
         "data",
         "limitations",
@@ -455,7 +460,13 @@ def validate() -> dict[str, int]:
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
     require(hegota_html.count('data-mode="prospective"') == 46, "Hegotá HTML table row count mismatch")
     require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
-    require(hegota_html.count('data-sort-key="') == 9, "Hegotá assessment columns must all be sortable")
+    require(hegota_html.count('data-sort-key="') == 7, "Hegotá assessment columns must all be sortable")
+    require(hegota_html.count('status status-not_applicable') >= 7, "Hegotá N/A rows must carry status badges")
+    require("Human checklists" in hegota_html and "data-compare-selection" in hegota_html, "Hegotá page must show human coverage and comparison selection")
+    for status in ["status-complete", "status-available_in_open_pr", "status-in_progress", "status-incomplete", "status-not_available"]:
+        require(status in hegota_html, f"Hegotá page omits the {status} state")
+    require("Not yet available" in hegota_html, "Hegotá missing human checklists must read as not yet available")
+    require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
     require("Snapshot status" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
         "Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot" in hegota_html,
@@ -560,7 +571,10 @@ def validate() -> dict[str, int]:
     require(osaka_html.count("data-fit-chart") == 2, "Osaka timelines must opt into responsive fitting")
     require(osaka_html.count("data-fork-link") == 6, "Osaka quick navigation must include every fork")
     require('aria-current="page"' in osaka_html, "Osaka quick navigation must identify the current fork")
-    require(osaka_html.count('data-sort-key="') == 7, "Osaka assessment columns must all be sortable")
+    require(osaka_html.count('data-sort-key="') == 8, "Osaka assessment columns must all be sortable")
+    require(osaka_html.count('class="stack stack-compact') == 12, "Osaka table must show one stacked profile per EIP")
+    require('data-composition-view="absolute"' in osaka_html and 'data-composition-view="normalized"' in osaka_html, "Osaka fork composition views are missing")
+    require(osaka_html.count("Contributed by ") >= 12, "fork composition tooltips must name contributing EIP counts")
     require("GPT-5.6 Sol LLM at xhigh reasoning effort" in osaka_html, "fork assessment method is missing")
     require(
         "https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md"
@@ -571,6 +585,8 @@ def validate() -> dict[str, int]:
     require("timeline-guide" not in osaka_html, "timeline key must use a simple list")
     require("The main purpose of this panel" in osaka_html, "EIP-history purpose is unexplained")
 
+    forks_index_html = (DIST / "forks/index.html").read_text(encoding="utf-8")
+    require(forks_index_html.count('class="stack stack-regular') == 6, "forks index must show one composition bar per fork")
     fork_links = {}
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
         document = Document()
