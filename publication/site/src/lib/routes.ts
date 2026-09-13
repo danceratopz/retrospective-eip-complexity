@@ -33,29 +33,37 @@ export function forkRoute(fork: string): string {
 }
 
 export interface CompareState {
-  eips: number[];
+  /** Assessment ids such as "amsterdam:7928:human:r1"; the canonical selection. */
+  assessments: string[];
+  /** Legacy selection by EIP number, resolved client-side against the compare index. */
+  eips?: number[];
   fork?: string | null;
   source?: Source | 'compare' | null;
-  rubric?: number | null;
 }
 
+export const COMPARE_LIMIT = 6;
+
 export function compareRoute(state: CompareState): string {
-  return basePath(`eips/compare/${query({ eips: state.eips.length ? state.eips.join(',') : null, fork: state.fork, source: state.source, rubric: state.rubric })}`);
+  if (state.assessments.length) return basePath(`eips/compare/${query({ a: state.assessments.join(',') })}`);
+  return basePath(`eips/compare/${query({ eips: state.eips?.length ? state.eips.join(',') : null, fork: state.fork, source: state.source })}`);
 }
 
 export function parseCompareState(search: string): CompareState {
   const params = new URLSearchParams(search);
+  const assessments = (params.get('a') ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter((value) => /^[a-z]+:\d+:(llm|human):r\d$/.test(value));
   const eips = (params.get('eips') ?? '')
     .split(',')
     .map((value) => Number.parseInt(value, 10))
     .filter((value) => Number.isFinite(value) && value > 0);
   const source = params.get('source');
-  const rubric = Number.parseInt(params.get('rubric') ?? '', 10);
   return {
+    assessments: [...new Set(assessments)],
     eips: [...new Set(eips)],
     fork: params.get('fork'),
     source: source === 'llm' || source === 'human' || source === 'compare' ? source : null,
-    rubric: Number.isFinite(rubric) ? rubric : null,
   };
 }
 

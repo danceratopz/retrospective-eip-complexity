@@ -180,9 +180,10 @@ def validate_eip_pages(data: dict) -> None:
         require('class="stack stack-large' in html or 'status-not_applicable' in html, f"EIP-{eip['eip']}: stacked complexity bar missing")
         require("Criterion legend and glossary" in html, f"EIP-{eip['eip']}: legend missing")
         if any(occurrence["llm"]["assessment_id"] for occurrence in eip["occurrences"]):
-            require(f"eips/compare/?eips={eip['eip']}&amp;fork=" in html or f"eips/compare/?eips={eip['eip']}&fork=" in html, f"EIP-{eip['eip']}: comparison entry point missing")
+            require("eips/compare/?a=" in html, f"EIP-{eip['eip']}: comparison entry point missing")
         require("Under-specified at assessment cutoff" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: under-specification wording missing")
         require("Assessment provenance" in html or "status-not_applicable" in html, f"EIP-{eip['eip']}: provenance section missing")
+    scored_rows = sum(1 for item in data["assessments"].values() if item["scored"])
     compare_html = (DIST / "eips/compare/index.html").read_text(encoding="utf-8")
     require("data-compare-root" in compare_html and "data-compare-output" in compare_html, "compare page shell missing")
     require("<noscript>" in compare_html, "compare page must explain the JavaScript requirement")
@@ -190,7 +191,7 @@ def validate_eip_pages(data: dict) -> None:
     index = json.loads((DIST / "generated/compare-index.json").read_text(encoding="utf-8"))
     require(len(index["assessments"]) == len(data["assessments"]), "compare index must mirror the assessments")
     require(all("label" in item for item in index["criteria"]), "compare index criteria must carry labels")
-    require(compare_html.count('<option value="EIP-') == len(data["eips"]), "compare page must list every EIP in the picker")
+    require(compare_html.count('<option value="EIP-') == scored_rows, "compare page must list every scored assessment in the picker")
 
 
 def validate() -> dict[str, int]:
@@ -394,6 +395,7 @@ def validate() -> dict[str, int]:
     association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
     home_html = (DIST / "index.html").read_text(encoding="utf-8")
     eip_index_html = (DIST / "eips/index.html").read_text(encoding="utf-8")
+    scored_rows = sum(1 for item in data["assessments"].values() if item["scored"])
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
     human_llm_html = (DIST / "human-vs-llm/index.html").read_text(encoding="utf-8")
     osaka_html = (DIST / "forks/osaka/index.html").read_text(encoding="utf-8")
@@ -460,24 +462,33 @@ def validate() -> dict[str, int]:
         "study/workflow",
     ]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
-    require(eip_index_html.count('data-mode="') == 95, "EIP index relationship row count mismatch")
-    for control in ["q", "fork", "band", "human", "llm", "under", "mode"]:
+    require(eip_index_html.count('data-mode="') == len(data["assessments"]) + 7, "EIP index must show one row per assessment plus the seven N/A dispositions")
+    for control in ["q", "fork", "band", "status", "evaluator", "under", "mode", "reruns"]:
         require(f'data-filter="{control}"' in eip_index_html, f"EIP index filter {control} is missing")
     require(eip_index_html.count('data-sort-key="') == 7, "EIP index sortable columns changed")
-    require(eip_index_html.count('class="stack stack-compact') == 88, "EIP index must show one compact stacked bar per scored row")
-    require(eip_index_html.count('data-select-eip="') == 88, "EIP index must offer comparison selection for every scored row")
-    require("data-compare-selection" in eip_index_html, "EIP index comparison selection bar is missing")
-    require(eip_index_html.count('status status-not_applicable') == 14, "EIP index must badge the seven N/A rows twice (profile and status)")
+    require(eip_index_html.count('class="stack stack-compact') == scored_rows, "EIP index must show one compact stacked bar per scored assessment")
+    require(eip_index_html.count('data-select-assessment="') == scored_rows, "EIP index must offer comparison selection for every scored assessment")
+    require(eip_index_html.count('data-evaluator="human"') == sum(1 for item in data["assessments"].values() if item["source"] == "human"), "EIP index must show one row per Human assessment")
+    require(eip_index_html.count('data-rerun="1"') == 12, "EIP index must carry the twelve Amsterdam re-runs as hidden-by-default rows")
+    require(eip_index_html.count("data-compare-selection") == 2, "EIP index must show the comparison selection bar above and below the table")
+    require(eip_index_html.count('status status-not_applicable') == 7, "EIP index must badge the seven N/A rows")
+    require("pending human checklist" in eip_index_html, "EIP index must report pending Hegotá human checklists")
+    require('href="https://github.com/ethspecs/pm/pull/118"' in eip_index_html, "Human status badges must link to their pull request")
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
-    require(hegota_html.count('data-mode="prospective"') == 46, "Hegotá HTML table row count mismatch")
+    require(hegota_html.count('data-mode="prospective"') == 46 + 25, "Hegotá HTML table must show 46 LLM rows plus 25 Human rows")
     require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
     require(hegota_html.count('data-sort-key="') == 7, "Hegotá assessment columns must all be sortable")
+    require(hegota_html.count('data-evaluator="human"') == 25, "Hegotá page must list every human checklist as its own row")
     require(hegota_html.count('status status-not_applicable') >= 7, "Hegotá N/A rows must carry status badges")
-    require("Human checklists" in hegota_html and "data-compare-selection" in hegota_html, "Hegotá page must show human coverage and comparison selection")
+    require("Human checklists" in hegota_html and hegota_html.count("data-compare-selection") == 2, "Hegotá page must show human coverage and comparison selection above and below the table")
+    require("Open the comparison view" not in hegota_html, "misleading comparison link must not remain on fork pages")
     for status in ["status-complete", "status-available_in_open_pr", "status-in_progress", "status-incomplete", "status-not_available"]:
         require(status in hegota_html, f"Hegotá page omits the {status} state")
-    require("Not yet available" in hegota_html, "Hegotá missing human checklists must read as not yet available")
+    require("Pending" in hegota_html and "Not yet available" not in hegota_html, "Hegotá missing human checklists must read as pending")
+    require("Draft PR" in hegota_html and "In progress" not in hegota_html, "draft pull-request checklists must be flagged as Draft PR")
+    require(hegota_html.count('data-status="in_progress"') == 8, "Hegotá page must list the eight draft-PR checklists as rows")
+    require("cells sum to 22" in hegota_html and ">published</span> 20" in hegota_html, "inconsistent checklists must show the published total and the cell sum")
     require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
     require("Snapshot status" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
@@ -600,7 +611,7 @@ def validate() -> dict[str, int]:
     forks_index_html = (DIST / "forks/index.html").read_text(encoding="utf-8")
     require(forks_index_html.count('class="stack stack-regular') == 5, "forks index must show one composition bar per retrospective fork only")
     require("score <strong>TBD</strong>" in forks_index_html and "856" not in forks_index_html, "forks index must not present a Hegotá total")
-    require("status status-in_progress" in forks_index_html, "forks index must mark Hegotá human checklists as in progress")
+    require(">In progress</span>" in forks_index_html, "forks index must mark Hegotá human checklists as in progress")
     require(
         'href="https://github.com/ethspecs/pm/pulls?q=is%3Apr+state%3Aopen+complexity+assessment"' in forks_index_html,
         "forks index must link the open complexity-assessment pull requests",

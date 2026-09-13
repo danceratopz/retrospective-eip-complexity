@@ -87,9 +87,9 @@ const contextLine = (panel) => {
         </div>
 
         <div class="source-availability" aria-label="Assessment sources">
-          <div class="source-line"><SourceBadge source="llm" /> <StatusBadge status={occurrence.llm.status} mode={occurrence.mode} size="small" />{occurrence.llm.status === 'complete' && <span class="muted">score {occurrence.llm.score}</span>}</div>
+          <div class="source-line"><SourceBadge source="llm" /> <StatusBadge status={occurrence.llm.status} mode={occurrence.mode} size="small" href={primary ? `#${domId(primary.id)}` : null} />{occurrence.llm.status === 'complete' && <span class="muted">score {occurrence.llm.score}</span>}</div>
           <div class="source-line">
-            <SourceBadge source="human" /> <StatusBadge status={humanStatus} mode={occurrence.mode} size="small" />
+            <SourceBadge source="human" /> <StatusBadge status={humanStatus} mode={occurrence.mode} size="small" href={humanPull?.url ?? humanRecord?.immutable_url ?? null} />
             {occurrence.human.assessment_id && occurrence.human.score !== null && <span class="muted">score {occurrence.human.score} · {rubricLabel(occurrence.human.rubric_revision)}</span>}
             {humanPull && <span class="muted">· <a href={humanPull.url}>ethspecs/pm #{humanPull.number}</a>{humanPull.draft ? ' (draft)' : ''}</span>}
             {!humanPull && humanRecord?.immutable_url && <span class="muted">· <a href={humanRecord.immutable_url}>merged checklist</a></span>}
@@ -117,34 +117,40 @@ const contextLine = (panel) => {
           </div>
         )}
 
-        {panel.views.length > 1 && (
-          <div class="tabs view-tabs" role="tablist" aria-label={`Assessment view for ${occurrence.fork_name}`}>
-            {panel.views.map((view) => (
+        {(panel.views.length > 1 || panel.llm.length > 1) && (
+          <div class="tabs view-tabs" role="tablist" aria-label={`Assessment for ${occurrence.fork_name}`}>
+            {panel.llm.map((assessment) => (
               <a
                 role="tab"
-                id={`tab-${occurrence.fork}-${view}`}
-                href={eipRoute(eip.eip, { fork: occurrence.fork, view }, `#panel-${occurrence.fork}-${view}`)}
-                aria-controls={`panel-${occurrence.fork}-${view}`}
-                aria-selected={view === panel.defaultView ? 'true' : 'false'}
-                data-view-tab={view}
-              >{VIEW_LABELS[view]}</a>
+                id={`tab-${occurrence.fork}-llm-r${assessment.rubric_revision}`}
+                href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'llm', rubric: panel.llm.length > 1 ? assessment.rubric_revision : null }, `#${domId(assessment.id)}`)}
+                aria-controls={domId(assessment.id)}
+                aria-selected={panel.defaultView === 'llm' && assessment === panel.llm[0] ? 'true' : 'false'}
+                data-view-tab="llm"
+                data-rubric-tab={panel.llm.length > 1 ? String(assessment.rubric_revision) : undefined}
+              >
+                <span class="tab-title">{SOURCE_LABELS.llm} · {rubricLabel(assessment.rubric_revision)}</span>
+                <span class="tab-meta">{assessment.role === 'primary' ? 'Primary study score' : 'Re-run for the human comparison'} · {assessment.score}</span>
+              </a>
             ))}
+            {panel.human && (
+              <a role="tab" id={`tab-${occurrence.fork}-human`} href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'human' }, `#panel-${occurrence.fork}-human`)} aria-controls={`panel-${occurrence.fork}-human`} aria-selected={panel.defaultView === 'human' ? 'true' : 'false'} data-view-tab="human">
+                <span class="tab-title">{SOURCE_LABELS.human} · {rubricLabel(panel.human.rubric_revision)}</span>
+                <span class="tab-meta">{statusLabel(panel.human.status, occurrence.mode)}{panel.human.scored ? ` · ${panel.human.score}` : ''}</span>
+              </a>
+            )}
+            {panel.comparisons.length > 0 && (
+              <a role="tab" id={`tab-${occurrence.fork}-compare`} href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'compare' }, `#panel-${occurrence.fork}-compare`)} aria-controls={`panel-${occurrence.fork}-compare`} aria-selected="false" data-view-tab="compare">
+                <span class="tab-title">{VIEW_LABELS.compare}</span>
+                <span class="tab-meta">Human vs LLM · same checklist revision</span>
+              </a>
+            )}
           </div>
         )}
 
         {panel.llm.length > 0 && (
           <div class="view-panel" id={`panel-${occurrence.fork}-llm`} role={panel.views.length > 1 ? 'tabpanel' : undefined} aria-labelledby={panel.views.length > 1 ? `tab-${occurrence.fork}-llm` : undefined} data-view-panel="llm">
-            {panel.views.length === 1 && <h2>{SOURCE_LABELS.llm} assessment</h2>}
-            {panel.llm.length > 1 && (
-              <div class="tabs rubric-tabs" role="tablist" aria-label="Rubric revision">
-                {panel.llm.map((assessment) => (
-                  <a role="tab" id={`tab-${occurrence.fork}-llm-r${assessment.rubric_revision}`} href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'llm', rubric: assessment.rubric_revision }, `#${domId(assessment.id)}`)} aria-controls={domId(assessment.id)} aria-selected={assessment === panel.llm[0] ? 'true' : 'false'} data-rubric-tab={String(assessment.rubric_revision)}>
-                    <span class="tab-title">{rubricLabel(assessment.rubric_revision)}</span>
-                    <span class="tab-meta">{assessment.role === 'primary' ? 'Primary study score' : 'Re-run for the human comparison'}</span>
-                  </a>
-                ))}
-              </div>
-            )}
+            {panel.views.length === 1 && panel.llm.length === 1 && <h2>{SOURCE_LABELS.llm} assessment</h2>}
             {panel.llm.map((assessment) => (
               <div id={domId(assessment.id)} class="rubric-panel" data-rubric-panel={String(assessment.rubric_revision)} role={panel.llm.length > 1 ? 'tabpanel' : undefined}>
                 <AssessmentView assessment={assessment} occurrence={occurrence} rubric={rubricFor(data, assessment.rubric_revision)} definitions={definitions} />
@@ -170,7 +176,7 @@ const contextLine = (panel) => {
 
         {primary && (
           <div class="actions">
-            <a class="button" href={compareRoute({ eips: [eip.eip], fork: occurrence.fork, source: panel.human?.scored ? 'compare' : 'llm' })}>Compare EIP-{eip.eip} with other EIPs</a>
+            <a class="button" href={compareRoute({ assessments: [primary.id, ...(panel.human?.scored ? [panel.human.id] : [])] })}>Compare EIP-{eip.eip} with other assessments</a>
             <a href={forkRoute(occurrence.fork)}>All {occurrence.fork_name} assessments</a>
           </div>
         )}
@@ -205,26 +211,31 @@ const contextLine = (panel) => {
 
     const applyView = (panel: HTMLElement, view: string) => {
       const viewPanels = Array.from(panel.querySelectorAll<HTMLElement>('[data-view-panel]'));
-      const viewTabs = Array.from(panel.querySelectorAll<HTMLElement>('[data-view-tab]'));
       const available = viewPanels.map((item) => item.dataset.viewPanel!);
       state.view = available.includes(view) ? view : panel.dataset.defaultView || available[0] || '';
       if (viewPanels.length > 1) {
-        for (const tab of viewTabs) tab.setAttribute('aria-selected', tab.dataset.viewTab === state.view ? 'true' : 'false');
         for (const item of viewPanels) item.hidden = item.dataset.viewPanel !== state.view;
+      }
+      markTabs(panel);
+    };
+
+    const markTabs = (panel: HTMLElement) => {
+      for (const tab of Array.from(panel.querySelectorAll<HTMLElement>('[data-view-tab]'))) {
+        const selected = tab.dataset.viewTab === state.view && (!tab.dataset.rubricTab || tab.dataset.rubricTab === state.rubric);
+        tab.setAttribute('aria-selected', selected ? 'true' : 'false');
       }
     };
 
     const applyRubric = (panel: HTMLElement, rubric: string) => {
       const rubricPanels = Array.from(panel.querySelectorAll<HTMLElement>('[data-rubric-panel]'));
-      const rubricTabs = Array.from(panel.querySelectorAll<HTMLElement>('[data-rubric-tab]'));
       if (rubricPanels.length < 2) {
         state.rubric = '';
         return;
       }
       const available = rubricPanels.map((item) => item.dataset.rubricPanel!);
       state.rubric = available.includes(rubric) ? rubric : available[0];
-      for (const tab of rubricTabs) tab.setAttribute('aria-selected', tab.dataset.rubricTab === state.rubric ? 'true' : 'false');
       for (const item of rubricPanels) item.hidden = item.dataset.rubricPanel !== state.rubric;
+      markTabs(panel);
     };
 
     const sync = () => {
@@ -263,12 +274,11 @@ const contextLine = (panel) => {
     window.addEventListener('hashchange', revealHash);
 
     root.addEventListener('click', (event) => {
-      const tab = (event.target as HTMLElement).closest<HTMLElement>('[data-fork-tab], [data-view-tab], [data-rubric-tab]');
+      const tab = (event.target as HTMLElement).closest<HTMLElement>('[data-fork-tab], [data-view-tab]');
       if (!tab) return;
       event.preventDefault();
       if (tab.dataset.forkTab) apply(tab.dataset.forkTab, '', '');
-      else if (tab.dataset.viewTab) apply(state.fork, tab.dataset.viewTab, '');
-      else if (tab.dataset.rubricTab) apply(state.fork, state.view, tab.dataset.rubricTab);
+      else if (tab.dataset.viewTab) apply(state.fork, tab.dataset.viewTab, tab.dataset.rubricTab ?? '');
       const selected = root.querySelector<HTMLElement>(`[data-fork-panel="${state.fork}"]`);
       selected?.querySelector<HTMLElement>('[aria-selected="true"]')?.focus();
     });

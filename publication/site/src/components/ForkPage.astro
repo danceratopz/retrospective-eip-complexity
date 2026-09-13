@@ -5,13 +5,13 @@
 import type { ForkSummary, Publication } from '../lib/domain';
 import { allOccurrences } from '../lib/domain';
 import { STATUS_LABELS, UNDER_SPECIFIED_SHORT, statusLabel } from '../lib/labels';
-import { forkRoute, compareRoute } from '../lib/routes';
+import { forkRoute } from '../lib/routes';
 import { basePath } from '../lib/data.js';
 import { isoDate, plural } from '../lib/format';
 import Chart from './Chart.astro';
 import CriterionLegend from './CriterionLegend.astro';
 import ForkComposition from './ForkComposition.astro';
-import OccurrenceTable from './OccurrenceTable.astro';
+import EvaluationTable from './EvaluationTable.astro';
 import StatusBadge from './StatusBadge.astro';
 
 interface Props {
@@ -102,9 +102,8 @@ const snapshot = hegota.human_snapshot;
 )}
 
 <h2 id="complexity-assessments">Complexity Assessments</h2>
-<p>Each assessment was automated using the GPT-5.6 Sol LLM at xhigh reasoning effort, evaluating the EIP revision linked in the Assessment Input column against <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">version 2 of STEEL’s complexity-assignment template</a>. Select rows to compare them, or open an EIP for its full assessment.</p>
-<OccurrenceTable data={data} occurrences={occurrences} fork={fork.fork} caption={prospective ? `Hegotá ${hegota.captured_on} candidate snapshot: scored and not-applicable entries with human checklist status` : `${fork.name} Complexity Assessments`} tableId={`occurrences-${fork.fork}`} />
-<div class="actions"><a class="button" href={compareRoute({ eips: [], fork: fork.fork, source: 'llm' })}>Compare {fork.short_name} EIPs</a></div>
+<p>LLM rows were automated using the GPT-5.6 Sol LLM at xhigh reasoning effort, evaluating the EIP revision linked in the Assessment Input column against <a href="https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md">version 2 of STEEL’s complexity-assignment template</a>. Human rows are STEEL reviewers’ published checklists; their status badge links to the pull request or merged report. Select rows from either evaluator to compare them, or open an EIP for its full assessment.</p>
+<EvaluationTable data={data} occurrences={occurrences} fork={fork.fork} caption={prospective ? `Hegotá ${hegota.captured_on} candidate snapshot: one row per LLM and Human assessment, with not-applicable entries and pending human checklists counted above` : `${fork.name} complexity assessments, one row per evaluator`} tableId={`evaluations-${fork.fork}`} />
 
 {prospective ? (
   <>

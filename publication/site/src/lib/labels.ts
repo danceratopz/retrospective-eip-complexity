@@ -26,7 +26,7 @@ export const CONFIDENCE_NOT_RECORDED = 'Not recorded';
 export const STATUS_LABELS: Record<Status, string> = {
   complete: 'Complete',
   available_in_open_pr: 'Available in open PR',
-  in_progress: 'In progress',
+  in_progress: 'Draft PR',
   incomplete: 'Incomplete',
   not_applicable: 'Not applicable to EL rubric',
   not_available: 'Not available',
@@ -34,17 +34,20 @@ export const STATUS_LABELS: Record<Status, string> = {
 export const STATUS_DESCRIPTIONS: Record<Status, string> = {
   complete: 'A complete assessment is published and merged.',
   available_in_open_pr: 'A complete checklist exists only in an open, non-draft pull request.',
-  in_progress: 'The most advanced checklist is in an open draft pull request.',
+  in_progress: 'The checklist is in an open draft pull request; if its cells and total parse, it is scored like any other assessment.',
   incomplete: 'A checklist exists but has unresolved cells, missing rows, or inconsistent totals; it carries no score.',
   not_applicable: 'Consensus-layer-only or explicitly excluded work; the execution-layer rubric assigns no score, and this is never a zero.',
-  not_available: 'No assessment from this source exists.',
+  not_available: 'No assessment from this evaluator exists; for Hegotá this means the human checklist is still pending.',
 };
 
-/** Prospective data says "not yet"; retrospective data is simply absent. */
+/** A prospective checklist that does not exist yet is pending; retrospective data is simply absent. */
 export function statusLabel(status: Status, mode: Mode = 'retrospective'): string {
-  if (status === 'not_available' && mode === 'prospective') return 'Not yet available';
+  if (status === 'not_available' && mode === 'prospective') return 'Pending';
   return STATUS_LABELS[status];
 }
+
+export const EVALUATOR_LABEL = 'Evaluator';
+export const EVALUATOR_FILTER_LABELS = { both: 'Both evaluators', llm: 'LLM only', human: 'Human only' } as const;
 
 export const UNDER_SPECIFIED_LABEL = 'Under-specified at assessment cutoff';
 export const UNDER_SPECIFIED_SHORT = 'Under-specified';
