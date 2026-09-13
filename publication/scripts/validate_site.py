@@ -598,7 +598,13 @@ def validate() -> dict[str, int]:
     require("The main purpose of this panel" in osaka_html, "EIP-history purpose is unexplained")
 
     forks_index_html = (DIST / "forks/index.html").read_text(encoding="utf-8")
-    require(forks_index_html.count('class="stack stack-regular') == 6, "forks index must show one composition bar per fork")
+    require(forks_index_html.count('class="stack stack-regular') == 5, "forks index must show one composition bar per retrospective fork only")
+    require("score <strong>TBD</strong>" in forks_index_html and "856" not in forks_index_html, "forks index must not present a Hegotá total")
+    require("status status-in_progress" in forks_index_html, "forks index must mark Hegotá human checklists as in progress")
+    require(
+        'href="https://github.com/ethspecs/pm/pulls?q=is%3Apr+state%3Aopen+complexity+assessment"' in forks_index_html,
+        "forks index must link the open complexity-assessment pull requests",
+    )
     fork_links = {}
     for fork in ["shanghai", "cancun", "prague", "osaka", "amsterdam"]:
         document = Document()
