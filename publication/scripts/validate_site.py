@@ -411,6 +411,7 @@ def validate() -> dict[str, int]:
     require("id=\"limitations\"" in study_html, "study limitations are missing")
     require("Method before results" not in study_html, "obsolete study eyebrow remains")
     require("Evaluation-first research publication" not in home_html, "obsolete landing-page eyebrow remains")
+    require("Local review preview" not in home_html, "preview footer text remains")
     require("How much complexity did an EIP imply before implementation?" not in home_html, "obsolete landing page remains")
     require(
         'href="/retrospective-eip-complexity/">Study</a>' in home_html,
