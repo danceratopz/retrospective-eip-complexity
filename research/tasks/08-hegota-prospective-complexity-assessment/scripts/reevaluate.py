@@ -116,6 +116,8 @@ def verify_source(eips_repo):
 
 
 def verify_freeze():
+    cohort, _, _ = prep.approved_entries()
+    packages.EXPECTED_COMMIT = cohort["source"]["repository_commit"]
     packages.validate_inventory()
     adapter = {"path": prep.rel(Path(__file__).resolve()), "sha256": prep.file_sha256(Path(__file__).resolve())}
     for item in prep.approved_entries()[2]:

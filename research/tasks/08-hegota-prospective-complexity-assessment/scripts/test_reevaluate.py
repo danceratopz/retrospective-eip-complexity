@@ -2,6 +2,7 @@
 """Regression checks for the append-only Task 08 adapter; no assessors are launched."""
 
 import copy
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -46,6 +47,26 @@ class ReevaluationTests(unittest.TestCase):
             (batch / "review.yaml").write_bytes(adapter.prep.yaml_bytes(review))
             with self.assertRaises(ValueError):
                 adapter.prep.approved_entries()
+
+    def test_new_commit_is_accepted_only_under_its_configured_snapshot(self):
+        validator = adapter.packages
+        original = adapter.TASK / "inputs/packages/hegota-pfi-2026-08-26/eip-2488"
+        new_commit = "1" * 40
+        with tempfile.TemporaryDirectory(dir=adapter.TASK) as directory:
+            package = Path(directory) / "eip-2488"
+            shutil.copytree(original, package)
+            manifest_path = package / "manifest.yaml"
+            manifest = adapter.prep.load_yaml(manifest_path)
+            manifest["snapshot_eip"]["commit"] = new_commit
+            manifest_path.write_bytes(adapter.prep.yaml_bytes(manifest))
+            template_path = package / "output-template.yaml"
+            template = adapter.prep.load_yaml(template_path)
+            template["provenance"]["input_package"]["manifest_sha256"] = adapter.prep.file_sha256(manifest_path)
+            template_path.write_bytes(adapter.prep.yaml_bytes(template))
+            with self.assertRaisesRegex(validator.ValidationError, "wrong common snapshot"):
+                validator.validate_package(package)
+            with patch.object(validator, "EXPECTED_COMMIT", new_commit):
+                validator.validate_package(package)
 
     def test_snapshot_cannot_target_original_tree(self):
         for value in ("../outputs", "hegota/snapshot", "/tmp/batch", ""):
