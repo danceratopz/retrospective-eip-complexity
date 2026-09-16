@@ -73,3 +73,6 @@ from those aggregates. Prospective Human-versus-LLM comparisons select the lates
 scored LLM evaluation under the Human checklist revision, by recorded evaluation date
 with stable IDs breaking same-day ties; retrospective comparisons remain historical. Explicit comparison URLs can
 select any versions, including multiple assessments of one EIP.
+
+Comparison metadata shows Open PR or Draft PR for unmerged Human checklists.
+Merged checklist source dates are labeled Published; they are not evaluation dates.

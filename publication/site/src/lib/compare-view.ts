@@ -5,7 +5,7 @@
  */
 import { DISPLAY_INDEX, criterionAbbreviation } from './criteria';
 import type { Source, Status, Tier } from './domain';
-import { EVALUATOR_LABELS, TIER_LABELS, rubricLabel, statusLabel } from './labels';
+import { EVALUATOR_LABELS, TIER_LABELS, rubricLabel, statusLabel, evaluationTimingLabel } from './labels';
 import { COMPARE_LIMIT, compareRoute, eipRoute, parseCompareState, type CompareState } from './routes';
 import { stackedBarHtml } from './stacked-bar';
 
@@ -16,6 +16,7 @@ export interface IndexAssessment {
   source: Source;
   rubric_revision: number;
   evaluation_date?: string | null;
+  publication_date?: string | null;
   role: string;
   status: Status;
   scored: boolean;
@@ -69,7 +70,7 @@ export function resolveLegacy(index: CompareIndex, state: CompareState): string[
 export function assessmentLabel(index: CompareIndex, assessment: IndexAssessment): string {
   const entry = index.eips.find((item) => item.eip === assessment.eip);
   const fork = index.forks.find((item) => item.fork === assessment.fork);
-  return `EIP-${assessment.eip} · ${EVALUATOR_LABELS[assessment.source]} r${assessment.rubric_revision} · ${fork?.short_name ?? assessment.fork} · ${assessment.evaluation_date ?? 'Date not recorded'} — ${entry?.title ?? ''}`;
+  return `EIP-${assessment.eip} · ${EVALUATOR_LABELS[assessment.source]} r${assessment.rubric_revision} · ${fork?.short_name ?? assessment.fork} · ${evaluationTimingLabel(assessment)} — ${entry?.title ?? ''}`;
 }
 
 function statusBadge(status: Status, mode: 'retrospective' | 'prospective'): HTMLElement {
@@ -136,7 +137,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
     const heading = el('h3');
     heading.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source, assessment: column.id }) }, `EIP-${column.eip}`), el('span', { class: 'compare-card-title' }, ` ${titles.get(column.eip) ?? ''}`));
     const meta = el('p', { class: 'muted compare-card-context' });
-    meta.append(sourceBadge(column), document.createTextNode(` · ${forkName.get(column.fork) ?? column.fork} · ${column.evaluation_date ?? 'Date not recorded'}`));
+    meta.append(sourceBadge(column), document.createTextNode(` · ${forkName.get(column.fork) ?? column.fork} · ${evaluationTimingLabel(column)}`));
     card.append(heading, meta);
     if (column.scored) {
       const segments = index.criteria.map((criterion, position) => ({ id: criterion.id, score: column.scores[position] ?? 0 })).filter((segment) => segment.score > 0);
@@ -176,7 +177,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
   headRow.append(el('th', { scope: 'col' }, 'Criterion'));
   for (const column of columns) {
     const cell = el('th', { scope: 'col', class: 'number' });
-    cell.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source, assessment: column.id }) }, `EIP-${column.eip}`), el('span', { class: 'matrix-fork' }, `${EVALUATOR_LABELS[column.source]} r${column.rubric_revision} · ${forkName.get(column.fork) ?? column.fork} · ${column.evaluation_date ?? 'Date not recorded'}`));
+    cell.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source, assessment: column.id }) }, `EIP-${column.eip}`), el('span', { class: 'matrix-fork' }, `${EVALUATOR_LABELS[column.source]} r${column.rubric_revision} · ${forkName.get(column.fork) ?? column.fork} · ${evaluationTimingLabel(column)}`));
     headRow.append(cell);
   }
   if (pairDelta) headRow.append(el('th', { scope: 'col', class: 'number' }, 'Δ'));

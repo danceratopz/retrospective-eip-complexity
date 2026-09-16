@@ -147,6 +147,8 @@ def compare_index(
         order = RUBRIC_ORDER[assessment["rubric_revision"]]
         scores = {item["id"]: item["score"] for item in assessment["criteria"]}
         under = assessment.get("under_specification") or {}
+        record = assessment["provenance"].get("source_record") or {}
+        published_at = record.get("committed_at") if assessment["source"] == "human" and not record.get("pull_request") else None
         rows.append(
             {
                 "id": assessment["id"],
@@ -156,6 +158,7 @@ def compare_index(
                 "rubric_revision": assessment["rubric_revision"],
                 "role": assessment["role"],
                 "evaluation_date": assessment.get("evaluation_date"),
+                "publication_date": str(published_at)[:10] if published_at else None,
                 "snapshot_id": assessment.get("snapshot_id"),
                 "status": assessment["status"],
                 "scored": assessment["scored"],

@@ -41,7 +41,8 @@ export const STATUS_DESCRIPTIONS: Record<Status, string> = {
 };
 
 /** A prospective checklist that does not exist yet is pending; retrospective data is simply absent. */
-export function statusLabel(status: Status, mode: Mode = 'retrospective'): string {
+export function statusLabel(status: Status, mode: Mode = 'retrospective', compact = false): string {
+  if (compact && status === 'available_in_open_pr') return 'Open PR';
   if (status === 'not_available' && mode === 'prospective') return 'Pending';
   return STATUS_LABELS[status];
 }
@@ -77,4 +78,20 @@ export function rubricLabel(revision: number): string {
 
 export function forkContextLabel(mode: Mode): string {
   return mode === 'prospective' ? 'Snapshot' : 'Assessment cutoff';
+}
+
+export function evaluationTimingLabel(assessment: {
+  source: Source;
+  status: Status;
+  evaluation_date?: string | null;
+  publication_date?: string | null;
+}): string {
+  if (assessment.source === 'human') {
+    if (assessment.status === 'available_in_open_pr' || assessment.status === 'in_progress') {
+      return statusLabel(assessment.status, 'prospective', true);
+    }
+    if (assessment.evaluation_date) return assessment.evaluation_date;
+    if (assessment.publication_date) return `Published ${assessment.publication_date}`;
+  }
+  return assessment.evaluation_date ?? 'Date not recorded';
 }
