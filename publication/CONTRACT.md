@@ -136,7 +136,7 @@ The adapter projects research records into one domain model that every page cons
 - a **comparison** exists only for a Human and an LLM assessment of the same occurrence under the same rubric revision, and stores per-criterion deltas;
 - one **criterion registry** (29 identifiers across both revisions) and per-revision **tier thresholds** are emitted once and shared by every page.
 
-The evaluator is first-class presentation state, not collapsed metadata: every table row, badge, and tab names it. The primary study score remains the revision-2 LLM assessment; the Amsterdam revision-1 LLM re-run from Task 05c is published only as the like-for-like counterpart of the published human checklist. Payload `schema_version` is `2.0.0`.
+The evaluator is first-class presentation state, not collapsed metadata: every table row, badge, and tab names it. The primary study score remains the revision-2 LLM assessment; the Amsterdam revision-1 LLM re-run from Task 05c is published only as the like-for-like counterpart of the published human checklist. Payload `schema_version` is `2.1.0`.
 
 Human checklists are STEEL-authored content from `ethspecs/pm`, which is licensed CC0-1.0. Their published score cells and rationale text are projected verbatim with an immutable permalink to the source blob. Hegotá human checklists come from the Task 09 snapshot, which distinguishes merged files, open pull requests, draft pull requests, and inconsistent checklists; the site must never render a missing or incomplete human checklist as a zero.
 
@@ -221,3 +221,20 @@ The validator passing proves internal consistency of this contract and artifact 
 | Cross-file invariants, recursive safety rejection, fixture expectations, stable summary, and deny scan | [`scripts/validate_contract.py`](scripts/validate_contract.py) |
 
 If prose and a machine-owned value conflict, implementation stops for contract review. It must not choose whichever value is easiest to render.
+
+## Hegotá evaluation history (contract 1.2.0, payload 2.1.0)
+
+The owner approved append-only prospective re-evaluations. Task 08's
+[versioned extension](../research/tasks/08-hegota-prospective-complexity-assessment/REEVALUATION.md)
+owns their research process. The frozen August cohort remains the aggregation and
+automatic Human-versus-LLM comparison selection; history rows do not enter its totals.
+
+The Task 08 evaluation registry affirmatively lists public assessment inputs and their
+freeze hashes. Registered re-evaluations of existing candidates may be projected from
+`evaluations/<snapshot-id>/assessments/`; no other content in that tree is publishable.
+The adapter validates identities, hashes, snapshot provenance, rubric and assessor pins,
+and completed validation before projection. Original public IDs remain unchanged; new
+IDs include the snapshot ID. The detail URL accepts an `assessment` ID, and comparison
+URLs retain the selected IDs. Evaluation date is a public calendar date derived from
+recorded run metadata; no session identifier or other operational metadata is exposed.
+Inclusion status belongs to each evaluation's snapshot, not to the current EIP state.
