@@ -458,7 +458,7 @@ def validate() -> dict[str, int]:
         "study/workflow",
     ]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
-    require(eip_index_html.count('data-mode="') == len(data["assessments"]) + 7, "EIP index must show one row per assessment plus the seven N/A dispositions")
+    require(eip_index_html.count('data-mode="') == len(data["assessments"]), "EIP index must show one row per assessment, excluding N/A dispositions")
     for control in ["q", "fork", "band", "status", "evaluator", "under", "mode", "reruns"]:
         require(f'data-filter="{control}"' in eip_index_html, f"EIP index filter {control} is missing")
     require(eip_index_html.count('data-sort-key="') == 8, "EIP index sortable columns changed")
@@ -467,16 +467,16 @@ def validate() -> dict[str, int]:
     require(eip_index_html.count('data-evaluator="human"') == sum(1 for item in data["assessments"].values() if item["source"] == "human"), "EIP index must show one row per Human assessment")
     require(eip_index_html.count('data-rerun="1"') == 12, "EIP index must carry the twelve Amsterdam re-runs as hidden-by-default rows")
     require(eip_index_html.count("data-compare-selection") == 2, "EIP index must show the comparison selection bar above and below the table")
-    require(eip_index_html.count('status status-not_applicable') == 7, "EIP index must badge the seven N/A rows")
+    require(eip_index_html.count('status status-not_applicable') == 0, "EIP index must omit N/A rows")
     require("pending human checklist" in eip_index_html, "EIP index must report pending Hegotá human checklists")
     require('href="https://github.com/ethspecs/pm/pull/118"' in eip_index_html, "Human status badges must link to their pull request")
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
-    require(hegota_html.count('data-mode="prospective"') == 46 + 25 + sum(a['role'] == 'reevaluation' for a in data['assessments'].values()), "Hegotá HTML table must show 46 LLM rows plus 25 Human rows")
+    require(hegota_html.count('data-mode="prospective"') == 39 + 25 + sum(a['role'] == 'reevaluation' for a in data['assessments'].values()), "Hegotá HTML table must show 39 applicable LLM rows plus re-evaluations and 25 Human rows")
     require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
     require(hegota_html.count('data-sort-key="') == 8, "Hegotá assessment columns must all be sortable")
     require(hegota_html.count('data-evaluator="human"') == 25, "Hegotá page must list every human checklist as its own row")
-    require(hegota_html.count('status status-not_applicable') >= 7, "Hegotá N/A rows must carry status badges")
+    require(hegota_html.count('status status-not_applicable') == 0, "Hegotá assessment table must omit N/A rows")
     require("Human checklists" in hegota_html and hegota_html.count("data-compare-selection") == 2, "Hegotá page must show human coverage and comparison selection above and below the table")
     require("Open the comparison view" not in hegota_html, "misleading comparison link must not remain on fork pages")
     for status in ["status-complete", "status-available_in_open_pr", "status-in_progress", "status-not_available"]:

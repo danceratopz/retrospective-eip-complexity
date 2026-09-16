@@ -50,9 +50,10 @@ const definitions = new Map(data.criteria.map((item) => [item.id, item]));
 const occurrences = given ?? allOccurrences(data);
 const rows: Row[] = [];
 for (const occurrence of occurrences) {
+  if (occurrence.llm.status === 'not_applicable') continue;
   const assessments = occurrence.assessment_ids.map((id) => data.assessments[id]);
   const llm = assessments.filter((item) => item.source === 'llm').sort((a, b) => occurrence.mode === 'prospective' ? (b.evaluation_date ?? '').localeCompare(a.evaluation_date ?? '') || a.id.localeCompare(b.id) : b.rubric_revision - a.rubric_revision);
-  if (!llm.length || occurrence.llm.status === 'not_applicable') {
+  if (!llm.length) {
     rows.push({ occurrence, assessment: null, evaluator: 'llm', status: occurrence.llm.status, rerun: false, statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork }) });
   }
   for (const assessment of llm) {
@@ -109,7 +110,6 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
         <select name="status" data-filter="status">
           <option value="">Any</option>
           {humanStatuses.map((status) => <option value={status}>{STATUS_LABELS[status]}</option>)}
-          <option value="not_applicable">{STATUS_LABELS.not_applicable}</option>
         </select>
       </label>
       <label class="checkbox"><input type="checkbox" name="under" value="1" data-filter="under" /> {UNDER_SPECIFIED_SHORT} only</label>
@@ -139,7 +139,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
         <th scope="col" class="select-col"><span class="visually-hidden">Select for comparison</span></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEip" data-sort-kind="number">EIP</button></th>
         {forkContext === null && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortFork">Fork</button></th>}
-        {forkContext !== null && prospective && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortSnapshot">Inclusion status at snapshot</button></th>}
+        {forkContext !== null && prospective && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortSnapshot" aria-label="Inclusion status at snapshot" title="Inclusion status at the evaluated snapshot">Inclusion</button></th>}
         {retrospectiveContext && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScope">Scope timing</button></th>}
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortDate">Evaluated on</button></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEvaluator">{EVALUATOR_LABEL}</button></th>
@@ -204,7 +204,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
               {assessment?.role === 'reevaluation' && <div class="muted">Re-evaluation</div>}
             </td>
             <td class="evaluator-cell"><EvaluatorBadge source={evaluator} revision={assessment?.rubric_revision ?? null} size="small" />{rerun && <div class="muted">re-run for the human comparison</div>}</td>
-            <td><StatusBadge status={status} mode={occurrence.mode} size="small" href={statusHref} detail={status === 'not_applicable' ? occurrence.llm.rationale : null} /></td>
+            <td><StatusBadge status={status} mode={occurrence.mode} size="small" compact href={statusHref} detail={status === 'not_applicable' ? occurrence.llm.rationale : null} /></td>
             <td class="number score-cell">
               {scored
                 ? <>{assessment.score}{assessment.checklist && assessment.checklist.published_total !== null && assessment.checklist.published_total !== assessment.score && <><br /><span class="flag flag-under" title={`The checklist publishes a total of ${assessment.checklist.published_total}; the cells are the primary record and sum to ${assessment.score}.`}>published {assessment.checklist.published_total}</span></>}</>
