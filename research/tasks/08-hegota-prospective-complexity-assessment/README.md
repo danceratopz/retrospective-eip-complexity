@@ -88,3 +88,55 @@ $PYTHON $TASK/scripts/finalize_sfi_cfi.py --summarize
 ```
 
 `finalize.py --summarize` first verifies the original assessment freeze against all 37 canonical PFI records. `finalize_sfi_cfi.py --summarize` verifies both extension assessments and their freeze, confirms the original PFI artifacts are byte-unchanged, then renders the extension and combined summaries. Either command refuses to aggregate if a required result is missing, invalid, or has changed since its freeze.
+
+## Continuing evaluations
+
+[Evaluation history version 1](REEVALUATION.md) extends the frozen study for regular,
+append-only re-evaluations. The original contract and sealed data remain unchanged.
+The publication registry lists every published LLM evaluation; original cohort totals
+remain pinned while individual EIPs acquire additional dated evaluations.
+
+For a new batch, choose a unique lowercase snapshot ID (for example,
+`hegota-2026-09-16-<short-commit>`), and create `evaluations/<snapshot-id>/cohort.yaml`
+and `review.yaml`. Use the original cohort and review schemas with these differences:
+
+- `snapshot_id` identifies the new batch in both files.
+- `source` pins the intended full EIPs commit and its EIP-8081 blob, hash, and commit
+  timestamp. `captured_on` records when that snapshot was captured.
+- `inventory` contains exactly the selected EIPs, each with `snapshot_status` (`PFI`,
+  `CFI`, or `SFI`) at that commit. The preparer verifies status against EIP-8081.
+- The review has exactly those entries in the same order, with approved applicability
+  decisions. Its `cohort_manifest` path/hash and `proposal_source` must identify the
+  new cohort, not an earlier review. Keep titles and layer dispositions tied to the
+  selected spec. Re-evaluation does not inherit approval of an earlier spec.
+
+After the Task 05 regression gate described in `TASK.md`, run from the repository root:
+
+```bash
+PYTHON=research/tasks/05-retrospective-complexity-assignment/.venv/bin/python
+TASK=research/tasks/08-hegota-prospective-complexity-assessment
+SNAPSHOT='hegota-2026-09-16-shortcommit'
+
+$PYTHON $TASK/scripts/reevaluate.py --snapshot "$SNAPSHOT" prepare \
+  --eips-repo ../EIPs --pm-repo ../pm
+$PYTHON $TASK/scripts/reevaluate.py --snapshot "$SNAPSHOT" verify-regeneration \
+  --eips-repo ../EIPs --pm-repo ../pm
+$PYTHON $TASK/scripts/reevaluate.py --snapshot "$SNAPSHOT" --eip 2488 run
+# Repeat run for each scorable EIP; do not exceed three concurrent assessors.
+$PYTHON $TASK/scripts/reevaluate.py --snapshot "$SNAPSHOT" validate
+$PYTHON $TASK/scripts/reevaluate.py --snapshot "$SNAPSHOT" freeze
+$PYTHON $TASK/scripts/reevaluate.py --snapshot "$SNAPSHOT" register
+```
+
+Replace the example snapshot and EIP before running. The preparer seals the adapter
+hash as well as the inherited engine provenance. Preparation can resume identical
+files but refuses changed files. `run` requires a successful regeneration receipt;
+`freeze` validates the complete selected batch; `register` appends only frozen,
+validated assessments to the publication inventory. Existing registry entries are
+never replaced. A spec, review, or preparer change needs a new batch ID.
+
+The runner deliberately does not fetch a moving branch, infer review approval, or
+publish incomplete work. New candidates outside the original 46 need a separate
+membership extension. The site build remains offline and reads only registered
+completed results. Run `scripts/test_reevaluate.py` with the same Python environment
+for the adapter's regression checks; it does not launch assessors.
