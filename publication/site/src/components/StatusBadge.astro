@@ -11,11 +11,12 @@ interface Props {
   mode?: Mode;
   detail?: string | null;
   size?: 'small' | 'regular';
+  compact?: boolean;
   /** When given, the badge is a link to the report or source that backs the status. */
   href?: string | null;
 }
 
-const { status, mode = 'retrospective', detail = null, size = 'regular', href = null } = Astro.props as Props;
+const { status, mode = 'retrospective', detail = null, size = 'regular', compact = false, href = null } = Astro.props as Props;
 const Tag = href ? 'a' : 'span';
 const glyphs: Record<Status, string> = {
   complete: '●',
@@ -28,5 +29,5 @@ const glyphs: Record<Status, string> = {
 ---
 <Tag class:list={['status', `status-${status}`, size === 'small' && 'status-small', href && 'status-link']} title={detail ?? STATUS_DESCRIPTIONS[status]} href={href ?? undefined}>
   <span class="status-glyph" aria-hidden="true">{glyphs[status]}</span>
-  <span>{statusLabel(status, mode)}</span>
+  <span>{statusLabel(status, mode, compact)}</span>
 </Tag>

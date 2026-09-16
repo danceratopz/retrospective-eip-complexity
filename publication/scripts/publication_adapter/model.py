@@ -7,6 +7,8 @@ all of them with one component set.
 
 from __future__ import annotations
 
+from datetime import date, datetime, timezone
+
 from pathlib import Path
 from typing import Any
 
@@ -73,6 +75,21 @@ def validate_scores(criteria: list[dict[str, Any]], score: int, tier: str, revis
         raise BuildError(f"{context}: tier {tier!r} does not match score {score} under revision {revision}")
 
 
+def evaluation_date(value: str | None) -> str | None:
+    """Project only the UTC calendar date from recorded evaluation metadata."""
+    if value is None:
+        return None
+    try:
+        if isinstance(value, str) and len(value) == 10:
+            return date.fromisoformat(value).isoformat()
+        timestamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if timestamp.tzinfo is None:
+            raise ValueError("timezone missing")
+        return timestamp.astimezone(timezone.utc).date().isoformat()
+    except (ValueError, TypeError, AttributeError) as error:
+        raise BuildError("Invalid recorded evaluation timestamp") from error
+
+
 def llm_assessment(
     record: dict[str, Any],
     *,
@@ -120,6 +137,9 @@ def llm_assessment(
     plausible = under.get("plausible_total_range") or {}
     return {
         "id": assessment_id(fork, eip, SOURCE_LLM, revision),
+        "evaluation_date": evaluation_date(assessor.get("run_at")),
+        "snapshot_id": record.get("snapshot_id"),
+        "snapshot_status": None,
         "eip": eip,
         "title": record["eip"]["title"],
         "fork": fork,

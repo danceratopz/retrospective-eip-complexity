@@ -12,6 +12,11 @@ from __future__ import annotations
 import json
 import sys
 import unittest
+import copy
+import tempfile
+from unittest.mock import patch
+
+import yaml
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -31,7 +36,7 @@ from publication_adapter.common import (  # noqa: E402
     Sanitizer,
 )
 from publication_adapter.comparisons import agreement_class, build_comparisons  # noqa: E402
-from publication_adapter.model import human_assessment_from_task09, validate_scores  # noqa: E402
+from publication_adapter.model import evaluation_date, human_assessment_from_task09, validate_scores  # noqa: E402
 from publication_adapter.rubric import REGISTRY_ORDER, REVISION_1_ORDER, REVISION_2_ORDER, tier_for  # noqa: E402
 
 
@@ -50,6 +55,79 @@ def _assessment(fork: str, eip: int, source: str, revision: int, scores: dict[st
         "tier": tier_for(total, revision),
         "criteria": criteria,
     }
+
+
+class EvaluationHistoryTests(unittest.TestCase):
+    def test_dates_preserve_recorded_precision_and_normalize_offsets(self):
+        self.assertEqual(evaluation_date("2026-09-11T00:30:00+02:00"), "2026-09-10")
+        self.assertEqual(evaluation_date("2026-08-26"), "2026-08-26")
+        self.assertIsNone(evaluation_date(None))
+        for bad in ("yesterday", "2026-09-11T00:00:00", "2026-02-30"):
+            with self.assertRaises(BuildError):
+                evaluation_date(bad)
+
+    def test_append_history_preserves_originals_and_rejects_invalid_entries(self):
+        from publication_adapter import history
+        from publication_adapter.common import ROOT, TASK08, digest, load_json, load_yaml, relative
+        from publication_adapter.sources import load_prospective
+        from publication_adapter.aggregates import fork_summaries
+        occurrences, originals, _, _ = load_prospective()
+        before = copy.deepcopy(originals)
+        candidates = {item["eip"] for item in occurrences}
+        registry = load_yaml(TASK08 / "outputs/evaluation-registry.yaml")
+        boundary = load_json(history.CONTRACT / "adapter-boundary.json")
+        with tempfile.TemporaryDirectory(dir=TASK08) as temporary:
+            base = Path(temporary)
+            snapshot = "hegota-test-repeat"
+            batch = base / snapshot
+            (batch / "assessments").mkdir(parents=True)
+            entry = copy.deepcopy(registry["evaluations"][0])
+            original_id = entry["id"]
+            record = load_yaml(ROOT / entry["assessment_path"])
+            record["snapshot_id"] = snapshot
+            record["provenance"]["cohort_snapshot"]["snapshot_id"] = snapshot
+            record["provenance"]["assessor"]["run_at"] = "2026-09-16T09:00:00Z"
+            path = batch / "assessments" / f"eip-{entry['eip']}.yaml"
+            path.write_text(yaml.safe_dump(record))
+            entry.update(id=original_id + ":" + snapshot, snapshot_id=snapshot,
+                         assessment_path=relative(path), assessment_sha256=digest(path))
+            freeze_path = batch / "assessment-manifest.yaml"
+            freeze_path.write_text(yaml.safe_dump({"snapshot_id": snapshot, "assessment_count": 1, "assessments": [dict(entry)]}))
+            report = batch / "validation-report.yaml"
+            report.write_text(yaml.safe_dump({"snapshot_id": snapshot, "result": "pass", "assessment_freeze_sha256": digest(freeze_path)}))
+            entry.update(freeze_path=relative(freeze_path), freeze_sha256=digest(freeze_path),
+                         validation_path=relative(report), validation_sha256=digest(report))
+            registry["evaluations"].append(entry)
+            registry_path = base / "registry.yaml"
+            boundary["evaluation_history"].update(registry=relative(registry_path), assessment_root=relative(base))
+            with patch.object(history, "load_json", return_value=boundary):
+                registry_path.write_text(yaml.safe_dump(registry))
+                additions, _ = history.load_history(originals, candidates)
+                self.assertEqual(len(additions), 1)
+                self.assertEqual(additions[0]["id"], entry["id"])
+                self.assertEqual(additions[0]["evaluation_date"], "2026-09-16")
+                self.assertEqual(originals, before)
+                assessment_map = {item["id"]: item for item in originals + additions}
+                for occurrence in occurrences:
+                    occurrence["human"] = {"status": "not_available", "assessment_id": None}
+                totals = fork_summaries(occurrences, assessment_map)
+                self.assertEqual(next(item for item in totals if item["fork"] == "hegota")["score_sum"], 856)
+                # Prospective comparisons select the newest evaluation; totals above stay frozen.
+                human = _assessment("hegota", entry["eip"], "human", 2, {})
+                pairs = build_comparisons({**assessment_map, human["id"]: human}, {})
+                self.assertEqual(next(iter(pairs.values()))["llm_assessment_id"], entry["id"])
+                for mutate in (
+                    lambda r: r["evaluations"].append(copy.deepcopy(entry)),
+                    lambda r: r["evaluations"].pop(0),
+                    lambda r: r["evaluations"][-1].update(assessment_sha256="0" * 64),
+                    lambda r: r["evaluations"][-1].update(id=original_id),
+                    lambda r: r["evaluations"][-1].update(assessment_path="/etc/passwd"),
+                ):
+                    broken = copy.deepcopy(registry)
+                    mutate(broken)
+                    registry_path.write_text(yaml.safe_dump(broken))
+                    with self.assertRaises(BuildError):
+                        history.load_history(originals, candidates)
 
 
 class RubricTests(unittest.TestCase):
@@ -89,6 +167,22 @@ class ComparisonTests(unittest.TestCase):
         row = next(item for item in comparison["rows"] if item["id"] == "cross_eip_interactions")
         self.assertEqual((row["human"], row["llm"], row["delta"], row["agreement"]), (1, 3, 2, "major"))
         self.assertEqual(comparison["agreement_counts"], {"exact": 23, "minor": 0, "major": 1})
+
+    def test_prospective_comparison_uses_latest_matching_rubric_in_any_order(self):
+        human = _assessment("hegota", 8272, SOURCE_HUMAN, 2, {})
+        original = _assessment("hegota", 8272, SOURCE_LLM, 2, {"security_risks": 3})
+        original["evaluation_date"] = "2026-08-26"
+        latest = copy.deepcopy(original)
+        latest.update(id=original["id"] + ":september", role="reevaluation", evaluation_date="2026-09-16")
+        incompatible = _assessment("hegota", 8272, SOURCE_LLM, 1, {})
+        incompatible["evaluation_date"] = "2026-09-17"
+        for candidates in ((original, latest), (latest, original)):
+            pairs = build_comparisons({a["id"]: a for a in (*candidates, incompatible, human)}, {})
+            self.assertEqual(list(pairs), ["hegota:8272:r2"])
+            self.assertEqual(pairs["hegota:8272:r2"]["llm_assessment_id"], latest["id"])
+        latest["scored"] = False
+        pairs = build_comparisons({a["id"]: a for a in (original, latest, human)}, {})
+        self.assertEqual(pairs["hegota:8272:r2"]["llm_assessment_id"], original["id"])
 
     def test_unscored_assessments_are_never_compared(self) -> None:
         human = _assessment("hegota", 1, SOURCE_HUMAN, 2, {})

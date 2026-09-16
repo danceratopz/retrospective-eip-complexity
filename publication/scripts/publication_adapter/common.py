@@ -27,7 +27,7 @@ TASK08_OUTPUTS = TASK08 / "outputs"
 TASK08_EXTENSION = TASK08 / "extensions/sfi-cfi-2026-08-26/outputs"
 TASK09 = ROOT / "research/tasks/09-hegota-human-assessment-snapshot/outputs"
 
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 FORK_ORDER = ["shanghai", "cancun", "prague", "osaka", "amsterdam", "hegota"]
 RETROSPECTIVE_FORKS = FORK_ORDER[:-1]
 PROSPECTIVE_FORK = "hegota"

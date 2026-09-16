@@ -1,5 +1,5 @@
 /**
- * Domain model of the publication payload (schema 2.0.0) and pure accessors over it.
+ * Domain model of the publication payload (schema 2.1.0) and pure accessors over it.
  *
  * Nothing here touches the filesystem, so both server-rendered components and client scripts can
  * import it. `data.js` owns loading.
@@ -93,7 +93,10 @@ export interface Assessment {
   mode: Mode;
   source: Source;
   rubric_revision: RubricRevision;
-  role: 'primary' | 'historical_rubric_rerun' | 'published_checklist';
+  role: 'primary' | 'historical_rubric_rerun' | 'published_checklist' | 'reevaluation';
+  evaluation_date?: string | null;
+  snapshot_id?: string | null;
+  snapshot_status?: 'PFI' | 'CFI' | 'SFI' | null;
   status: Status;
   scored: boolean;
   score: number | null;
@@ -354,7 +357,7 @@ export function comparisonsFor(data: Publication, occurrence: Occurrence): Compa
 /** The assessment views an occurrence supports; Human and Compare appear only when the data exists. */
 export function viewModes(occurrence: Occurrence): ViewMode[] {
   const modes: ViewMode[] = [];
-  if (occurrence.llm.assessment_id) modes.push('llm');
+  if (occurrence.assessment_ids.some((id) => id.includes(':llm:'))) modes.push('llm');
   if (occurrence.human.assessment_id) modes.push('human');
   if (occurrence.comparison_ids.length) modes.push('compare');
   return modes;

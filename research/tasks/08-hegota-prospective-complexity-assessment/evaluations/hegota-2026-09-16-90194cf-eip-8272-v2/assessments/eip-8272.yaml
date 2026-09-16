@@ -1,0 +1,695 @@
+schema_version: 1
+task_id: 08-hegota-prospective-complexity-assessment
+fork_id: hegota
+eip:
+  number: 8272
+  title: Recent Roots for Frame Transactions
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: >-
+    Execution-layer assessment of draft EIP-8272 at the sealed Hegotá snapshot.
+    The proposal installs one stateful recent-root contract, defines canonical
+    recent-root VERIFY frames for EIP-8141 frame transactions, extends public
+    mempool admission and revalidation policy, and performs a first-active-block
+    state transition. It reuses EIP-7843 slotNumber/SLOTNUM and existing EVM gas,
+    state access, frame encoding, and transaction semantics.
+provenance:
+  input_package:
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/evaluations/hegota-2026-09-16-90194cf-eip-8272-v2/packages/eip-8272/manifest.yaml
+    manifest_sha256: 7f4e43d55c57788bd8401dac91b68f475b36f003aef0df663ffff2ee023c08e2
+  cohort_snapshot:
+    snapshot_id: hegota-2026-09-16-90194cf-eip-8272-v2
+    manifest_path: research/tasks/08-hegota-prospective-complexity-assessment/evaluations/hegota-2026-09-16-90194cf-eip-8272-v2/cohort.yaml
+    manifest_sha256: afbde48ebf42a6970d24a11ce497c872d33d4589afd468d9e360a18a2a610031
+    captured_on: '2026-09-16'
+    repository: ethereum/EIPs
+    commit: 90194cfa32915fc8a4ba5b7eea783774c2182b7f
+    committed_at: '2026-09-16T00:38:19Z'
+    information_cutoff_at: '2026-09-16T00:38:19Z'
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: 90194cfa32915fc8a4ba5b7eea783774c2182b7f
+    path: EIPS/eip-8272.md
+    committed_at: '2026-09-16T00:38:19Z'
+    git_blob_sha: 274ce98c57ec285862f4d2ff48cd9f545c385f12
+    content_sha256: 82419d7e5c094b03539e4c7d1da91f4a117cce7a95d147b8776f8e0c668471f1
+    immutable_url: https://github.com/ethereum/EIPs/blob/90194cfa32915fc8a4ba5b7eea783774c2182b7f/EIPS/eip-8272.md
+    information_cutoff_at: '2026-09-16T00:38:19Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: 3d8c0128c5543dd3146341ef395aa344e4abea30
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b0d2258a8fdd1a514b61ef42ab0fd5a6d7fb5046
+    content_sha256: 16da70eafc61ca7ff9be62b4a89017f4a881a6ff3a27bb02040334d3100dba2a
+    immutable_url: https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 2
+  assessor_view:
+    path: rubric.md
+    content_sha256: 9e5bde0f53a9195bc375586d8a7dc0026e7c1838dcdefce74baa2c6ae4d42fea
+    transformation: remove_revision_notes_and_calibration_examples_v1
+  task_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/REEVALUATION.md
+    content_sha256: 1e32bbaba0250a143e2c2969b25b11cd04cf4efab52b5dfcc0dd8d1bdc28ab34
+  assessment_contract:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/prompts/ASSESSMENT-CONTRACT.md
+    content_sha256: 0f566b8e914e7b1cdd4ba3f6ce220f6ad0d58f1c72711e21c213d22fb95425e9
+  session_prompt:
+    path: research/tasks/08-hegota-prospective-complexity-assessment/evaluations/hegota-2026-09-16-90194cf-eip-8272-v2/prompts/eip-8272.md
+    content_sha256: 8b4e3283e5d6102a033a64ad1e72f1db054d790d998f6487f3856f39716be5d4
+  assessor:
+    model: gpt-5.6-sol
+    reasoning_effort: xhigh
+    run_at: '2026-09-16T09:15:55+02:00'
+    session_id: assessment-run-024fe923-16e9-4c91-a0c3-f488ec71596f
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_one_eip_capsule_v1
+    agent_identity: codex
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-7702.md
+  - supporting/eip-7843.md
+  - supporting/eip-8141.md
+  operational_files_read:
+  - PROMPT.md
+  - ASSESSMENT-CONTRACT.md
+  - package/manifest.yaml
+  - package/output-template.yaml
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Recent root verifier frame
+    summary: >-
+      The frame consumes ordinary EVM gas, uses normal warm/cold access and
+      EIP-8141 data pricing, and adds no special intrinsic gas, warming rule, or
+      block-gas exemption.
+  rationale: >-
+    The proposal creates additional ordinary EVM work but does not introduce or
+    update an EVM gas-accounting rule.
+  confidence: high
+  uncertainty_note: >-
+    RECENT_ROOT_CODE is TBD, so exact gas-use vectors cannot yet be fixed, but
+    the specified accounting mechanism remains the existing one.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Public mempool handling
+    summary: >-
+      Direct evaluation must reproduce EVM gas use and the same warm account and
+      storage-key updates and rollbacks.
+  - source: eip.md
+    locator: Specification > Recent root verifier frame
+    summary: >-
+      Target access and storage reads follow normal warm and cold access rules.
+  rationale: >-
+    No opcode's internal state-access or gas-charge order changes. The
+    equivalence rule for an optional optimized evaluation preserves, rather than
+    reorders, ordinary EVM access effects.
+  confidence: high
+  uncertainty_note: >-
+    The missing canonical bytecode obscures its concrete trace, not the stated
+    ordering rule for any opcode.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Recent root verifier frame
+    summary: >-
+      The proposal reuses ordinary frame execution and adds no special gas
+      accounting or block-gas exemption.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: >-
+      The EIP does not change the EIP-8141 transaction payload and does not
+      modify other transaction types.
+  rationale: >-
+    No blob gas field, price, limit, accounting path, or existing blob test rule
+    is changed.
+  confidence: high
+  uncertainty_note: No blob-gas ambiguity is visible in the package.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale > Implicit source creation
+    summary: >-
+      Writes creating storage entries pay the ordinary state-growth cost.
+  - source: eip.md
+    locator: Specification > Recent root contract
+    summary: All calls use ordinary EVM execution and gas accounting.
+  rationale: >-
+    Recent-root writes consume state, but the proposal neither changes a state
+    gas rate or budget nor introduces a new state-gas charging mechanism.
+  confidence: high
+  uncertainty_note: >-
+    Exact code gas is unresolved, but the specification mandates existing
+    state-growth charging.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Recent root contract > Write operation
+    summary: >-
+      A successful write performs an ordinary storage assignment and returns no
+      data or logs.
+  - source: eip.md
+    locator: Specification > Recent root contract
+    summary: All calls use ordinary EVM execution and gas accounting.
+  rationale: The proposal defines no new refund trigger, counter, or settlement rule.
+  confidence: high
+  uncertainty_note: No refund-related under-specification is identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Each of EIP-8141's four recognized validation-prefix shapes must be tested
+      in four protocol-verifier configurations, while reversed and duplicate
+      protocol verifiers must be rejected.
+  - source: eip.md
+    locator: Specification > Public mempool handling
+    summary: >-
+      Prefix matching must skip optional expiry and recent-root verifier frames,
+      changing how the existing four EIP-8141 prefix shapes are classified.
+  rationale: >-
+    A considerable set of existing EIP-8141 public-mempool prefix tests must be
+    reworked into a verifier-position matrix, but the impact is confined to that
+    specialized frame-validation category rather than diverse execution tests.
+  confidence: high
+  uncertainty_note: >-
+    The package does not quantify the pre-existing EIP-8141 test inventory, so
+    the absolute number of affected vectors is unknown.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification > Activation
+    summary: >-
+      The first active block must initialize the fixed account against parent
+      state and is invalid unless the chosen address has empty code and storage.
+  rationale: >-
+    Fork-transition tests not otherwise about EIP-8272 gain a narrow expected
+    state condition for the installed account. Other changes mainly rework
+    EIP-8141 tests rather than adding a universal assertion to every test.
+  confidence: medium
+  uncertainty_note: >-
+    How broadly the activation-account expectation is asserted by the test
+    corpus is not specified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Current slot
+    summary: >-
+      Execution clients obtain current_slot from EIP-7843's existing slotNumber
+      field.
+  - source: eip.md
+    locator: Abstract
+    summary: The feature requires no change to the FrameTx envelope.
+  rationale: >-
+    The proposal consumes an already-defined slotNumber and existing fork
+    activation context; it specifies no new transition-tool input or output
+    field.
+  confidence: medium
+  uncertainty_note: >-
+    The package does not describe a transition-tool binding, but no interface
+    addition is required by the EIP text.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Tests need recent-root tuple construction, slot-age boundaries, verifier
+      frame variants, activation transitions, direct-evaluation equivalence, and
+      reorganization-driven eviction.
+  - source: supporting/eip-8141.md
+    locator: Specification > Mempool > Revalidation
+    summary: >-
+      EIP-8141 already defines dependency-based re-simulation and eviction after
+      canonical-head changes.
+  rationale: >-
+    Existing FrameTx and mempool/revalidation concepts cover the behavior, but
+    minor reusable helpers are needed for 72-byte tuples, recent-root frames,
+    slot movement, and indexed dependency changes.
+  confidence: medium
+  uncertainty_note: >-
+    No test-framework implementation is package evidence, so whether helpers are
+    merely extended or newly introduced cannot be confirmed.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Root sources; Specification > Entry and storage keys
+    summary: >-
+      Source identifiers, entry hashes, and storage keys use domain-separated
+      keccak256 over fixed-length encodings.
+  rationale: >-
+    Reuse of the existing keccak256 hash does not introduce or modify a
+    cryptographic mechanism for purposes of this anchor.
+  confidence: high
+  uncertainty_note: >-
+    Application-specific proofs and privacy commitments are explicitly outside
+    the protocol's opaque bytes32-root semantics.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Required cases span one versus sixteen tuples, duplicates, malformed
+      lengths, current/future slots, ages 8191 and 8192, exact gas boundaries,
+      four prefix shapes and verifier orders, activation states, and reorgs.
+  - source: eip.md
+    locator: Specification > Validation operation
+    summary: >-
+      Validation combines strict age tests, modulo-8192 ring indexing, tuple
+      hashing, storage equality, and all-tuples-must-pass behavior.
+  rationale: >-
+    Multiple boundary-prone mechanisms compose, and the prefix-shape, tuple,
+    gas, age, activation, and reorganization axes create an elevated case
+    matrix.
+  confidence: high
+  uncertainty_note: >-
+    RECENT_ROOT_CODE prevents final bytecode-level boundary vectors, but the
+    specified boundary surface is already clear.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Backwards Compatibility
+    summary: >-
+      The proposal changes neither the FrameTx envelope nor other transaction
+      types.
+  - source: eip.md
+    locator: Specification > Current slot
+    summary: current_slot is read from EIP-7843's existing header field.
+  rationale: >-
+    Activation affects executed state, but EIP-8272 introduces no block RLP
+    validation mechanism, which is the scope of this anchor.
+  confidence: high
+  uncertainty_note: No EIP-8272 block-encoding change is specified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Current slot
+    summary: >-
+      EIP-8272 consumes slotNumber supplied under EIP-7843 and does not define a
+      new Engine API field or endpoint.
+  - source: supporting/eip-7843.md
+    locator: Specification > RPC changes > Engine API changes
+    summary: >-
+      EIP-7843 is the package source that defines the slotNumber-bearing payload
+      and attributes objects and associated Engine API methods.
+  rationale: >-
+    The necessary Engine API surface belongs to the prerequisite; this proposal
+    adds no further Engine API communication mechanism.
+  confidence: high
+  uncertainty_note: No incremental Engine API ambiguity is identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification > Recent root contract
+    summary: >-
+      A fixed RECENT_ROOT_ADDRESS exposes write and validation operations and
+      stores per-source ring-buffer entries.
+  - source: eip.md
+    locator: Specification > Activation
+    summary: >-
+      Clients install RECENT_ROOT_CODE at activation with nonce and storage
+      conditions.
+  rationale: >-
+    Exactly one protocol-installed system contract is added, and it is stateful
+    because ordinary callers can write persistent recent-root entries.
+  confidence: high
+  uncertainty_note: >-
+    The contract's canonical runtime bytes are TBD, but its stateful role and
+    activation are explicit.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Activation
+    summary: >-
+      The designated address must be absent or have empty code and storage before
+      clients install the new recent-root code.
+  - source: eip.md
+    locator: Specification > Recent root verifier frame
+    summary: The new frame targets RECENT_ROOT_ADDRESS.
+  rationale: >-
+    Installing a new contract into an absent or empty account does not modify a
+    pre-existing system contract, and no existing system contract is otherwise
+    changed.
+  confidence: medium
+  uncertainty_note: >-
+    An already-existing empty account may have its nonce updated, but it is not
+    a pre-existing system contract under the rubric's distinction.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: The proposal explicitly requires no new opcode.
+  - source: eip.md
+    locator: Specification > Application introspection
+    summary: >-
+      Applications reuse EIP-8141 FRAMEPARAM, FRAMEDATALOAD, and FRAMEDATACOPY.
+  rationale: No opcode is introduced.
+  confidence: high
+  uncertainty_note: No opcode-addition ambiguity is present.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Recent root verifier frame
+    summary: Target access, storage reads, and data pricing use existing rules.
+  - source: eip.md
+    locator: Specification > Public mempool handling
+    summary: >-
+      SLOTNUM and constrained SLOAD are newly permitted only by public-mempool
+      trace policy while the canonical top-level frame executes.
+  rationale: >-
+    The proposal changes which existing opcodes a mempool policy admits in this
+    narrowly recognized frame, but changes no existing opcode's execution result
+    or semantics.
+  confidence: high
+  uncertainty_note: >-
+    The distinction is between mempool-policy permission and opcode behavior;
+    only the latter is scored here.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Recent root contract; Specification > Activation
+    summary: >-
+      The feature is deployed as EVM runtime code at an account with nonce and
+      storage, not as a precompile.
+  rationale: No precompile is introduced.
+  confidence: high
+  uncertainty_note: The missing runtime bytes do not change the specified account model.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Specification > Recent root contract
+    summary: >-
+      The design uses a newly installed ordinary contract and existing frame
+      execution without mentioning any precompile behavior or gas change.
+  rationale: No existing precompile logic or gas schedule is modified.
+  confidence: high
+  uncertainty_note: No precompile interaction requiring scoring is package-grounded.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Rationale > Canonical frame instead of an envelope field
+    summary: >-
+      The design reuses EIP-8141 transaction encoding and puts fixed-length
+      tuples in existing frame data rather than adding an envelope field.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The EIP-8141 transaction payload and signature hash do not change.
+  rationale: >-
+    The tuple is an application-level encoding inside an existing data field;
+    transaction, block, receipt, and interface RLP/SSZ encodings are unchanged.
+  confidence: high
+  uncertainty_note: No interface-level encoding change is specified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract; Backwards Compatibility
+    summary: >-
+      The feature uses EIP-8141 FrameTx without changing its envelope and does
+      not modify other transaction types.
+  rationale: No new transaction type is introduced.
+  confidence: high
+  uncertainty_note: No transaction-type ambiguity is present.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Recent root verifier frame
+    summary: >-
+      A failed verifier uses EIP-8141's existing rule that a reverting or
+      exceptional VERIFY frame invalidates the transaction.
+  - source: eip.md
+    locator: Rationale > Fixed early position; Test Cases
+    summary: >-
+      The fixed position affects public-mempool eligibility, not block validity,
+      and mempool rejection alone does not make a transaction invalid in a block.
+  rationale: >-
+    EIP-8272 adds a recognized mempool-policy species and contract predicates,
+    but it does not alter FrameTx static validity rules or intrinsic gas; block
+    validity continues to follow existing EIP-8141 VERIFY execution semantics.
+  confidence: medium
+  uncertainty_note: >-
+    Some harnesses may group public-mempool admission under transaction
+    validation, but the EIP explicitly separates that policy from block
+    validity, which controls this score.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification > Current slot
+    summary: The proposal reads the EIP-7843 slotNumber field.
+  - source: supporting/eip-7843.md
+    locator: Specification > RPC changes > Header extension
+    summary: EIP-7843, rather than EIP-8272, defines the slotNumber header field.
+  rationale: No additional block or header field is introduced by this proposal.
+  confidence: high
+  uncertainty_note: The prerequisite field is fully attributable to EIP-7843.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Activation
+    summary: >-
+      Before transactions in the first active block, clients create or update
+      RECENT_ROOT_ADDRESS, conditionally preserve balance and nonce, reject a
+      nonempty-code/storage parent, run initialization only once, and undo or
+      reapply it across activation reorgs.
+  rationale: >-
+    The proposal mandates an irregular first-active-block state transition at a
+    fixed address, directly satisfying the rubric's score-3 activation anchor.
+  confidence: high
+  uncertainty_note: >-
+    RECENT_ROOT_CODE is still TBD, so the exact code value written by this
+    otherwise explicit transition is unresolved.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Public mempool handling
+    summary: >-
+      Nodes must index storage and expiry dependencies, update them atomically on
+      replacement, and selectively recheck transactions after slot changes,
+      reorgs, storage changes, or code and activation changes.
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      Reorganizations or synchronized expiry may evict many transactions sharing
+      a popular root, while dependency indexing is intended to avoid scanning
+      unrelated transactions.
+  - source: eip.md
+    locator: Specification > Entry and storage keys
+    summary: >-
+      Persistent storage can grow by up to 8192 keys for each written source_id.
+  rationale: >-
+    Although one validation call is bounded to sixteen tuples, end-to-end
+    performance couples transaction-pool indexing, replacement, expiry, chain
+    reorganization, direct-EVM equivalence, and unbounded numbers of root
+    sources; that interaction cannot be fully benchmarked in isolation.
+  confidence: medium
+  uncertainty_note: >-
+    The package supplies bounds and mitigations but no workload or benchmark
+    data, and canonical bytecode needed for exact per-frame measurements is TBD.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Public mempool handling
+    summary: >-
+      The proposal makes a narrow exception to shared-storage-read bans and
+      requires exact code matching, bounded execution, dependency recording,
+      atomic replacement, reorg-aware rechecks, and eviction.
+  - source: eip.md
+    locator: Security Considerations
+    summary: >-
+      The text identifies signature-binding requirements, last-write semantics,
+      publication risk, cross-chain domain binding, persistent state growth, and
+      mass eviction after reorg or expiry.
+  rationale: >-
+    The mechanism touches critical state, EVM execution, account validation, and
+    public transaction-pool invariants. Incorrect dependency tracking, optimized
+    evaluation, reorg handling, or application binding can affect nodes and
+    users, warranting extensive targeted and cross-component review and fuzzing.
+  confidence: high
+  uncertainty_note: >-
+    The specified mitigations reduce exposure but do not eliminate the
+    multi-component security review surface.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification > Constants
+    summary: RECENT_ROOT_CODE is explicitly listed as TBD.
+  - source: eip.md
+    locator: Specification > Activation; Specification > Public mempool handling
+    summary: >-
+      Clients must install exactly RECENT_ROOT_CODE, compare runtime code against
+      it for mempool admission, and make direct evaluation reproduce that code's
+      exact gas use and warm-access effects.
+  rationale: >-
+    The undefined canonical runtime bytes become consensus state at activation
+    and determine exact execution gas and the mempool code-match gate. Clients
+    cannot baseline activation state roots, code matching, or gas-equivalent
+    execution until a previously nonexistent observable value is agreed.
+  confidence: high
+  uncertainty_note: >-
+    Functional pseudocode is detailed, but it does not determine the canonical
+    bytecode or its exact gas trace.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Front matter requires; Specification
+    summary: >-
+      EIP-8272 requires 7843 and 8141, extends EIP-8141 frame and mempool
+      semantics, sources current_slot from EIP-7843, and specifies EIP-7702
+      delegated-code storage-context behavior.
+  - source: eip.md
+    locator: Test Cases
+    summary: >-
+      Testing explicitly composes EIP-8141 prefix shapes and gas limits with
+      expiry and recent-root verifier frames, EIP-7843 slots, and delegated-code
+      cases implied by the storage-context rule.
+  rationale: >-
+    There are three direct interacting EIPs: 8141 supplies the transaction,
+    verifier, introspection, gas-budget, and mempool framework; 7843 supplies
+    slotNumber and SLOTNUM; and 7702 affects delegated execution and storage
+    context. Their coordinated behavior requires cross-EIP test coverage. With
+    exactly three identified interactions, no uncapped bonus applies.
+  confidence: high
+  uncertainty_note: >-
+    Transitive EIP-8141 dependencies are not counted because EIP-8272 does not
+    directly modify them in the package evidence.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7702
+  - 7843
+  - 8141
+  unidentified_interactions: []
+totals:
+  primary_score: 24
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: >-
+    RECENT_ROOT_CODE is TBD. The proposal therefore lacks the exact code bytes
+    that must be installed into consensus state and code-matched by mempool
+    implementations, and it cannot yet fix bytecode-level gas, exceptional-halt,
+    and optimized-evaluation equivalence vectors. This single gap is scored
+    under unspecified behavior rather than being duplicated as independent
+    penalties.
+  affected_criteria:
+  - added_system_contracts
+  - performance_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  plausible_total_range:
+    minimum: 23
+    maximum: 26
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - What exact runtime bytes and code hash replace RECENT_ROOT_CODE?
+  - >-
+    What exact gas-use, exceptional-halt boundaries, and warm-access traces do
+    those bytes establish for one through sixteen validation tuples and writes?
+  - >-
+    What bytecode-grounded reference vectors establish equivalence between EVM
+    execution and optional direct evaluation?
+notable_ambiguities:
+- >-
+  RECENT_ROOT_CODE is undefined even though activation, public-mempool admission,
+  and direct-evaluation equivalence all depend on its exact value.
+- >-
+  The node-chosen near-expiry admission margin is deliberately local policy, so
+  it affects interoperability expectations but not consensus scoring.
+overall_confidence: medium
+snapshot_id: hegota-2026-09-16-90194cf-eip-8272-v2
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: >-
+    I consulted only the listed sealed package sources and operational files,
+    did not use internet access, skills, repositories, external information, or
+    post-snapshot material, and based this assessment solely on the snapshot.

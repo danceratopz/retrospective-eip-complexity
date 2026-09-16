@@ -5,7 +5,8 @@
 import type { Assessment, Comparison, CriterionDefinition, Occurrence, Rubric } from '../lib/domain';
 import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
 import { AGREEMENT_LABELS, EVALUATOR_LABELS, TIER_LABELS, rubricLabel } from '../lib/labels';
-import { domId, plural, signed, truncate } from '../lib/format';
+import { domId, isoDate, shortCommit, plural, signed, truncate } from '../lib/format';
+import { eipRoute } from '../lib/routes';
 import EvaluatorBadge from './EvaluatorBadge.astro';
 import StackedBar from './StackedBar.astro';
 import TierBadge from './TierBadge.astro';
@@ -30,6 +31,7 @@ const confounds = comparison.confounds;
 ---
 <section class="compare" data-compare={comparison.id}>
   <p class="muted">Both assessments applied {rubricLabel(comparison.rubric_revision)} ({rubric.criterion_count} criteria) to EIP-{comparison.eip} in {occurrence.fork_name}. Δ is LLM minus Human.</p>
+  {occurrence.mode === 'prospective' && <p class="source-note">Using the latest scored LLM evaluation for this checklist: <a href={eipRoute(llm.eip, { fork: llm.fork, view: 'llm', assessment: llm.id })}>{llm.evaluation_date ?? 'Date not recorded'}</a>{llm.provenance.assessed_revision && <> · spec <a href={llm.provenance.assessed_revision.immutable_url}>{isoDate(llm.provenance.assessed_revision.committed_at)} · <code>{shortCommit(llm.provenance.assessed_revision.commit)}</code></a></>}. The Human and LLM assessments may use different spec revisions.</p>}
   <div class="compare-totals">
     <div class="compare-total compare-llm"><EvaluatorBadge source="llm" /><span class="stat">{comparison.llm_total}</span><TierBadge tier={comparison.llm_tier} thresholds={rubric.tier_thresholds} /></div>
     <div class="compare-total compare-human"><EvaluatorBadge source="human" /><span class="stat">{comparison.human_total}</span><TierBadge tier={comparison.human_tier} thresholds={rubric.tier_thresholds} /></div>

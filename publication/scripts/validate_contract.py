@@ -16,7 +16,7 @@ from typing import Any
 
 PUBLICATION_ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_ROOT = PUBLICATION_ROOT.parent
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 JSON_SCHEMA_DRAFT = "https://json-schema.org/draft/2020-12/schema"
 
 RECORD_TYPES = {
@@ -525,6 +525,11 @@ def validate_routes_labels_adapter(
     require(set(adapter["public_output_allowlist"]["allowed_record_types"]) == RECORD_TYPES, "adapter: public record allowlist mismatch")
     require(adapter["public_output_allowlist"].get("deny_by_default") is True, "adapter: deny-by-default missing")
     require(adapter["public_output_allowlist"].get("recursive_research_copy_permitted") is False, "adapter: recursive research copy must be forbidden")
+    history = adapter["evaluation_history"]
+    require(history["comparison_selection_version"] == 2, "adapter: comparison selection version mismatch")
+    require(history["registry"] == "research/tasks/08-hegota-prospective-complexity-assessment/outputs/evaluation-registry.yaml", "adapter: evaluation registry mismatch")
+    require(history["assessment_root"] == "research/tasks/08-hegota-prospective-complexity-assessment/evaluations", "adapter: evaluation root mismatch")
+    require(set(history["public_fields"]) == {"evaluation_date", "snapshot_id", "snapshot_status"}, "adapter: evaluation public fields mismatch")
     gate = adapter["prospective_gate"]
     require(gate["allowed_record_type_now"] == "prospective_cohort_summary", "adapter: prospective summary type mismatch")
     require(gate["reserved_route_family"] == "prospective_hegota", "adapter: prospective route mismatch")

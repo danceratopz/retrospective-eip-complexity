@@ -5,7 +5,7 @@
  */
 import type { Assessment, CriterionDefinition, Occurrence, Rubric } from '../lib/domain';
 import { EVALUATOR_LABELS } from '../lib/labels';
-import { truncate } from '../lib/format';
+import { truncate, isoDate, shortCommit } from '../lib/format';
 import AssessmentSummary from './AssessmentSummary.astro';
 import CriterionTable from './CriterionTable.astro';
 import ProvenanceDetails from './ProvenanceDetails.astro';
@@ -30,6 +30,11 @@ const sourceLabel = EVALUATOR_LABELS[assessment.source];
 const checklist = assessment.checklist;
 ---
 <article class="assessment-view" data-assessment={assessment.id}>
+  <p class="assessment-dates">
+    <strong>Evaluated on:</strong> {assessment.evaluation_date ? <time datetime={assessment.evaluation_date}>{assessment.evaluation_date}</time> : 'Not recorded'}
+    {assessment.provenance.assessed_revision && <> · <strong>Spec revision:</strong> <a href={assessment.provenance.assessed_revision.immutable_url}>{isoDate(assessment.provenance.assessed_revision.committed_at)} · <code>{shortCommit(assessment.provenance.assessed_revision.commit)}</code></a></>}
+    {assessment.snapshot_status && <> · Inclusion status at snapshot: {assessment.snapshot_status}</>}
+  </p>
   {assessment.summary && <p class="assessment-scope"><strong>Scope at the cutoff.</strong> {assessment.summary}</p>}
   <AssessmentSummary assessment={assessment} occurrence={occurrence} rubric={rubric} />
   {!assessment.scored && checklist && (

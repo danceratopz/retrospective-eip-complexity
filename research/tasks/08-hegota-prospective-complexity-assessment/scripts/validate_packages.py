@@ -22,6 +22,7 @@ PACKAGE_FREEZE = TASK_ROOT / "outputs" / "package-manifest.yaml"
 EXPECTED_TASK_ID = "08-hegota-prospective-complexity-assessment"
 EXPECTED_FORK_ID = "hegota"
 EXPECTED_SNAPSHOT_ID = "hegota-pfi-2026-08-26-ac450a4"
+EXPECTED_COMMIT = "ac450a4ab2f37387385ee9c54b62f518d97e6cc9"
 PROVENANCE_ONLY_REPOSITORIES = {
     *package_engine.PROVENANCE_ONLY_REPOSITORIES,
     "ethereum/consensus-specs",
@@ -109,7 +110,7 @@ def validate_package(package: Path) -> None:
     eip_path = package / primary.get("package_path", "")
     if not eip_path.is_file() or file_sha256(eip_path) != primary.get("content_sha256"):
         raise ValidationError(f"EIP-{number} primary EIP hash mismatch")
-    if primary.get("commit") != "ac450a4ab2f37387385ee9c54b62f518d97e6cc9":
+    if primary.get("commit") != EXPECTED_COMMIT:
         raise ValidationError(f"EIP-{number} uses the wrong common snapshot")
     rubric = manifest.get("rubric", {})
     rubric_path = package / rubric.get("package_path", "")
