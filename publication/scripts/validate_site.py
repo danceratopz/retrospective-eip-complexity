@@ -118,9 +118,9 @@ def occurrence_rows(data: dict) -> list[dict]:
 
 
 def validate_domain_model(data: dict, rows: list[dict]) -> None:
-    """Invariants of the schema 2.0.0 domain model that the pages depend on."""
+    """Invariants of the schema 2.1.0 domain model that the pages depend on."""
     assessments = data["assessments"]
-    require(len(assessments) == 137, f"expected 137 assessments, found {len(assessments)}")
+    require(len([a for a in assessments.values() if a["role"] != "reevaluation"]) == 137, f"expected 137 assessments, found {len(assessments)}")
     require(len(data["comparisons"]) == 34, "expected 34 same-rubric Human/LLM comparisons")
     require(len(data["criteria"]) == 29, "criterion registry must contain 29 criteria")
     require(set(data["rubrics"]) == {"1", "2"}, "both rubric revisions must be published")
@@ -154,6 +154,8 @@ def validate_eip_pages(data: dict) -> None:
         require(html.count("<h1>") == 1, f"EIP-{eip['eip']}: one h1")
         for occurrence in eip["occurrences"]:
             require(f'data-fork-panel="{occurrence["fork"]}"' in html, f"EIP-{eip['eip']}: missing {occurrence['fork']} panel")
+            for identifier in occurrence["assessment_ids"]:
+                require(f'data-assessment="{identifier}"' in html, f"EIP-{eip['eip']}: missing evaluation {identifier}")
             if occurrence["llm"]["assessment_id"]:
                 require(f'data-assessment="{occurrence["llm"]["assessment_id"]}"' in html, f"EIP-{eip['eip']}: missing LLM view")
             else:
@@ -198,7 +200,7 @@ def validate() -> dict[str, int]:
     require(DIST.is_dir(), "site dist directory is missing; run npm run build")
     data_path = DIST / "generated/publication.json"
     data = json.loads(data_path.read_text(encoding="utf-8"))
-    require(data["schema_version"] == "2.0.0", "publication schema mismatch")
+    require(data["schema_version"] == "2.1.0", "publication schema mismatch")
     require(data["release_state"] == "public", "release state mismatch")
     rows = occurrence_rows(data)
     validate_domain_model(data, rows)
@@ -341,7 +343,7 @@ def validate() -> dict[str, int]:
 
     manifest_path = DIST / "generated/provenance.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    require(manifest["schema_version"] == "2.0.0", "provenance schema mismatch")
+    require(manifest["schema_version"] == "2.1.0", "provenance schema mismatch")
     for item in manifest["generated_files"]:
         path = DIST / "generated" / item["path"]
         require(path.is_file(), f"manifest output is missing: {item['path']}")
@@ -459,7 +461,7 @@ def validate() -> dict[str, int]:
     require(eip_index_html.count('data-mode="') == len(data["assessments"]) + 7, "EIP index must show one row per assessment plus the seven N/A dispositions")
     for control in ["q", "fork", "band", "status", "evaluator", "under", "mode", "reruns"]:
         require(f'data-filter="{control}"' in eip_index_html, f"EIP index filter {control} is missing")
-    require(eip_index_html.count('data-sort-key="') == 7, "EIP index sortable columns changed")
+    require(eip_index_html.count('data-sort-key="') == 8, "EIP index sortable columns changed")
     require(eip_index_html.count('class="stack stack-compact') == scored_rows, "EIP index must show one compact stacked bar per scored assessment")
     require(eip_index_html.count('data-select-assessment="') == scored_rows, "EIP index must offer comparison selection for every scored assessment")
     require(eip_index_html.count('data-evaluator="human"') == sum(1 for item in data["assessments"].values() if item["source"] == "human"), "EIP index must show one row per Human assessment")
@@ -470,9 +472,9 @@ def validate() -> dict[str, int]:
     require('href="https://github.com/ethspecs/pm/pull/118"' in eip_index_html, "Human status badges must link to their pull request")
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
-    require(hegota_html.count('data-mode="prospective"') == 46 + 25, "Hegotá HTML table must show 46 LLM rows plus 25 Human rows")
+    require(hegota_html.count('data-mode="prospective"') == 46 + 25 + sum(a['role'] == 'reevaluation' for a in data['assessments'].values()), "Hegotá HTML table must show 46 LLM rows plus 25 Human rows")
     require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
-    require(hegota_html.count('data-sort-key="') == 7, "Hegotá assessment columns must all be sortable")
+    require(hegota_html.count('data-sort-key="') == 8, "Hegotá assessment columns must all be sortable")
     require(hegota_html.count('data-evaluator="human"') == 25, "Hegotá page must list every human checklist as its own row")
     require(hegota_html.count('status status-not_applicable') >= 7, "Hegotá N/A rows must carry status badges")
     require("Human checklists" in hegota_html and hegota_html.count("data-compare-selection") == 2, "Hegotá page must show human coverage and comparison selection above and below the table")
@@ -484,7 +486,7 @@ def validate() -> dict[str, int]:
     require(hegota_html.count('data-status="in_progress"') == 8, "Hegotá page must list the eight draft-PR checklists as rows")
     require("published 20" in hegota_html, "a checklist scored from its cells must still show its differing published total")
     require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
-    require("Snapshot status" in hegota_html, "Hegotá snapshot-status column is missing")
+    require("Inclusion status at snapshot" in hegota_html and "Evaluated on" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
         "EIP-7805 was SFI and EIP-8141 was CFI, rather than PFI, at the frozen 2026-08-26 snapshot." in hegota_html
         and hegota_html.count(">SFI</span>") >= 1
@@ -583,7 +585,7 @@ def validate() -> dict[str, int]:
     require(osaka_html.count("data-fit-chart") == 2, "Osaka timelines must opt into responsive fitting")
     require(osaka_html.count("data-fork-link") == 6, "Osaka quick navigation must include every fork")
     require('aria-current="page"' in osaka_html, "Osaka quick navigation must identify the current fork")
-    require(osaka_html.count('data-sort-key="') == 8, "Osaka assessment columns must all be sortable")
+    require(osaka_html.count('data-sort-key="') == 9, "Osaka assessment columns must all be sortable")
     require(osaka_html.count('class="stack stack-compact') == 12, "Osaka table must show one stacked profile per EIP")
     require('data-composition-view="absolute"' in osaka_html and 'data-composition-view="normalized"' in osaka_html, "Osaka fork composition views are missing")
     require(osaka_html.count("Contributed by ") >= 12, "fork composition tooltips must name contributing EIP counts")

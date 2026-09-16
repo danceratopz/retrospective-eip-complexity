@@ -16,11 +16,11 @@ npm run preview -- --host 127.0.0.1 --port 4321
 The site is organised around one domain model and one set of shared components.
 
 ```text
-publication.json (schema 2.0.0)
+publication.json (schema 2.1.0)
   criteria[]      29 rubric criteria with labels, definitions, anchors, rubric membership
   rubrics{1,2}    criterion order, nominal maximum, tier thresholds per checklist revision
   eips[]          EIP -> occurrences[] (one per fork) -> llm/human summaries, assessment_ids, comparison_ids
-  assessments{}   one object per (fork, EIP, evaluator, rubric revision): status, scored, score, tier,
+  assessments{}   one object per immutable evaluation (fork, EIP, evaluator, rubric revision, snapshot): status, scored, score, tier,
                   criteria[] with rationale/evidence/uncertainty, under_specification, provenance
   comparisons{}   same-rubric Human vs LLM pairs with per-criterion deltas and agreement classes
   forks[]         totals, cutoff split, criterion composition blocks, human coverage
@@ -44,7 +44,7 @@ compare-index.json  compact per-assessment criterion scores for the client-side 
 
 | Page | Query parameters |
 | --- | --- |
-| `/eips/{eip}/` | `fork` (occurrence), `view` (`llm`, `human`, `compare`), `rubric` (checklist revision), plus `#` anchors into criterion rows and the uncertainty section |
+| `/eips/{eip}/` | `fork` (occurrence), `view` (`llm`, `human`, `compare`), `rubric` (legacy checklist revision), `assessment` (stable evaluation ID), plus `#` anchors into criterion rows and the uncertainty section |
 | `/eips/compare/` | `eips` (comma-separated, at most four), `fork` (context), `source` (`llm`, `human`, `compare`) |
 | `/eips/` | `q`, `fork`, `band`, `human`, `llm`, `under`, `mode` |
 | `/results/predicted-vs-observed/` | `composition=normalized` |
@@ -58,3 +58,16 @@ Seven criterion groups take the first seven slots of the documented categorical 
 members of a group are OKLCH lightness steps of the group hue. Segments carry an abbreviation, an
 accessible name, and a tooltip, and every bar has a legend or table nearby, so identity never depends on
 colour alone. `criteria.ts` fails the build if the payload and the registry disagree.
+
+### Prospective history
+
+The Task 08 registry is append-only. Original IDs remain valid; new IDs append the
+snapshot ID. Every registered evaluation is rendered and individually selectable by
+URL, including multiple LLM evaluations using the same rubric. Tables group versions
+by EIP, newest first, and dates link to the exact spec revision. Evaluation dates come
+from recorded run metadata, never the source commit or build clock. Human evaluation
+dates remain unknown when their source only records checklist publication timing.
+
+The August snapshot still supplies fork totals, charts, and automatic Human-versus-LLM
+pairs. History rows are excluded from those aggregates. Explicit comparison URLs can
+select any versions, including multiple assessments of one EIP.

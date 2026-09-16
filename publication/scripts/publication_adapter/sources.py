@@ -23,6 +23,7 @@ from .common import (
     occurrence_id,
     source,
 )
+from .history import load_history
 from .model import human_assessment_from_05c, human_assessment_from_task09, llm_assessment
 
 
@@ -172,6 +173,7 @@ def load_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict
         )
         if assessment["score"] != row["score"]:
             raise BuildError(f"Task 08 summary score mismatch for EIP-{row['eip']}")
+        assessment["snapshot_status"] = row["snapshot_status"]
         assessments.append(assessment)
         sources.append(source(path))
         occurrence = _base_occurrence(
@@ -219,6 +221,9 @@ def load_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict
     }
     if public_summary["pfi_score_sum"] != 776 or public_summary["pfi_scored"] != 37:
         raise BuildError("Task 08 original PFI subtotal changed")
+    additions, history_sources = load_history(assessments, {item["eip"] for item in occurrences})
+    assessments.extend(additions)
+    sources.extend(history_sources)
     return occurrences, assessments, public_summary, sources
 
 

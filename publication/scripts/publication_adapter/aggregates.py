@@ -155,6 +155,8 @@ def compare_index(
                 "source": assessment["source"],
                 "rubric_revision": assessment["rubric_revision"],
                 "role": assessment["role"],
+                "evaluation_date": assessment.get("evaluation_date"),
+                "snapshot_id": assessment.get("snapshot_id"),
                 "status": assessment["status"],
                 "scored": assessment["scored"],
                 "score": assessment["score"],
@@ -165,7 +167,7 @@ def compare_index(
             }
         )
     return {
-        "schema_version": "2.0.0",
+        "schema_version": "2.1.0",
         "criteria": [
             {"id": item["id"], "label": item["label"], "short_definition": item["short_definition"], "rubric_revisions": item["rubric_revisions"]}
             for item in criteria
@@ -190,7 +192,7 @@ def write_downloads(occurrences: list[dict[str, Any]], assessments: dict[str, di
     root = PUBLIC / "downloads"
     root.mkdir(parents=True, exist_ok=True)
     fields = [
-        "assessment_id", "mode", "fork", "eip", "title", "source", "rubric_revision", "role", "status", "scored",
+        "assessment_id", "mode", "fork", "eip", "title", "source", "rubric_revision", "role", "evaluation_date", "snapshot_id", "status", "scored",
         "score", "tier", "confidence", "under_specification", "scope_timing", "snapshot_status", "layers",
         "source_kind", "pull_request", "exclusion_kind", "rationale",
     ]
@@ -210,6 +212,8 @@ def write_downloads(occurrences: list[dict[str, Any]], assessments: dict[str, di
                     "source": assessment["source"],
                     "rubric_revision": assessment["rubric_revision"],
                     "role": assessment["role"],
+                    "evaluation_date": assessment.get("evaluation_date"),
+                    "snapshot_id": assessment.get("snapshot_id"),
                     "status": assessment["status"],
                     "scored": assessment["scored"],
                     "score": assessment["score"],
@@ -217,7 +221,7 @@ def write_downloads(occurrences: list[dict[str, Any]], assessments: dict[str, di
                     "confidence": assessment["confidence"],
                     "under_specification": (assessment.get("under_specification") or {}).get("present"),
                     "scope_timing": occurrence["scope_timing"],
-                    "snapshot_status": occurrence["snapshot_status"],
+                    "snapshot_status": assessment.get("snapshot_status") or occurrence["snapshot_status"],
                     "layers": ";".join(occurrence["layers"]),
                     "source_kind": record["kind"],
                     "pull_request": pull["url"] if pull else None,

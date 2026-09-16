@@ -15,6 +15,7 @@ export interface IndexAssessment {
   fork: string;
   source: Source;
   rubric_revision: number;
+  evaluation_date?: string | null;
   role: string;
   status: Status;
   scored: boolean;
@@ -68,7 +69,7 @@ export function resolveLegacy(index: CompareIndex, state: CompareState): string[
 export function assessmentLabel(index: CompareIndex, assessment: IndexAssessment): string {
   const entry = index.eips.find((item) => item.eip === assessment.eip);
   const fork = index.forks.find((item) => item.fork === assessment.fork);
-  return `EIP-${assessment.eip} · ${EVALUATOR_LABELS[assessment.source]} r${assessment.rubric_revision} · ${fork?.short_name ?? assessment.fork} — ${entry?.title ?? ''}`;
+  return `EIP-${assessment.eip} · ${EVALUATOR_LABELS[assessment.source]} r${assessment.rubric_revision} · ${fork?.short_name ?? assessment.fork} · ${assessment.evaluation_date ?? 'Date not recorded'} — ${entry?.title ?? ''}`;
 }
 
 function statusBadge(status: Status, mode: 'retrospective' | 'prospective'): HTMLElement {
@@ -120,7 +121,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
   const pairs = new Map<string, IndexAssessment[]>();
   for (const column of columns) pairs.set(`${column.fork}:${column.eip}`, [...(pairs.get(`${column.fork}:${column.eip}`) ?? []), column]);
   for (const [, group] of pairs) {
-    if (group.some((item) => item.source === 'llm') && group.some((item) => item.source === 'human')) {
+    if (group.some((item) => item.source === 'llm' && item.role !== 'reevaluation') && group.some((item) => item.source === 'human')) {
       const first = group[0];
       const paragraph = el('p', { class: 'source-note' });
       paragraph.append(el('strong', {}, `Human and LLM assessments of EIP-${first.eip} are both selected. `), el('a', { href: eipRoute(first.eip, { fork: first.fork, view: 'compare' }) }, 'Open the detailed per-criterion comparison with rationale from both evaluators'), document.createTextNode('.'));
@@ -133,9 +134,9 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
   for (const column of columns) {
     const card = el('article', { class: 'compare-card' });
     const heading = el('h3');
-    heading.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source }) }, `EIP-${column.eip}`), el('span', { class: 'compare-card-title' }, ` ${titles.get(column.eip) ?? ''}`));
+    heading.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source, assessment: column.id }) }, `EIP-${column.eip}`), el('span', { class: 'compare-card-title' }, ` ${titles.get(column.eip) ?? ''}`));
     const meta = el('p', { class: 'muted compare-card-context' });
-    meta.append(sourceBadge(column), document.createTextNode(` · ${forkName.get(column.fork) ?? column.fork}`));
+    meta.append(sourceBadge(column), document.createTextNode(` · ${forkName.get(column.fork) ?? column.fork} · ${column.evaluation_date ?? 'Date not recorded'}`));
     card.append(heading, meta);
     if (column.scored) {
       const segments = index.criteria.map((criterion, position) => ({ id: criterion.id, score: column.scores[position] ?? 0 })).filter((segment) => segment.score > 0);
@@ -175,7 +176,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
   headRow.append(el('th', { scope: 'col' }, 'Criterion'));
   for (const column of columns) {
     const cell = el('th', { scope: 'col', class: 'number' });
-    cell.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source }) }, `EIP-${column.eip}`), el('span', { class: 'matrix-fork' }, `${EVALUATOR_LABELS[column.source]} r${column.rubric_revision} · ${forkName.get(column.fork) ?? column.fork}`));
+    cell.append(el('a', { href: eipRoute(column.eip, { fork: column.fork, view: column.source, assessment: column.id }) }, `EIP-${column.eip}`), el('span', { class: 'matrix-fork' }, `${EVALUATOR_LABELS[column.source]} r${column.rubric_revision} · ${forkName.get(column.fork) ?? column.fork} · ${column.evaluation_date ?? 'Date not recorded'}`));
     headRow.append(cell);
   }
   if (pairDelta) headRow.append(el('th', { scope: 'col', class: 'number' }, 'Δ'));

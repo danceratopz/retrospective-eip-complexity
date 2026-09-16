@@ -27,7 +27,7 @@ def build_comparisons(
     """Pair every scored human assessment with the scored LLM assessment of the same fork, EIP, and rubric."""
     by_key: dict[tuple[str, int, int], dict[str, dict[str, Any]]] = {}
     for assessment in assessments.values():
-        if not assessment["scored"]:
+        if not assessment["scored"] or assessment.get("role") == "reevaluation":
             continue
         key = (assessment["fork"], assessment["eip"], assessment["rubric_revision"])
         by_key.setdefault(key, {})[assessment["source"]] = assessment

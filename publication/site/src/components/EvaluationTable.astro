@@ -17,7 +17,6 @@ import {
   STATUS_LABELS,
   TIER_LABELS,
   UNDER_SPECIFIED_SHORT,
-  rubricLabel,
 } from '../lib/labels';
 import { eipRoute, forkRoute, COMPARE_LIMIT } from '../lib/routes';
 import { isoDate, shortCommit, truncate } from '../lib/format';
@@ -52,12 +51,12 @@ const occurrences = given ?? allOccurrences(data);
 const rows: Row[] = [];
 for (const occurrence of occurrences) {
   const assessments = occurrence.assessment_ids.map((id) => data.assessments[id]);
-  const llm = assessments.filter((item) => item.source === 'llm').sort((a, b) => b.rubric_revision - a.rubric_revision);
-  if (!llm.length) {
+  const llm = assessments.filter((item) => item.source === 'llm').sort((a, b) => occurrence.mode === 'prospective' ? (b.evaluation_date ?? '').localeCompare(a.evaluation_date ?? '') || a.id.localeCompare(b.id) : b.rubric_revision - a.rubric_revision);
+  if (!llm.length || occurrence.llm.status === 'not_applicable') {
     rows.push({ occurrence, assessment: null, evaluator: 'llm', status: occurrence.llm.status, rerun: false, statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork }) });
   }
   for (const assessment of llm) {
-    rows.push({ occurrence, assessment, evaluator: 'llm', status: assessment.status, rerun: assessment.role === 'historical_rubric_rerun', statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork, view: 'llm', rubric: llm.length > 1 ? assessment.rubric_revision : null }) });
+    rows.push({ occurrence, assessment, evaluator: 'llm', status: assessment.status, rerun: assessment.role === 'historical_rubric_rerun', statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork, view: 'llm', assessment: assessment.id }) });
   }
   for (const assessment of assessments.filter((item) => item.source === 'human')) {
     const record = assessment.provenance.source_record;
@@ -140,8 +139,9 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
         <th scope="col" class="select-col"><span class="visually-hidden">Select for comparison</span></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEip" data-sort-kind="number">EIP</button></th>
         {forkContext === null && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortFork">Fork</button></th>}
-        {forkContext !== null && prospective && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortSnapshot">Snapshot status</button></th>}
+        {forkContext !== null && prospective && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortSnapshot">Inclusion status at snapshot</button></th>}
         {retrospectiveContext && <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScope">Scope timing</button></th>}
+        <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortDate">Evaluated on</button></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortEvaluator">{EVALUATOR_LABEL}</button></th>
         <th scope="col" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortStatus">Status</button></th>
         <th scope="col" class="number" aria-sort="none"><button class="sort-button" type="button" data-sort-key="sortScore" data-sort-kind="number">Score</button></th>
@@ -154,6 +154,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
     <tbody>
       {rows.map(({ occurrence, assessment, evaluator, status, rerun, statusHref }) => {
         const scored = Boolean(assessment?.scored);
+        const snapshotStatus = assessment?.source === 'llm' ? assessment.snapshot_status ?? occurrence.snapshot_status : occurrence.snapshot_status;
         const revision = assessment?.provenance.assessed_revision ?? null;
         const record = assessment?.provenance.source_record ?? null;
         return (
@@ -170,7 +171,8 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
             data-search={`eip-${occurrence.eip} ${occurrence.eip} ${occurrence.title} ${occurrence.fork} ${occurrence.fork_name} ${EVALUATOR_LABELS[evaluator]}`.toLowerCase()}
             data-sort-eip={occurrence.eip}
             data-sort-fork={`${forkIndex(occurrence.fork)} ${occurrence.eip}`}
-            data-sort-snapshot={occurrence.snapshot_status ?? ''}
+            data-sort-date={assessment?.evaluation_date ?? ''}
+            data-sort-snapshot={snapshotStatus ?? ''}
             data-sort-scope={occurrence.scope_timing ?? ''}
             data-sort-evaluator={`${evaluator === 'llm' ? '0' : '1'}-${rerun ? '1' : '0'}-${String(occurrence.eip).padStart(5, '0')}`}
             data-sort-status={statusSort(status)}
@@ -180,21 +182,27 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
             data-sort-assessment={revision?.committed_at ?? record?.committed_at ?? record?.pull_request?.updated_at ?? ''}
           >
             <td class="select-col">
-              {assessment && scored && <input type="checkbox" data-select-assessment={assessment.id} aria-label={`Select the ${EVALUATOR_LABELS[evaluator]} assessment of EIP-${occurrence.eip} (${occurrence.fork_name}) for comparison`} />}
+              {assessment && scored && <input type="checkbox" data-select-assessment={assessment.id} aria-label={`Select the ${EVALUATOR_LABELS[evaluator]} assessment of EIP-${occurrence.eip} (${occurrence.fork_name}, ${assessment.evaluation_date ?? 'date not recorded'}${assessment.snapshot_id ? `, ${assessment.snapshot_id}` : ''}) for comparison`} />}
             </td>
-            <td class="eip-cell"><a href={eipRoute(occurrence.eip, { fork: occurrence.fork, view: evaluator, rubric: rerun ? assessment.rubric_revision : null })}><strong>EIP-{occurrence.eip}</strong> {occurrence.title}</a></td>
+            <td class="eip-cell"><a href={eipRoute(occurrence.eip, { fork: occurrence.fork, view: evaluator, assessment: assessment?.id })}><strong>EIP-{occurrence.eip}</strong> {occurrence.title}</a></td>
             {forkContext === null && (
               <td class="fork-cell">
                 <a href={forkRoute(occurrence.fork)}>{occurrence.fork_name}</a>
                 <div class="fork-meta">
                   <span class:list={['pill', 'pill-small', occurrence.mode === 'prospective' && 'prospective']}>{MODE_LABELS[occurrence.mode]}</span>
-                  {occurrence.snapshot_status && <span class="pill pill-small" title={SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status]}>{occurrence.snapshot_status}</span>}
+                  {snapshotStatus && <span class="pill pill-small" title={SNAPSHOT_STATUS_LABELS[snapshotStatus]}>{snapshotStatus}</span>}
                   {occurrence.scope_timing && <span class="muted">{SCOPE_TIMING_LABELS[occurrence.scope_timing]}</span>}
                 </div>
               </td>
             )}
-            {forkContext !== null && prospective && <td><span class="pill pill-small" title={occurrence.snapshot_status ? SNAPSHOT_STATUS_LABELS[occurrence.snapshot_status] : undefined}>{occurrence.snapshot_status}</span></td>}
+            {forkContext !== null && prospective && <td><span class="pill pill-small" title={snapshotStatus ? SNAPSHOT_STATUS_LABELS[snapshotStatus] : undefined}>{snapshotStatus}</span></td>}
             {retrospectiveContext && <td>{occurrence.scope_timing ? SCOPE_TIMING_LABELS[occurrence.scope_timing] : '—'}</td>}
+            <td class="evaluation-date">
+              {assessment?.evaluation_date
+                ? <a href={revision?.immutable_url}><time datetime={assessment.evaluation_date}>{assessment.evaluation_date}</time></a>
+                : <span class="muted">{assessment ? 'Not recorded' : '—'}</span>}
+              {assessment?.role === 'reevaluation' && <div class="muted">Re-evaluation</div>}
+            </td>
             <td class="evaluator-cell"><EvaluatorBadge source={evaluator} revision={assessment?.rubric_revision ?? null} size="small" />{rerun && <div class="muted">re-run for the human comparison</div>}</td>
             <td><StatusBadge status={status} mode={occurrence.mode} size="small" href={statusHref} detail={status === 'not_applicable' ? occurrence.llm.rationale : null} /></td>
             <td class="number score-cell">
