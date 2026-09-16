@@ -226,8 +226,12 @@ If prose and a machine-owned value conflict, implementation stops for contract r
 
 The owner approved append-only prospective re-evaluations. Task 08's
 [versioned extension](../research/tasks/08-hegota-prospective-complexity-assessment/REEVALUATION.md)
-owns their research process. The frozen August cohort remains the aggregation and
-automatic Human-versus-LLM comparison selection; history rows do not enter its totals.
+owns their research process. The frozen August cohort remains the aggregation selection; history rows do not enter
+its totals. Comparison selection version 2, authorized by the owner on 2026-09-16,
+uses the latest scored prospective LLM evaluation under the Human checklist revision
+(recorded date, then stable ID for same-day ties). Unknown dates precede recorded dates.
+Retrospective comparisons remain historical. This supersedes the original Task 08
+publication comparison policy without changing its sealed research contract.
 
 The Task 08 evaluation registry affirmatively lists public assessment inputs and their
 freeze hashes. Registered re-evaluations of existing candidates may be projected from

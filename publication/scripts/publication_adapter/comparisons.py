@@ -24,13 +24,23 @@ def agreement_class(delta: int) -> str:
 def build_comparisons(
     assessments: dict[str, dict[str, Any]], task05c: dict[int, dict[str, Any]]
 ) -> dict[str, dict[str, Any]]:
-    """Pair every scored human assessment with the scored LLM assessment of the same fork, EIP, and rubric."""
+    """Pair same-rubric assessments, selecting the latest dated prospective LLM evaluation."""
     by_key: dict[tuple[str, int, int], dict[str, dict[str, Any]]] = {}
     for assessment in assessments.values():
-        if not assessment["scored"] or assessment.get("role") == "reevaluation":
+        if not assessment["scored"]:
+            continue
+        if assessment["fork"] != "hegota" and assessment.get("role") == "reevaluation":
             continue
         key = (assessment["fork"], assessment["eip"], assessment["rubric_revision"])
-        by_key.setdefault(key, {})[assessment["source"]] = assessment
+        pair = by_key.setdefault(key, {})
+        source_kind = assessment["source"]
+        previous = pair.get(source_kind)
+        if assessment["fork"] == "hegota" and source_kind == SOURCE_LLM and previous:
+            # Unknown dates sort before recorded dates; IDs break same-day ties deterministically.
+            order = lambda item: (item.get("evaluation_date") or "", item["id"])
+            if order(assessment) <= order(previous):
+                continue
+        pair[source_kind] = assessment
     comparisons: dict[str, dict[str, Any]] = {}
     for (fork, eip, revision), pair in sorted(by_key.items()):
         if SOURCE_HUMAN not in pair or SOURCE_LLM not in pair:

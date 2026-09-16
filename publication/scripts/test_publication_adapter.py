@@ -112,10 +112,10 @@ class EvaluationHistoryTests(unittest.TestCase):
                     occurrence["human"] = {"status": "not_available", "assessment_id": None}
                 totals = fork_summaries(occurrences, assessment_map)
                 self.assertEqual(next(item for item in totals if item["fork"] == "hegota")["score_sum"], 856)
-                # Automatic pairs retain the original, regardless of insertion order.
+                # Prospective comparisons select the newest evaluation; totals above stay frozen.
                 human = _assessment("hegota", entry["eip"], "human", 2, {})
                 pairs = build_comparisons({**assessment_map, human["id"]: human}, {})
-                self.assertEqual(next(iter(pairs.values()))["llm_assessment_id"], original_id)
+                self.assertEqual(next(iter(pairs.values()))["llm_assessment_id"], entry["id"])
                 for mutate in (
                     lambda r: r["evaluations"].append(copy.deepcopy(entry)),
                     lambda r: r["evaluations"].pop(0),
@@ -167,6 +167,22 @@ class ComparisonTests(unittest.TestCase):
         row = next(item for item in comparison["rows"] if item["id"] == "cross_eip_interactions")
         self.assertEqual((row["human"], row["llm"], row["delta"], row["agreement"]), (1, 3, 2, "major"))
         self.assertEqual(comparison["agreement_counts"], {"exact": 23, "minor": 0, "major": 1})
+
+    def test_prospective_comparison_uses_latest_matching_rubric_in_any_order(self):
+        human = _assessment("hegota", 8272, SOURCE_HUMAN, 2, {})
+        original = _assessment("hegota", 8272, SOURCE_LLM, 2, {"security_risks": 3})
+        original["evaluation_date"] = "2026-08-26"
+        latest = copy.deepcopy(original)
+        latest.update(id=original["id"] + ":september", role="reevaluation", evaluation_date="2026-09-16")
+        incompatible = _assessment("hegota", 8272, SOURCE_LLM, 1, {})
+        incompatible["evaluation_date"] = "2026-09-17"
+        for candidates in ((original, latest), (latest, original)):
+            pairs = build_comparisons({a["id"]: a for a in (*candidates, incompatible, human)}, {})
+            self.assertEqual(list(pairs), ["hegota:8272:r2"])
+            self.assertEqual(pairs["hegota:8272:r2"]["llm_assessment_id"], latest["id"])
+        latest["scored"] = False
+        pairs = build_comparisons({a["id"]: a for a in (original, latest, human)}, {})
+        self.assertEqual(pairs["hegota:8272:r2"]["llm_assessment_id"], original["id"])
 
     def test_unscored_assessments_are_never_compared(self) -> None:
         human = _assessment("hegota", 1, SOURCE_HUMAN, 2, {})

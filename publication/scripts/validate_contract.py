@@ -526,6 +526,7 @@ def validate_routes_labels_adapter(
     require(adapter["public_output_allowlist"].get("deny_by_default") is True, "adapter: deny-by-default missing")
     require(adapter["public_output_allowlist"].get("recursive_research_copy_permitted") is False, "adapter: recursive research copy must be forbidden")
     history = adapter["evaluation_history"]
+    require(history["comparison_selection_version"] == 2, "adapter: comparison selection version mismatch")
     require(history["registry"] == "research/tasks/08-hegota-prospective-complexity-assessment/outputs/evaluation-registry.yaml", "adapter: evaluation registry mismatch")
     require(history["assessment_root"] == "research/tasks/08-hegota-prospective-complexity-assessment/evaluations", "adapter: evaluation root mismatch")
     require(set(history["public_fields"]) == {"evaluation_date", "snapshot_id", "snapshot_status"}, "adapter: evaluation public fields mismatch")

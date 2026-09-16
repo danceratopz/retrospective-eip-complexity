@@ -121,10 +121,10 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
   const pairs = new Map<string, IndexAssessment[]>();
   for (const column of columns) pairs.set(`${column.fork}:${column.eip}`, [...(pairs.get(`${column.fork}:${column.eip}`) ?? []), column]);
   for (const [, group] of pairs) {
-    if (group.some((item) => item.source === 'llm' && item.role !== 'reevaluation') && group.some((item) => item.source === 'human')) {
+    if (group.some((item) => item.source === 'llm') && group.some((item) => item.source === 'human')) {
       const first = group[0];
       const paragraph = el('p', { class: 'source-note' });
-      paragraph.append(el('strong', {}, `Human and LLM assessments of EIP-${first.eip} are both selected. `), el('a', { href: eipRoute(first.eip, { fork: first.fork, view: 'compare' }) }, 'Open the detailed per-criterion comparison with rationale from both evaluators'), document.createTextNode('.'));
+      paragraph.append(el('strong', {}, `Human and LLM assessments of EIP-${first.eip} are both selected. `), el('a', { href: eipRoute(first.eip, { fork: first.fork, view: 'compare' }) }, first.fork === 'hegota' ? 'Open the latest same-checklist comparison with rationale from both evaluators' : 'Open the detailed per-criterion comparison with rationale from both evaluators'), document.createTextNode('.'));
       output.append(paragraph);
     }
   }

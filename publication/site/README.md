@@ -68,6 +68,8 @@ by EIP, newest first, and dates link to the exact spec revision. Evaluation date
 from recorded run metadata, never the source commit or build clock. Human evaluation
 dates remain unknown when their source only records checklist publication timing.
 
-The August snapshot still supplies fork totals, charts, and automatic Human-versus-LLM
-pairs. History rows are excluded from those aggregates. Explicit comparison URLs can
+The August snapshot still supplies fork totals and charts. History rows are excluded
+from those aggregates. Prospective Human-versus-LLM comparisons select the latest
+scored LLM evaluation under the Human checklist revision, by recorded evaluation date
+with stable IDs breaking same-day ties; retrospective comparisons remain historical. Explicit comparison URLs can
 select any versions, including multiple assessments of one EIP.
