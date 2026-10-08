@@ -1,0 +1,632 @@
+{
+ "case": "cancun/1153",
+ "run_id": "assessment-run-3b332906-e9d9-4560-8219-a38f8eafe210",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:36:54.615325Z",
+ "finished_at": "2026-10-08T09:38:35.929394Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "7f2bb8680e3cba610fd966ed20ab5cc3fe24df9ae6d58c0a30aadc3106857e14",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "850802ad596c4abef9b8b274f154335f9a57195bd410617b4dff68525daaa14c",
+ "output": {
+  "duration_api_ms": 98635,
+  "stop_reason": "tool_use",
+  "session_id": "f5eeb138-2f9e-4c81-8af1-bf94a95fd38e",
+  "total_cost_usd": 0.565672,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 41818,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 11556,
+   "output_tokens_details": {
+    "thinking_tokens": 3959
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 41818,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 11556,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 41818,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 41818
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 11556,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 41818,
+    "webSearchRequests": 0,
+    "costUSD": 0.565672,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 3959,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"This revision of EIP-1153 adds two EVM opcodes, TLOAD (0xb3) and TSTORE (0xb4). They give each contract a word-addressed store that is discarded at the end of every transaction. TLOAD and TSTORE take the same stack arguments as SLOAD and SSTORE and each costs a fixed 100 gas. Neither opcode produces refunds or uses warm/cold access tracking. Transient storage is owned the same way as persistent storage, including under DELEGATECALL and CALLCODE, and writes are rolled back when a frame reverts. TSTORE raises an exception inside a STATICCALL context, while TLOAD is allowed there.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Gas cost for TSTORE is the same as a warm SSTORE of a dirty slot ... currently 100 gas\\\"\",\"summary\":\"Both new opcodes have a fixed gas cost of 100 and no dynamic component.\"},{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"The gas accounting rules are also simpler, since no refunds are required.\\\"\",\"summary\":\"No refund-counter interaction and no change to the existing gas rules.\"}],\"rationale\":\"The EIP adds fixed-cost gas-table entries for two new instructions; these are covered under Added opcodes. No accounting mechanism is introduced, and no existing charging, metering or settlement rule changes. The expected gas results of baseline operations do not change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The spec does not say whether TSTORE inherits the EIP-2200 rule that a store fails when gasleft is at or below the 2300 stipend. If it does, there is a new gasleft-based metering condition, which would point to level 2.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"gas cost of TLOAD is the same as a hot SLOAD\\\"\",\"summary\":\"Constant cost with no cold/warm distinction and no access-list participation.\"},{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"values of transient storage are never deserialized from storage or serialized to storage\\\"\",\"summary\":\"Transient storage does not touch persistent state, so there is no state access to order against a gas charge.\"}],\"rationale\":\"Charges are constant, the opcodes take no part in warm/cold or access-list tracking, and no existing opcode's ordering changes. The only failure cases are out-of-gas and a static-context write, and both are exceptional halts with the same observable result whatever their order.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Some might treat TSTORE as a new state-accessing operation that needs an ordering rule (level 2). Because it touches no trie or access list, level 0 is chosen.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only EVM opcodes are specified; blobs are not mentioned.\"}],\"rationale\":\"No blob-gas rules are touched.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"All values in transient storage are discarded at the end of the transaction.\\\"\",\"summary\":\"Nothing is persisted, so there is no state-write accounting.\"}],\"rationale\":\"Transient storage never becomes persistent state, and no state-gas charging is added or changed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"it is preferable to have a separate mechanism that does not interact with the refund counter\\\"\",\"summary\":\"The EIP explicitly avoids adding any refund.\"}],\"rationale\":\"No refund mechanism is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"TLOAD (0xb3) TSTORE (0xb4)\\\"\",\"summary\":\"Two opcode bytes that were undefined become valid instructions.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"does not change behavior of any existing opcodes\\\"\",\"summary\":\"No existing opcode behavior changes.\"}],\"rationale\":\"Only baseline cases that treat 0xb3/0xb4 as undefined or invalid opcodes need updated expectations. That is particular cases within one behavioral family (invalid-opcode handling).\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"All values in transient storage are discarded at the end of the transaction.\\\"\",\"summary\":\"Transient storage produces no output in post-state, receipts or headers.\"}],\"rationale\":\"Baseline tests need no new assertion, because no new observable output exists outside execution.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"never deserialized from storage or serialized to storage\\\"\",\"summary\":\"There is no input or output state for the transition tool to exchange.\"}],\"rationale\":\"Transient storage starts empty for every transaction and is discarded at its end, so no t8n field or mechanism change is required.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Two new opcodes are added to EVM, TLOAD (0xb3) and TSTORE (0xb4)\\\"\",\"summary\":\"The framework's opcode definitions need the two new instructions.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"discarded at the end of the transaction\\\"\",\"summary\":\"Transient values are not visible in post-state, so tests must copy them into persistent storage to observe them.\"}],\"rationale\":\"Testing needs a local extension of existing primitives (new opcode entries in the opcode/bytecode helpers). Observation can reuse existing patterns such as SSTORE-ing TLOAD results and multi-transaction blocks. No new abstraction is architecturally required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No cryptographic operations are introduced.\"}],\"rationale\":\"No cryptographic rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"currently 100 gas\\\"\",\"summary\":\"Exact-gas out-of-gas boundary for each opcode.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"TSTORE pops two 32-byte words\\\"; \\\"Addressing is the same as SLOAD and SSTORE\\\"\",\"summary\":\"Stack-underflow boundaries and full 256-bit key and value ranges.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"If a frame reverts, all writes to transient storage that took place between entry to the frame and the return are reverted, including those that took place in inner calls\\\"\",\"summary\":\"Revert-scope boundaries across nested frames.\"}],\"rationale\":\"There are several independent boundary-sensitive rules: exact-gas out-of-gas for each opcode, stack underflow, key/value extremes, and the frame-entry revert checkpoint boundary. The call-type × revert × reentrancy combinations are semantic coverage rather than an elevated boundary matrix, so level 3 is not met.\",\"confidence\":\"medium\",\"uncertainty_note\":\"An unresolved stipend check (gasleft ≤ 2300) could add another boundary; it would not change the level.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"This EIP requires a hard fork to implement.\\\"\",\"summary\":\"Only execution rules change; block structure is untouched.\"}],\"rationale\":\"No change to block RLP decoding or structural validation.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The Engine API is not mentioned.\"}],\"rationale\":\"No Engine API changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is defined.\"}],\"rationale\":\"None introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is referenced.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"They use the same arguments on stack as SLOAD (0x54) and SSTORE (0x55).\\\"\",\"summary\":\"Fixed stack effects (TLOAD 1→1, TSTORE 2→0) and no immediates.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Gas cost for TSTORE ... 100 gas ... TLOAD ... 100 gas\\\"\",\"summary\":\"Both have constant gas.\"}],\"rationale\":\"Two simple instructions are introduced (no immediates, fixed stack, constant gas), which is level 2.\",\"confidence\":\"high\",\"uncertainty_note\":\"If an implied stipend check applied to TSTORE, it would make the instruction's failure behavior depend on gasleft. The cost would still be constant.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"Since this EIP does not change behavior of any existing opcodes\\\"\",\"summary\":\"The EIP states that no existing opcode changes.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"If a frame reverts, all writes to transient storage ... are reverted\\\"\",\"summary\":\"The rollback effect of revert extends to the new store, which is observable only through the new opcodes.\"}],\"rationale\":\"No existing instruction's specified semantics or availability change. The revert and call-context effects on transient storage are part of the new opcodes' semantics.\",\"confidence\":\"medium\",\"uncertainty_note\":\"One could argue that REVERT and the CALL family now have extended state effects, which would be level 3. Those effects are observable only through TLOAD/TSTORE.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles.\"}],\"rationale\":\"None introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"never deserialized from storage or serialized to storage\\\"\",\"summary\":\"No serialized schema is affected.\"}],\"rationale\":\"No schema or codec changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction type is defined.\"}],\"rationale\":\"None introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No intrinsic gas or validity rule changes.\"}],\"rationale\":\"No transaction-validity changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header field.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"This EIP requires a hard fork to implement.\\\"\",\"summary\":\"Activation is ordinary rule selection with no state migration.\"}],\"rationale\":\"No activation-specific state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"TSTORE presents a new way to allocate memory on a node with linear cost ... ~= 9.15MB\\\"\",\"summary\":\"New per-transaction memory bound that exceeds the single-context MSTORE bound.\"},{\"source\":\"eip.md\",\"locator\":\"Reference Implementation — \\\"The worst case time complexity can be produced by writing the maximum number of keys that can fit in one block, and then reverting.\\\"\",\"summary\":\"Worst case comes from the journal and revert interaction with call frames.\"}],\"rationale\":\"Two workloads need targeted integrated benchmarks: memory allocated by linear-cost TSTORE, and journal rollback on revert across nested frames. Both are a bounded interaction between the new store and frame checkpointing; they do not form cross-subsystem coupling.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The supplied DoS argument uses SSTORE (the TryDOS contract) rather than TSTORE; worst-case TSTORE fill-then-revert is not demonstrated.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"If the TSTORE opcode is called within the context of a STATICCALL, it will result in an exception\\\"\",\"summary\":\"The static-context invariant is extended to a new write path.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"the owning contract of the transient storage is the contract that issued DELEGATECALL or CALLCODE\\\"\",\"summary\":\"Isolation boundary per contract and per call type.\"},{\"source\":\"supporting/eip-2200.md\",\"locator\":\"Motivation — \\\"This danger is easily mitigated if SSTORE is not allowed in low gasleft state\\\"\",\"summary\":\"Reentrancy protection for the 2300-gas stipend relies on state writes being impossible at low gasleft. TSTORE at 100 gas may break that assumption.\"}],\"rationale\":\"Local checks cover static-context rejection, per-contract isolation, revert rollback and discard at end of transaction (no leakage between transactions in a block). TSTORE also changes the stipend-based reentrancy assumption used by other contracts: a callee could write transient state with only 2300 gas. That needs targeted integration review, which is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If an EIP-2200-style stipend check is intended for TSTORE, the stipend concern disappears and level 1 may suffice.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Gas cost for TSTORE is the same as a warm SSTORE of a dirty slot\\\"\",\"summary\":\"Defines only the cost; it does not say whether the SSTORE stipend check applies.\"},{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"state that behaves identically to storage\\\"\",\"summary\":\"Could be read as inheriting all SSTORE restrictions, including the stipend check.\"},{\"source\":\"supporting/eip-2200.md\",\"locator\":\"Specification — \\\"If gasleft is less than or equal to gas stipend, fail the current call frame with 'out of gas' exception.\\\"\",\"summary\":\"The competing rule that might or might not apply to TSTORE.\"}],\"rationale\":\"Whether TSTORE fails when gasleft ≤ 2300 has two competing readings that both rest on normative text. The outcome is observable and localized, so expected results need agreement first (level 2). Smaller slips, such as TLOAD \\\"pops the value on top of the stack\\\" where it clearly means pushes, have one evident intended outcome.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Behavior of transient storage around SELFDESTRUCT and failed CREATE is not discussed. However, the general revert and end-of-transaction discard rules appear to resolve it.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"supporting/eip-2200.md\",\"locator\":\"Specification — stipend check\",\"summary\":\"An SSTORE stipend guard exists. Coordinated cases are needed for TSTORE versus SSTORE at gasleft ≤ 2300.\"},{\"source\":\"supporting/eip-3529.md\",\"locator\":\"Specification — \\\"Reduce the max gas refunded after a transaction to gas_used // MAX_REFUND_QUOTIENT\\\"\",\"summary\":\"The refund cap is unaffected. A local check confirms TSTORE does not change the refund counter or the cap.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — DELEGATECALL/CALLCODE/STATICCALL paragraphs\",\"summary\":\"Needs coordinated cases with call types, static context and revert.\"}],\"rationale\":\"The interaction with EIP-2200's stipend guard needs coordinated cases. EIP-3529 needs only a local refund-compatibility check. Call-type, static-context and revert scenarios are needed but are unnumbered in the supplied documents. There is no multi-EIP vector restructuring, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Counting the unnumbered STATICCALL, DELEGATECALL and REVERT interactions as separate EIPs could argue for level 3.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":2200,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"TSTORE executed with gasleft at or below the 2300 stipend (for example, inside a transfer/send-stipend call), compared with SSTORE in the same situation. Also check that the TSTORE price is the same as a dirty-slot SSTORE.\"},{\"eip\":3529,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Transactions that mix SSTORE refunds with TSTORE/TLOAD: confirm the refund counter and the gas_used//5 cap are unaffected by transient writes.\"}],\"unidentified_interactions\":[\"STATICCALL context: TSTORE raises an exception while TLOAD succeeds, including nested static contexts.\",\"DELEGATECALL/CALLCODE: transient storage belongs to the caller's context; CALL targets the callee's.\",\"REVERT and exceptional halts: rollback of transient writes, including writes in inner calls, at checkpoint boundaries.\",\"EIP-2929-style warm/hot terminology used for pricing, with no access-list participation by the new opcodes.\",\"Contract creation (CREATE/CREATE2) and SELFDESTRUCT contexts, which the EIP does not address explicitly.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The revision prices TSTORE like a dirty-slot SSTORE and says transient storage behaves identically to storage. It never says whether EIP-2200's stipend guard (fail if gasleft ≤ 2300) applies to TSTORE. TLOAD's description also says it 'pops' the loaded value, a likely typo for 'pushes'.\",\"affected_criteria\":[{\"criterion\":\"evm_gas_rule_changes\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"security_risks\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"Does TSTORE fail with out-of-gas when gasleft ≤ 2300, as SSTORE does under EIP-2200?\",\"How should transient storage of an account behave after SELFDESTRUCT within the same transaction, and in a failed contract-creation context, beyond the general revert rule?\"]},\"notable_ambiguities\":[\"TLOAD is described as one that \\\"pops the value on top of the stack\\\"; the intent is plainly to push the loaded value.\",\"Whether the EIP-2200 stipend check applies to TSTORE.\",\"Whether the gas costs are fixed at 100 or tied to future SSTORE/SLOAD repricing (\\\"currently 100 gas\\\").\",\"The DoS argument in the Reference Implementation uses SSTORE (the TryDOS contract), not TSTORE.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "This revision of EIP-1153 adds two EVM opcodes, TLOAD (0xb3) and TSTORE (0xb4). They give each contract a word-addressed store that is discarded at the end of every transaction. TLOAD and TSTORE take the same stack arguments as SLOAD and SSTORE and each costs a fixed 100 gas. Neither opcode produces refunds or uses warm/cold access tracking. Transient storage is owned the same way as persistent storage, including under DELEGATECALL and CALLCODE, and writes are rolled back when a frame reverts. TSTORE raises an exception inside a STATICCALL context, while TLOAD is allowed there.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Gas cost for TSTORE is the same as a warm SSTORE of a dirty slot ... currently 100 gas\"",
+       "summary": "Both new opcodes have a fixed gas cost of 100 and no dynamic component."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"The gas accounting rules are also simpler, since no refunds are required.\"",
+       "summary": "No refund-counter interaction and no change to the existing gas rules."
+      }
+     ],
+     "rationale": "The EIP adds fixed-cost gas-table entries for two new instructions; these are covered under Added opcodes. No accounting mechanism is introduced, and no existing charging, metering or settlement rule changes. The expected gas results of baseline operations do not change.",
+     "confidence": "medium",
+     "uncertainty_note": "The spec does not say whether TSTORE inherits the EIP-2200 rule that a store fails when gasleft is at or below the 2300 stipend. If it does, there is a new gasleft-based metering condition, which would point to level 2.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"gas cost of TLOAD is the same as a hot SLOAD\"",
+       "summary": "Constant cost with no cold/warm distinction and no access-list participation."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"values of transient storage are never deserialized from storage or serialized to storage\"",
+       "summary": "Transient storage does not touch persistent state, so there is no state access to order against a gas charge."
+      }
+     ],
+     "rationale": "Charges are constant, the opcodes take no part in warm/cold or access-list tracking, and no existing opcode's ordering changes. The only failure cases are out-of-gas and a static-context write, and both are exceptional halts with the same observable result whatever their order.",
+     "confidence": "medium",
+     "uncertainty_note": "Some might treat TSTORE as a new state-accessing operation that needs an ordering rule (level 2). Because it touches no trie or access list, level 0 is chosen.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only EVM opcodes are specified; blobs are not mentioned."
+      }
+     ],
+     "rationale": "No blob-gas rules are touched.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"All values in transient storage are discarded at the end of the transaction.\"",
+       "summary": "Nothing is persisted, so there is no state-write accounting."
+      }
+     ],
+     "rationale": "Transient storage never becomes persistent state, and no state-gas charging is added or changed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"it is preferable to have a separate mechanism that does not interact with the refund counter\"",
+       "summary": "The EIP explicitly avoids adding any refund."
+      }
+     ],
+     "rationale": "No refund mechanism is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"TLOAD (0xb3) TSTORE (0xb4)\"",
+       "summary": "Two opcode bytes that were undefined become valid instructions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"does not change behavior of any existing opcodes\"",
+       "summary": "No existing opcode behavior changes."
+      }
+     ],
+     "rationale": "Only baseline cases that treat 0xb3/0xb4 as undefined or invalid opcodes need updated expectations. That is particular cases within one behavioral family (invalid-opcode handling).",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"All values in transient storage are discarded at the end of the transaction.\"",
+       "summary": "Transient storage produces no output in post-state, receipts or headers."
+      }
+     ],
+     "rationale": "Baseline tests need no new assertion, because no new observable output exists outside execution.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"never deserialized from storage or serialized to storage\"",
+       "summary": "There is no input or output state for the transition tool to exchange."
+      }
+     ],
+     "rationale": "Transient storage starts empty for every transaction and is discarded at its end, so no t8n field or mechanism change is required.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Two new opcodes are added to EVM, TLOAD (0xb3) and TSTORE (0xb4)\"",
+       "summary": "The framework's opcode definitions need the two new instructions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"discarded at the end of the transaction\"",
+       "summary": "Transient values are not visible in post-state, so tests must copy them into persistent storage to observe them."
+      }
+     ],
+     "rationale": "Testing needs a local extension of existing primitives (new opcode entries in the opcode/bytecode helpers). Observation can reuse existing patterns such as SSTORE-ing TLOAD results and multi-transaction blocks. No new abstraction is architecturally required.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No cryptographic operations are introduced."
+      }
+     ],
+     "rationale": "No cryptographic rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"currently 100 gas\"",
+       "summary": "Exact-gas out-of-gas boundary for each opcode."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"TSTORE pops two 32-byte words\"; \"Addressing is the same as SLOAD and SSTORE\"",
+       "summary": "Stack-underflow boundaries and full 256-bit key and value ranges."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"If a frame reverts, all writes to transient storage that took place between entry to the frame and the return are reverted, including those that took place in inner calls\"",
+       "summary": "Revert-scope boundaries across nested frames."
+      }
+     ],
+     "rationale": "There are several independent boundary-sensitive rules: exact-gas out-of-gas for each opcode, stack underflow, key/value extremes, and the frame-entry revert checkpoint boundary. The call-type × revert × reentrancy combinations are semantic coverage rather than an elevated boundary matrix, so level 3 is not met.",
+     "confidence": "medium",
+     "uncertainty_note": "An unresolved stipend check (gasleft ≤ 2300) could add another boundary; it would not change the level.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"This EIP requires a hard fork to implement.\"",
+       "summary": "Only execution rules change; block structure is untouched."
+      }
+     ],
+     "rationale": "No change to block RLP decoding or structural validation.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The Engine API is not mentioned."
+      }
+     ],
+     "rationale": "No Engine API changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is defined."
+      }
+     ],
+     "rationale": "None introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is referenced."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"They use the same arguments on stack as SLOAD (0x54) and SSTORE (0x55).\"",
+       "summary": "Fixed stack effects (TLOAD 1→1, TSTORE 2→0) and no immediates."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Gas cost for TSTORE ... 100 gas ... TLOAD ... 100 gas\"",
+       "summary": "Both have constant gas."
+      }
+     ],
+     "rationale": "Two simple instructions are introduced (no immediates, fixed stack, constant gas), which is level 2.",
+     "confidence": "high",
+     "uncertainty_note": "If an implied stipend check applied to TSTORE, it would make the instruction's failure behavior depend on gasleft. The cost would still be constant.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"Since this EIP does not change behavior of any existing opcodes\"",
+       "summary": "The EIP states that no existing opcode changes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"If a frame reverts, all writes to transient storage ... are reverted\"",
+       "summary": "The rollback effect of revert extends to the new store, which is observable only through the new opcodes."
+      }
+     ],
+     "rationale": "No existing instruction's specified semantics or availability change. The revert and call-context effects on transient storage are part of the new opcodes' semantics.",
+     "confidence": "medium",
+     "uncertainty_note": "One could argue that REVERT and the CALL family now have extended state effects, which would be level 3. Those effects are observable only through TLOAD/TSTORE.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles."
+      }
+     ],
+     "rationale": "None introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"never deserialized from storage or serialized to storage\"",
+       "summary": "No serialized schema is affected."
+      }
+     ],
+     "rationale": "No schema or codec changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction type is defined."
+      }
+     ],
+     "rationale": "None introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No intrinsic gas or validity rule changes."
+      }
+     ],
+     "rationale": "No transaction-validity changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header field."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"This EIP requires a hard fork to implement.\"",
+       "summary": "Activation is ordinary rule selection with no state migration."
+      }
+     ],
+     "rationale": "No activation-specific state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"TSTORE presents a new way to allocate memory on a node with linear cost ... ~= 9.15MB\"",
+       "summary": "New per-transaction memory bound that exceeds the single-context MSTORE bound."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Reference Implementation — \"The worst case time complexity can be produced by writing the maximum number of keys that can fit in one block, and then reverting.\"",
+       "summary": "Worst case comes from the journal and revert interaction with call frames."
+      }
+     ],
+     "rationale": "Two workloads need targeted integrated benchmarks: memory allocated by linear-cost TSTORE, and journal rollback on revert across nested frames. Both are a bounded interaction between the new store and frame checkpointing; they do not form cross-subsystem coupling.",
+     "confidence": "medium",
+     "uncertainty_note": "The supplied DoS argument uses SSTORE (the TryDOS contract) rather than TSTORE; worst-case TSTORE fill-then-revert is not demonstrated.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"If the TSTORE opcode is called within the context of a STATICCALL, it will result in an exception\"",
+       "summary": "The static-context invariant is extended to a new write path."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"the owning contract of the transient storage is the contract that issued DELEGATECALL or CALLCODE\"",
+       "summary": "Isolation boundary per contract and per call type."
+      },
+      {
+       "source": "supporting/eip-2200.md",
+       "locator": "Motivation — \"This danger is easily mitigated if SSTORE is not allowed in low gasleft state\"",
+       "summary": "Reentrancy protection for the 2300-gas stipend relies on state writes being impossible at low gasleft. TSTORE at 100 gas may break that assumption."
+      }
+     ],
+     "rationale": "Local checks cover static-context rejection, per-contract isolation, revert rollback and discard at end of transaction (no leakage between transactions in a block). TSTORE also changes the stipend-based reentrancy assumption used by other contracts: a callee could write transient state with only 2300 gas. That needs targeted integration review, which is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "If an EIP-2200-style stipend check is intended for TSTORE, the stipend concern disappears and level 1 may suffice.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Gas cost for TSTORE is the same as a warm SSTORE of a dirty slot\"",
+       "summary": "Defines only the cost; it does not say whether the SSTORE stipend check applies."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"state that behaves identically to storage\"",
+       "summary": "Could be read as inheriting all SSTORE restrictions, including the stipend check."
+      },
+      {
+       "source": "supporting/eip-2200.md",
+       "locator": "Specification — \"If gasleft is less than or equal to gas stipend, fail the current call frame with 'out of gas' exception.\"",
+       "summary": "The competing rule that might or might not apply to TSTORE."
+      }
+     ],
+     "rationale": "Whether TSTORE fails when gasleft ≤ 2300 has two competing readings that both rest on normative text. The outcome is observable and localized, so expected results need agreement first (level 2). Smaller slips, such as TLOAD \"pops the value on top of the stack\" where it clearly means pushes, have one evident intended outcome.",
+     "confidence": "medium",
+     "uncertainty_note": "Behavior of transient storage around SELFDESTRUCT and failed CREATE is not discussed. However, the general revert and end-of-transaction discard rules appear to resolve it.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "supporting/eip-2200.md",
+       "locator": "Specification — stipend check",
+       "summary": "An SSTORE stipend guard exists. Coordinated cases are needed for TSTORE versus SSTORE at gasleft ≤ 2300."
+      },
+      {
+       "source": "supporting/eip-3529.md",
+       "locator": "Specification — \"Reduce the max gas refunded after a transaction to gas_used // MAX_REFUND_QUOTIENT\"",
+       "summary": "The refund cap is unaffected. A local check confirms TSTORE does not change the refund counter or the cap."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — DELEGATECALL/CALLCODE/STATICCALL paragraphs",
+       "summary": "Needs coordinated cases with call types, static context and revert."
+      }
+     ],
+     "rationale": "The interaction with EIP-2200's stipend guard needs coordinated cases. EIP-3529 needs only a local refund-compatibility check. Call-type, static-context and revert scenarios are needed but are unnumbered in the supplied documents. There is no multi-EIP vector restructuring, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Counting the unnumbered STATICCALL, DELEGATECALL and REVERT interactions as separate EIPs could argue for level 3.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 2200,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "TSTORE executed with gasleft at or below the 2300 stipend (for example, inside a transfer/send-stipend call), compared with SSTORE in the same situation. Also check that the TSTORE price is the same as a dirty-slot SSTORE."
+     },
+     {
+      "eip": 3529,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Transactions that mix SSTORE refunds with TSTORE/TLOAD: confirm the refund counter and the gas_used//5 cap are unaffected by transient writes."
+     }
+    ],
+    "unidentified_interactions": [
+     "STATICCALL context: TSTORE raises an exception while TLOAD succeeds, including nested static contexts.",
+     "DELEGATECALL/CALLCODE: transient storage belongs to the caller's context; CALL targets the callee's.",
+     "REVERT and exceptional halts: rollback of transient writes, including writes in inner calls, at checkpoint boundaries.",
+     "EIP-2929-style warm/hot terminology used for pricing, with no access-list participation by the new opcodes.",
+     "Contract creation (CREATE/CREATE2) and SELFDESTRUCT contexts, which the EIP does not address explicitly."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The revision prices TSTORE like a dirty-slot SSTORE and says transient storage behaves identically to storage. It never says whether EIP-2200's stipend guard (fail if gasleft ≤ 2300) applies to TSTORE. TLOAD's description also says it 'pops' the loaded value, a likely typo for 'pushes'.",
+    "affected_criteria": [
+     {
+      "criterion": "evm_gas_rule_changes",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "security_risks",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Does TSTORE fail with out-of-gas when gasleft ≤ 2300, as SSTORE does under EIP-2200?",
+     "How should transient storage of an account behave after SELFDESTRUCT within the same transaction, and in a failed contract-creation context, beyond the general revert rule?"
+    ]
+   },
+   "notable_ambiguities": [
+    "TLOAD is described as one that \"pops the value on top of the stack\"; the intent is plainly to push the loaded value.",
+    "Whether the EIP-2200 stipend check applies to TSTORE.",
+    "Whether the gas costs are fixed at 100 or tied to future SSTORE/SLOAD repricing (\"currently 100 gas\").",
+    "The DoS argument in the Reference Implementation uses SSTORE (the TryDOS contract), not TSTORE."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 39957,
+  "type": "result",
+  "duration_ms": 99090,
+  "uuid": "d28d7b5a-e078-4519-a40a-77149cf7543a",
+  "ttft_stream_ms": 1177,
+  "time_to_request_ms": 452,
+  "first_content_frame_ms": 1177,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

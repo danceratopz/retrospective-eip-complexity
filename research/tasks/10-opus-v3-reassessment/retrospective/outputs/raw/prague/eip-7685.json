@@ -1,0 +1,633 @@
+{
+ "case": "prague/7685",
+ "run_id": "assessment-run-cf01a255-aaad-410e-978d-652ea6123a17",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:46:49.978641Z",
+ "finished_at": "2026-10-08T09:48:08.519806Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "2b3e6ef6f0e866efcf47d040bc3f3cf0f12d476f957df0992681eabcf64e7916",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "bcb100bd4478a09accb66847b37216997305a5ebae592644a614af51ec852d9d",
+ "output": {
+  "duration_api_ms": 76102,
+  "stop_reason": "tool_use",
+  "session_id": "ffaa9937-f2ce-4c86-8d8c-b1fe25335be3",
+  "total_cost_usd": 0.2783194,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 12813,
+   "cache_read_input_tokens": 10537,
+   "output_tokens": 8685,
+   "output_tokens_details": {
+    "thinking_tokens": 2261
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 12813,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 8685,
+     "cache_read_input_tokens": 10537,
+     "cache_creation_input_tokens": 12813,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 12813
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 8685,
+    "cacheReadInputTokens": 10537,
+    "cacheCreationInputTokens": 12813,
+    "webSearchRequests": 0,
+    "costUSD": 0.2783194,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 2261,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"At this revision, EIP-7685 sets up a general framework for execution-layer requests that are passed to the consensus layer. A request is a request_type byte followed by opaque request_data. The block body gains a list of requests, sorted in ascending order by type. The execution header gains a 32-byte requests_root, which is the Merkle-Patricia trie root of that list keyed by index, built the same way as the transactions root. The revision defines no request types, system contracts, sources or validation rules for requests. It also leaves the consensus-layer and Engine API representation to later proposals.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Execution Layer\",\"summary\":\"Only the block body and header structures change. No gas charging, metering or settlement rule is specified.\"}],\"rationale\":\"No rule for charging, metering or settling execution gas is added or changed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction or state-access behavior is specified.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Blob gas is not mentioned.\"}],\"rationale\":\"No change to blob-gas accounting.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state-gas accounting is defined.\"}],\"rationale\":\"No change to state-gas accounting.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund mechanism is defined.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block structure - \\\"The block body is appended with a list of requests\\\"\",\"summary\":\"The block body RLP structure gains an additional list.\"},{\"source\":\"eip.md\",\"locator\":\"Block Header - \\\"Extend the header with a new 32 byte value requests_root\\\"\",\"summary\":\"The header structure gains a field.\"}],\"rationale\":\"Ordinary execution tests do not change behavior. Only baseline block-structure and RLP-decoding cases, such as malformed header or body field counts, must account for the extra fields. This rework is confined to boundary cases within the block-structure family. The new header value that every block must carry is scored under INV.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether changed block hashes in every fixture count as rework or as a new assertion is a judgment call. Here it is treated as the new invariant under INV.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Header - \\\"block.header.requests_root = compute_trie_root_from_indexed_data(block.body.requests)\\\"\",\"summary\":\"Every post-fork block has a requests_root commitment, which is the empty-trie root when there are no requests.\"}],\"rationale\":\"Every block-producing test in the target fork must additionally produce or check the new requests_root field and the empty requests body list. This is a universal assertion. Pre-fork vectors do not need to be re-derived, so the level is 2.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Header\",\"summary\":\"requests_root must be computed and reported.\"},{\"source\":\"eip.md\",\"locator\":\"Block structure\",\"summary\":\"The body carries a requests list that a block builder must receive or output.\"}],\"rationale\":\"The t8n tool needs to output requests_root and the requests list. Block-building tooling needs a requests body input. That is multiple field changes with no new exchange mechanism.\",\"confidence\":\"medium\",\"uncertainty_note\":\"This revision defines no request types and no source for requests. Only the root output might be needed, which would be level 1.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Request - \\\"request = request_type ++ request_data\\\"\",\"summary\":\"A typed opaque request object must be representable in the block body.\"},{\"source\":\"eip.md\",\"locator\":\"Block Header\",\"summary\":\"A new header field is computed with the existing indexed-trie method.\"}],\"rationale\":\"Existing header and body primitives need local extensions: a new header field, a typed-bytes request list in the body, and an indexed-trie root computed like the transactions root. No new abstraction is required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Invalid-block tests that tamper with the request list or its ordering could justify a new body modifier abstraction (level 2).\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Header - \\\"This is equivalent to how the transaction trie root is computed.\\\"\",\"summary\":\"The existing MPT/keccak commitment method is reused.\"}],\"rationale\":\"The unchanged trie-root primitive is reused. No new cryptographic rule is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Request - \\\"in ascending order by type\\\"\",\"summary\":\"Requests must be ordered by type, which raises boundary cases such as equal types, out-of-order types and an empty list.\"},{\"source\":\"eip.md\",\"locator\":\"Ordering\",\"summary\":\"The type ordering exists to verify the integrity of the commitment.\"}],\"rationale\":\"One boundary-sensitive mechanism is introduced: ascending type ordering of the requests list against its root commitment. Cases include empty, single, equal-type and out-of-order lists.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If an empty request_data or an unknown type byte is handled as a separate rule, this could be level 2.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block structure\",\"summary\":\"New body RLP decoding with an appended requests list.\"},{\"source\":\"eip.md\",\"locator\":\"Block Header\",\"summary\":\"New header field. requests_root must equal the trie root of body.requests.\"},{\"source\":\"eip.md\",\"locator\":\"Ordering - \\\"simplify the process of verifying that all requests which were committed to in requests_root were found in the block\\\"\",\"summary\":\"The commitment ties the header to the body and implies an ordering check.\"}],\"rationale\":\"Several structural rules change through block import: header decoding with the new field, body decoding with the requests list, and the requests_root-vs-body match, which is a cross-field (complex) check. Ascending-type ordering adds another rule. Level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether ordering is checked explicitly or only enforced through the root comparison is not stated. Either way, multiple rules are added and one is complex.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract - \\\"This inherently exposes the requests to the consensus layer\\\"\",\"summary\":\"The requests are intended to reach the CL.\"},{\"source\":\"eip.md\",\"locator\":\"Consensus Layer - \\\"Each proposal may choose how to extend the beacon chain types\\\"\",\"summary\":\"The CL and Engine API representation is not specified.\"}],\"rationale\":\"For the CL to receive the requests and for the EL to rebuild the extended body, the execution payload exchanged over the Engine API presumably needs a requests field. This revision does not specify it, so the score is the minimal plausible single-field change, given low confidence.\",\"confidence\":\"low\",\"uncertainty_note\":\"The Engine API change is unspecified. It could be none in this EIP (left to request-type EIPs), or it could be several fields or a new versioned method.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Request source and validity - \\\"The authors' recommendations\\\"\",\"summary\":\"System contracts are only recommended for future request types. None is specified.\"}],\"rationale\":\"No system contract is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No existing system contract is referenced or changed.\"}],\"rationale\":\"No existing system contract changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No opcodes are defined.\"}],\"rationale\":\"No new instruction.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No changes to instruction semantics.\"}],\"rationale\":\"No instruction's semantics or availability changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are defined.\"}],\"rationale\":\"No new precompile.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"No precompile changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block structure - \\\"block_body_rlp = rlp([... , [request_0, ..., request_k]])\\\"\",\"summary\":\"The block body RLP schema gains a requests list.\"},{\"source\":\"eip.md\",\"locator\":\"Block Header\",\"summary\":\"The header RLP gains a 32-byte requests_root.\"},{\"source\":\"eip.md\",\"locator\":\"Request - \\\"request = request_type ++ request_data\\\"\",\"summary\":\"A new typed request encoding is defined.\"}],\"rationale\":\"The block body and header schemas both gain serialized fields, and a new typed request encoding is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Request\",\"summary\":\"Requests are typed objects in the body, not transaction envelopes.\"}],\"rationale\":\"Request types are not transaction types, and no transaction envelope is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction validity or intrinsic gas rules are specified.\"}],\"rationale\":\"Transaction validity is unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Header - \\\"Extend the header with a new 32 byte value requests_root\\\"\",\"summary\":\"New execution-header field.\"},{\"source\":\"eip.md\",\"locator\":\"Block structure\",\"summary\":\"New block body member: the requests list.\"}],\"rationale\":\"The execution header gains requests_root, and the block body gains a requests list.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state migration or code installation at activation.\"}],\"rationale\":\"Only rule selection at the fork. No one-time state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Header\",\"summary\":\"A trie root is computed over the request list, the same way as for transactions.\"}],\"rationale\":\"No request types or sources are defined, so the workload is an indexed trie root over a list that is usually empty. No additional performance validation is established.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Future request types could add workload, but that belongs to those EIPs.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Ordering\",\"summary\":\"The ordering exists to verify integrity between the body requests and requests_root.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations - \\\"Needs discussion.\\\"\",\"summary\":\"No security analysis is provided.\"}],\"rationale\":\"The new security condition is the integrity of the header commitment against the body's request list: blocks with a mismatched or misordered list must be rejected. This can be checked locally at block validation.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The security section is empty, and request authority and validation are deferred to the CL and to future types.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Request source and validity - \\\"This EIP makes no strict requirement where a request may come from nor when/how a request must be validated\\\"\",\"summary\":\"No rule says how the EL must treat requests in a block, including unknown types or non-empty lists when no types exist.\"},{\"source\":\"eip.md\",\"locator\":\"Block Header\",\"summary\":\"The header field's position in the header RLP is not stated.\"},{\"source\":\"eip.md\",\"locator\":\"Intra-type - \\\"Within the same type, order is not defined\\\"\",\"summary\":\"Intra-type ordering is left open.\"}],\"rationale\":\"Clients could disagree on several observable outcomes. One is whether a block whose body carries requests of an undefined type, or any requests at all, is valid. Another is where requests_root sits in the header encoding. These competing outcomes are localized but must be agreed before fixtures can be fixed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Request-type EIPs that are not supplied may resolve validity per type. The header position may be assumed to be appended last.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block structure - \\\"Latest block body field before requests\\\"\",\"summary\":\"The body field is placed after the latest existing body field.\"},{\"source\":\"eip.md\",\"locator\":\"Request source and validity\",\"summary\":\"Request producers such as system contracts are deferred to other proposals.\"}],\"rationale\":\"Only local compatibility checks are needed: the requests body field must be placed after the existing body fields (withdrawals), and the header field after the Cancun header fields. No coordinated cross-EIP scenarios are established, because no request types are defined. The candidate list is empty.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Future request-type EIPs built on this framework would add coordinated interactions. They are not supplied and not counted.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[],\"unidentified_interactions\":[\"Body field positioning: the requests list is appended after the latest existing block body field (withdrawals in the Cancun baseline). This needs a local compatibility check in body RLP decoding.\",\"Header field positioning: requests_root must be placed relative to the existing Cancun header fields. Its position is unstated and needs a local compatibility check.\",\"Future request-type proposals (system contracts or event-parsed requests) will feed this framework. None is defined in this revision, so no coordinated cases can be named.\"]},\"under_specification\":{\"present\":true,\"summary\":\"This revision defines only the container (typed request list, body field and header root). It does not define any request type or any rule on where requests come from or how the EL validates them. It does not say where requests_root sits in the header, and it does not specify Engine API or payload transport. The Test Cases section is TODO and Security Considerations reads 'Needs discussion.'\",\"affected_criteria\":[{\"criterion\":\"engine_api_changes\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"block_syncing_changes\",\"minimum_score\":2,\"maximum_score\":3}],\"unresolved_questions\":[\"Is a block whose body contains requests valid when no request type is defined, and how must unknown request types be treated?\",\"Must the EL derive the requests itself and compare them with the body, or only check the body against requests_root?\",\"Where in the header RLP field order does requests_root sit?\",\"How are requests carried in the Engine API execution payload, if at all, under this EIP?\",\"Is a request with empty request_data (type byte only) valid?\",\"Is explicit validation of ascending type order required, or only the root match?\"]},\"notable_ambiguities\":[\"The abstract says requests are 'inherently' exposed to the CL, yet the CL and Engine API representation is left to future proposals.\",\"The rationale says the type ordering makes it easier to verify that all committed requests were found in the block, but the specification never states that verification rule.\",\"Intra-type ordering is delegated to future request types, so for now no ordering inside a type can be tested.\",\"The 'Opaque byte array' rationale mentions 'the transaction payload', apparently meaning the request payload.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "At this revision, EIP-7685 sets up a general framework for execution-layer requests that are passed to the consensus layer. A request is a request_type byte followed by opaque request_data. The block body gains a list of requests, sorted in ascending order by type. The execution header gains a 32-byte requests_root, which is the Merkle-Patricia trie root of that list keyed by index, built the same way as the transactions root. The revision defines no request types, system contracts, sources or validation rules for requests. It also leaves the consensus-layer and Engine API representation to later proposals.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Execution Layer",
+       "summary": "Only the block body and header structures change. No gas charging, metering or settlement rule is specified."
+      }
+     ],
+     "rationale": "No rule for charging, metering or settling execution gas is added or changed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction or state-access behavior is specified."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Blob gas is not mentioned."
+      }
+     ],
+     "rationale": "No change to blob-gas accounting.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state-gas accounting is defined."
+      }
+     ],
+     "rationale": "No change to state-gas accounting.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund mechanism is defined."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block structure - \"The block body is appended with a list of requests\"",
+       "summary": "The block body RLP structure gains an additional list."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block Header - \"Extend the header with a new 32 byte value requests_root\"",
+       "summary": "The header structure gains a field."
+      }
+     ],
+     "rationale": "Ordinary execution tests do not change behavior. Only baseline block-structure and RLP-decoding cases, such as malformed header or body field counts, must account for the extra fields. This rework is confined to boundary cases within the block-structure family. The new header value that every block must carry is scored under INV.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether changed block hashes in every fixture count as rework or as a new assertion is a judgment call. Here it is treated as the new invariant under INV.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Header - \"block.header.requests_root = compute_trie_root_from_indexed_data(block.body.requests)\"",
+       "summary": "Every post-fork block has a requests_root commitment, which is the empty-trie root when there are no requests."
+      }
+     ],
+     "rationale": "Every block-producing test in the target fork must additionally produce or check the new requests_root field and the empty requests body list. This is a universal assertion. Pre-fork vectors do not need to be re-derived, so the level is 2.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Header",
+       "summary": "requests_root must be computed and reported."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block structure",
+       "summary": "The body carries a requests list that a block builder must receive or output."
+      }
+     ],
+     "rationale": "The t8n tool needs to output requests_root and the requests list. Block-building tooling needs a requests body input. That is multiple field changes with no new exchange mechanism.",
+     "confidence": "medium",
+     "uncertainty_note": "This revision defines no request types and no source for requests. Only the root output might be needed, which would be level 1.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Request - \"request = request_type ++ request_data\"",
+       "summary": "A typed opaque request object must be representable in the block body."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block Header",
+       "summary": "A new header field is computed with the existing indexed-trie method."
+      }
+     ],
+     "rationale": "Existing header and body primitives need local extensions: a new header field, a typed-bytes request list in the body, and an indexed-trie root computed like the transactions root. No new abstraction is required.",
+     "confidence": "medium",
+     "uncertainty_note": "Invalid-block tests that tamper with the request list or its ordering could justify a new body modifier abstraction (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Header - \"This is equivalent to how the transaction trie root is computed.\"",
+       "summary": "The existing MPT/keccak commitment method is reused."
+      }
+     ],
+     "rationale": "The unchanged trie-root primitive is reused. No new cryptographic rule is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Request - \"in ascending order by type\"",
+       "summary": "Requests must be ordered by type, which raises boundary cases such as equal types, out-of-order types and an empty list."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Ordering",
+       "summary": "The type ordering exists to verify the integrity of the commitment."
+      }
+     ],
+     "rationale": "One boundary-sensitive mechanism is introduced: ascending type ordering of the requests list against its root commitment. Cases include empty, single, equal-type and out-of-order lists.",
+     "confidence": "medium",
+     "uncertainty_note": "If an empty request_data or an unknown type byte is handled as a separate rule, this could be level 2.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block structure",
+       "summary": "New body RLP decoding with an appended requests list."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block Header",
+       "summary": "New header field. requests_root must equal the trie root of body.requests."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Ordering - \"simplify the process of verifying that all requests which were committed to in requests_root were found in the block\"",
+       "summary": "The commitment ties the header to the body and implies an ordering check."
+      }
+     ],
+     "rationale": "Several structural rules change through block import: header decoding with the new field, body decoding with the requests list, and the requests_root-vs-body match, which is a cross-field (complex) check. Ascending-type ordering adds another rule. Level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether ordering is checked explicitly or only enforced through the root comparison is not stated. Either way, multiple rules are added and one is complex.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract - \"This inherently exposes the requests to the consensus layer\"",
+       "summary": "The requests are intended to reach the CL."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Consensus Layer - \"Each proposal may choose how to extend the beacon chain types\"",
+       "summary": "The CL and Engine API representation is not specified."
+      }
+     ],
+     "rationale": "For the CL to receive the requests and for the EL to rebuild the extended body, the execution payload exchanged over the Engine API presumably needs a requests field. This revision does not specify it, so the score is the minimal plausible single-field change, given low confidence.",
+     "confidence": "low",
+     "uncertainty_note": "The Engine API change is unspecified. It could be none in this EIP (left to request-type EIPs), or it could be several fields or a new versioned method.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Request source and validity - \"The authors' recommendations\"",
+       "summary": "System contracts are only recommended for future request types. None is specified."
+      }
+     ],
+     "rationale": "No system contract is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No existing system contract is referenced or changed."
+      }
+     ],
+     "rationale": "No existing system contract changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No opcodes are defined."
+      }
+     ],
+     "rationale": "No new instruction.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No changes to instruction semantics."
+      }
+     ],
+     "rationale": "No instruction's semantics or availability changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are defined."
+      }
+     ],
+     "rationale": "No new precompile.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "No precompile changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block structure - \"block_body_rlp = rlp([... , [request_0, ..., request_k]])\"",
+       "summary": "The block body RLP schema gains a requests list."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block Header",
+       "summary": "The header RLP gains a 32-byte requests_root."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Request - \"request = request_type ++ request_data\"",
+       "summary": "A new typed request encoding is defined."
+      }
+     ],
+     "rationale": "The block body and header schemas both gain serialized fields, and a new typed request encoding is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Request",
+       "summary": "Requests are typed objects in the body, not transaction envelopes."
+      }
+     ],
+     "rationale": "Request types are not transaction types, and no transaction envelope is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction validity or intrinsic gas rules are specified."
+      }
+     ],
+     "rationale": "Transaction validity is unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Header - \"Extend the header with a new 32 byte value requests_root\"",
+       "summary": "New execution-header field."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block structure",
+       "summary": "New block body member: the requests list."
+      }
+     ],
+     "rationale": "The execution header gains requests_root, and the block body gains a requests list.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state migration or code installation at activation."
+      }
+     ],
+     "rationale": "Only rule selection at the fork. No one-time state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Header",
+       "summary": "A trie root is computed over the request list, the same way as for transactions."
+      }
+     ],
+     "rationale": "No request types or sources are defined, so the workload is an indexed trie root over a list that is usually empty. No additional performance validation is established.",
+     "confidence": "medium",
+     "uncertainty_note": "Future request types could add workload, but that belongs to those EIPs.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Ordering",
+       "summary": "The ordering exists to verify integrity between the body requests and requests_root."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations - \"Needs discussion.\"",
+       "summary": "No security analysis is provided."
+      }
+     ],
+     "rationale": "The new security condition is the integrity of the header commitment against the body's request list: blocks with a mismatched or misordered list must be rejected. This can be checked locally at block validation.",
+     "confidence": "medium",
+     "uncertainty_note": "The security section is empty, and request authority and validation are deferred to the CL and to future types.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Request source and validity - \"This EIP makes no strict requirement where a request may come from nor when/how a request must be validated\"",
+       "summary": "No rule says how the EL must treat requests in a block, including unknown types or non-empty lists when no types exist."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block Header",
+       "summary": "The header field's position in the header RLP is not stated."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Intra-type - \"Within the same type, order is not defined\"",
+       "summary": "Intra-type ordering is left open."
+      }
+     ],
+     "rationale": "Clients could disagree on several observable outcomes. One is whether a block whose body carries requests of an undefined type, or any requests at all, is valid. Another is where requests_root sits in the header encoding. These competing outcomes are localized but must be agreed before fixtures can be fixed.",
+     "confidence": "medium",
+     "uncertainty_note": "Request-type EIPs that are not supplied may resolve validity per type. The header position may be assumed to be appended last.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block structure - \"Latest block body field before requests\"",
+       "summary": "The body field is placed after the latest existing body field."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Request source and validity",
+       "summary": "Request producers such as system contracts are deferred to other proposals."
+      }
+     ],
+     "rationale": "Only local compatibility checks are needed: the requests body field must be placed after the existing body fields (withdrawals), and the header field after the Cancun header fields. No coordinated cross-EIP scenarios are established, because no request types are defined. The candidate list is empty.",
+     "confidence": "medium",
+     "uncertainty_note": "Future request-type EIPs built on this framework would add coordinated interactions. They are not supplied and not counted.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [],
+    "unidentified_interactions": [
+     "Body field positioning: the requests list is appended after the latest existing block body field (withdrawals in the Cancun baseline). This needs a local compatibility check in body RLP decoding.",
+     "Header field positioning: requests_root must be placed relative to the existing Cancun header fields. Its position is unstated and needs a local compatibility check.",
+     "Future request-type proposals (system contracts or event-parsed requests) will feed this framework. None is defined in this revision, so no coordinated cases can be named."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "This revision defines only the container (typed request list, body field and header root). It does not define any request type or any rule on where requests come from or how the EL validates them. It does not say where requests_root sits in the header, and it does not specify Engine API or payload transport. The Test Cases section is TODO and Security Considerations reads 'Needs discussion.'",
+    "affected_criteria": [
+     {
+      "criterion": "engine_api_changes",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "block_syncing_changes",
+      "minimum_score": 2,
+      "maximum_score": 3
+     }
+    ],
+    "unresolved_questions": [
+     "Is a block whose body contains requests valid when no request type is defined, and how must unknown request types be treated?",
+     "Must the EL derive the requests itself and compare them with the body, or only check the body against requests_root?",
+     "Where in the header RLP field order does requests_root sit?",
+     "How are requests carried in the Engine API execution payload, if at all, under this EIP?",
+     "Is a request with empty request_data (type byte only) valid?",
+     "Is explicit validation of ascending type order required, or only the root match?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The abstract says requests are 'inherently' exposed to the CL, yet the CL and Engine API representation is left to future proposals.",
+    "The rationale says the type ordering makes it easier to verify that all committed requests were found in the block, but the specification never states that verification rule.",
+    "Intra-type ordering is delegated to future request types, so for now no ordering inside a type can be tested.",
+    "The 'Opaque byte array' rationale mentions 'the transaction payload', apparently meaning the request payload."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 24372,
+  "type": "result",
+  "duration_ms": 76599,
+  "uuid": "693e02cc-9b94-43ee-9dc1-260fcc913533",
+  "ttft_stream_ms": 1142,
+  "time_to_request_ms": 494,
+  "first_content_frame_ms": 1143,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

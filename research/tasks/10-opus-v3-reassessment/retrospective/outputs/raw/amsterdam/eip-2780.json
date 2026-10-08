@@ -1,0 +1,687 @@
+{
+ "case": "amsterdam/2780",
+ "run_id": "assessment-run-33b6d63c-18ec-46fb-b4e2-0ad0567e155a",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:31:13.528622Z",
+ "finished_at": "2026-10-08T09:33:29.393725Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "a4cbc12e64e5681458a26d556c91b6f043eefdd3b666c1b246880707a7724d6c",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "92dc971c44f9cf98aa8664f6dc8a15bfe71e5d1a07ebc29644ff09e0723aa011",
+ "output": {
+  "duration_api_ms": 133129,
+  "stop_reason": "tool_use",
+  "session_id": "29d0fa5c-7450-4608-b4a8-966df0e59595",
+  "total_cost_usd": 0.9334040000000001,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 79102,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 15029,
+   "output_tokens_details": {
+    "thinking_tokens": 6412
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 79102,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 15029,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 79102,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 79102
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 15029,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 79102,
+    "webSearchRequests": 0,
+    "costUSD": 0.9334040000000001,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 6412,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"At FORK_BLOCK, this revision of EIP-2780 lowers the transaction intrinsic base cost TX_BASE_COST from 21,000 to 6,000 for every transaction type. It also adds a GAS_NEW_ACCOUNT = 25,000 surcharge to intrinsic gas when all of these hold: the transaction is not a CREATE, value > 0, `to` is not a precompile, and `to` is \\\"non-existent per EIP-161 emptiness\\\" at the start of transaction execution. Calldata pricing, access-list pricing and the EIP-1559 mechanics are explicitly unchanged. Typed transactions from EIP-2930, EIP-1559 and EIP-7702 inherit the new base. Because of the surcharge, intrinsic gas, and so transaction validity (gas_limit ≥ intrinsic), now depends on account state. The EIP asks for Perfnet benchmarks of blocks made entirely of ETH transfers and of minimal contract calls.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Intrinsic gas computation — \\\"Replace any hardcoded `21,000` with `TX_BASE_COST = 6,000`\\\"\",\"summary\":\"The intrinsic base charge for every transaction drops from 21,000 to 6,000.\"},{\"source\":\"eip.md\",\"locator\":\"Intrinsic gas computation — pseudocode \\\"is_nonexistent_per_eip161(state_at_start, tx.to)\\\"\",\"summary\":\"Adds a new state-dependent conditional term (+25,000) to intrinsic gas.\"}],\"rationale\":\"A new accounting rule (a state-dependent surcharge in intrinsic gas) is added. At the same time the base charge changes, which alters the expected gas used for every baseline transaction. This meets level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"The surcharge could be read as a parameterised extension of intrinsic gas rather than a new mechanism (level 1). However, it adds a state-dependent condition that intrinsic gas did not have before.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Intrinsic gas computation\",\"summary\":\"Changes only the pre-execution intrinsic computation; no opcode's access or charge sequence changes.\"},{\"source\":\"supporting/eip-2929.md\",\"locator\":\"Specification — \\\"accessed_addresses is initialized to include the tx.sender, tx.to\\\"\",\"summary\":\"tx.to is already in the accessed set at transaction start, and this is unchanged.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes. The new pre-execution read of `to` happens at the transaction level, not inside an opcode.\",\"confidence\":\"high\",\"uncertainty_note\":\"No block-level access list specification is supplied. Whether the intrinsic-gas read of `to` must be recorded there is outside the supplied evidence.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"Calldata and access-list metering are unchanged\\\"\",\"summary\":\"The EIP does not mention blob gas at all.\"}],\"rationale\":\"No blob-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"Charging `GAS_NEW_ACCOUNT = 25,000` on value transfers that create an account aligns entry points and internalizes state growth\\\"\",\"summary\":\"The existing new-account (state-growth) charge is applied at a new site: top-level value transfers.\"},{\"source\":\"supporting/eip-161.md\",\"locator\":\"Specification (b)\",\"summary\":\"The existing 25,000 charge for CALL when the destination is dead and value > 0.\"}],\"rationale\":\"The existing new-account state-growth charge is applied at a new charging site (top-level transfer intrinsic gas). No new state-gas dimension or spill rule is introduced. This matches level 2: charging added at a new site using an existing mechanism.\",\"confidence\":\"low\",\"uncertainty_note\":\"The baseline has no separate state-gas dimension; the charge is paid in ordinary execution gas. An evaluator could therefore assign this entirely to GAS and score 0 here.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund mechanism is introduced.\"}],\"rationale\":\"No new refund.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"any logic that assumes a `21,000` base must update\\\"\",\"summary\":\"Every transaction's gas used, fee debit and coinbase payment change.\"},{\"source\":\"eip.md\",\"locator\":\"Effects on transactions per block — \\\"ETH transfer tx that creates a new EOA: intrinsic becomes `6,000 + 25,000`\\\"\",\"summary\":\"Baseline tests that transfer value to fresh addresses change cost differently from other tests.\"}],\"rationale\":\"One common rule change (the base intrinsic cost) changes expected gas used, receipts' cumulative gas, sender and coinbase balances, and intrinsic-gas validity boundaries in ordinary cases across every transaction-carrying family: opcodes, calls, creates, access lists, 1559 fees, 7702 and 7623 floor tests. Tests that fund new accounts by top-level transfer also pick up the surcharge.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new header, receipt, log or state output is introduced.\"}],\"rationale\":\"Only existing values change, which is counted under PAT.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Intrinsic gas computation\",\"summary\":\"Intrinsic gas is derived from the transaction and the pre-state, both of which the tool already receives.\"}],\"rationale\":\"No new input or output field is required. The state-dependent intrinsic gas is computed internally from the existing pre-state input.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No transition-tool documentation is supplied to confirm interface reuse.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Intrinsic gas computation — \\\"CalculateIntrinsicGas(tx, state_at_start)\\\"\",\"summary\":\"Intrinsic gas now takes state as an input.\"}],\"rationale\":\"The framework's fork-aware intrinsic-gas calculator needs a local extension: a recipient-existence and precompile input. No new abstraction is required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the framework computes intrinsic gas purely from transaction fields, adding a state-aware variant could be judged a new construction abstraction (level 2).\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Derivation (non-normative) — \\\"ECRECOVER_COST = 3,000\\\"\",\"summary\":\"Signature recovery is used only as a pricing proxy; signing rules are unchanged.\"}],\"rationale\":\"No cryptographic rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"New-account surcharge — \\\"Apply `GAS_NEW_ACCOUNT` when **all** are true\\\"\",\"summary\":\"Four interacting conditions: create, value, precompile, and existence at transaction start.\"},{\"source\":\"eip.md\",\"locator\":\"Intrinsic gas computation\",\"summary\":\"The new base moves the gas_limit ≥ intrinsic validity boundary.\"},{\"source\":\"supporting/eip-7623.md\",\"locator\":\"Specification — \\\"Any transaction with a gas limit below `21000 + TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata`\\\"\",\"summary\":\"The floor boundary also uses the base constant.\"}],\"rationale\":\"Several boundary-sensitive mechanisms change: (1) the intrinsic gas_limit boundary at the new base; (2) the surcharge condition, which forms an elevated matrix; (3) the calldata floor-versus-intrinsic boundary. The matrix dimensions are: value (0 / >0); recipient state (non-existent, existing-but-empty, balance-only, nonce-only, code or 7702 delegation, created earlier in the same block); precompile or not; create or call; transaction type (legacy, 1, 2, 3, 4); and gas_limit at intrinsic or intrinsic−1. These combine to change validity.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No block RLP or structural validation rule changes.\"}],\"rationale\":\"The changes are execution and validity rules only.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API fields or methods are mentioned.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is referenced or changed.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new instruction.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"identical to `CALL` account-creation pricing\\\"\",\"summary\":\"CALL semantics and pricing stay as they are; only the top-level path changes.\"}],\"rationale\":\"No instruction's semantics change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new precompile.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"New-account surcharge — \\\"`to` is not a precompile\\\"\",\"summary\":\"Precompiles are only exempted from the surcharge; their own semantics and gas are unchanged.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Why not charge full tx data as calldata? — \\\"Serialization neutrality\\\"\",\"summary\":\"No envelope or schema changes.\"}],\"rationale\":\"No schema changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Code change example — \\\"Typed transactions ... now inherit `TX_BASE_COST = 6,000`\\\"\",\"summary\":\"Existing types are repriced; no new type is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Intrinsic gas computation — \\\"CalculateIntrinsicGas(tx, state_at_start)\\\"\",\"summary\":\"Intrinsic gas, which bounds validity, now depends on recipient state at the start of each transaction.\"},{\"source\":\"eip.md\",\"locator\":\"New-account surcharge — \\\"non-existent per EIP-161 emptiness at the start of transaction execution\\\"\",\"summary\":\"Validity depends on state evolving within the block.\"},{\"source\":\"supporting/eip-7623.md\",\"locator\":\"Specification — \\\"or below its intrinsic gas cost (take the maximum of these two calculations) is considered invalid\\\"\",\"summary\":\"Intrinsic gas is a validity bound.\"}],\"rationale\":\"Intrinsic-gas validity was previously a function of transaction fields only; it now needs a state read. Testing it requires coordinated transaction/state scenarios. Examples: an earlier transaction in the same block creates or funds the recipient, which changes a later transaction's intrinsic gas and validity; empty-but-existing pre-state accounts; type-4 authorizations touching `to`. Validity tests therefore need pre-state and intra-block sequencing designed together, not just a parameter change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the state dependency can be covered by local pre-state variations within existing intrinsic-gas tests, level 2 applies.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"After `FORK_BLOCK`, set the following parameters and rules\\\"\",\"summary\":\"Only rule and constant selection at the fork.\"}],\"rationale\":\"No activation-time state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"+250% more minimal transactions\\\"\",\"summary\":\"Up to 3.5x as many minimal transactions fit per block.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases — \\\"blocks of just ETH transfers ... Block of txs calling minimal gas contract execution with maximal contract size addresses\\\"\",\"summary\":\"The EIP itself requires integrated perfnet benchmarks across clients.\"},{\"source\":\"eip.md\",\"locator\":\"Effects on transactions per block — \\\"Above ~457.6 M gas, the 8 MiB size cap dominates\\\"\",\"summary\":\"Couples transaction count to the EIP-7934 block size cap.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"Current gaslimit testing mostly uses a block with a single transaction\\\"\",\"summary\":\"The baseline benchmark assumptions do not cover many-transaction blocks.\"}],\"rationale\":\"The cheaper fixed per-transaction cost raises the per-block transaction count. That stresses several client subsystems together: signature recovery, per-transaction state and trie updates, receipt and root computation, code loading for tx.to (maximum code size per transaction), and the block-size cap interaction. The benchmark assumption that a block holds few transactions is invalidated, so integrated adversarial stress testing is needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The EIP claims existing headroom (>300 MGas/s for transfers), but that claim is not supported by supplied data.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"As this significantly increases the max tx per block this carries risk\\\"\",\"summary\":\"DoS pricing boundary for per-transaction overhead changes.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"Wallets, RPCs, gas estimators ... must update\\\"\",\"summary\":\"Intrinsic gas is now state-dependent, which affects components such as mempool validation and estimation.\"}],\"rationale\":\"Two bounded interactions change: per-transaction DoS pricing, and the assumption that intrinsic gas is stateless. The second affects transaction-pool admission, builders and estimation, because validity can change with recipient state. These need targeted integration review. A shared authorization invariant across many components is not clearly established.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the stateless-intrinsic-gas invariant is treated as shared across txpool, builder and import, level 3 could apply.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"New-account surcharge — \\\"`to` is **non-existent** per EIP-161 emptiness\\\"\",\"summary\":\"Conflates non-existent and empty. EIP-161 distinguishes them, with 'dead' covering both.\"},{\"source\":\"supporting/eip-161.md\",\"locator\":\"Specification — \\\"An account is considered _dead_ when either it is non-existent or it is _empty_\\\"\",\"summary\":\"Defines separate states, so existing-but-empty recipients have an unclear outcome.\"},{\"source\":\"supporting/eip-7623.md\",\"locator\":\"Specification — tx.gasUsed formula\",\"summary\":\"The floor formula places the base outside max(); the EIP does not say whether GAS_NEW_ACCOUNT is inside the execution side, outside both, or absorbed by the floor.\"},{\"source\":\"eip.md\",\"locator\":\"Edits and interactions with other EIPs — EIP-7702 \\\"No other changes\\\"\",\"summary\":\"Does not say whether 'start of transaction execution' is before or after authorization processing, which can change whether `to` exists.\"}],\"rationale\":\"Several localized questions have competing outcomes. (a) Is an existing-but-empty recipient charged? (b) How does the surcharge combine with the EIP-7623 floor? (c) Is existence evaluated before or after EIP-7702 authorization processing, or after the sender nonce/fee debit? All three require client agreement before expected values can be fixed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The EIP-7702 spec is not supplied, so the ordering of its authorization processing relative to intrinsic gas is an evidence gap.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Edits and interactions with other EIPs\",\"summary\":\"Names EIP-2930, EIP-7702 and EIP-7623 interactions.\"},{\"source\":\"supporting/eip-161.md\",\"locator\":\"Specification\",\"summary\":\"Defines the emptiness and existence semantics that the surcharge depends on.\"},{\"source\":\"supporting/eip-7976.md\",\"locator\":\"Specification\",\"summary\":\"A floor formula also hardcodes 21000.\"}],\"rationale\":\"The new intrinsic-gas rule couples EIP-161 existence semantics, the EIP-7623 (and possibly EIP-7976) floor, and EIP-7702 authorization effects within one validity computation. Coordinated scenarios are needed across these interactions, not only independent checks.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether EIP-7976 is in the same fork is not established.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":161,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Value transfers to a non-existent recipient, an existing-but-empty recipient, and recipients with only balance, only nonce, or only code. Zero-value transfer to an empty account (touch/delete, no surcharge). A recipient created by an earlier transaction in the same block.\"},{\"eip\":7623,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Floor formula with TX_BASE_COST = 6,000. Calldata-heavy value transfer to a new account, checking whether the surcharge is absorbed by or added to the floor. gas_limit boundary at max(intrinsic incl. surcharge, floor).\"},{\"eip\":7702,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Type-4 transaction with and without access list using the new base. Value transfer where `to` is a non-existent authority delegated within the same transaction (existence before or after authorization processing). `to` with existing delegation code.\"},{\"eip\":7976,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"If co-scheduled: the 15/60 floor with the 6,000 base and the surcharge, at the floor and intrinsic boundaries.\"},{\"eip\":2930,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Type-1 intrinsic = 6,000 + unchanged access-list costs; surcharge applies equally.\"},{\"eip\":1559,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Type-2 inherits the new base; fee settlement with lower gas used.\"},{\"eip\":2718,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Every typed transaction applies the new base uniformly.\"},{\"eip\":2929,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Precompile-set exemption from the surcharge matches the fork's precompile set; warm sender/to behavior unchanged.\"},{\"eip\":7934,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Blocks of many minimal transfers approach the RLP block-size cap at high gas limits.\"}],\"unidentified_interactions\":[\"Contract-creation intrinsic costs (CREATE transaction path, init-code word cost) are stated to be unchanged apart from the base; this needs a regression check.\",\"System transactions and calls are not addressed; whether they are exempt from the base needs confirmation.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The surcharge condition uses 'non-existent per EIP-161 emptiness', which mixes two states that EIP-161 keeps separate. 'Start of transaction execution' is not ordered relative to the sender nonce/fee debit or EIP-7702 authorization processing. The EIP does not say how the surcharge combines with the EIP-7623/7976 calldata floor, which hardcodes the base outside max().\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"security_risks\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"cross_eip_interactions\",\"minimum_score\":2,\"maximum_score\":3}],\"unresolved_questions\":[\"Is GAS_NEW_ACCOUNT charged when `to` exists but is empty (zero nonce, zero balance, no code)?\",\"Is recipient existence evaluated before or after EIP-7702 authorizations are applied in the same transaction?\",\"Is GAS_NEW_ACCOUNT included in, added outside of, or overridden by the EIP-7623/7976 calldata floor in gas used and in the gas_limit validity check?\",\"Does 'Replace any hardcoded 21,000' also change the floor formula's base constant to 6,000? This is implied but not stated for EIP-7623.\"]},\"notable_ambiguities\":[\"'Non-existent per EIP-161 emptiness' conflates non-existent and empty accounts.\",\"Timing of the existence check relative to EIP-7702 authorization processing and the sender debit.\",\"How the surcharge combines with the EIP-7623/7976 calldata floor.\",\"The intended precompile set is assumed to be the fork's active precompiles; the EIP does not state it.\",\"SGAS and GAS overlap for the new-account surcharge; the classification is a judgement call.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "At FORK_BLOCK, this revision of EIP-2780 lowers the transaction intrinsic base cost TX_BASE_COST from 21,000 to 6,000 for every transaction type. It also adds a GAS_NEW_ACCOUNT = 25,000 surcharge to intrinsic gas when all of these hold: the transaction is not a CREATE, value > 0, `to` is not a precompile, and `to` is \"non-existent per EIP-161 emptiness\" at the start of transaction execution. Calldata pricing, access-list pricing and the EIP-1559 mechanics are explicitly unchanged. Typed transactions from EIP-2930, EIP-1559 and EIP-7702 inherit the new base. Because of the surcharge, intrinsic gas, and so transaction validity (gas_limit ≥ intrinsic), now depends on account state. The EIP asks for Perfnet benchmarks of blocks made entirely of ETH transfers and of minimal contract calls.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic gas computation — \"Replace any hardcoded `21,000` with `TX_BASE_COST = 6,000`\"",
+       "summary": "The intrinsic base charge for every transaction drops from 21,000 to 6,000."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic gas computation — pseudocode \"is_nonexistent_per_eip161(state_at_start, tx.to)\"",
+       "summary": "Adds a new state-dependent conditional term (+25,000) to intrinsic gas."
+      }
+     ],
+     "rationale": "A new accounting rule (a state-dependent surcharge in intrinsic gas) is added. At the same time the base charge changes, which alters the expected gas used for every baseline transaction. This meets level 3.",
+     "confidence": "high",
+     "uncertainty_note": "The surcharge could be read as a parameterised extension of intrinsic gas rather than a new mechanism (level 1). However, it adds a state-dependent condition that intrinsic gas did not have before.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic gas computation",
+       "summary": "Changes only the pre-execution intrinsic computation; no opcode's access or charge sequence changes."
+      },
+      {
+       "source": "supporting/eip-2929.md",
+       "locator": "Specification — \"accessed_addresses is initialized to include the tx.sender, tx.to\"",
+       "summary": "tx.to is already in the accessed set at transaction start, and this is unchanged."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes. The new pre-execution read of `to` happens at the transaction level, not inside an opcode.",
+     "confidence": "high",
+     "uncertainty_note": "No block-level access list specification is supplied. Whether the intrinsic-gas read of `to` must be recorded there is outside the supplied evidence.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"Calldata and access-list metering are unchanged\"",
+       "summary": "The EIP does not mention blob gas at all."
+      }
+     ],
+     "rationale": "No blob-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"Charging `GAS_NEW_ACCOUNT = 25,000` on value transfers that create an account aligns entry points and internalizes state growth\"",
+       "summary": "The existing new-account (state-growth) charge is applied at a new site: top-level value transfers."
+      },
+      {
+       "source": "supporting/eip-161.md",
+       "locator": "Specification (b)",
+       "summary": "The existing 25,000 charge for CALL when the destination is dead and value > 0."
+      }
+     ],
+     "rationale": "The existing new-account state-growth charge is applied at a new charging site (top-level transfer intrinsic gas). No new state-gas dimension or spill rule is introduced. This matches level 2: charging added at a new site using an existing mechanism.",
+     "confidence": "low",
+     "uncertainty_note": "The baseline has no separate state-gas dimension; the charge is paid in ordinary execution gas. An evaluator could therefore assign this entirely to GAS and score 0 here.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund mechanism is introduced."
+      }
+     ],
+     "rationale": "No new refund.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"any logic that assumes a `21,000` base must update\"",
+       "summary": "Every transaction's gas used, fee debit and coinbase payment change."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Effects on transactions per block — \"ETH transfer tx that creates a new EOA: intrinsic becomes `6,000 + 25,000`\"",
+       "summary": "Baseline tests that transfer value to fresh addresses change cost differently from other tests."
+      }
+     ],
+     "rationale": "One common rule change (the base intrinsic cost) changes expected gas used, receipts' cumulative gas, sender and coinbase balances, and intrinsic-gas validity boundaries in ordinary cases across every transaction-carrying family: opcodes, calls, creates, access lists, 1559 fees, 7702 and 7623 floor tests. Tests that fund new accounts by top-level transfer also pick up the surcharge.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new header, receipt, log or state output is introduced."
+      }
+     ],
+     "rationale": "Only existing values change, which is counted under PAT.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic gas computation",
+       "summary": "Intrinsic gas is derived from the transaction and the pre-state, both of which the tool already receives."
+      }
+     ],
+     "rationale": "No new input or output field is required. The state-dependent intrinsic gas is computed internally from the existing pre-state input.",
+     "confidence": "medium",
+     "uncertainty_note": "No transition-tool documentation is supplied to confirm interface reuse.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic gas computation — \"CalculateIntrinsicGas(tx, state_at_start)\"",
+       "summary": "Intrinsic gas now takes state as an input."
+      }
+     ],
+     "rationale": "The framework's fork-aware intrinsic-gas calculator needs a local extension: a recipient-existence and precompile input. No new abstraction is required.",
+     "confidence": "medium",
+     "uncertainty_note": "If the framework computes intrinsic gas purely from transaction fields, adding a state-aware variant could be judged a new construction abstraction (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Derivation (non-normative) — \"ECRECOVER_COST = 3,000\"",
+       "summary": "Signature recovery is used only as a pricing proxy; signing rules are unchanged."
+      }
+     ],
+     "rationale": "No cryptographic rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "New-account surcharge — \"Apply `GAS_NEW_ACCOUNT` when **all** are true\"",
+       "summary": "Four interacting conditions: create, value, precompile, and existence at transaction start."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic gas computation",
+       "summary": "The new base moves the gas_limit ≥ intrinsic validity boundary."
+      },
+      {
+       "source": "supporting/eip-7623.md",
+       "locator": "Specification — \"Any transaction with a gas limit below `21000 + TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata`\"",
+       "summary": "The floor boundary also uses the base constant."
+      }
+     ],
+     "rationale": "Several boundary-sensitive mechanisms change: (1) the intrinsic gas_limit boundary at the new base; (2) the surcharge condition, which forms an elevated matrix; (3) the calldata floor-versus-intrinsic boundary. The matrix dimensions are: value (0 / >0); recipient state (non-existent, existing-but-empty, balance-only, nonce-only, code or 7702 delegation, created earlier in the same block); precompile or not; create or call; transaction type (legacy, 1, 2, 3, 4); and gas_limit at intrinsic or intrinsic−1. These combine to change validity.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No block RLP or structural validation rule changes."
+      }
+     ],
+     "rationale": "The changes are execution and validity rules only.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API fields or methods are mentioned."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is referenced or changed."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new instruction."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"identical to `CALL` account-creation pricing\"",
+       "summary": "CALL semantics and pricing stay as they are; only the top-level path changes."
+      }
+     ],
+     "rationale": "No instruction's semantics change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new precompile."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "New-account surcharge — \"`to` is not a precompile\"",
+       "summary": "Precompiles are only exempted from the surcharge; their own semantics and gas are unchanged."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Why not charge full tx data as calldata? — \"Serialization neutrality\"",
+       "summary": "No envelope or schema changes."
+      }
+     ],
+     "rationale": "No schema changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Code change example — \"Typed transactions ... now inherit `TX_BASE_COST = 6,000`\"",
+       "summary": "Existing types are repriced; no new type is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic gas computation — \"CalculateIntrinsicGas(tx, state_at_start)\"",
+       "summary": "Intrinsic gas, which bounds validity, now depends on recipient state at the start of each transaction."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New-account surcharge — \"non-existent per EIP-161 emptiness at the start of transaction execution\"",
+       "summary": "Validity depends on state evolving within the block."
+      },
+      {
+       "source": "supporting/eip-7623.md",
+       "locator": "Specification — \"or below its intrinsic gas cost (take the maximum of these two calculations) is considered invalid\"",
+       "summary": "Intrinsic gas is a validity bound."
+      }
+     ],
+     "rationale": "Intrinsic-gas validity was previously a function of transaction fields only; it now needs a state read. Testing it requires coordinated transaction/state scenarios. Examples: an earlier transaction in the same block creates or funds the recipient, which changes a later transaction's intrinsic gas and validity; empty-but-existing pre-state accounts; type-4 authorizations touching `to`. Validity tests therefore need pre-state and intra-block sequencing designed together, not just a parameter change.",
+     "confidence": "medium",
+     "uncertainty_note": "If the state dependency can be covered by local pre-state variations within existing intrinsic-gas tests, level 2 applies.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"After `FORK_BLOCK`, set the following parameters and rules\"",
+       "summary": "Only rule and constant selection at the fork."
+      }
+     ],
+     "rationale": "No activation-time state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"+250% more minimal transactions\"",
+       "summary": "Up to 3.5x as many minimal transactions fit per block."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — \"blocks of just ETH transfers ... Block of txs calling minimal gas contract execution with maximal contract size addresses\"",
+       "summary": "The EIP itself requires integrated perfnet benchmarks across clients."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Effects on transactions per block — \"Above ~457.6 M gas, the 8 MiB size cap dominates\"",
+       "summary": "Couples transaction count to the EIP-7934 block size cap."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"Current gaslimit testing mostly uses a block with a single transaction\"",
+       "summary": "The baseline benchmark assumptions do not cover many-transaction blocks."
+      }
+     ],
+     "rationale": "The cheaper fixed per-transaction cost raises the per-block transaction count. That stresses several client subsystems together: signature recovery, per-transaction state and trie updates, receipt and root computation, code loading for tx.to (maximum code size per transaction), and the block-size cap interaction. The benchmark assumption that a block holds few transactions is invalidated, so integrated adversarial stress testing is needed.",
+     "confidence": "medium",
+     "uncertainty_note": "The EIP claims existing headroom (>300 MGas/s for transfers), but that claim is not supported by supplied data.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"As this significantly increases the max tx per block this carries risk\"",
+       "summary": "DoS pricing boundary for per-transaction overhead changes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"Wallets, RPCs, gas estimators ... must update\"",
+       "summary": "Intrinsic gas is now state-dependent, which affects components such as mempool validation and estimation."
+      }
+     ],
+     "rationale": "Two bounded interactions change: per-transaction DoS pricing, and the assumption that intrinsic gas is stateless. The second affects transaction-pool admission, builders and estimation, because validity can change with recipient state. These need targeted integration review. A shared authorization invariant across many components is not clearly established.",
+     "confidence": "medium",
+     "uncertainty_note": "If the stateless-intrinsic-gas invariant is treated as shared across txpool, builder and import, level 3 could apply.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "New-account surcharge — \"`to` is **non-existent** per EIP-161 emptiness\"",
+       "summary": "Conflates non-existent and empty. EIP-161 distinguishes them, with 'dead' covering both."
+      },
+      {
+       "source": "supporting/eip-161.md",
+       "locator": "Specification — \"An account is considered _dead_ when either it is non-existent or it is _empty_\"",
+       "summary": "Defines separate states, so existing-but-empty recipients have an unclear outcome."
+      },
+      {
+       "source": "supporting/eip-7623.md",
+       "locator": "Specification — tx.gasUsed formula",
+       "summary": "The floor formula places the base outside max(); the EIP does not say whether GAS_NEW_ACCOUNT is inside the execution side, outside both, or absorbed by the floor."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Edits and interactions with other EIPs — EIP-7702 \"No other changes\"",
+       "summary": "Does not say whether 'start of transaction execution' is before or after authorization processing, which can change whether `to` exists."
+      }
+     ],
+     "rationale": "Several localized questions have competing outcomes. (a) Is an existing-but-empty recipient charged? (b) How does the surcharge combine with the EIP-7623 floor? (c) Is existence evaluated before or after EIP-7702 authorization processing, or after the sender nonce/fee debit? All three require client agreement before expected values can be fixed.",
+     "confidence": "medium",
+     "uncertainty_note": "The EIP-7702 spec is not supplied, so the ordering of its authorization processing relative to intrinsic gas is an evidence gap.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Edits and interactions with other EIPs",
+       "summary": "Names EIP-2930, EIP-7702 and EIP-7623 interactions."
+      },
+      {
+       "source": "supporting/eip-161.md",
+       "locator": "Specification",
+       "summary": "Defines the emptiness and existence semantics that the surcharge depends on."
+      },
+      {
+       "source": "supporting/eip-7976.md",
+       "locator": "Specification",
+       "summary": "A floor formula also hardcodes 21000."
+      }
+     ],
+     "rationale": "The new intrinsic-gas rule couples EIP-161 existence semantics, the EIP-7623 (and possibly EIP-7976) floor, and EIP-7702 authorization effects within one validity computation. Coordinated scenarios are needed across these interactions, not only independent checks.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether EIP-7976 is in the same fork is not established.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 161,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Value transfers to a non-existent recipient, an existing-but-empty recipient, and recipients with only balance, only nonce, or only code. Zero-value transfer to an empty account (touch/delete, no surcharge). A recipient created by an earlier transaction in the same block."
+     },
+     {
+      "eip": 7623,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Floor formula with TX_BASE_COST = 6,000. Calldata-heavy value transfer to a new account, checking whether the surcharge is absorbed by or added to the floor. gas_limit boundary at max(intrinsic incl. surcharge, floor)."
+     },
+     {
+      "eip": 7702,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Type-4 transaction with and without access list using the new base. Value transfer where `to` is a non-existent authority delegated within the same transaction (existence before or after authorization processing). `to` with existing delegation code."
+     },
+     {
+      "eip": 7976,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "If co-scheduled: the 15/60 floor with the 6,000 base and the surcharge, at the floor and intrinsic boundaries."
+     },
+     {
+      "eip": 2930,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Type-1 intrinsic = 6,000 + unchanged access-list costs; surcharge applies equally."
+     },
+     {
+      "eip": 1559,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Type-2 inherits the new base; fee settlement with lower gas used."
+     },
+     {
+      "eip": 2718,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Every typed transaction applies the new base uniformly."
+     },
+     {
+      "eip": 2929,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Precompile-set exemption from the surcharge matches the fork's precompile set; warm sender/to behavior unchanged."
+     },
+     {
+      "eip": 7934,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Blocks of many minimal transfers approach the RLP block-size cap at high gas limits."
+     }
+    ],
+    "unidentified_interactions": [
+     "Contract-creation intrinsic costs (CREATE transaction path, init-code word cost) are stated to be unchanged apart from the base; this needs a regression check.",
+     "System transactions and calls are not addressed; whether they are exempt from the base needs confirmation."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The surcharge condition uses 'non-existent per EIP-161 emptiness', which mixes two states that EIP-161 keeps separate. 'Start of transaction execution' is not ordered relative to the sender nonce/fee debit or EIP-7702 authorization processing. The EIP does not say how the surcharge combines with the EIP-7623/7976 calldata floor, which hardcodes the base outside max().",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "security_risks",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "cross_eip_interactions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     }
+    ],
+    "unresolved_questions": [
+     "Is GAS_NEW_ACCOUNT charged when `to` exists but is empty (zero nonce, zero balance, no code)?",
+     "Is recipient existence evaluated before or after EIP-7702 authorizations are applied in the same transaction?",
+     "Is GAS_NEW_ACCOUNT included in, added outside of, or overridden by the EIP-7623/7976 calldata floor in gas used and in the gas_limit validity check?",
+     "Does 'Replace any hardcoded 21,000' also change the floor formula's base constant to 6,000? This is implied but not stated for EIP-7623."
+    ]
+   },
+   "notable_ambiguities": [
+    "'Non-existent per EIP-161 emptiness' conflates non-existent and empty accounts.",
+    "Timing of the existence check relative to EIP-7702 authorization processing and the sender debit.",
+    "How the surcharge combines with the EIP-7623/7976 calldata floor.",
+    "The intended precompile set is assumed to be the fork's active precompiles; the EIP does not state it.",
+    "SGAS and GAS overlap for the new-account surcharge; the classification is a judgement call."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 66164,
+  "type": "result",
+  "duration_ms": 133602,
+  "uuid": "b26259c5-85ed-4735-9655-dbac56e53be8",
+  "ttft_stream_ms": 1433,
+  "time_to_request_ms": 468,
+  "first_content_frame_ms": 1434,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

@@ -1,0 +1,584 @@
+{
+ "case": "amsterdam/7976",
+ "run_id": "assessment-run-a5207dd2-f134-4a04-8853-58809963104a",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:32:57.374645Z",
+ "finished_at": "2026-10-08T09:34:10.550439Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "62409df4a2cdb150c8e26ab674f3a710753dfd5bd4c1fb6970821b7181fbab7e",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "7dd97ac1fda622c53e541f241fb93ab7ca86033c216163ddbe169a28496b2f08",
+ "output": {
+  "duration_api_ms": 70899,
+  "stop_reason": "tool_use",
+  "session_id": "8dfef676-0a2a-459e-b97b-b9e96c7a1559",
+  "total_cost_usd": 0.41548399999999996,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 30532,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 8561,
+   "output_tokens_details": {
+    "thinking_tokens": 2579
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 30532,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 8561,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 30532,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 30532
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 8561,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 30532,
+    "webSearchRequests": 0,
+    "costUSD": 0.41548399999999996,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 2579,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-7976 changes one parameter of the EIP-7623 calldata floor: TOTAL_COST_FLOOR_PER_TOKEN goes from 10 to 15, so the floor becomes 15/60 gas per zero/non-zero byte. STANDARD_TOKEN_COST stays at 4. The gasUsed formula, max(standard + execution + creation costs, floor), keeps the same structure as EIP-7623. The validity rule also keeps its structure: a transaction's gas limit must be at least the larger of its intrinsic gas and 21000 + floor * tokens. The EIP adds no new transaction type, header field, opcode, precompile, system contract or encoding.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — `TOTAL_COST_FLOOR_PER_TOKEN` | `15`\",\"summary\":\"The only change is the floor parameter, which goes from EIP-7623's 10 to 15. The max() settlement formula is the same as in EIP-7623.\"},{\"source\":\"supporting/eip-7623.md\",\"locator\":\"Specification — TOTAL_COST_FLOOR_PER_TOKEN 10\",\"summary\":\"Defines the existing floor mechanism and its value of 10.\"}],\"rationale\":\"An existing accounting rule changes a parameter. No new accounting mechanism is added. This matches level 1.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only transaction-level gas settlement and validity change. No instruction is affected.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — Better blob incentivization\",\"summary\":\"Blobs come up only as an economic incentive. No blob-gas rule changes.\"}],\"rationale\":\"No blob-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only the calldata floor pricing changes.\"}],\"rationale\":\"State-gas accounting does not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — execution_gas_used ... with the gas refund subtracted\",\"summary\":\"The existing refund is still applied inside the standard branch. No new refund is introduced.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — tx.gasUsed formula\",\"summary\":\"The floor rises from 10 to 15 per token. Any baseline transaction whose standard cost plus execution falls below 15*tokens now has a different gasUsed, and therefore different balances and receipts.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — Any transaction with a gas limit below `21000 + TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata`\",\"summary\":\"The minimum gas limit for validity rises. Baseline cases with gas limits sized to the old floor or to intrinsic gas now become invalid.\"},{\"source\":\"supporting/eip-7623.md\",\"locator\":\"Specification\",\"summary\":\"Baseline floor tests and their expected values are derived from 10.\"}],\"rationale\":\"Several families need expected values reworked. These are the EIP-7623 floor/standard crossover tests, the intrinsic-gas and gas-limit validity boundary tests, and other calldata-heavy transaction tests with little execution, which now fall into the wider floor region (execution below 11*tokens rather than 6*tokens). The rule change is a single parameter, and most ordinary tests with significant execution are unaffected. This fits localized cases in several families (level 2) rather than a common rewrite.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Without a supplied test suite, it is unclear how many baseline tests fall in the new floor window (6–11 gas per token of execution). If very few do, the score could be 1.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new output, field or log is introduced.\"}],\"rationale\":\"Only existing expected values change, and that counts under PAT.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only a parameter is selected by fork. No new inputs or outputs.\"}],\"rationale\":\"Fork-aware constant selection needs no interface change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — parameter table\",\"summary\":\"The new floor constant is just a fork parameter value.\"}],\"rationale\":\"The baseline already has floor-aware gas-calculation helpers from EIP-7623. A new parameter value is not a new primitive.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the framework's fork-specific helpers hardcode the EIP-7623 constant, a minor local extension might be needed, which would make this level 1.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No cryptographic content.\"}],\"rationale\":\"No cryptographic changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — Edge cases: Test transactions at the boundary where execution gas equals or exceeds the floor cost\",\"summary\":\"The crossover between the standard and floor branches of max() moves.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — gas limit below ... (take the maximum of these two calculations) is considered invalid\",\"summary\":\"The validity boundary moves, to max(intrinsic, 21000 + 15*tokens).\"}],\"rationale\":\"Two changed rules have boundary-sensitive outcomes: (1) the settlement crossover between the standard and floor costs, and (2) the gas-limit validity threshold. Each depends on zero/non-zero byte mix, contract creation and refunds, but those dimensions are inherited from EIP-7623. No elevated matrix is introduced, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Both rules come from the same parameter. If treated as one mechanism, the score would be 1.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No block decoding or structural validation changes.\"}],\"rationale\":\"Changes to execution rules alone do not qualify.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — eth_estimateGas\",\"summary\":\"Only public JSON-RPC estimation is mentioned. Engine API is not in scope.\"}],\"rationale\":\"No Engine API change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No contracts are introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contracts are referenced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instructions are introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only transaction-level pricing changes.\"}],\"rationale\":\"No instruction semantics change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Precompile schedules are untouched.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No schema changes.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new envelope is introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — Any transaction with a gas limit below `21000 + TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata`\",\"summary\":\"The existing floor validity condition now uses 15.\"},{\"source\":\"supporting/eip-7623.md\",\"locator\":\"Specification — considered invalid\",\"summary\":\"The same condition already exists in the baseline.\"}],\"rationale\":\"An existing validity bound changes value. There is no new dependency or sequence, so this is level 1.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — requires a scheduled network upgrade\",\"summary\":\"Only a constant is selected at the fork. No state transition is needed.\"}],\"rationale\":\"Selecting a rule or constant at the fork does not count.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — reduces this to approximately 0.72 MB\",\"summary\":\"The change lowers the maximum calldata payload size. It does not add workload.\"}],\"rationale\":\"Raising the floor shrinks the worst-case calldata bound. No additional or heavier workload needs validation.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Confirming the reduced worst-case block size could be treated as a component check, which would make this level 1.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — no additional security concerns are introduced\",\"summary\":\"The EIP claims no new attack vectors. Bundling considerations are inherited from EIP-7623.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — the floor price needs to be reserved in the transaction gas limit\",\"summary\":\"The gas-limit reservation boundary changes.\"}],\"rationale\":\"The changed condition is the consensus validity and reservation threshold. It can be checked locally and does not change other components' assumptions, so this is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"This could be 0 if a parameter change to an inherited check is not seen as security-sensitive.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — tx.gasUsed formula\",\"summary\":\"The normative formula and validity rule are stated fully.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — `45s_000_000/40`\",\"summary\":\"The typos and odd phrasing are in non-normative rationale only.\"}],\"rationale\":\"No consensus-visible outcome is left unresolved. The rationale typos do not affect the normative rules.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — changes from EIP-7623's implementation\",\"summary\":\"The target reuses EIP-7623's mechanism with a new constant.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — isContractCreation * (32000 + INITCODE_WORD_COST * words(calldata))\",\"summary\":\"EIP-3860 initcode cost stays in the standard branch.\"},{\"source\":\"supporting/eip-3860.md\",\"locator\":\"Rules — initcode_cost(initcode)\",\"summary\":\"Defines the initcode word cost that is part of intrinsic gas for creation transactions.\"}],\"rationale\":\"The interactions are local compatibility checks. EIP-7623's mechanism is re-parameterized, so its crossover and validity cases must be re-checked with 15, along with the transition from 10 to 15 at the fork. EIP-3860 initcode cost appears in creation transactions on the standard side of max() and in intrinsic gas. The interactions do not need restructuring or coordinated multi-EIP scenarios beyond those local checks.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Fork-transition cases (floor of 10 before the fork, 15 after) could be argued to be coordinated cross-EIP cases with EIP-7623, which would make this level 2.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":7623,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Re-check the floor/standard crossover and the gas-limit validity boundary using 15 instead of 10. Include fork-transition cases where the same transaction gets a floor of 10 before the fork and 15 after.\"},{\"eip\":3860,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Contract-creation transactions near the new crossover, where the 32000 + 2 * words(initcode) term in the standard branch is compared against 15*tokens. Also check that the validity threshold takes the larger of intrinsic gas (including initcode cost) and the new floor.\"}],\"unidentified_interactions\":[\"Gas refunds: execution_gas_used is defined after subtracting the refund, so refund-heavy transactions can drop below the new floor (the refund rule's defining EIP is not supplied).\",\"Other intrinsic-gas components of the conditional baseline (for example, other transaction types' intrinsic costs) enter the max(intrinsic, floor) validity check; these components are not specified in the supplied documents.\"]},\"under_specification\":{\"present\":false,\"summary\":\"The normative specification is complete for a parameter change. The only problems are non-normative typos in the Rationale ('45s_000_000/40'; 'for non zero bytes and maintains proportional costs for non-zero bytes').\",\"affected_criteria\":[],\"unresolved_questions\":[]},\"notable_ambiguities\":[\"The Rationale contains the typo '45s_000_000/40' and the self-contradictory phrase 'for non zero bytes and maintains proportional costs for non-zero bytes'. Both are non-normative.\",\"Test Case 4 (eth_estimateGas) is public JSON-RPC behavior, outside consensus execution-layer testing.\",\"'Intrinsic gas cost' is not defined for every transaction type in the supplied documents. It is inherited from the baseline.\"],\"overall_confidence\":\"high\"}",
+  "structured_output": {
+   "scope_summary": "EIP-7976 changes one parameter of the EIP-7623 calldata floor: TOTAL_COST_FLOOR_PER_TOKEN goes from 10 to 15, so the floor becomes 15/60 gas per zero/non-zero byte. STANDARD_TOKEN_COST stays at 4. The gasUsed formula, max(standard + execution + creation costs, floor), keeps the same structure as EIP-7623. The validity rule also keeps its structure: a transaction's gas limit must be at least the larger of its intrinsic gas and 21000 + floor * tokens. The EIP adds no new transaction type, header field, opcode, precompile, system contract or encoding.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — `TOTAL_COST_FLOOR_PER_TOKEN` | `15`",
+       "summary": "The only change is the floor parameter, which goes from EIP-7623's 10 to 15. The max() settlement formula is the same as in EIP-7623."
+      },
+      {
+       "source": "supporting/eip-7623.md",
+       "locator": "Specification — TOTAL_COST_FLOOR_PER_TOKEN 10",
+       "summary": "Defines the existing floor mechanism and its value of 10."
+      }
+     ],
+     "rationale": "An existing accounting rule changes a parameter. No new accounting mechanism is added. This matches level 1.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only transaction-level gas settlement and validity change. No instruction is affected."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Better blob incentivization",
+       "summary": "Blobs come up only as an economic incentive. No blob-gas rule changes."
+      }
+     ],
+     "rationale": "No blob-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only the calldata floor pricing changes."
+      }
+     ],
+     "rationale": "State-gas accounting does not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — execution_gas_used ... with the gas refund subtracted",
+       "summary": "The existing refund is still applied inside the standard branch. No new refund is introduced."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — tx.gasUsed formula",
+       "summary": "The floor rises from 10 to 15 per token. Any baseline transaction whose standard cost plus execution falls below 15*tokens now has a different gasUsed, and therefore different balances and receipts."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — Any transaction with a gas limit below `21000 + TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata`",
+       "summary": "The minimum gas limit for validity rises. Baseline cases with gas limits sized to the old floor or to intrinsic gas now become invalid."
+      },
+      {
+       "source": "supporting/eip-7623.md",
+       "locator": "Specification",
+       "summary": "Baseline floor tests and their expected values are derived from 10."
+      }
+     ],
+     "rationale": "Several families need expected values reworked. These are the EIP-7623 floor/standard crossover tests, the intrinsic-gas and gas-limit validity boundary tests, and other calldata-heavy transaction tests with little execution, which now fall into the wider floor region (execution below 11*tokens rather than 6*tokens). The rule change is a single parameter, and most ordinary tests with significant execution are unaffected. This fits localized cases in several families (level 2) rather than a common rewrite.",
+     "confidence": "medium",
+     "uncertainty_note": "Without a supplied test suite, it is unclear how many baseline tests fall in the new floor window (6–11 gas per token of execution). If very few do, the score could be 1.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new output, field or log is introduced."
+      }
+     ],
+     "rationale": "Only existing expected values change, and that counts under PAT.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only a parameter is selected by fork. No new inputs or outputs."
+      }
+     ],
+     "rationale": "Fork-aware constant selection needs no interface change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — parameter table",
+       "summary": "The new floor constant is just a fork parameter value."
+      }
+     ],
+     "rationale": "The baseline already has floor-aware gas-calculation helpers from EIP-7623. A new parameter value is not a new primitive.",
+     "confidence": "medium",
+     "uncertainty_note": "If the framework's fork-specific helpers hardcode the EIP-7623 constant, a minor local extension might be needed, which would make this level 1.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No cryptographic content."
+      }
+     ],
+     "rationale": "No cryptographic changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — Edge cases: Test transactions at the boundary where execution gas equals or exceeds the floor cost",
+       "summary": "The crossover between the standard and floor branches of max() moves."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — gas limit below ... (take the maximum of these two calculations) is considered invalid",
+       "summary": "The validity boundary moves, to max(intrinsic, 21000 + 15*tokens)."
+      }
+     ],
+     "rationale": "Two changed rules have boundary-sensitive outcomes: (1) the settlement crossover between the standard and floor costs, and (2) the gas-limit validity threshold. Each depends on zero/non-zero byte mix, contract creation and refunds, but those dimensions are inherited from EIP-7623. No elevated matrix is introduced, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Both rules come from the same parameter. If treated as one mechanism, the score would be 1.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No block decoding or structural validation changes."
+      }
+     ],
+     "rationale": "Changes to execution rules alone do not qualify.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — eth_estimateGas",
+       "summary": "Only public JSON-RPC estimation is mentioned. Engine API is not in scope."
+      }
+     ],
+     "rationale": "No Engine API change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No contracts are introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contracts are referenced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instructions are introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only transaction-level pricing changes."
+      }
+     ],
+     "rationale": "No instruction semantics change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Precompile schedules are untouched."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No schema changes."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new envelope is introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — Any transaction with a gas limit below `21000 + TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata`",
+       "summary": "The existing floor validity condition now uses 15."
+      },
+      {
+       "source": "supporting/eip-7623.md",
+       "locator": "Specification — considered invalid",
+       "summary": "The same condition already exists in the baseline."
+      }
+     ],
+     "rationale": "An existing validity bound changes value. There is no new dependency or sequence, so this is level 1.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — requires a scheduled network upgrade",
+       "summary": "Only a constant is selected at the fork. No state transition is needed."
+      }
+     ],
+     "rationale": "Selecting a rule or constant at the fork does not count.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — reduces this to approximately 0.72 MB",
+       "summary": "The change lowers the maximum calldata payload size. It does not add workload."
+      }
+     ],
+     "rationale": "Raising the floor shrinks the worst-case calldata bound. No additional or heavier workload needs validation.",
+     "confidence": "medium",
+     "uncertainty_note": "Confirming the reduced worst-case block size could be treated as a component check, which would make this level 1.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — no additional security concerns are introduced",
+       "summary": "The EIP claims no new attack vectors. Bundling considerations are inherited from EIP-7623."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — the floor price needs to be reserved in the transaction gas limit",
+       "summary": "The gas-limit reservation boundary changes."
+      }
+     ],
+     "rationale": "The changed condition is the consensus validity and reservation threshold. It can be checked locally and does not change other components' assumptions, so this is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "This could be 0 if a parameter change to an inherited check is not seen as security-sensitive.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — tx.gasUsed formula",
+       "summary": "The normative formula and validity rule are stated fully."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — `45s_000_000/40`",
+       "summary": "The typos and odd phrasing are in non-normative rationale only."
+      }
+     ],
+     "rationale": "No consensus-visible outcome is left unresolved. The rationale typos do not affect the normative rules.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — changes from EIP-7623's implementation",
+       "summary": "The target reuses EIP-7623's mechanism with a new constant."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — isContractCreation * (32000 + INITCODE_WORD_COST * words(calldata))",
+       "summary": "EIP-3860 initcode cost stays in the standard branch."
+      },
+      {
+       "source": "supporting/eip-3860.md",
+       "locator": "Rules — initcode_cost(initcode)",
+       "summary": "Defines the initcode word cost that is part of intrinsic gas for creation transactions."
+      }
+     ],
+     "rationale": "The interactions are local compatibility checks. EIP-7623's mechanism is re-parameterized, so its crossover and validity cases must be re-checked with 15, along with the transition from 10 to 15 at the fork. EIP-3860 initcode cost appears in creation transactions on the standard side of max() and in intrinsic gas. The interactions do not need restructuring or coordinated multi-EIP scenarios beyond those local checks.",
+     "confidence": "medium",
+     "uncertainty_note": "Fork-transition cases (floor of 10 before the fork, 15 after) could be argued to be coordinated cross-EIP cases with EIP-7623, which would make this level 2.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 7623,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Re-check the floor/standard crossover and the gas-limit validity boundary using 15 instead of 10. Include fork-transition cases where the same transaction gets a floor of 10 before the fork and 15 after."
+     },
+     {
+      "eip": 3860,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Contract-creation transactions near the new crossover, where the 32000 + 2 * words(initcode) term in the standard branch is compared against 15*tokens. Also check that the validity threshold takes the larger of intrinsic gas (including initcode cost) and the new floor."
+     }
+    ],
+    "unidentified_interactions": [
+     "Gas refunds: execution_gas_used is defined after subtracting the refund, so refund-heavy transactions can drop below the new floor (the refund rule's defining EIP is not supplied).",
+     "Other intrinsic-gas components of the conditional baseline (for example, other transaction types' intrinsic costs) enter the max(intrinsic, floor) validity check; these components are not specified in the supplied documents."
+    ]
+   },
+   "under_specification": {
+    "present": false,
+    "summary": "The normative specification is complete for a parameter change. The only problems are non-normative typos in the Rationale ('45s_000_000/40'; 'for non zero bytes and maintains proportional costs for non-zero bytes').",
+    "affected_criteria": [],
+    "unresolved_questions": []
+   },
+   "notable_ambiguities": [
+    "The Rationale contains the typo '45s_000_000/40' and the self-contradictory phrase 'for non zero bytes and maintains proportional costs for non-zero bytes'. Both are non-normative.",
+    "Test Case 4 (eth_estimateGas) is public JSON-RPC behavior, outside consensus execution-layer testing.",
+    "'Intrinsic gas cost' is not defined for every transaction type in the supplied documents. It is inherited from the baseline."
+   ],
+   "overall_confidence": "high"
+  },
+  "ttft_ms": 26703,
+  "type": "result",
+  "duration_ms": 71346,
+  "uuid": "61587199-18ce-41cb-a55f-69477f3fd60d",
+  "ttft_stream_ms": 1201,
+  "time_to_request_ms": 442,
+  "first_content_frame_ms": 1202,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

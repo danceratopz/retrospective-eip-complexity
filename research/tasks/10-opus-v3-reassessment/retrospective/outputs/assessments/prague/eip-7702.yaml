@@ -1,0 +1,689 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: prague
+eip:
+  number: 7702
+  title: Set Code for EOAs
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: This revision of EIP-7702 adds a new EIP-2718 transaction type whose payload
+    carries a list of `[contract_code, y_parity, r, s]` authorization tuples. When the transaction starts,
+    each tuple's signer is recovered with `ecrecover(keccak(MAGIC + contract_code), ...)`. The signer's
+    code must be empty; it is then set to `contract_code`, and the signer is added to the EIP-2929 `accessed_addresses`
+    set. Every signer's code is set back to empty when the transaction ends. Intrinsic gas is the EIP-2930
+    formula plus calldata-style per-byte costs over each `contract_code` and 5000 per tuple. The EIP adds
+    no opcodes, precompiles, system contracts or header fields.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/prague/eip-7702/manifest.yaml
+    manifest_sha256: e8160d1a0cba037936500d1f944f55d39f3327b6e55c24c0a5649f1dfa2460b4
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-7702/manifest.yaml
+    manifest_sha256: 15af644a677fbd125cc14e8f42620df4a65ab51d3c77a2c84ec3821d2370cb88
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: ad9ecb077cac50baf02350ac5d34efc87fdcdbdf
+    path: EIPS/eip-7702.md
+    committed_at: '2024-05-09T20:47:43Z'
+    git_blob_sha: 8534301caff92e1185bfcc9d0020877d09d356b9
+    content_sha256: ed08fdd82ff96de1912bddcd30e44e7ab32500bba439cebc6219e4ce634f405d
+    immutable_url: https://github.com/ethereum/EIPs/blob/ad9ecb077cac50baf02350ac5d34efc87fdcdbdf/EIPS/eip-7702.md
+    information_cutoff_at: '2024-05-23'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:47:33.984954Z'
+    session_id: assessment-run-fec80259-2d6d-4920-be80-fb555c616a34
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-20.md
+  - supporting/eip-2718.md
+  - supporting/eip-2929.md
+  - supporting/eip-2930.md
+  - supporting/eip-3074.md
+  - supporting/eip-4337.md
+  - supporting/eip-5003.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: c9da44fee8cf3cdb4f541187b8314b5aec838de55e82e61feee1cf0681f6c108
+    schema_sha256: f89611609ba867731932c7947bdde89525464c599a538a03851cd282b1f9a4ac
+    started_at: '2026-10-08T09:47:33.984954Z'
+    finished_at: '2026-10-08T09:50:42.763419Z'
+    duration_ms: 186804
+    num_turns: 3
+    usage:
+      input_tokens: 4
+      cache_creation_input_tokens: 65742
+      cache_read_input_tokens: 50933
+      output_tokens: 23618
+      output_tokens_details:
+        thinking_tokens: 5354
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 65742
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 9365
+        cache_read_input_tokens: 50933
+        cache_creation_input_tokens: 14809
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 14809
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 4
+        outputTokens: 23618
+        cacheReadInputTokens: 50933
+        cacheCreationInputTokens: 65742
+        webSearchRequests: 0
+        costUSD: 1.0084985999999998
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 5354
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 1.0084985999999998
+  assessor_raw_output:
+    path: retrospective/outputs/raw/prague/eip-7702.json
+    content_sha256: acf934baf25d377a5d5d36807888242eca16340cf074008cd2c4ac3e5e88d419
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "Additionally, we add a cost of `16 * non-zero calldata bytes + 4 * zero
+      calldata bytes` over each `contract_code`, plus `PER_CONTRACT_CODE_BASE_COST`"
+    summary: 'Adds a new intrinsic-gas component for the new transaction type: calldata-style pricing
+      over each contract_code plus 5000 per tuple.'
+  - source: eip.md
+    locator: Specification — "Add the `signer` account to `accessed_addresses`"
+    summary: Signers are pre-warmed, which changes cold/warm costs for later accesses to them, but only
+      inside the new transaction type.
+  rationale: The EIP adds a new intrinsic-gas accounting mechanism for authorization tuples, and signer
+    pre-warming uses the existing EIP-2929 mechanism. Both apply only to the new transaction type, so
+    existing rules and baseline gas results do not change. This fits level 2.
+  confidence: high
+  uncertainty_note: The text does not say whether the signer warming is reverted if the transaction later
+    fails; warming at transaction start is presumably not revertible.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "At the start of executing the transaction, for each [contract_code, y_parity,
+      r, s] tuple"
+    summary: The state accesses (reading signer code, setting code, warming) happen in transaction-level
+      processing, not inside any instruction.
+  - source: eip.md
+    locator: Rationale — "It does not require adding any opcodes"
+    summary: No instruction's sequence of access and gas charging is changed.
+  rationale: No opcode's state-access or gas-charge ordering changes. The new access sequence (recover,
+    check code, set code, warm) is transaction-level setup rather than instruction execution, so level
+    0 is the best fit.
+  confidence: medium
+  uncertainty_note: If the authorization processing were treated as a new state-accessing operation that
+    needs an ordering rule, level 2 could be argued.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — TransactionPayload
+    summary: The payload has no blob fields, and nothing about blob gas is specified.
+  rationale: Blob-gas accounting is not affected.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "PER_CONTRACT_CODE_BASE_COST = 5000"
+    summary: Writing temporary code is covered by a flat intrinsic charge, not by any state-gas mechanism.
+  - source: eip.md
+    locator: Specification — "At the end of the transaction, set the contract_code of each signer back
+      to empty."
+    summary: The code write is temporary; no state-byte accounting is introduced.
+  rationale: The EIP introduces no state-gas accounting, state-byte rates or budgets. Its flat per-tuple
+    cost is intrinsic execution gas and is scored under GAS.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund rule is mentioned, including when code is reset at the end of the transaction.
+  rationale: No new refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "As of FORK_BLOCK_NUMBER, a new EIP-2718 transaction is introduced"
+    summary: All new behavior is triggered only by the new transaction type.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: The broken invariant concerns account balances and mempool design, not the results of existing
+      execution tests.
+  rationale: Existing transaction types and opcode behaviors keep their inputs and expected results. The
+    new behavior is reached only through the new transaction type, so no baseline test family needs rework.
+  confidence: medium
+  uncertainty_note: Existing tests that assume an EOA can never execute code are application-level, not
+    baseline EL tests.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new header, receipt field, log or protocol-mandated write applies to existing tests.
+  rationale: Baseline tests need no new assertion.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "[[contract_code, y_parity, r, s], ...]"
+    summary: Transaction input to the state-transition tool needs a new authorization-list field.
+  rationale: One new semantic transaction-input field (the contract_code authorization list) must be passed.
+    No new tool mechanism or exchange sequence is required, so this is level 1.
+  confidence: medium
+  uncertainty_note: No transition-tool evidence was supplied. Whether recovered signers must be reported
+    in output is unspecified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "signer = ecrecover(keccak(MAGIC + contract_code), y_parity, r, s)"
+    summary: Tests must build and sign authorization tuples over a new MAGIC-prefixed message.
+  - source: eip.md
+    locator: Specification — "At the end of the transaction, set the contract_code of each signer back
+      to empty."
+    summary: Tests need checks on code that is temporary within the transaction, e.g. observed during
+      execution through EXTCODE* or calls and empty in the post-state.
+  rationale: The target suite needs a new construction abstraction (authorization tuples signed by arbitrary
+    keys and attached to the new transaction type). This is limited to the target's own test suite and
+    does not change how other families are built, so level 2.
+  confidence: medium
+  uncertainty_note: The actual capabilities of existing helpers are not evidenced.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "Let signer = ecrecover(keccak(MAGIC + contract_code), y_parity, r, s)"
+    summary: Adds a protocol-level secp256k1 signature recovery over a new message domain for each authorization
+      tuple.
+  - source: supporting/eip-3074.md
+    locator: AUTH Behavior — "Signature validity and signer recovery are handled analogously to transaction
+      signatures"
+    summary: Shows the established precedent for ECDSA recovery rules, including malleability limits,
+      in a related design. The target does not adopt these rules explicitly.
+  rationale: Exactly one established mechanism (secp256k1 ECDSA recovery with keccak) is added as a new
+    protocol validation site. Hashing and recovery primitives are unchanged, but the validity rules for
+    authorization signatures are new, so level 1.
+  confidence: medium
+  uncertainty_note: The s-range, y_parity range and handling of an invalid signature are not stated. If
+    reuse of an unchanged primitive is read as no new mechanism, the score would be 0.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — intrinsic cost paragraph
+    summary: Intrinsic gas now depends on tuple count and contract_code byte composition, so the gas-limit
+      boundary must be tested.
+  - source: eip.md
+    locator: Specification — "Verify that the contract code of signer is empty."
+    summary: Boundary on prior code state, including duplicate signers in one list (the second check sees
+      code already set) and empty versus non-empty code.
+  - source: eip.md
+    locator: Specification — "[[contract_code, y_parity, r, s], ...]"
+    summary: The list may be empty or contain empty contract_code. No size limits on contract_code or
+      the list are stated.
+  rationale: 'Several boundary-sensitive mechanisms are introduced: the intrinsic-gas threshold, the code-emptiness
+    check (including duplicates and order in the list), and signature-value bounds. An elevated matrix
+    is plausible (signer identity versus origin or destination × prior code × transaction outcome), but
+    the failure outcomes are unspecified, so level 2 is the best-supported score.'
+  confidence: medium
+  uncertainty_note: Once failure semantics are defined, interactions between signer identity, duplicate
+    entries and revert/reset behavior could justify level 3.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — TransactionPayload
+    summary: Block bodies must decode a new typed transaction with a nested authorization-tuple list.
+  - source: supporting/eip-2718.md
+    locator: Transactions
+    summary: Typed transactions in the block transaction trie use a type byte followed by an opaque payload.
+  rationale: Block import must accept and structurally decode one new transaction payload format, which
+    is a simple local rule. No header or cross-block validation changes, so level 1.
+  confidence: medium
+  uncertainty_note: Element-type constraints on the tuples (byte lengths, y_parity range) are not stated.
+    If they are enforced as several structural rules, level 2 could apply.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API changes; transactions travel as opaque typed bytes.
+  rationale: No Engine API field or endpoint changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No protocol-designated contract is introduced.
+  rationale: No system contract.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No existing system contract is referenced or changed.
+  rationale: No system contract is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — "It does not require adding any opcodes"
+    summary: Explicitly adds no opcodes.
+  rationale: No new instruction.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — Conversion of EIP-3074 use cases
+    summary: Uses existing calls and TSTORE/TLOAD unchanged; existing instructions only observe the temporarily
+      set code.
+  rationale: No instruction's specified semantics change. EXTCODE* and CALL into a signer behave normally
+    against the state that holds the temporary code.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is added.
+  rationale: No new precompile.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "ecrecover(...)"
+    summary: ecrecover is used as a protocol function; the precompile itself is not changed.
+  rationale: No precompile semantics or gas change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — "rlp([chain_id, nonce, max_priority_fee_per_gas, max_fee_per_gas, gas_limit,
+      destination, data, access_list, [[contract_code, y_parity, r, s], ...], signature_y_parity, signature_r,
+      signature_s])"
+    summary: Defines a new RLP transaction payload schema with a nested authorization-tuple list.
+  rationale: A new serialized transaction schema is defined.
+  confidence: high
+  uncertainty_note: The signing payload of the outer transaction and the receipt payload are not specified,
+    and the schema has no value field.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — "a new EIP-2718 transaction is introduced with TransactionType = TX_TYPE(TBD)"
+    summary: A new typed transaction envelope with a TBD type byte.
+  rationale: A new EIP-2718 transaction type is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — intrinsic cost paragraph
+    summary: New intrinsic-gas rule for the new transaction type.
+  - source: eip.md
+    locator: Specification — "Verify that the contract code of signer is empty."
+    summary: Adds a check on third-party (signer) account state. Its failure consequence (invalid transaction
+      or skipped tuple) is not stated.
+  rationale: The new transaction type and its intrinsic-gas rule need dedicated validity cases. These
+    can be built on the existing typed-transaction validation sequence, so level 2.
+  confidence: medium
+  uncertainty_note: If a failed code-emptiness or signature check makes the whole transaction invalid,
+    validity would depend on other accounts' state, possibly changed by earlier transactions in the block.
+    That would need coordinated multi-account/state scenarios and would reach level 3.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header or block-level field is added.
+  rationale: No header member is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Parameters — "FORK_BLKNUM = TBD"
+    summary: Activation only enables the new transaction type; no state migration or code installation
+      happens.
+  rationale: No activation-specific state transition is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — per-tuple processing steps
+    summary: Each tuple requires keccak plus ecrecover, a code read and a code write, followed by a code
+      reset at the end of the transaction.
+  - source: eip.md
+    locator: Parameters — "PER_CONTRACT_CODE_BASE_COST = 5000"
+    summary: A flat per-tuple cost bounds the workload. Contract_code size has no explicit cap beyond
+      calldata pricing.
+  rationale: Targeted integrated benchmarks are needed for transactions with many tuples. The bounded
+    interaction is signature recovery, code writes and reset of arbitrary-size code against the state/commitment
+    path, which must be checked against the 5000 per-tuple and calldata pricing. This is level 2.
+  confidence: medium
+  uncertainty_note: Without a code-size limit, the cost of setting and resetting large code depends on
+    client state handling.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility — "breaks the invariant that an account balance can only decrease
+      as a result of transactions originating from that account"
+    summary: Changes an invariant relied on by mempool design and other EIPs, such as inclusion lists.
+  - source: eip.md
+    locator: Specification — "keccak(MAGIC + contract_code)"
+    summary: The authorization signature covers no nonce or chain_id, so replay across transactions and
+      chains is possible within the rules.
+  - source: eip.md
+    locator: Security Considerations
+    summary: Shares EIP-3074's security considerations; wallets must be careful about which contract_code
+      they sign.
+  - source: supporting/eip-3074.md
+    locator: Allowing tx.origin as Signer
+    summary: Lists invariants (msg.sender == tx.origin checks, EOA detection) that delegated execution
+      of EOAs can break.
+  rationale: The EIP changes shared authorization and trust invariants across several components. EOAs
+    can execute arbitrary code signed once with no replay protection; balances can drop without the owner
+    sending a transaction (affecting mempool and inclusion lists); and EOA-versus-contract assumptions
+    in contracts change. Coordinated adversarial scenarios are needed, so level 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "Verify that the contract code of signer is empty."
+    summary: The outcome of a failed check (invalid transaction, aborted execution or skipped tuple) is
+      not stated. Invalid or unrecoverable signatures are likewise not handled.
+  - source: eip.md
+    locator: Specification — "At the end of the transaction, set the contract_code of each signer back
+      to empty."
+    summary: Silent on revert/failure paths and on storage or nonce changes made under the temporary code.
+  - source: eip.md
+    locator: Specification — TransactionPayload
+    summary: There is no value field. The outer signature hash, receipt payload, MAGIC and contract-creation
+      (empty destination) handling are unspecified.
+  rationale: 'Several localized, constructible outcomes have competing interpretations: failure handling
+    for verification and signatures, duplicate signers, persistence of storage written by temporary code,
+    and the missing value field. Expected results cannot be fixed until these are agreed, so level 2.'
+  confidence: medium
+  uncertainty_note: EOAs executing code and holding storage is newly observable behavior. If agreeing
+    on it required re-baselining across families, level 3 could be argued.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "Add the signer account to accessed_addresses (as defined in EIP-2929.)"
+    summary: Signer warming interacts with EIP-2929 cold/warm charging for CALL, EXTCODE* and BALANCE
+      targeting signers.
+  - source: eip.md
+    locator: Specification — "The intrinsic cost of the new transaction is inherited from EIP-2930"
+    summary: The access list and authorization tuples coexist; intrinsic-gas totals and duplicate warming
+      (signer also in the access list) need combined cases.
+  - source: supporting/eip-2718.md
+    locator: Transactions / Security Considerations
+    summary: The new type must fit the typed envelope and receipt rules and include the type in signed
+      data.
+  rationale: 'EIP-2929 and EIP-2930 need coordinated cases: warm/cold gas for signers, and signers that
+    also appear in the access list or as tx.origin or destination. EIP-2718 needs only local envelope
+    compatibility checks. This does not amount to coupled restructuring across many EIPs, so level 2.'
+  confidence: medium
+  uncertainty_note: The fee fields imply EIP-1559, and sender-with-code rules (EIP-3607) are relevant,
+    but neither is supplied or cited.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 2929
+  - 2930
+  - 2718
+  unidentified_interactions:
+  - The fee fields max_priority_fee_per_gas and max_fee_per_gas imply EIP-1559 fee rules, which are not
+    cited or supplied.
+  - 'Sender-with-code rejection (referenced in EIP-3074 as EIP-3607): a signer equal to tx.origin, and
+    later transactions from accounts whose code was reset.'
+  - Transient storage (TSTORE/TLOAD) used in the rationale's verify/execute pattern within temporary code.
+  - SELFDESTRUCT or code-modifying operations executed by temporary signer code, and their interaction
+    with the end-of-transaction reset.
+  - Inclusion lists and mempool designs affected by balances that can decrease without the owner sending
+    a transaction.
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 2929
+  - 2930
+  interaction_details:
+  - eip: 2929
+    interaction: coordinated_cases
+    cases: 'Signers pre-warmed at transaction start: cold/warm costs for CALL, EXTCODE* and BALANCE targeting
+      a signer; signer equal to tx.origin or destination (already warm); warming state after an inner
+      revert.'
+  - eip: 2930
+    interaction: coordinated_cases
+    cases: Intrinsic gas combining access-list items with tuple costs at the gas-limit boundary; a signer
+      address also in the access list (double charge, single warm entry); storage keys of a signer pre-warmed
+      for use by its temporary code.
+  - eip: 2718
+    interaction: local_compatibility_check
+    cases: New type byte in the envelope; matching receipt type; transaction and receipt tries containing
+      the new type.
+totals:
+  primary_score: 26
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: This early draft omits several consensus-relevant outcomes. It does not say what happens when
+    signature recovery or the code-emptiness check fails, including for duplicate signers. Behavior of
+    the code reset on revert is not specified, nor whether storage and nonce changes made under temporary
+    code persist. The payload has no value field, and the outer signing hash, receipt payload, MAGIC and
+    TX_TYPE are undefined. Authorization signatures carry no nonce or chain_id.
+  affected_criteria:
+  - state_access_ordering_within_opcode_execution
+  - cryptography
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - new_or_modified_transaction_validity_mechanisms
+  - unspecified_behavior_requiring_cross_client_consensus
+  criterion_ranges:
+  - criterion: state_access_ordering_within_opcode_execution
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: cryptography
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: edge_boundary_conditions
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: block_syncing_changes
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: new_or_modified_transaction_validity_mechanisms
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 2
+    maximum_score: 3
+  plausible_total_range:
+    minimum: 25
+    maximum: 33
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - Does a failed code-emptiness check or invalid signature make the transaction invalid, abort execution,
+    or skip the tuple?
+  - How is a signer that appears twice in one list handled, given that the second check sees code already
+    set?
+  - Is code reset at the end of the transaction also on revert or out-of-gas, and do storage or balance
+    changes made by temporary code persist?
+  - Where is the value field, or can value not be transferred?
+  - What hash does the outer transaction signature cover, and what is the receipt payload?
+  - Is contract creation (empty destination) allowed?
+  - Which signature validity bounds (s range, y_parity) apply to authorization tuples?
+  - Is there a size limit on contract_code?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- The payload has no value field despite having destination and data.
+- The authorization message keccak(MAGIC + contract_code) has no nonce or chain_id, so signatures are
+  replayable indefinitely and across chains.
+- The consequence of a failed 'Verify that the contract code of signer is empty' is not stated.
+- The fee-market fields assume EIP-1559, which is not listed in requires.
+- MAGIC, TX_TYPE and FORK_BLKNUM are TBD; FORK_BLKNUM and FORK_BLOCK_NUMBER are used inconsistently.
+- It is not stated whether a signer may equal tx.origin, or how sender-with-code rules interact with that
+  case.
+overall_confidence: medium

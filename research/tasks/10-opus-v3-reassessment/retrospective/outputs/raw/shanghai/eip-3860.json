@@ -1,0 +1,621 @@
+{
+ "case": "shanghai/3860",
+ "run_id": "assessment-run-a913ad75-2d1a-4311-9344-084ff586ac51",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:48:45.348692Z",
+ "finished_at": "2026-10-08T09:50:08.960616Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "3ea22f5bbbd6ff51a770c9c4be005a5c9546096c372da2033257b6979685b9bb",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "ab74e7e7a61d2b0363d634fc7bc3602ff583553065bbaa5a3d9bf46dccffb5da",
+ "output": {
+  "duration_api_ms": 81251,
+  "stop_reason": "tool_use",
+  "session_id": "93b2689b-e5ee-43d1-808c-71c3d338a8d4",
+  "total_cost_usd": 0.42672,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 28839,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 9800,
+   "output_tokens_details": {
+    "thinking_tokens": 3248
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 28839,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 9800,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 28839,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 28839
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 9800,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 28839,
+    "webSearchRequests": 0,
+    "costUSD": 0.42672,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 3248,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"At this revision, EIP-3860 sets MAX_INITCODE_SIZE = 2 * MAX_CODE_SIZE = 49152 bytes. It also adds initcode_cost = 2 * ceil(len(initcode)/32) gas. A create transaction whose initcode is larger than the limit is invalid, and initcode_cost is added to the create transaction's intrinsic gas. For CREATE and CREATE2, initcode larger than the limit pushes 0 on the stack, and initcode_cost is charged before address calculation and initcode execution. For CREATE2 this charge comes on top of the EIP-1014 hashcost.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 2\",\"summary\":\"The create transaction data cost formula is extended with initcode_cost(initcode) as part of intrinsic gas.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 4\",\"summary\":\"CREATE and CREATE2 are charged an extra initcode_cost(initcode).\"},{\"source\":\"eip.md\",\"locator\":\"Rationale / Gas cost per word, \\\"after activation `2` for `CREATE` and `6 + 2` for `CREATE2`\\\"\",\"summary\":\"The per-word charge for create operations changes from 0/6 to 2/8.\"}],\"rationale\":\"The EIP adds a new per-word initcode charge at two sites: intrinsic gas and the CREATE/CREATE2 opcodes. This changes the expected gas of baseline operations: every create transaction and every CREATE/CREATE2 with non-empty initcode. A new mechanism that also changes baseline gas results meets level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Because the charge reuses the existing per-word scheme used by CREATE2's hashcost, it could be read as only a parameter change (level 1).\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 4, \\\"deducted before the calculation of the resulting contract address and the execution of `initcode`\\\"\",\"summary\":\"The spec places the new charge relative to address derivation, which reads state such as the sender nonce.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 3\",\"summary\":\"A new early-failure check is added to CREATE and CREATE2. Its position relative to the nonce increment, balance/depth checks and access-list warming is not stated.\"}],\"rationale\":\"Both CREATE and CREATE2 need an ordering rule for the new size check and the new charge relative to the state they touch (sender nonce, created-address warming, endowment). Ordering changes for multiple opcodes meet level 2.\",\"confidence\":\"low\",\"uncertainty_note\":\"The charge may just join the existing upfront charges without changing any state-access ordering, which would make this 0. Where the limit check sits is unspecified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The spec does not mention blobs or blob gas.\"}],\"rationale\":\"Blob-gas accounting does not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation, \\\"Cost for the resulting deployed code: 200 gas per byte\\\"\",\"summary\":\"The cost of deployed code is cited as existing and is left unchanged.\"}],\"rationale\":\"The new charge covers jumpdest analysis, not state writes. State-gas accounting does not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund is introduced.\"}],\"rationale\":\"There is no refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rules 2 and 4\",\"summary\":\"Gas used by every create transaction and every CREATE/CREATE2 changes.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Transactions with initcode beyond the limit now behave differently.\"}],\"rationale\":\"Baseline tests for create-transaction intrinsic gas, CREATE gas and CREATE2 gas need new expected gas and balances, and large-initcode cases need new outcomes. This rework covers ordinary cases throughout the contract-creation families.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Any test that deploys via a create transaction sees changed gas and balances, so the impact could be broad enough for level 3.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new receipt, log, header or state output is introduced.\"}],\"rationale\":\"The changes are to gas and limits, which count as rework, not new assertions.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Parameters\",\"summary\":\"Only constants and rules change. No new inputs or outputs are needed.\"}],\"rationale\":\"Fork-aware rule selection needs no interface change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 2\",\"summary\":\"The intrinsic gas formula used by the framework must include initcode_cost for create transactions.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"Tests need initcode of exact lengths and exact gas limits.\"}],\"rationale\":\"The intrinsic-gas calculation needs a local extension. No new abstraction is required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"supporting/eip-1014.md\",\"locator\":\"Specification\",\"summary\":\"CREATE2 address hashing is unchanged. Only gas is added around it.\"}],\"rationale\":\"No cryptographic rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"The listed cases include MAX_INITCODE_SIZE and MAX_INITCODE_SIZE+1 for the transaction, CREATE and CREATE2, plus intrinsic gas with and without the initcode cost covered.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Parameters, \\\"ceil(len(initcode) / 32)\\\"\",\"summary\":\"The word-rounding boundary determines the cost.\"}],\"rationale\":\"There are several boundary-sensitive mechanisms: the transaction size limit, the opcode size limit, the per-word ceiling and the intrinsic-gas sufficiency threshold. None is shown to have an elevated matrix, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The spec does not settle how oversized initcode combines with gas sufficiency in CREATE/CREATE2. Does the size check or the OOG/initcode charge come first? If that ordering changes outcomes, the matrix could be elevated.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 1\",\"summary\":\"This is a transaction-validity rule, not a change to block RLP or structure.\"}],\"rationale\":\"Block decoding and structural validation are unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The Engine API is not mentioned.\"}],\"rationale\":\"There are no Engine API changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is involved.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules\",\"summary\":\"Only the existing CREATE and CREATE2 are affected.\"}],\"rationale\":\"No new instruction is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 3, \\\"instruction results in `0` value pushed on stack\\\"\",\"summary\":\"CREATE and CREATE2 gain a new failure outcome for oversized initcode.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale / How to report initcode limit violation?\",\"summary\":\"The spec chooses to push 0 rather than abort exceptionally.\"}],\"rationale\":\"A new size-limit failure in CREATE and CREATE2 changes their semantics beyond gas.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No serialized schema changes.\"}],\"rationale\":\"There are no codec changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 1\",\"summary\":\"The rule applies to existing create transactions.\"}],\"rationale\":\"No new transaction envelope is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 1\",\"summary\":\"A create transaction with initcode over MAX_INITCODE_SIZE is invalid.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 2, \\\"transaction with not enough gas to cover initcode cost is invalid\\\"\",\"summary\":\"The intrinsic-gas validity rule changes.\"}],\"rationale\":\"There is a new size-based validity rule and a changed intrinsic gas rule for create transactions. Both need dedicated cases across existing transaction types, but the existing validation sequence stays usable.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The Backwards Compatibility text says oversized transactions are still includable but abort, which contradicts rule 1. The outcome depends on which text is followed.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header field is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility, \\\"requires a 'network upgrade'\\\"\",\"summary\":\"Only the rules switch at the fork. There is no state migration.\"}],\"rationale\":\"Selecting new rules at activation is not an activation-specific transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale / Gas cost constant\",\"summary\":\"The cost was derived from jumpdest-analysis benchmarks compared against KECCAK256.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations, \\\"~1.3GB of initcode\\\"\",\"summary\":\"The worst-case jumpdest-analysis workload is now bounded and priced.\"}],\"rationale\":\"Validating the per-word cost against the bounded worst case needs component benchmarks of jumpdest analysis. Baseline end-to-end assumptions are unchanged.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations\",\"summary\":\"The change reduces DoS risk from jumpdest analysis and adds new failure modes for factory contracts.\"}],\"rationale\":\"The new limit and charge can be checked locally in the create paths.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility, \\\"would still be includable in a block, but result in an exceptional abort\\\"\",\"summary\":\"This contradicts rule 1, which says such transactions are invalid.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Rules, rule 3\",\"summary\":\"For oversized initcode, the spec does not say whether initcode_cost or memory expansion gas is charged, whether the sender nonce is incremented, or how the check is ordered against other create failure checks.\"}],\"rationale\":\"Rules conflict on whether oversized create transactions are invalid or includable-but-aborting. The CREATE/CREATE2 failure path also leaves localized outcomes (gas, nonce, ordering) open. Clients must agree before expected results can be fixed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Rule 1 is normative and probably prevails over the Backwards Compatibility text.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract, \\\"We extend EIP-170\\\"\",\"summary\":\"The initcode limit is defined as 2 * MAX_CODE_SIZE.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale / Gas cost per word\",\"summary\":\"CREATE2 charges 6 + 2 per word, combining with the EIP-1014 hashcost.\"},{\"source\":\"supporting/eip-1014.md\",\"locator\":\"Specification, \\\"hashcost ... deducted ... before evaluation of the resulting address\\\"\",\"summary\":\"Defines the timing of the hashcost, which the new charge must be coordinated with.\"}],\"rationale\":\"CREATE2 tests need coordinated cases where the EIP-1014 hashcost and the new initcode cost are combined at gas and size boundaries. The EIP-170 interaction needs only compatibility checks.\",\"confidence\":\"medium\",\"uncertainty_note\":\"EIP-3670 is only referenced as future work and is not in the baseline.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":1014,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"CREATE2 gas with hashcost (6/word) plus initcode_cost (2/word) at word-rounding boundaries, including exact-gas sufficiency. CREATE2 at MAX_INITCODE_SIZE and +1. Check that the charge happens before address derivation.\"},{\"eip\":170,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Check that initcode within 49152 bytes that returns code over 24576 bytes still fails under EIP-170, and that the limit is derived from MAX_CODE_SIZE.\"}],\"unidentified_interactions\":[\"The EIP-2929-style warming of the created address relative to the oversized-initcode failure is not addressed.\",\"The new rules apply to create transactions of every existing transaction type (legacy and typed). The calldata cost (4/16 gas per byte) adds to the new intrinsic cost.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The rules conflict on whether an oversized create transaction is invalid (rule 1) or includable with an exceptional abort (Backwards Compatibility). The failure path for oversized CREATE/CREATE2 initcode does not say how gas is charged, what happens to the nonce, or how the check is ordered.\",\"affected_criteria\":[{\"criterion\":\"state_access_ordering_within_opcode_execution\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"Is an oversized create transaction invalid, or includable but aborting?\",\"For oversized CREATE/CREATE2 initcode, are initcode_cost and memory expansion charged before the check pushes 0?\",\"Is the sender nonce incremented, or the target address warmed, when the size check fails?\",\"How is the size check ordered against the balance, call-depth and gas checks?\",\"Is the gas passed to the child frame consumed when the size check fails?\"]},\"notable_ambiguities\":[\"Backwards Compatibility contradicts Rule 1 on how oversized create transactions are handled.\",\"The Rationale contains a TODO: the maximum initcode size seen on mainnet is not stated.\",\"It is unclear whether 'push 0' for oversized initcode also consumes gas or clears return data.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "At this revision, EIP-3860 sets MAX_INITCODE_SIZE = 2 * MAX_CODE_SIZE = 49152 bytes. It also adds initcode_cost = 2 * ceil(len(initcode)/32) gas. A create transaction whose initcode is larger than the limit is invalid, and initcode_cost is added to the create transaction's intrinsic gas. For CREATE and CREATE2, initcode larger than the limit pushes 0 on the stack, and initcode_cost is charged before address calculation and initcode execution. For CREATE2 this charge comes on top of the EIP-1014 hashcost.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 2",
+       "summary": "The create transaction data cost formula is extended with initcode_cost(initcode) as part of intrinsic gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 4",
+       "summary": "CREATE and CREATE2 are charged an extra initcode_cost(initcode)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Gas cost per word, \"after activation `2` for `CREATE` and `6 + 2` for `CREATE2`\"",
+       "summary": "The per-word charge for create operations changes from 0/6 to 2/8."
+      }
+     ],
+     "rationale": "The EIP adds a new per-word initcode charge at two sites: intrinsic gas and the CREATE/CREATE2 opcodes. This changes the expected gas of baseline operations: every create transaction and every CREATE/CREATE2 with non-empty initcode. A new mechanism that also changes baseline gas results meets level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "Because the charge reuses the existing per-word scheme used by CREATE2's hashcost, it could be read as only a parameter change (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 4, \"deducted before the calculation of the resulting contract address and the execution of `initcode`\"",
+       "summary": "The spec places the new charge relative to address derivation, which reads state such as the sender nonce."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 3",
+       "summary": "A new early-failure check is added to CREATE and CREATE2. Its position relative to the nonce increment, balance/depth checks and access-list warming is not stated."
+      }
+     ],
+     "rationale": "Both CREATE and CREATE2 need an ordering rule for the new size check and the new charge relative to the state they touch (sender nonce, created-address warming, endowment). Ordering changes for multiple opcodes meet level 2.",
+     "confidence": "low",
+     "uncertainty_note": "The charge may just join the existing upfront charges without changing any state-access ordering, which would make this 0. Where the limit check sits is unspecified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The spec does not mention blobs or blob gas."
+      }
+     ],
+     "rationale": "Blob-gas accounting does not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation, \"Cost for the resulting deployed code: 200 gas per byte\"",
+       "summary": "The cost of deployed code is cited as existing and is left unchanged."
+      }
+     ],
+     "rationale": "The new charge covers jumpdest analysis, not state writes. State-gas accounting does not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund is introduced."
+      }
+     ],
+     "rationale": "There is no refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rules 2 and 4",
+       "summary": "Gas used by every create transaction and every CREATE/CREATE2 changes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Transactions with initcode beyond the limit now behave differently."
+      }
+     ],
+     "rationale": "Baseline tests for create-transaction intrinsic gas, CREATE gas and CREATE2 gas need new expected gas and balances, and large-initcode cases need new outcomes. This rework covers ordinary cases throughout the contract-creation families.",
+     "confidence": "medium",
+     "uncertainty_note": "Any test that deploys via a create transaction sees changed gas and balances, so the impact could be broad enough for level 3.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new receipt, log, header or state output is introduced."
+      }
+     ],
+     "rationale": "The changes are to gas and limits, which count as rework, not new assertions.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Parameters",
+       "summary": "Only constants and rules change. No new inputs or outputs are needed."
+      }
+     ],
+     "rationale": "Fork-aware rule selection needs no interface change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 2",
+       "summary": "The intrinsic gas formula used by the framework must include initcode_cost for create transactions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "Tests need initcode of exact lengths and exact gas limits."
+      }
+     ],
+     "rationale": "The intrinsic-gas calculation needs a local extension. No new abstraction is required.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "supporting/eip-1014.md",
+       "locator": "Specification",
+       "summary": "CREATE2 address hashing is unchanged. Only gas is added around it."
+      }
+     ],
+     "rationale": "No cryptographic rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "The listed cases include MAX_INITCODE_SIZE and MAX_INITCODE_SIZE+1 for the transaction, CREATE and CREATE2, plus intrinsic gas with and without the initcode cost covered."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Parameters, \"ceil(len(initcode) / 32)\"",
+       "summary": "The word-rounding boundary determines the cost."
+      }
+     ],
+     "rationale": "There are several boundary-sensitive mechanisms: the transaction size limit, the opcode size limit, the per-word ceiling and the intrinsic-gas sufficiency threshold. None is shown to have an elevated matrix, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "The spec does not settle how oversized initcode combines with gas sufficiency in CREATE/CREATE2. Does the size check or the OOG/initcode charge come first? If that ordering changes outcomes, the matrix could be elevated.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 1",
+       "summary": "This is a transaction-validity rule, not a change to block RLP or structure."
+      }
+     ],
+     "rationale": "Block decoding and structural validation are unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The Engine API is not mentioned."
+      }
+     ],
+     "rationale": "There are no Engine API changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is involved."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules",
+       "summary": "Only the existing CREATE and CREATE2 are affected."
+      }
+     ],
+     "rationale": "No new instruction is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 3, \"instruction results in `0` value pushed on stack\"",
+       "summary": "CREATE and CREATE2 gain a new failure outcome for oversized initcode."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale / How to report initcode limit violation?",
+       "summary": "The spec chooses to push 0 rather than abort exceptionally."
+      }
+     ],
+     "rationale": "A new size-limit failure in CREATE and CREATE2 changes their semantics beyond gas.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No serialized schema changes."
+      }
+     ],
+     "rationale": "There are no codec changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 1",
+       "summary": "The rule applies to existing create transactions."
+      }
+     ],
+     "rationale": "No new transaction envelope is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 1",
+       "summary": "A create transaction with initcode over MAX_INITCODE_SIZE is invalid."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 2, \"transaction with not enough gas to cover initcode cost is invalid\"",
+       "summary": "The intrinsic-gas validity rule changes."
+      }
+     ],
+     "rationale": "There is a new size-based validity rule and a changed intrinsic gas rule for create transactions. Both need dedicated cases across existing transaction types, but the existing validation sequence stays usable.",
+     "confidence": "medium",
+     "uncertainty_note": "The Backwards Compatibility text says oversized transactions are still includable but abort, which contradicts rule 1. The outcome depends on which text is followed.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header field is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility, \"requires a 'network upgrade'\"",
+       "summary": "Only the rules switch at the fork. There is no state migration."
+      }
+     ],
+     "rationale": "Selecting new rules at activation is not an activation-specific transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Gas cost constant",
+       "summary": "The cost was derived from jumpdest-analysis benchmarks compared against KECCAK256."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations, \"~1.3GB of initcode\"",
+       "summary": "The worst-case jumpdest-analysis workload is now bounded and priced."
+      }
+     ],
+     "rationale": "Validating the per-word cost against the bounded worst case needs component benchmarks of jumpdest analysis. Baseline end-to-end assumptions are unchanged.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations",
+       "summary": "The change reduces DoS risk from jumpdest analysis and adds new failure modes for factory contracts."
+      }
+     ],
+     "rationale": "The new limit and charge can be checked locally in the create paths.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility, \"would still be includable in a block, but result in an exceptional abort\"",
+       "summary": "This contradicts rule 1, which says such transactions are invalid."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Rules, rule 3",
+       "summary": "For oversized initcode, the spec does not say whether initcode_cost or memory expansion gas is charged, whether the sender nonce is incremented, or how the check is ordered against other create failure checks."
+      }
+     ],
+     "rationale": "Rules conflict on whether oversized create transactions are invalid or includable-but-aborting. The CREATE/CREATE2 failure path also leaves localized outcomes (gas, nonce, ordering) open. Clients must agree before expected results can be fixed.",
+     "confidence": "medium",
+     "uncertainty_note": "Rule 1 is normative and probably prevails over the Backwards Compatibility text.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract, \"We extend EIP-170\"",
+       "summary": "The initcode limit is defined as 2 * MAX_CODE_SIZE."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Gas cost per word",
+       "summary": "CREATE2 charges 6 + 2 per word, combining with the EIP-1014 hashcost."
+      },
+      {
+       "source": "supporting/eip-1014.md",
+       "locator": "Specification, \"hashcost ... deducted ... before evaluation of the resulting address\"",
+       "summary": "Defines the timing of the hashcost, which the new charge must be coordinated with."
+      }
+     ],
+     "rationale": "CREATE2 tests need coordinated cases where the EIP-1014 hashcost and the new initcode cost are combined at gas and size boundaries. The EIP-170 interaction needs only compatibility checks.",
+     "confidence": "medium",
+     "uncertainty_note": "EIP-3670 is only referenced as future work and is not in the baseline.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 1014,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "CREATE2 gas with hashcost (6/word) plus initcode_cost (2/word) at word-rounding boundaries, including exact-gas sufficiency. CREATE2 at MAX_INITCODE_SIZE and +1. Check that the charge happens before address derivation."
+     },
+     {
+      "eip": 170,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Check that initcode within 49152 bytes that returns code over 24576 bytes still fails under EIP-170, and that the limit is derived from MAX_CODE_SIZE."
+     }
+    ],
+    "unidentified_interactions": [
+     "The EIP-2929-style warming of the created address relative to the oversized-initcode failure is not addressed.",
+     "The new rules apply to create transactions of every existing transaction type (legacy and typed). The calldata cost (4/16 gas per byte) adds to the new intrinsic cost."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The rules conflict on whether an oversized create transaction is invalid (rule 1) or includable with an exceptional abort (Backwards Compatibility). The failure path for oversized CREATE/CREATE2 initcode does not say how gas is charged, what happens to the nonce, or how the check is ordered.",
+    "affected_criteria": [
+     {
+      "criterion": "state_access_ordering_within_opcode_execution",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Is an oversized create transaction invalid, or includable but aborting?",
+     "For oversized CREATE/CREATE2 initcode, are initcode_cost and memory expansion charged before the check pushes 0?",
+     "Is the sender nonce incremented, or the target address warmed, when the size check fails?",
+     "How is the size check ordered against the balance, call-depth and gas checks?",
+     "Is the gas passed to the child frame consumed when the size check fails?"
+    ]
+   },
+   "notable_ambiguities": [
+    "Backwards Compatibility contradicts Rule 1 on how oversized create transactions are handled.",
+    "The Rationale contains a TODO: the maximum initcode size seen on mainnet is not stated.",
+    "It is unclear whether 'push 0' for oversized initcode also consumes gas or clears return data."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 32697,
+  "type": "result",
+  "duration_ms": 81675,
+  "uuid": "649a1dbb-ef4a-4b6b-b9c5-7add0ea01662",
+  "ttft_stream_ms": 1468,
+  "time_to_request_ms": 421,
+  "first_content_frame_ms": 1468,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

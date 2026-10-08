@@ -1,0 +1,598 @@
+{
+ "case": "amsterdam/8024",
+ "run_id": "assessment-run-883d982f-5b83-4256-bf11-6ffbcb99941e",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:34:08.302524Z",
+ "finished_at": "2026-10-08T09:35:17.413207Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "f2353262d18d710c08b83e094ff6cf19a07c32e0dc1cb757ba8fb0c89e07edba",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "bcb100bd4478a09accb66847b37216997305a5ebae592644a614af51ec852d9d",
+ "output": {
+  "duration_api_ms": 66729,
+  "stop_reason": "tool_use",
+  "session_id": "f1bd9ca6-54b8-4202-ae60-10b9b911faf4",
+  "total_cost_usd": 0.28603140000000005,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 15397,
+   "cache_read_input_tokens": 10537,
+   "output_tokens": 8037,
+   "output_tokens_details": {
+    "thinking_tokens": 2054
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 15397,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 8037,
+     "cache_read_input_tokens": 10537,
+     "cache_creation_input_tokens": 15397,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 15397
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 8037,
+    "cacheReadInputTokens": 10537,
+    "cacheCreationInputTokens": 15397,
+    "webSearchRequests": 0,
+    "costUSD": 0.28603140000000005,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 2054,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8024, at this revision, adds three legacy EVM instructions: DUPN (0xe6), SWAPN (0xe7) and EXCHANGE (0xe8). Each takes a 1-byte immediate and costs a constant 3 gas. DUPN and SWAPN reach stack items 17–235, and EXCHANGE swaps defined (n, m) pairs within the top 30 items. The immediate is decoded by decode_single or decode_pair. Immediates in the ranges 91–127 (DUPN/SWAPN) and 80–127 (EXCHANGE) cause a halt that consumes all gas. These ranges are excluded so that JUMPDEST analysis stays unchanged and no existing jump target is created or removed.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Charge 3 gas.\\\"\",\"summary\":\"Each new opcode charges a constant 3 gas through the ordinary static-cost path.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale / Gas cost\",\"summary\":\"The cost matches the existing DUP*/SWAP* instructions.\"}],\"rationale\":\"The new instructions only have constant per-opcode costs. No accounting rule or baseline gas result changes, so this is level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The instructions only touch the stack and code bytes; they access no state.\"}],\"rationale\":\"No state is accessed and no instruction's access ordering changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Nothing relates to blobs.\"}],\"rationale\":\"No blob-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Stack-only instructions with no state writes.\"}],\"rationale\":\"No state-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund is mentioned.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"DUPN (0xe6) SWAPN (0xe7) EXCHANGE (0xe8)\\\"\",\"summary\":\"Previously undefined opcode bytes now execute when followed by a valid immediate.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Only contracts that attempt to execute these opcodes are affected.\"}],\"rationale\":\"Baseline tests that treat 0xe6–0xe8 as undefined and expect an exceptional halt must now expect execution when the immediate is valid. That rework is confined to a few cases in the undefined-opcode family, so this is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No test suite was supplied, so the number of affected undefined-opcode tests is estimated.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The EIP adds no new outputs such as logs, header fields or receipt fields.\"}],\"rationale\":\"Baseline tests need no new assertion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only EVM execution semantics change; no new inputs or outputs.\"}],\"rationale\":\"The transition tool's interface does not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — encode_single / encode_pair\",\"summary\":\"Assemblers must emit an encoded 1-byte immediate after each opcode.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases / Assembly/Disassembly\",\"summary\":\"Bytecode must be assembled, and disassembled, using the immediate encoding, including the invalid-immediate forms.\"}],\"rationale\":\"The framework's opcode and bytecode builder needs a local extension to encode the operand-to-immediate mapping, and to emit raw invalid immediates. No new abstraction is required, so this is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Existing support for opcodes with immediates is assumed to extend; actual helper availability was not supplied.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No cryptographic operations.\"}],\"rationale\":\"No cryptography is added or changed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"If 90 < x < 128 revert\\\" / \\\"If 79 < x < 128 revert\\\"\",\"summary\":\"Each opcode has a range of invalid immediates with boundaries at 90/91, 127/128 and 79/80.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — decode_single / decode_pair\",\"summary\":\"The piecewise mappings have branch boundaries (x≤90 vs ≥128; the q<r branch; k=x vs x−48).\"},{\"source\":\"eip.md\",\"locator\":\"Rationale / Disallowed immediate range\",\"summary\":\"The JUMPDEST and PUSH bytes used as immediates mark a compatibility boundary.\"}],\"rationale\":\"Several independent boundary-sensitive mechanisms are introduced: the invalid-immediate ranges for each opcode, the piecewise decode branches, stack-depth reachability (n relative to stack height, and DUPN at 1024 items), and the JUMPDEST/PUSH compatibility boundary. None forms an elevated matrix whose combinations cannot be tested separately, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Stack underflow/overflow and an immediate past the end of the code are not stated explicitly, though general EVM rules imply exceptional halts.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No block structure or decoding changes.\"}],\"rationale\":\"No block RLP or structural validation changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only EVM execution changes.\"}],\"rationale\":\"No Engine API changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is introduced.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is referenced.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"We introduce three new instructions\\\"\",\"summary\":\"DUPN, SWAPN and EXCHANGE are new instructions.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Let x = code[pc + 1]\\\"\",\"summary\":\"Each instruction has immediate data, operand-dependent stack access and an invalid-immediate halt.\"}],\"rationale\":\"Multiple instructions are introduced, and all of them are complex because they carry immediate data. This is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"JUMPDEST analysis is unchanged\\\"\",\"summary\":\"Existing instructions and jump-target analysis are unchanged.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Contracts that never execute the new opcodes are unaffected.\"}],\"rationale\":\"Only previously undefined bytes gain meaning, which is counted under Added opcodes. No existing instruction's semantics or availability changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is introduced.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is changed.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only the bytecode immediate encoding is defined; no serialized EL object changes.\"}],\"rationale\":\"The immediate encoding is part of contract bytecode, not a protocol serialization schema.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction type is introduced.\"}],\"rationale\":\"None introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only execution-time opcode semantics change.\"}],\"rationale\":\"No transaction-validity or intrinsic-gas changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"No state migration is needed; this is only a rule selection at the fork.\"}],\"rationale\":\"No activation-specific state transition is required.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale / Gas cost\",\"summary\":\"The constant 3 gas assumes the operations are pointer swaps with negligible decoding cost.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations\",\"summary\":\"The stack is fixed at 1024 items and kept in memory.\"}],\"rationale\":\"Component benchmarks of deep DUPN, SWAPN and EXCHANGE are enough to confirm that 3 gas is adequate, including immediate decoding at stack depths up to 235. No end-to-end performance assumptions change, so this is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"This could be 0 if benchmarking is considered unnecessary given the parity with DUP/SWAP.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale / Disallowed immediate range\",\"summary\":\"No JUMPDEST may be created or removed in any bytecode by introducing these instructions.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"JUMPDEST analysis is unchanged\\\"\",\"summary\":\"Clients must not treat the immediate byte as skipped in jump-destination analysis.\"}],\"rationale\":\"The new security condition, preserving jump-target analysis and halting on invalid immediates, can be checked locally within the EVM interpreter and its jumpdest analysis. This is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"revert, consuming all gas\\\"\",\"summary\":\"The text says \\\"revert\\\" while also requiring all gas to be consumed, which implies an exceptional halt rather than a REVERT.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — DUPN/SWAPN/EXCHANGE steps\",\"summary\":\"Stack underflow (n beyond stack height), DUPN overflow at 1024, and an immediate beyond the end of the code are not addressed explicitly.\"}],\"rationale\":\"Several localized details are omitted, but general EVM rules support one intended outcome for each: exceptional halt on underflow/overflow, and zero-padded code for a missing immediate. Because every failure path consumes all gas, the order of checks is not observable. This is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If clients disagree on how to read an immediate past the end of the code, or on the meaning of \\\"revert\\\", this would rise to level 2.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — \\\"e65f is [INVALID_DUPN, PUSH0]\\\"\",\"summary\":\"Invalid-immediate handling interacts with the PUSH0 byte and with PUSH1–PUSH32 data.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale / Disallowed immediate range\",\"summary\":\"Compatibility with JUMPDEST analysis and PUSH data must be preserved.\"}],\"rationale\":\"Only local compatibility checks with existing opcode and jump-analysis behavior are needed. The target's behavior can otherwise be tested on its own, so this is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The candidate list is empty, so the interactions are recorded without EIP numbers.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[],\"unidentified_interactions\":[\"The legacy JUMPDEST analysis and PUSH1–PUSH32 data handling: an invalid DUPN/SWAPN/EXCHANGE immediate must leave a following JUMPDEST valid and PUSH data intact. These are local compatibility checks only.\",\"The PUSH0 byte (0x5f) used as an immediate must decode as INVALID_* followed by PUSH0. This is a local compatibility check only.\"]},\"under_specification\":{\"present\":true,\"summary\":\"There are minor, localized omissions: stack underflow/overflow handling, how an immediate past the end of the code is read, and the use of the word \\\"revert\\\" alongside \\\"consuming all gas\\\". General EVM conventions resolve each of these to a single outcome.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":2,\"maximum_score\":2}],\"unresolved_questions\":[\"What happens when the opcode is the last byte of the code: is the missing immediate read as 0 (DUPN 17, and so on)?\",\"Is the invalid-immediate failure an exceptional halt, or a REVERT with return data, given that it consumes all gas?\",\"Stack underflow when n exceeds the stack height, and DUPN overflow at 1024 items, are not stated explicitly.\"]},\"notable_ambiguities\":[\"The word \\\"revert\\\" is used for invalid immediates while also requiring all gas to be consumed.\",\"Reading an immediate at code[pc+1] beyond the end of the code is not specified.\",\"Stack underflow/overflow conditions are not stated in the formal steps.\"],\"overall_confidence\":\"high\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8024, at this revision, adds three legacy EVM instructions: DUPN (0xe6), SWAPN (0xe7) and EXCHANGE (0xe8). Each takes a 1-byte immediate and costs a constant 3 gas. DUPN and SWAPN reach stack items 17–235, and EXCHANGE swaps defined (n, m) pairs within the top 30 items. The immediate is decoded by decode_single or decode_pair. Immediates in the ranges 91–127 (DUPN/SWAPN) and 80–127 (EXCHANGE) cause a halt that consumes all gas. These ranges are excluded so that JUMPDEST analysis stays unchanged and no existing jump target is created or removed.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Charge 3 gas.\"",
+       "summary": "Each new opcode charges a constant 3 gas through the ordinary static-cost path."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Gas cost",
+       "summary": "The cost matches the existing DUP*/SWAP* instructions."
+      }
+     ],
+     "rationale": "The new instructions only have constant per-opcode costs. No accounting rule or baseline gas result changes, so this is level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The instructions only touch the stack and code bytes; they access no state."
+      }
+     ],
+     "rationale": "No state is accessed and no instruction's access ordering changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Nothing relates to blobs."
+      }
+     ],
+     "rationale": "No blob-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Stack-only instructions with no state writes."
+      }
+     ],
+     "rationale": "No state-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund is mentioned."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"DUPN (0xe6) SWAPN (0xe7) EXCHANGE (0xe8)\"",
+       "summary": "Previously undefined opcode bytes now execute when followed by a valid immediate."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Only contracts that attempt to execute these opcodes are affected."
+      }
+     ],
+     "rationale": "Baseline tests that treat 0xe6–0xe8 as undefined and expect an exceptional halt must now expect execution when the immediate is valid. That rework is confined to a few cases in the undefined-opcode family, so this is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "No test suite was supplied, so the number of affected undefined-opcode tests is estimated.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The EIP adds no new outputs such as logs, header fields or receipt fields."
+      }
+     ],
+     "rationale": "Baseline tests need no new assertion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only EVM execution semantics change; no new inputs or outputs."
+      }
+     ],
+     "rationale": "The transition tool's interface does not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — encode_single / encode_pair",
+       "summary": "Assemblers must emit an encoded 1-byte immediate after each opcode."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases / Assembly/Disassembly",
+       "summary": "Bytecode must be assembled, and disassembled, using the immediate encoding, including the invalid-immediate forms."
+      }
+     ],
+     "rationale": "The framework's opcode and bytecode builder needs a local extension to encode the operand-to-immediate mapping, and to emit raw invalid immediates. No new abstraction is required, so this is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "Existing support for opcodes with immediates is assumed to extend; actual helper availability was not supplied.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No cryptographic operations."
+      }
+     ],
+     "rationale": "No cryptography is added or changed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"If 90 < x < 128 revert\" / \"If 79 < x < 128 revert\"",
+       "summary": "Each opcode has a range of invalid immediates with boundaries at 90/91, 127/128 and 79/80."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — decode_single / decode_pair",
+       "summary": "The piecewise mappings have branch boundaries (x≤90 vs ≥128; the q<r branch; k=x vs x−48)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Disallowed immediate range",
+       "summary": "The JUMPDEST and PUSH bytes used as immediates mark a compatibility boundary."
+      }
+     ],
+     "rationale": "Several independent boundary-sensitive mechanisms are introduced: the invalid-immediate ranges for each opcode, the piecewise decode branches, stack-depth reachability (n relative to stack height, and DUPN at 1024 items), and the JUMPDEST/PUSH compatibility boundary. None forms an elevated matrix whose combinations cannot be tested separately, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Stack underflow/overflow and an immediate past the end of the code are not stated explicitly, though general EVM rules imply exceptional halts.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No block structure or decoding changes."
+      }
+     ],
+     "rationale": "No block RLP or structural validation changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only EVM execution changes."
+      }
+     ],
+     "rationale": "No Engine API changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is introduced."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is referenced."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"We introduce three new instructions\"",
+       "summary": "DUPN, SWAPN and EXCHANGE are new instructions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Let x = code[pc + 1]\"",
+       "summary": "Each instruction has immediate data, operand-dependent stack access and an invalid-immediate halt."
+      }
+     ],
+     "rationale": "Multiple instructions are introduced, and all of them are complex because they carry immediate data. This is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"JUMPDEST analysis is unchanged\"",
+       "summary": "Existing instructions and jump-target analysis are unchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Contracts that never execute the new opcodes are unaffected."
+      }
+     ],
+     "rationale": "Only previously undefined bytes gain meaning, which is counted under Added opcodes. No existing instruction's semantics or availability changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is introduced."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is changed."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only the bytecode immediate encoding is defined; no serialized EL object changes."
+      }
+     ],
+     "rationale": "The immediate encoding is part of contract bytecode, not a protocol serialization schema.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction type is introduced."
+      }
+     ],
+     "rationale": "None introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only execution-time opcode semantics change."
+      }
+     ],
+     "rationale": "No transaction-validity or intrinsic-gas changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "No state migration is needed; this is only a rule selection at the fork."
+      }
+     ],
+     "rationale": "No activation-specific state transition is required.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Gas cost",
+       "summary": "The constant 3 gas assumes the operations are pointer swaps with negligible decoding cost."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations",
+       "summary": "The stack is fixed at 1024 items and kept in memory."
+      }
+     ],
+     "rationale": "Component benchmarks of deep DUPN, SWAPN and EXCHANGE are enough to confirm that 3 gas is adequate, including immediate decoding at stack depths up to 235. No end-to-end performance assumptions change, so this is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "This could be 0 if benchmarking is considered unnecessary given the parity with DUP/SWAP.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Disallowed immediate range",
+       "summary": "No JUMPDEST may be created or removed in any bytecode by introducing these instructions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"JUMPDEST analysis is unchanged\"",
+       "summary": "Clients must not treat the immediate byte as skipped in jump-destination analysis."
+      }
+     ],
+     "rationale": "The new security condition, preserving jump-target analysis and halting on invalid immediates, can be checked locally within the EVM interpreter and its jumpdest analysis. This is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"revert, consuming all gas\"",
+       "summary": "The text says \"revert\" while also requiring all gas to be consumed, which implies an exceptional halt rather than a REVERT."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — DUPN/SWAPN/EXCHANGE steps",
+       "summary": "Stack underflow (n beyond stack height), DUPN overflow at 1024, and an immediate beyond the end of the code are not addressed explicitly."
+      }
+     ],
+     "rationale": "Several localized details are omitted, but general EVM rules support one intended outcome for each: exceptional halt on underflow/overflow, and zero-padded code for a missing immediate. Because every failure path consumes all gas, the order of checks is not observable. This is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "If clients disagree on how to read an immediate past the end of the code, or on the meaning of \"revert\", this would rise to level 2.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — \"e65f is [INVALID_DUPN, PUSH0]\"",
+       "summary": "Invalid-immediate handling interacts with the PUSH0 byte and with PUSH1–PUSH32 data."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Disallowed immediate range",
+       "summary": "Compatibility with JUMPDEST analysis and PUSH data must be preserved."
+      }
+     ],
+     "rationale": "Only local compatibility checks with existing opcode and jump-analysis behavior are needed. The target's behavior can otherwise be tested on its own, so this is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "The candidate list is empty, so the interactions are recorded without EIP numbers.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [],
+    "unidentified_interactions": [
+     "The legacy JUMPDEST analysis and PUSH1–PUSH32 data handling: an invalid DUPN/SWAPN/EXCHANGE immediate must leave a following JUMPDEST valid and PUSH data intact. These are local compatibility checks only.",
+     "The PUSH0 byte (0x5f) used as an immediate must decode as INVALID_* followed by PUSH0. This is a local compatibility check only."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "There are minor, localized omissions: stack underflow/overflow handling, how an immediate past the end of the code is read, and the use of the word \"revert\" alongside \"consuming all gas\". General EVM conventions resolve each of these to a single outcome.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 2,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "What happens when the opcode is the last byte of the code: is the missing immediate read as 0 (DUPN 17, and so on)?",
+     "Is the invalid-immediate failure an exceptional halt, or a REVERT with return data, given that it consumes all gas?",
+     "Stack underflow when n exceeds the stack height, and DUPN overflow at 1024 items, are not stated explicitly."
+    ]
+   },
+   "notable_ambiguities": [
+    "The word \"revert\" is used for invalid immediates while also requiring all gas to be consumed.",
+    "Reading an immediate at code[pc+1] beyond the end of the code is not specified.",
+    "Stack underflow/overflow conditions are not stated in the formal steps."
+   ],
+   "overall_confidence": "high"
+  },
+  "ttft_ms": 21817,
+  "type": "result",
+  "duration_ms": 67109,
+  "uuid": "7c88748d-6f43-4d48-a158-3fb8718db344",
+  "ttft_stream_ms": 1486,
+  "time_to_request_ms": 378,
+  "first_content_frame_ms": 1487,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

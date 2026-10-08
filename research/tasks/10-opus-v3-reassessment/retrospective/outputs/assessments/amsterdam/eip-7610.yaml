@@ -1,0 +1,591 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: amsterdam
+eip:
+  number: 7610
+  title: Revert creation in case of non-empty storage
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: EIP-7610 extends the EIP-684 address-collision rule for contract creation.
+    Creation by a creation transaction, CREATE, CREATE2 or any other route MUST throw, as if the first
+    init-code byte were an invalid opcode, when the destination has a nonzero nonce, nonzero code length
+    or non-empty storage. Non-empty storage is the new condition. The rule MUST apply retroactively to
+    all existing blocks, although the Backwards Compatibility section also says a hard fork is required.
+    The EIP says coverage will come from refilling existing tests that deploy to addresses with storage.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/amsterdam/eip-7610/manifest.yaml
+    manifest_sha256: 109b7451941fc284e192e58ce052f1b54ac067e9b9646d82ac756722c6258e73
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7610/manifest.yaml
+    manifest_sha256: 46e935dfbdbf8176f37a28798773c6153447f1a3c338a34647e5fc734297b6da
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: fd89c8f734f4ddd6abee784cf91cf8e38e117d75
+    path: EIPS/eip-7610.md
+    committed_at: '2024-11-07T08:14:40Z'
+    git_blob_sha: 6e7d1900da8e7b159ceb01ff02cf550a850b2c39
+    content_sha256: 32737f15ce361d36c07bd84790f4e56059f5f170b032869556807d839e2de9bc
+    immutable_url: https://github.com/ethereum/EIPs/blob/fd89c8f734f4ddd6abee784cf91cf8e38e117d75/EIPS/eip-7610.md
+    information_cutoff_at: '2025-09-24T14:40:52Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:31:13.519314Z'
+    session_id: assessment-run-71631826-f559-491b-856f-400ff69dfc0b
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-161.md
+  - supporting/eip-684.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 920c1b419ee151db528eff40dd8d5525cce22aeff739cc6e0594301763df5673
+    schema_sha256: 057049af8330cfc36416a1d48944246ee04387ae84b4493329b6f4d3913bd6d9
+    started_at: '2026-10-08T09:31:13.519314Z'
+    finished_at: '2026-10-08T09:32:38.468084Z'
+    duration_ms: 82863
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 26001
+      cache_read_input_tokens: 0
+      output_tokens: 9420
+      output_tokens_details:
+        thinking_tokens: 3069
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 26001
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 9420
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 26001
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 26001
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 9420
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 26001
+        webSearchRequests: 0
+        costUSD: 0.396416
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 3069
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.396416
+  assessor_raw_output:
+    path: retrospective/outputs/raw/amsterdam/eip-7610.json
+    content_sha256: 6e1f45e5ff74c5f0c2a85fe6501742077f4870cfae49d10749f2cd926e5cced7
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "throw as if the first byte in the init code were an invalid opcode"
+    summary: The new collision case reuses the existing exceptional-halt outcome. No new gas accounting
+      rule or parameter is defined.
+  rationale: No execution-gas charging, metering or settlement rule changes. Gas results change only because
+    an existing halt rule now applies to more cases, and that is counted under PAT.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "destination address already has either a nonzero nonce, a nonzero code length,
+      or non-empty storage"
+    summary: Adds a storage-emptiness condition to the existing destination check but specifies no ordering
+      or access-list change.
+  rationale: The check is an extra predicate on an account that the EIP-684 collision check already inspects.
+    No instruction's access or gas-charge ordering is changed or newly specified.
+  confidence: medium
+  uncertainty_note: One could argue that the storage-emptiness check is a new kind of state access. The
+    text gives it no ordering or access-recording rule.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Concerns only contract-creation collisions. Blobs are not mentioned.
+  rationale: No blob-gas rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No state-byte or state-gas costs are defined.
+  rationale: No state-gas accounting change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund mechanism is introduced.
+  rationale: No new refund.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Test Cases — "There exists quite a number of tests ... which test the scenario of deployment
+      to targets with non-empty storage"
+    summary: Existing tests that create contracts at storage-only addresses have expected results that
+      change and need refilling.
+  - source: eip.md
+    locator: Test Cases — "Reth and EELS both intentionally implement a version of the account reset solely
+      to pass the tests"
+    summary: Baseline expectations currently encode account-reset behavior, which now becomes a creation
+      failure.
+  - source: eip.md
+    locator: Specification — "MUST apply retroactively for all existing blocks"
+    summary: Because the rule is retroactive, expected results change for fixtures of earlier forks too.
+  rationale: 'Ordinary cases throughout the creation-collision family need new expected results: post-state,
+    gas consumed and the success flag returned by CREATE/CREATE2. The affected paths are creation transactions,
+    CREATE and CREATE2 at storage-only destinations, which share one rule rather than requiring a common
+    rewrite across distinct families. The retroactive rule extends the rework to earlier-fork fixtures
+    within that family.'
+  confidence: medium
+  uncertainty_note: No test suite was supplied, so the number of tests and how they spread across families
+    is estimated. If storage-only pre-states appear in many unrelated families, the score could approach
+    3.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new output, field or log is produced.
+  rationale: Existing tests need no new kind of assertion; only existing expected values change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only an execution rule changes. No new inputs or outputs are defined.
+  rationale: Existing allocation inputs can already express storage-only accounts, so no transition-tool
+    interface change is needed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases — "Refilling the existing tests will provide sufficient coverage"
+    summary: Coverage comes from existing tests and pre-state setups.
+  rationale: Testing needs pre-state accounts with storage but zero nonce and no code, plus existing creation
+    primitives. No new abstraction is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No cryptographic rule is involved.
+  rationale: No cryptographic change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "nonzero nonce, a nonzero code length, or non-empty storage"
+    summary: 'One collision predicate gains a storage-emptiness dimension: storage empty versus at least
+      one nonzero slot.'
+  - source: supporting/eip-684.md
+    locator: Specification
+    summary: The existing nonce and code conditions combine with the new storage condition.
+  rationale: 'Exactly one boundary-sensitive mechanism changes: the collision predicate, now including
+    storage emptiness. Combinations of nonce, code and storage, across creation transactions, CREATE and
+    CREATE2, form a matrix, but it belongs to a single mechanism.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block decoding or structural validation changes.
+  rationale: Only an execution rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API change.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contract is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contract is referenced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instruction is defined.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — "the `CREATE` opcode, the `CREATE2` opcode ... the creation MUST throw"
+    summary: CREATE and CREATE2 now fail with an exceptional halt in a case where they previously proceeded.
+  rationale: 'The semantics of CREATE and CREATE2 change: they fail, return zero on the stack and leave
+    no deployment, for destinations that have storage but zero nonce and no code. This goes beyond a gas-only
+    change.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is changed.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No serialized schema changes.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new transaction envelope is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "creation MUST throw as if the first byte in the init code were an invalid
+      opcode"
+    summary: A creation transaction that collides fails during execution. It does not become invalid for
+      inclusion.
+  rationale: The outcome is an execution failure, not a transaction-validity rule. Intrinsic gas and inclusion
+    rules are unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header field is added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "MUST apply retroactively for all existing blocks"
+    summary: The rule applies retroactively; no state migration or code installation is specified.
+  - source: eip.md
+    locator: Backwards Compatibility — "requires a hard fork"
+    summary: Describes rule activation only.
+  rationale: No one-time state transition is required at activation; the change selects a rule only.
+  confidence: high
+  uncertainty_note: Whether the rule activates at a fork or retroactively is ambiguous, but neither reading
+    needs a state transition.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "non-empty storage"
+    summary: Adds a storage-emptiness check on the creation path. The supplied text does not claim any
+      performance cost.
+  rationale: The supplied evidence establishes no changed resource bound or workload needing benchmarks.
+    A storage-emptiness lookup per creation is bounded.
+  confidence: medium
+  uncertainty_note: On some client storage layouts, a storage-emptiness check may cost more than reading
+    the nonce or code. The supplied text does not address this.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations — "it enforces the imutability of deployed code"
+    summary: The invariant that deployed contracts are immutable is strengthened.
+  - source: eip.md
+    locator: Rationale — "There exists 28 such contracts on Ethereum mainnet"
+    summary: Storage-only accounts exist on mainnet.
+  rationale: The new condition is a local collision check that can be validated within the creation logic.
+    It does not change other components' trust assumptions.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "MUST apply retroactively for all existing blocks"
+    summary: The normative text makes the rule retroactive.
+  - source: eip.md
+    locator: Backwards Compatibility — "requires a hard fork"
+    summary: This informative section suggests fork activation, which conflicts with retroactive application
+      in pre-fork test fixtures.
+  - source: supporting/eip-161.md
+    locator: Specification — "An account is considered _empty_ when it has **no code** and **zero nonce**
+      and **zero balance**"
+    summary: Under EIP-161, an account with storage but zero balance counts as empty. Whether a failed
+      creation touches such an account, and so deletes it, is not addressed.
+  rationale: The activation scope of the rule is a localized point of conflict. The normative MUST supports
+    one intended outcome, retroactive application, which matches the plan to refill existing tests. The
+    touch/delete behavior of storage-only empty accounts after a failed creation is not addressed in the
+    target. It may be defined by baseline rules that were not supplied.
+  confidence: medium
+  uncertainty_note: Expected results for storage-only accounts with zero balance after a collision (touched
+    and deleted under EIP-161, or left intact) may be specified in baseline rules not supplied. If not,
+    the score would be 2.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "This EIP amends [EIP-684] with one extra condition"
+    summary: Directly extends the EIP-684 collision predicate.
+  - source: eip.md
+    locator: Rationale — "Before [EIP-161] was applied, the nonce of a newly deployed contract remained
+      set to zero"
+    summary: Storage-only accounts arise from creation behavior before EIP-161.
+  - source: supporting/eip-161.md
+    locator: Specification d. — "any account _touched_ ... which is now _empty_ SHALL instead become non-existent"
+    summary: The EIP-161 definition of empty ignores storage, so it interacts with storage-only collision
+      targets.
+  rationale: 'Coordinated cases are needed for the combined EIP-684 + EIP-7610 collision predicate: nonce
+    × code × storage across all creation routes. EIP-161 empty-account semantics also need coordinated
+    cases for storage-only accounts with zero balance used as collision targets. These cases go beyond
+    local checks but do not restructure shared vectors across many EIPs.'
+  confidence: medium
+  uncertainty_note: How the EIP-161 touch/delete rule applies to storage-only accounts after a failed
+    creation is not resolved in the supplied text.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 684
+  - 161
+  unidentified_interactions: []
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 684
+  - 161
+  interaction_details:
+  - eip: 684
+    interaction: coordinated_cases
+    cases: Collision-predicate matrix over nonce, code length and storage (storage-only versus nonce or
+      code set versus combinations) for creation transactions, CREATE and CREATE2. Checks that the throw
+      behavior matches the EIP-684 invalid-opcode semantics, including gas consumed and a stack result
+      of zero.
+  - eip: 161
+    interaction: coordinated_cases
+    cases: Pre-state accounts with storage, zero nonce and no code, which can only arise from pre-EIP-161
+      creation, used as CREATE, CREATE2 or creation-transaction targets. Cases cover zero and nonzero
+      balance (empty versus non-empty under EIP-161) and check whether the account survives end-of-transaction
+      clearing after a failed creation.
+totals:
+  primary_score: 10
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: The normative text requires retroactive application, while the Backwards Compatibility section
+    says a hard fork is required. This leaves expected behavior for pre-Amsterdam fixtures slightly unclear,
+    though the normative MUST favors retroactive application. The target also does not say how a storage-only
+    account with zero balance (empty under EIP-161) is treated after a failed creation, i.e. whether it
+    is touched and deleted.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - unspecified_behavior_requiring_cross_client_consensus
+  criterion_ranges:
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 1
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 9
+    maximum: 11
+  plausible_tiers:
+  - low
+  unresolved_questions:
+  - Does the rule apply retroactively in pre-Amsterdam test forks, or only from the Amsterdam hard fork?
+  - Is a storage-only account with zero balance touched by a failed creation attempt, and so deleted as
+    empty under EIP-161 at the end of the transaction?
+  - Does 'non-empty storage' refer to committed storage (storage root) or to current in-transaction storage?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- Retroactive application (Specification) versus 'requires a hard fork' (Backwards Compatibility).
+- The EIP-161 definition of an empty account ignores storage, so storage-only collision targets with zero
+  balance may interact with state clearing.
+- The EIP says to refill existing tests but gives no new explicit test vectors.
+overall_confidence: medium

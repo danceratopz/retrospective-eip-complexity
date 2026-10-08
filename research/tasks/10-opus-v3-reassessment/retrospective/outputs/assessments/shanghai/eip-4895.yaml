@@ -1,0 +1,633 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: shanghai
+eip:
+  number: 4895
+  title: Beacon chain push withdrawals as operations
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: At the supplied revision, EIP-4895 adds a new block-level "operation", the
+    `Withdrawal`. Each withdrawal is RLP([index uint64, address 20 bytes, amount uint256 wei]) and is
+    supplied by the consensus layer. Blocks gain a `withdrawals` list, and the header gains a `withdrawals_root`
+    commitment built like the transactions root (an MPT keyed by list position), with a new block-validity
+    check that the two match. From `FORK_TIMESTAMP` onward, withdrawals are processed after all user transactions
+    as unconditional, gas-free balance increases that MUST NOT fail. Whether withdrawals emit logs or
+    receipts is left as a TODO.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/shanghai/eip-4895/manifest.yaml
+    manifest_sha256: b56d7d2b4ed586265dc185792208d09db76e87b00567988149ce3c89e82bb366
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/shanghai/eip-4895/manifest.yaml
+    manifest_sha256: d2214d109ef54263d8c879a109f644d2d127e1cfa3eda26f854b154bb88d2b5f
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 1ce607ac37433c566f9ee5ecad817693da1fcd3f
+    path: EIPS/eip-4895.md
+    committed_at: '2022-03-11T12:28:57Z'
+    git_blob_sha: 20168103d6823834989fd5d37c090ff7c559d64d
+    content_sha256: 34436435c8cd7099db27223f7219fd85190f1648805caebebc4e00ad60c287c1
+    immutable_url: https://github.com/ethereum/EIPs/blob/1ce607ac37433c566f9ee5ecad817693da1fcd3f/EIPS/eip-4895.md
+    information_cutoff_at: '2022-03-11T12:28:57Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:48:57.991545Z'
+    session_id: assessment-run-3d700eb3-e274-462a-a37d-b1b1dfa9fed4
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4788.md
+  - supporting/eip-4863.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 2eed49628070de7c1d13e43418deda9bf6bdc32b62d60cc4a9f348537384dba6
+    schema_sha256: 31c8f49b70ad4e83c7514586ee22d4fdb29d11f9f5800e3b18ad2e85760750d8
+    started_at: '2026-10-08T09:48:57.991545Z'
+    finished_at: '2026-10-08T09:50:50.808102Z'
+    duration_ms: 110780
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 29156
+      cache_read_input_tokens: 0
+      output_tokens: 12436
+      output_tokens_details:
+        thinking_tokens: 4579
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 29156
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 12436
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 29156
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 29156
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 12436
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 29156
+        webSearchRequests: 0
+        costUSD: 0.481976
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 4579
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.481976
+  assessor_raw_output:
+    path: retrospective/outputs/raw/shanghai/eip-4895.json
+    content_sha256: cb40a1bb86a5bdfa06a67c45ee4957c0f0442ea6b31783ee50ed248ecd7b7915
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "This operation has no associated gas costs."
+    summary: Withdrawals do not consume or change execution gas. Transaction gas accounting is untouched.
+  rationale: No execution-gas charging, metering, limit or settlement rule changes. Withdrawals sit outside
+    gas accounting entirely.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "processed **after** any user-level transactions"
+    summary: The ordering is at block level (withdrawals after transactions), not inside any instruction.
+  rationale: No opcode's state-access or gas-charge ordering changes. The withdrawal balance credit is
+    a block-level operation, not an instruction, and there is no access-list concept involved.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Nothing in the spec relates to blobs or blob gas.
+  rationale: No blob-gas accounting rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "no associated gas costs"
+    summary: The balance writes carry no state-gas charge.
+  rationale: No state-gas mechanism, rate or budget is introduced or changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition
+    summary: No refund mechanism is defined.
+  rationale: No refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Commitment to withdrawals — "The execution block header gains a new field"
+    summary: Post-fork headers carry an extra field, so Paris-shaped headers become structurally invalid
+      after the fork.
+  - source: eip.md
+    locator: 'New field in the execution block: withdrawals'
+    summary: The block body gains a new list element.
+  rationale: 'Baseline header and block-structure validation cases (for example field-count and malformed-header
+    RLP cases, and fork-transition block shapes) need reworked inputs and expectations for post-fork blocks.
+    This is confined to one family: block structure/import validation. Ordinary state-execution tests
+    keep their behavior. The new commitment value itself is counted under INV.'
+  confidence: medium
+  uncertainty_note: Whether regenerating block hashes in every post-fork blockchain test counts as rework
+    or only as the new-commitment assertion is a matter of interpretation. I attribute it to INV.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block validity — "assert block_header.withdrawals_root == compute_trie_root_from_indexed_data(block.withdrawals)"
+    summary: Every post-fork block must carry a correct withdrawals_root commitment, including over an
+      empty list.
+  - source: eip.md
+    locator: Specification — "Beginning with the execution timestamp `FORK_TIMESTAMP`"
+    summary: The rule is timestamp-gated, so pre-fork vectors are unaffected.
+  rationale: Every blockchain/import test in the fork has to produce and check the new header commitment,
+    even when its withdrawals list is empty. Because activation is gated by fork timestamp, pre-fork vectors
+    do not need to be re-derived. Under the template's note, a universal assertion without pre-fork vector
+    changes is level 2.
+  confidence: high
+  uncertainty_note: If the logs/receipts TODO were resolved by adding receipts for withdrawals, a further
+    commitment assertion would follow. That would still be level 2.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'System-level operation: withdrawal — "supplied from the consensus layer"'
+    summary: The state transition needs a withdrawals list as an input that is not a transaction.
+  - source: eip.md
+    locator: Commitment to withdrawals — "constructed identically to the transactions root"
+    summary: A new root is computed analogously to the transactions root, which the transition tool produces.
+  rationale: The transition tool needs a new input (the withdrawals list, applied after transactions).
+    By analogy with the transactions root, it also plausibly needs a new output, withdrawalsRoot. That
+    makes multiple semantic fields with no new exchange mechanism, which is level 2.
+  confidence: medium
+  uncertainty_note: No transition-tool documentation was supplied. If the framework computes the root
+    itself, only the input field changes (level 1).
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'System-level operation: withdrawal'
+    summary: A new block-level object type that is distinct from transactions.
+  - source: eip.md
+    locator: 'New field in the execution block: withdrawals'
+    summary: Blocks must be built with a withdrawals list and a matching root.
+  rationale: The framework needs a Withdrawal construction abstraction, block builders that attach withdrawals
+    and compute withdrawals_root, and post-state balance expectations driven by withdrawals. These are
+    new construction and expectation abstractions within the target's suite. Other families only see an
+    empty default list, so level 3 is not met.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Commitment to withdrawals — "constructed identically to the transactions root"
+    summary: The spec reuses the existing Merkle-Patricia trie and Keccak hashing unchanged.
+  rationale: An existing primitive and commitment scheme are reused unchanged. No cryptographic verification
+    or rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "Beginning with the execution timestamp `FORK_TIMESTAMP`"
+    summary: There is a timestamp boundary for when the withdrawals field and rules apply.
+  - source: eip.md
+    locator: 'System-level operation: withdrawal — "`index` as a `uint64` ... `amount` ... 256-bit value"'
+    summary: Field-width bounds for index and amount, including zero and maximum values.
+  - source: eip.md
+    locator: State transition — "This balance change is unconditional and **MUST** not fail."
+    summary: Boundary outcomes for amount zero, credits to nonexistent or empty accounts, and large amounts.
+  rationale: 'There are several independent boundary-sensitive rules: the fork-timestamp activation boundary
+    for the block/header structure; field-width bounds on index and amount in decoding; and the amount/recipient
+    boundaries (zero amount, nonexistent or empty recipient, list empty versus many). No interacting matrix
+    whose combinations change the result is clearly established, so this is level 2.'
+  confidence: medium
+  uncertainty_note: How zero-amount credits to empty accounts behave, and whether amount overflow is possible,
+    is unspecified. This could create a combined matrix (amount × account state × same-block transaction
+    effects).
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'New field in the execution block: withdrawals'
+    summary: New RLP body element that must be decoded during import.
+  - source: eip.md
+    locator: Commitment to withdrawals
+    summary: New header field.
+  - source: eip.md
+    locator: Block validity — "ensure that the `withdrawals_root` matches the expected value"
+    summary: A cross-field validation of the header commitment against the body contents.
+  rationale: 'Several structural rules change: body decoding with the new withdrawals list, header decoding
+    with the new field (timestamp-gated presence), and Withdrawal element decoding. The root-matches-body
+    check depends on another field (the body list), so at least one rule is complex. That is level 3.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'System-level operation: withdrawal — "three key pieces of information supplied from the
+      consensus layer"'
+    summary: The CL must deliver withdrawals to the EL, both for payload validation and for block building.
+  rationale: The withdrawals list has to cross the EL/CL boundary in executed payloads and in build requests.
+    That is one distinct semantic field, and in practice new or versioned payload exchange behavior. Endpoint
+    behavior with at most one field change is level 2.
+  confidence: low
+  uncertainty_note: This revision does not specify the Engine API at all. The endpoint and field shape
+    is inferred from the requirement that the CL supply the withdrawals.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — "Why only balance updates? No general EVM execution?"
+    summary: Only balance updates are applied. No protocol contract is introduced.
+  rationale: No system contract is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition
+    summary: No existing system contract is touched.
+  rationale: No system contract exists in the baseline, and none is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instruction is defined.
+  rationale: No new opcode.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — "firewalls off generic EVM execution"
+    summary: Withdrawals involve no EVM execution and change no opcode semantics.
+  rationale: No instruction's semantics or availability change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is defined.
+  rationale: No new precompile.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is changed.
+  rationale: No precompile changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: 'System-level operation: withdrawal — "`RLP([index, address, amount])`"'
+    summary: New RLP schema for the Withdrawal object.
+  - source: eip.md
+    locator: 'New field in the execution block: withdrawals'
+    summary: The block RLP gains a withdrawals list.
+  - source: eip.md
+    locator: Commitment to withdrawals
+    summary: The header RLP gains withdrawals_root.
+  rationale: Block and header schemas gain serialized fields, and a new Withdrawal RLP object is defined.
+  confidence: high
+  uncertainty_note: The exact position of the new elements within the block and header lists is not specified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — "Why not a new transaction type?"
+    summary: Withdrawals are explicitly a separate operation type, not a transaction envelope.
+  rationale: Withdrawals are not in the transaction list and have no EIP-2718 discriminator. This contrasts
+    with the EIP-4863 alternative.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition
+    summary: Withdrawals are applied after transactions and do not alter transaction eligibility or intrinsic
+      gas.
+  rationale: No transaction validity rules change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Commitment to withdrawals — "block_header.withdrawals_root"
+    summary: New execution header member.
+  - source: eip.md
+    locator: 'New field in the execution block: withdrawals'
+    summary: New block-level member, `block.withdrawals`.
+  rationale: The execution header gains withdrawals_root, and the block body gains a withdrawals member.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "`FORK_TIMESTAMP` | TBD"
+    summary: Activation is selected by timestamp, and the spec describes no state migration.
+  rationale: There is no one-time state conversion or code installation at activation. Timestamp-based
+    rule selection and starting recurring withdrawal processing do not count.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale — "Why no (gas) costs ..." — "bounded (enforced by the consensus layer) and this
+      limit is kept small"
+    summary: Withdrawal work is not gas-metered, and the EL relies on a CL-enforced count bound.
+  rationale: The new workload consists of gas-free balance credits and the withdrawals trie root, outside
+    gas-limit bounds. Component benchmarks of processing the maximum withdrawal count are enough, since
+    the rationale states the cost is negligible next to block execution.
+  confidence: medium
+  uncertainty_note: The maximum count is not given in the supplied text. A large bound could require integrated
+    benchmarks; a trivially small one might need none.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations — "does not have a current analog in the EVM and thus deserves very
+      high security scrutiny"
+    summary: A new ETH issuance path from the CL into EL balances.
+  - source: eip.md
+    locator: State transition — "unconditional and **MUST** not fail"
+    summary: Unconditional credits to any address, without EVM execution.
+  rationale: The EL now credits ETH on CL authority, which changes EL supply and balance assumptions at
+    the CL/EL trust boundary. It also adds a new path for balance changes without code execution that
+    contracts may not expect, though coinbase credits are an existing analog. This bounded cross-layer
+    interaction needs targeted integration review and fuzzing of the withdrawals commitment and processing.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'State transition — "TODO: add logs? this implies receipt structure for the withdrawals and
+      a commitment to the list of receipts"'
+    summary: Whether withdrawals produce logs, receipts or an extra commitment is unresolved.
+  - source: eip.md
+    locator: 'System-level operation: withdrawal — "a monotonically increasing `index`"'
+    summary: The spec does not say whether the EL must validate index monotonicity.
+  - source: eip.md
+    locator: State transition — "the implementation should increase the balance"
+    summary: Treatment of zero-amount credits to empty or nonexistent accounts, and of overflow, is not
+      specified.
+  rationale: 'Several localized outcomes have competing interpretations: logs and receipts (observable
+    through the receipts root), EL enforcement of index monotonicity, empty-account creation or touch
+    semantics for zero amounts, and the element positions in the block and header. These need specification
+    agreement before expected results can be fixed. They are localized rather than a cross-family re-baselining.'
+  confidence: medium
+  uncertainty_note: Empty-account semantics might be defined by baseline rules that were not supplied
+    (an evidence gap rather than a pure omission).
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: State transition — "processed **after** any user-level transactions are applied"
+    summary: Withdrawal credits apply after transaction effects such as fee payments and account deletions.
+  - source: eip.md
+    locator: Motivation — "more involved than the prior EIP-4863"; "pull-based alternatives (e.g. EIP-4788
+      ...)"
+    summary: EIP-4788 and EIP-4863 are cited as alternative designs, not as prerequisites or co-scheduled
+      mechanisms.
+  rationale: 'The target interacts with existing block-processing behavior, needing local compatibility
+    checks: credits to the coinbase after fee crediting, to accounts destroyed or created earlier in the
+    block, and to empty accounts. Its core behavior can otherwise be tested on its own. EIP-4863 is a
+    superseded alternative, and EIP-4788 is a cited alternative not established in the same-fork scenario,
+    so neither needs target-specific cases.'
+  confidence: medium
+  uncertainty_note: If EIP-4788 were scheduled in the same fork, block-start beacon-root writes and block-end
+    withdrawals would need joint block-structure and processing checks. The supplied text does not establish
+    that scenario.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions:
+  - Withdrawals are processed after all user transactions, so a credit to the block coinbase must be checked
+    for correct composition with that block's fee and priority-fee payments.
+  - A credit to an account self-destructed or created by a transaction earlier in the same block must
+    yield the correct final state.
+  - A zero-amount or small credit to a nonexistent or empty recipient interacts with baseline empty-account
+    touch and deletion rules, which the target does not restate.
+  base_score: 1
+  bonus: 0
+  bonus_qualifying_eips: []
+  interaction_details: []
+totals:
+  primary_score: 26
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: This draft leaves several consensus-visible details open. Logs and receipts for withdrawals
+    are an explicit TODO. Element positions in the block and header RLP lists are not given. It does not
+    say whether the EL validates index monotonicity or bounds the withdrawal count. Zero-amount and empty-account
+    semantics, and amount overflow, are unspecified. The Engine API transport for withdrawals is not specified,
+    although CL supply is required.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - transition_tool_interface_changes
+  - edge_boundary_conditions
+  - engine_api_changes
+  - performance_risks
+  criterion_ranges:
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: transition_tool_interface_changes
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: edge_boundary_conditions
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: engine_api_changes
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: performance_risks
+    minimum_score: 0
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 22
+    maximum: 30
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - Do withdrawals emit logs or receipts, and is there a receipts commitment for them?
+  - Must the EL validate that withdrawal indices are monotonically increasing or contiguous across blocks?
+  - What is the maximum number of withdrawals per block, and must the EL enforce it?
+  - Does a zero-amount withdrawal to a nonexistent account create or touch it, and how do empty-account
+    deletion rules apply?
+  - Where do withdrawals and withdrawals_root sit in the block and header RLP lists, and how is their
+    absence or presence validated around FORK_TIMESTAMP?
+  - How are withdrawals transported over the Engine API for payload validation and for block building?
+  - What happens if a credit would overflow a 256-bit balance, given that the operation MUST NOT fail?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- 'The ''TODO: add logs?'' in State transition leaves the receipt structure undecided.'
+- The state transition uses lowercase 'should increase the balance' but follows it with 'MUST not fail'.
+- Block validity begins with 'Assuming the block is well-formatted' without defining the well-formedness
+  rules for the new fields.
+- The index is described as 'monotonically increasing', but no EL validation of this is stated.
+- The rationale calls withdrawals a 'new transaction type' in a heading, while the specification defines
+  them as non-transaction operations.
+- The count bound on withdrawals is enforced only by the CL, per the rationale; no EL-side limit is given.
+overall_confidence: medium

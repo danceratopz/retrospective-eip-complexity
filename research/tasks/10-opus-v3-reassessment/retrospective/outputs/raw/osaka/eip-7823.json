@@ -1,0 +1,577 @@
+{
+ "case": "osaka/7823",
+ "run_id": "assessment-run-18499b87-7222-458f-bd11-21ecbb711c7a",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:40:05.399098Z",
+ "finished_at": "2026-10-08T09:41:23.840747Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "6a6cccaf52d90f18ca8eb5a56a153c101bc4eff532597f2a2d603e8072779a6e",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "43d381db1adf5ccecc4aff700b5a31af2becf07efaf8a3d430c9e274e1983045",
+ "output": {
+  "duration_api_ms": 76179,
+  "stop_reason": "tool_use",
+  "session_id": "232cab24-bd1c-45d6-8ada-1dd3e55e146b",
+  "total_cost_usd": 0.385876,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 25666,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 9027,
+   "output_tokens_details": {
+    "thinking_tokens": 3092
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 25666,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 9027,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 25666,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 25666
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 9027,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 25666,
+    "webSearchRequests": 0,
+    "costUSD": 0.385876,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 3092,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"This revision of EIP-7823 adds an upper bound to the MODEXP precompile at address 0x05, which EIP-198 defines. Each of the three declared length fields (length_of_BASE, length_of_EXPONENT, length_of_MODULUS) must be at most 1024 bytes (8192 bits). If any length is larger, the precompile stops, returns an error and consumes all gas. The input format, output format and gas pricing function are otherwise unchanged. The Backwards Compatibility and Security Considerations sections are still TODO placeholders.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"we don't suggest to rework the pricing function\\\"\",\"summary\":\"The EIP explicitly leaves the MODEXP pricing function unchanged.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"returns an error, and consumes all gas\\\"\",\"summary\":\"Oversized inputs use the existing precompile failure mode of consuming all forwarded gas; no new accounting rule is added.\"}],\"rationale\":\"No execution-gas accounting rule or parameter changes. Calls that previously succeeded with oversized lengths now consume all gas through the existing failure mechanism. That is a precompile behavior change and is scored under ~PC.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Some readers might count the change in gas outcome for previously affordable oversized calls as a level-1 gas change. Here it is attributed to the precompile's changed failure rule.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only the precompile's internal input validation changes; no instruction's access or charge ordering changes.\"}],\"rationale\":\"Precompile internals change, but no instruction's own state-access or gas-charge sequence changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No blob-related rules are mentioned.\"}],\"rationale\":\"No blob gas changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state-writing cost rules are mentioned.\"}],\"rationale\":\"No state gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund is introduced.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"This is a backwards incompatible change\\\"\",\"summary\":\"Some inputs that were valid before are now rejected.\"},{\"source\":\"supporting/eip-198.md\",\"locator\":\"Specification — mult_complexity \\\"else: return x ** 2 // 16 + 480 * x - 199680\\\"\",\"summary\":\"The baseline gas branch for lengths above 1024 bytes is reachable by successful calls before the fork. Tests of that branch need new expected results (failure with all gas consumed).\"}],\"rationale\":\"Rework is limited to the boundary/large-length cases in the MODEXP precompile family. Baseline cases with any declared length above 1024 bytes change from success (when affordable) to failure. Ordinary cases with lengths of 1024 bytes or less are unaffected.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new output, log, header or receipt field is introduced.\"}],\"rationale\":\"Baseline tests need no new assertions.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The change is internal to the precompile; no t8n input or output is affected.\"}],\"rationale\":\"No interface change is required beyond ordinary fork selection.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The tests are ordinary precompile calls with chosen length fields and gas, checking success or failure and gas used.\"}],\"rationale\":\"Existing precompile-call test primitives are enough. New parameter values are not new primitives.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"upper bound to the inputs\\\"\",\"summary\":\"Only an input-length bound is added; the modular exponentiation arithmetic is unchanged.\"}],\"rationale\":\"No cryptographic verification, signing, hashing or proof rule changes. The arithmetic primitive itself is unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"MUST be less than or equal to 8192 bits (1024 bytes)\\\"\",\"summary\":\"Adds one boundary rule (≤1024 bytes) that applies to each of the three length fields.\"},{\"source\":\"supporting/eip-198.md\",\"locator\":\"Specification — \\\"every length is a 32-byte left-padded integer\\\"\",\"summary\":\"Length values can range up to 2^256-1, so boundary tests cover 1024, 1025, and very large values, including values beyond 64-bit range.\"}],\"rationale\":\"Exactly one boundary-sensitive mechanism is introduced: the per-field length limit. Its dimensions are which field exceeds the limit, the value sizes (1024/1025/very large), and interaction with available gas and calldata padding. It is still a single mechanism, so level 1.\",\"confidence\":\"high\",\"uncertainty_note\":\"The three fields could be treated as separate mechanisms, but they share one rule.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No block decoding or structural validation change.\"}],\"rationale\":\"Only an execution rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API changes.\"}],\"rationale\":\"No Engine API field or endpoint changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is introduced.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only a native precompile is affected.\"}],\"rationale\":\"No system contract changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — EVMMAX\",\"summary\":\"EVMMAX is mentioned only as a possible future feature; no opcode is added.\"}],\"rationale\":\"No new instructions.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only the callee precompile's behavior changes; the CALL-family semantics are unchanged.\"}],\"rationale\":\"Changed precompile behavior reached through an unchanged instruction does not count.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The existing MODEXP precompile at 0x05 is modified; no new address is added.\"}],\"rationale\":\"No new precompile.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"If any of these inputs are larger than the limit, the precompile execution stops, returns an error, and consumes all gas.\\\"\",\"summary\":\"Changes which inputs MODEXP accepts and its failure rules.\"},{\"source\":\"supporting/eip-198.md\",\"locator\":\"Specification — \\\"Consumes floor(mult_complexity(...)...\\\"\",\"summary\":\"MODEXP takes variable-length input and charges dynamic gas, so it is complex under this criterion.\"}],\"rationale\":\"A complex precompile (MODEXP: variable input length, dynamic gas) has a behavior change: new rejection and failure rules. This meets level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only the precompile's calldata interpretation is affected; no listed serialized object changes.\"}],\"rationale\":\"Precompile calldata is not a listed schema.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction type is introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"A precompile failure is an execution outcome, not a transaction-validity rule.\"}],\"rationale\":\"Precompile outputs and failures are excluded from this criterion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header field is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"A rule change only; no state migration or code installation.\"}],\"rationale\":\"Only fork-gated rule selection is needed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — Limit\",\"summary\":\"The bound tightens the input space and leaves pricing unchanged, so no new or larger workload is enabled.\"}],\"rationale\":\"Tightening the input space adds no new workload and does not change the resource assumptions behind pricing. Inputs at the 1024-byte boundary were already allowed in the baseline.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Benchmarks for future repricing are mentioned only as a possibility and are not part of this EIP.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"source of numerous consensus bugs\\\"\",\"summary\":\"The new rejection boundary is consensus-critical: clients must agree on the exact limit check, including very large 256-bit length values.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"Needs discussion.\\\"\",\"summary\":\"No security analysis is supplied.\"}],\"rationale\":\"The new validation boundary can be checked locally within the precompile. Fuzzing the length fields at and above the limit is enough, and no other component's assumptions change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Contracts that depend on MODEXP inputs over 1024 bytes would break. This is an application-level concern and the EIP has not analyzed it.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"each of the length inputs ... MUST be less than or equal to 8192 bits (1024 bytes)\\\"\",\"summary\":\"The wording applies the bound to the 'length inputs' in bits, but the parenthetical makes clear it limits the declared byte length.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"execution stops, returns an error, and consumes all gas\\\"\",\"summary\":\"The ordering of the bound check against gas computation is not stated. Both paths consume all gas, so the observable outcome is the same.\"}],\"rationale\":\"Some details are not stated: whether the bound applies when other lengths make the call trivial (e.g. modulus length 0), and when the check happens relative to gas calculation. However, the rule \\\"any length > 1024 → fail, consume all gas\\\" supports a single outcome. Localized, level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The baseline Prague gas formula (later repricing) is not in the packet, but this does not affect the bound's outcome.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Recap from EIP-198\\\"\",\"summary\":\"The target modifies the precompile defined by EIP-198.\"},{\"source\":\"supporting/eip-198.md\",\"locator\":\"Specification — \\\"Call data is assumed to be infinitely right-padded\\\"\",\"summary\":\"The bound applies to declared lengths. These lengths must be checked together with EIP-198's padding and parsing semantics.\"}],\"rationale\":\"The interaction with EIP-198 needs only local compatibility checks within the precompile's own tests: the bound with right-padding, length-field parsing, and the gas formula's >1024 branch. No coordinated multi-EIP scenarios are needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Later MODEXP gas repricing in the baseline is not in the supplied documents.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":198,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Check the bound together with EIP-198 parsing: lengths of exactly 1024 and 1025 bytes for each field, calldata shorter than the declared length (right-padding), very large 32-byte length values, and calls that previously succeeded affordably through the x>1024 mult_complexity branch.\"}],\"unidentified_interactions\":[]},\"under_specification\":{\"present\":true,\"summary\":\"The Backwards Compatibility and Security Considerations sections are TODO. A few details are not stated: when the bound check happens relative to gas computation, whether the bound applies to otherwise trivial calls (e.g. zero modulus length), and the 'bits' wording for the length fields. The surrounding rule supports a single outcome in each case.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":0,\"maximum_score\":1}],\"unresolved_questions\":[\"Does the bound apply even when length_of_MODULUS is 0 or the call would otherwise return trivially?\",\"Is the bound checked before or after gas computation? Observable effect is the same (all gas consumed), but traces may differ.\",\"How should historical transactions using lengths over 1024 bytes be treated? The EIP marks this as needing analysis.\"]},\"notable_ambiguities\":[\"The specification says each length input 'MUST be less than or equal to 8192 bits (1024 bytes)'. The parenthetical shows it means the declared byte length, not the 256-bit length field itself.\",\"No activation fork is specified in the text; Osaka is assumed from the assessment framing.\",\"The Prague baseline gas formula for MODEXP (after EIP-198) is not supplied. Gas expectations for cases at the boundary depend on it.\",\"Backwards Compatibility and Security Considerations are TODO placeholders.\"],\"overall_confidence\":\"high\"}",
+  "structured_output": {
+   "scope_summary": "This revision of EIP-7823 adds an upper bound to the MODEXP precompile at address 0x05, which EIP-198 defines. Each of the three declared length fields (length_of_BASE, length_of_EXPONENT, length_of_MODULUS) must be at most 1024 bytes (8192 bits). If any length is larger, the precompile stops, returns an error and consumes all gas. The input format, output format and gas pricing function are otherwise unchanged. The Backwards Compatibility and Security Considerations sections are still TODO placeholders.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"we don't suggest to rework the pricing function\"",
+       "summary": "The EIP explicitly leaves the MODEXP pricing function unchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"returns an error, and consumes all gas\"",
+       "summary": "Oversized inputs use the existing precompile failure mode of consuming all forwarded gas; no new accounting rule is added."
+      }
+     ],
+     "rationale": "No execution-gas accounting rule or parameter changes. Calls that previously succeeded with oversized lengths now consume all gas through the existing failure mechanism. That is a precompile behavior change and is scored under ~PC.",
+     "confidence": "medium",
+     "uncertainty_note": "Some readers might count the change in gas outcome for previously affordable oversized calls as a level-1 gas change. Here it is attributed to the precompile's changed failure rule.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only the precompile's internal input validation changes; no instruction's access or charge ordering changes."
+      }
+     ],
+     "rationale": "Precompile internals change, but no instruction's own state-access or gas-charge sequence changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No blob-related rules are mentioned."
+      }
+     ],
+     "rationale": "No blob gas changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state-writing cost rules are mentioned."
+      }
+     ],
+     "rationale": "No state gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund is introduced."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"This is a backwards incompatible change\"",
+       "summary": "Some inputs that were valid before are now rejected."
+      },
+      {
+       "source": "supporting/eip-198.md",
+       "locator": "Specification — mult_complexity \"else: return x ** 2 // 16 + 480 * x - 199680\"",
+       "summary": "The baseline gas branch for lengths above 1024 bytes is reachable by successful calls before the fork. Tests of that branch need new expected results (failure with all gas consumed)."
+      }
+     ],
+     "rationale": "Rework is limited to the boundary/large-length cases in the MODEXP precompile family. Baseline cases with any declared length above 1024 bytes change from success (when affordable) to failure. Ordinary cases with lengths of 1024 bytes or less are unaffected.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new output, log, header or receipt field is introduced."
+      }
+     ],
+     "rationale": "Baseline tests need no new assertions.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The change is internal to the precompile; no t8n input or output is affected."
+      }
+     ],
+     "rationale": "No interface change is required beyond ordinary fork selection.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The tests are ordinary precompile calls with chosen length fields and gas, checking success or failure and gas used."
+      }
+     ],
+     "rationale": "Existing precompile-call test primitives are enough. New parameter values are not new primitives.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"upper bound to the inputs\"",
+       "summary": "Only an input-length bound is added; the modular exponentiation arithmetic is unchanged."
+      }
+     ],
+     "rationale": "No cryptographic verification, signing, hashing or proof rule changes. The arithmetic primitive itself is unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"MUST be less than or equal to 8192 bits (1024 bytes)\"",
+       "summary": "Adds one boundary rule (≤1024 bytes) that applies to each of the three length fields."
+      },
+      {
+       "source": "supporting/eip-198.md",
+       "locator": "Specification — \"every length is a 32-byte left-padded integer\"",
+       "summary": "Length values can range up to 2^256-1, so boundary tests cover 1024, 1025, and very large values, including values beyond 64-bit range."
+      }
+     ],
+     "rationale": "Exactly one boundary-sensitive mechanism is introduced: the per-field length limit. Its dimensions are which field exceeds the limit, the value sizes (1024/1025/very large), and interaction with available gas and calldata padding. It is still a single mechanism, so level 1.",
+     "confidence": "high",
+     "uncertainty_note": "The three fields could be treated as separate mechanisms, but they share one rule.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No block decoding or structural validation change."
+      }
+     ],
+     "rationale": "Only an execution rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API changes."
+      }
+     ],
+     "rationale": "No Engine API field or endpoint changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is introduced."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only a native precompile is affected."
+      }
+     ],
+     "rationale": "No system contract changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — EVMMAX",
+       "summary": "EVMMAX is mentioned only as a possible future feature; no opcode is added."
+      }
+     ],
+     "rationale": "No new instructions.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only the callee precompile's behavior changes; the CALL-family semantics are unchanged."
+      }
+     ],
+     "rationale": "Changed precompile behavior reached through an unchanged instruction does not count.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The existing MODEXP precompile at 0x05 is modified; no new address is added."
+      }
+     ],
+     "rationale": "No new precompile.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"If any of these inputs are larger than the limit, the precompile execution stops, returns an error, and consumes all gas.\"",
+       "summary": "Changes which inputs MODEXP accepts and its failure rules."
+      },
+      {
+       "source": "supporting/eip-198.md",
+       "locator": "Specification — \"Consumes floor(mult_complexity(...)...\"",
+       "summary": "MODEXP takes variable-length input and charges dynamic gas, so it is complex under this criterion."
+      }
+     ],
+     "rationale": "A complex precompile (MODEXP: variable input length, dynamic gas) has a behavior change: new rejection and failure rules. This meets level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only the precompile's calldata interpretation is affected; no listed serialized object changes."
+      }
+     ],
+     "rationale": "Precompile calldata is not a listed schema.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction type is introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "A precompile failure is an execution outcome, not a transaction-validity rule."
+      }
+     ],
+     "rationale": "Precompile outputs and failures are excluded from this criterion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header field is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "A rule change only; no state migration or code installation."
+      }
+     ],
+     "rationale": "Only fork-gated rule selection is needed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Limit",
+       "summary": "The bound tightens the input space and leaves pricing unchanged, so no new or larger workload is enabled."
+      }
+     ],
+     "rationale": "Tightening the input space adds no new workload and does not change the resource assumptions behind pricing. Inputs at the 1024-byte boundary were already allowed in the baseline.",
+     "confidence": "medium",
+     "uncertainty_note": "Benchmarks for future repricing are mentioned only as a possibility and are not part of this EIP.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"source of numerous consensus bugs\"",
+       "summary": "The new rejection boundary is consensus-critical: clients must agree on the exact limit check, including very large 256-bit length values."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"Needs discussion.\"",
+       "summary": "No security analysis is supplied."
+      }
+     ],
+     "rationale": "The new validation boundary can be checked locally within the precompile. Fuzzing the length fields at and above the limit is enough, and no other component's assumptions change.",
+     "confidence": "medium",
+     "uncertainty_note": "Contracts that depend on MODEXP inputs over 1024 bytes would break. This is an application-level concern and the EIP has not analyzed it.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"each of the length inputs ... MUST be less than or equal to 8192 bits (1024 bytes)\"",
+       "summary": "The wording applies the bound to the 'length inputs' in bits, but the parenthetical makes clear it limits the declared byte length."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"execution stops, returns an error, and consumes all gas\"",
+       "summary": "The ordering of the bound check against gas computation is not stated. Both paths consume all gas, so the observable outcome is the same."
+      }
+     ],
+     "rationale": "Some details are not stated: whether the bound applies when other lengths make the call trivial (e.g. modulus length 0), and when the check happens relative to gas calculation. However, the rule \"any length > 1024 → fail, consume all gas\" supports a single outcome. Localized, level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "The baseline Prague gas formula (later repricing) is not in the packet, but this does not affect the bound's outcome.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Recap from EIP-198\"",
+       "summary": "The target modifies the precompile defined by EIP-198."
+      },
+      {
+       "source": "supporting/eip-198.md",
+       "locator": "Specification — \"Call data is assumed to be infinitely right-padded\"",
+       "summary": "The bound applies to declared lengths. These lengths must be checked together with EIP-198's padding and parsing semantics."
+      }
+     ],
+     "rationale": "The interaction with EIP-198 needs only local compatibility checks within the precompile's own tests: the bound with right-padding, length-field parsing, and the gas formula's >1024 branch. No coordinated multi-EIP scenarios are needed.",
+     "confidence": "medium",
+     "uncertainty_note": "Later MODEXP gas repricing in the baseline is not in the supplied documents.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 198,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Check the bound together with EIP-198 parsing: lengths of exactly 1024 and 1025 bytes for each field, calldata shorter than the declared length (right-padding), very large 32-byte length values, and calls that previously succeeded affordably through the x>1024 mult_complexity branch."
+     }
+    ],
+    "unidentified_interactions": []
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The Backwards Compatibility and Security Considerations sections are TODO. A few details are not stated: when the bound check happens relative to gas computation, whether the bound applies to otherwise trivial calls (e.g. zero modulus length), and the 'bits' wording for the length fields. The surrounding rule supports a single outcome in each case.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 0,
+      "maximum_score": 1
+     }
+    ],
+    "unresolved_questions": [
+     "Does the bound apply even when length_of_MODULUS is 0 or the call would otherwise return trivially?",
+     "Is the bound checked before or after gas computation? Observable effect is the same (all gas consumed), but traces may differ.",
+     "How should historical transactions using lengths over 1024 bytes be treated? The EIP marks this as needing analysis."
+    ]
+   },
+   "notable_ambiguities": [
+    "The specification says each length input 'MUST be less than or equal to 8192 bits (1024 bytes)'. The parenthetical shows it means the declared byte length, not the 256-bit length field itself.",
+    "No activation fork is specified in the text; Osaka is assumed from the assessment framing.",
+    "The Prague baseline gas formula for MODEXP (after EIP-198) is not supplied. Gas expectations for cases at the boundary depend on it.",
+    "Backwards Compatibility and Security Considerations are TODO placeholders."
+   ],
+   "overall_confidence": "high"
+  },
+  "ttft_ms": 30506,
+  "type": "result",
+  "duration_ms": 76607,
+  "uuid": "8a7d8edc-0908-4252-b926-93911b1c23ed",
+  "ttft_stream_ms": 1034,
+  "time_to_request_ms": 423,
+  "first_content_frame_ms": 1034,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

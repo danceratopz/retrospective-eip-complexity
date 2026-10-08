@@ -1,0 +1,672 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: amsterdam
+eip:
+  number: 8282
+  title: Builder Execution Requests
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: EIP-8282 adds two new predeploys for EIP-7732 builders. One is a builder deposit
+    contract that takes 184-byte calldata, checks that the amount is at least 1 ETH and that msg.value
+    covers the fee plus the stake, queues the record and emits a LOG0. The other is a builder exit contract
+    that takes a 48-byte pubkey, charges a fee and records msg.sender as source_address. Each contract
+    reuses the EIP-7002/EIP-7251 request-bus storage layout, EIP-1559-style excess fee and EXCESS_INHIBITOR.
+    An end-of-block SYSTEM_ADDRESS call drains each queue (up to 64 deposit and 16 exit records per block)
+    into new EIP-7685 request types 0x03 and 0x04, which are committed in requests_hash. The remaining
+    changes rewire consensus-layer handling of EIP-7732 builder onboarding and exits, and there is no
+    reference bytecode yet.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/amsterdam/eip-8282/manifest.yaml
+    manifest_sha256: 5aa939a51b438ed2d09b3d09b974f1ad027de1764d3b8521d0d7e2e17ca9f69b
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-8282/manifest.yaml
+    manifest_sha256: 3ba4d31eeff8c98a1ff605a02f258ef88418f39338a0c21f0331f3637fc410d2
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 554d3325e31c3f74078402d961355218ece16bee
+    path: EIPS/eip-8282.md
+    committed_at: '2026-07-08T12:46:18Z'
+    git_blob_sha: 35ab20cb31a416c50600da00125d262e1756850c
+    content_sha256: ff36162c244b19266b6a97716b84d28e13a94dd24dad1e46935d50fed148a380
+    immutable_url: https://github.com/ethereum/EIPs/blob/554d3325e31c3f74078402d961355218ece16bee/EIPS/eip-8282.md
+    information_cutoff_at: '2026-07-13T07:12:57Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:35:58.674437Z'
+    session_id: assessment-run-bba19c9a-7a48-4c83-8aab-60a45ded2a85
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-1559.md
+  - supporting/eip-6110.md
+  - supporting/eip-7002.md
+  - supporting/eip-7251.md
+  - supporting/eip-7685.md
+  - supporting/eip-7732.md
+  - supporting/eip-7804.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 4f4993d45b919969af2ac165c2edfccf3bcae65cf8fefc4ae3b0592752117007
+    schema_sha256: 1a49c16c01f68eb63a9709ea54465d792a9cff08e590114124bdd15304c9c476
+    started_at: '2026-10-08T09:35:58.674437Z'
+    finished_at: '2026-10-08T09:37:44.923399Z'
+    duration_ms: 104143
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 91284
+      cache_read_input_tokens: 0
+      output_tokens: 11903
+      output_tokens_details:
+        thinking_tokens: 3926
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 91284
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 11903
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 91284
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 91284
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 11903
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 91284
+        webSearchRequests: 0
+        costUSD: 0.96834
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 3926
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.96834
+  assessor_raw_output:
+    path: retrospective/outputs/raw/amsterdam/eip-8282.json
+    content_sha256: c3c4bbe4024751cc60dd6a09f2087ea72ad9018e2527b8543185422ca174ed25
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Request queue and system call — "dedicated gas limit of `30_000_000`"
+    summary: The system-call gas handling is restated from EIP-7002/7251. No new execution-gas accounting
+      rule is introduced.
+  - source: eip.md
+    locator: Request fee
+    summary: The request fee is a contract-level value fee, not an execution-gas rule.
+  rationale: The system-call gas exemption is inherited from EIP-7002/7251, and the fee is an ordinary
+    contract fee. No execution-gas accounting rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Request queue and system call
+    summary: Only contract internals and system calls are defined. No instruction's access ordering changes.
+  rationale: No opcode's state-access or gas-charge ordering changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Blob gas is not mentioned anywhere.
+  rationale: No blob-gas accounting change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Request queue and system call
+    summary: Queue writes use ordinary storage under unchanged pricing.
+  rationale: No state-gas mechanism or rate change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Request fee — "left locked in the contract"
+    summary: No refund mechanism is introduced. Overpayment is retained by the contract.
+  rationale: No new gas refund.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Deployment — "If there is no code at either predeploy address once the EIP is active, every
+      block from activation onward MUST be invalid"
+    summary: Fork pre-states must contain both predeploys, so baseline fixtures need the new accounts.
+  - source: eip.md
+    locator: Backwards Compatibility — "blocks that contain no builder requests produce empty `request_data`"
+    summary: Blocks without builder requests leave requests_hash unchanged.
+  rationale: Blocks with no builder requests keep the same requests_hash. Rework is limited to fork pre-allocation
+    and to request-bus tests that enumerate request types and their ordering, which are localized cases.
+  confidence: medium
+  uncertainty_note: Whether adding the predeploys to pre-state is handled centrally by the framework,
+    and whether the inhibitor-clearing writes change fork-transition expectations, cannot be established
+    from the supplied evidence.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Request fee — "that call clears the inhibitor"
+    summary: The first post-fork system call writes predeploy storage, which is a new state output in
+      fork-transition blocks.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Empty builder request_data is excluded from requests_hash, so ordinary blocks show no new
+      commitment output.
+  rationale: 'Only fork-transition and request-bus cases need extra assertions: the predeploys'' storage
+    after the inhibitor is cleared, and the presence or absence of 0x03/0x04 requests. Ordinary tests
+    gain no new output.'
+  confidence: medium
+  uncertainty_note: Post-state checks of the predeploy storage could apply more widely, depending on the
+    fixture convention.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: supporting/eip-7685.md
+    locator: Requests
+    summary: The requests are opaque type-prefixed bytes under the existing request scheme.
+  - source: eip.md
+    locator: Request queue and system call — "includes `request_type ++ request_data` in the block requests
+      list"
+    summary: The new types use the existing requests list.
+  rationale: New request types travel through the existing requests output, so no new field or mechanism
+    is needed.
+  confidence: medium
+  uncertainty_note: No transition-tool evidence is supplied.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Consensus layer request objects
+    summary: BuilderDepositRequest (184 bytes) and BuilderExitRequest (68 bytes) need encoders and expected-request
+      helpers.
+  rationale: These are local extensions of existing request-type helper primitives, as used for EIP-6110,
+    7002 and 7251.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations — "the execution layer does not verify BLS"
+    summary: BLS verification is CL-only. The EL only carries the signature bytes.
+  - source: supporting/eip-7685.md
+    locator: Block Header
+    summary: The sha256 requests commitment is unchanged.
+  rationale: No EL cryptographic mechanism changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Deposit requests — "`amount * 1 gwei >= BUILDER_MIN_DEPOSIT`" and "`msg.value - fee >= amount
+      * 1 gwei`"
+    summary: Deposit acceptance depends on amount, the current fee (from excess) and msg.value together.
+  - source: eip.md
+    locator: Request queue and system call
+    summary: 'Several boundaries apply: exact calldata sizes (184/48/0, all others revert), value-bearing
+      fee-getter revert, MAX caps of 64/16, queue reset on full drain, and excess update with TARGET 8/2
+      and inhibitor handling.'
+  rationale: 'Several independent boundary-sensitive mechanisms are introduced: calldata dispatch, the
+    minimum deposit, the per-block caps, the excess/fee update and the inhibitor. The deposit funding
+    check is an elevated matrix, because amount, fee/excess and msg.value interact and their combinations
+    change acceptance.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Request queue and system call — "if any of the predeploys' system calls fails or returns
+      an error, the block MUST be invalid"
+    summary: Adds block-invalidity conditions.
+  - source: eip.md
+    locator: Request queue and system call — "committed via the `requests_hash`"
+    summary: The content of the requests_hash header commitment now includes two new state-derived types.
+  rationale: One complex validation, the requests_hash check that depends on execution state, changes
+    content. The no-code and system-call-failure invalidity rules follow the existing pattern.
+  confidence: medium
+  uncertainty_note: It is debatable whether a change to requests_hash content counts as structural validation
+    rather than an ordinary execution rule.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Request queue and system call
+    summary: Requests are carried through the existing EIP-7685 requests list.
+  - source: supporting/eip-7732.md
+    locator: Engine API — "No changes needed."
+    summary: The prerequisite states that no Engine API changes are needed.
+  rationale: No Engine API field or endpoint is defined or changed.
+  confidence: medium
+  uncertainty_note: The EIP does not say whether Engine API request-type validation lists need updating.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Constants — BUILDER_DEPOSIT_CONTRACT_ADDRESS, BUILDER_EXIT_CONTRACT_ADDRESS
+    summary: Two new protocol-designated contracts are defined.
+  - source: eip.md
+    locator: Request queue and system call
+    summary: Both keep in-state queues and excess/count storage and emit EIP-7685 requests through system
+      calls.
+  rationale: Multiple contracts are introduced, and both are stateful and trigger system actions (execution
+    requests).
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility — "It does not modify the validator deposit contract ... the validator
+      withdrawal/consolidation predeploys"
+    summary: Existing system contracts are left unchanged.
+  rationale: Existing contracts keep their rules, code and layout. The changed CL interpretation of 0xB0
+    deposits is CL-only.
+  confidence: medium
+  uncertainty_note: The order of the new system calls relative to the EIP-7002/7251 calls is not stated.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instruction is defined.
+  rationale: No new opcodes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No instruction semantics change.
+  rationale: No opcode modifications.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Constants
+    summary: Only EVM predeploys are added, not precompiles.
+  rationale: No precompiles.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile changes.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Consensus layer request objects
+    summary: 'New request payload schemas: 184-byte BuilderDepositRequest and 68-byte BuilderExitRequest,
+      with amount little-endian.'
+  - source: eip.md
+    locator: Deposit requests — "with the amount converted to its little-endian SSZ encoding"
+    summary: Defines the conversion from big-endian input to little-endian output.
+  rationale: These are new request payload schemas within the existing request-type scheme.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Requests are submitted as ordinary contract calls. No transaction envelope is added.
+  rationale: No new transaction type.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Deposit requests — "The contract MUST reject"
+    summary: Rejection happens through a contract revert, which is application-level and not transaction
+      validity.
+  rationale: No consensus transaction-validity rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: New request types sit under the existing requests_hash.
+  rationale: Adding a request type under an existing commitment is not a new header field.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Deployment — "by a one-time presigned transaction"
+    summary: Contracts are installed by ordinary deployment transactions before the fork, not by protocol-mandated
+      installation.
+  - source: eip.md
+    locator: Request fee — "the first system call clears the inhibitor"
+    summary: The inhibitor is cleared by contract logic inside the recurring system call, as in EIP-7002.
+  rationale: Installation uses ordinary deployment transactions. Clearing the inhibitor is contract-internal
+    recurring logic inherited from the EIP-7002 pattern, not a protocol-mandated state conversion.
+  confidence: medium
+  uncertainty_note: The inhibitor clearing could be read as a one-time conversion embedded in a recurring
+    system call.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Request queue and system call
+    summary: Two extra end-of-block system calls, draining up to 64×184-byte and 16×68-byte records, within
+      a 30M dedicated gas limit.
+  - source: eip.md
+    locator: Security Considerations — Spam and state growth
+    summary: Enqueue is limited only by gas, and queue growth is gated by 1 ETH locked per deposit.
+  rationale: Component benchmarks of the new system-call drain cost and the enqueue path cover the workload.
+    The system calls use the existing dedicated-gas pattern.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations — "`BUILDER_MIN_DEPOSIT` is enforced only at the execution layer
+      ... with no consensus-layer re-assertion"
+    summary: The CL relies on the EL contract to check funding and the minimum before crediting builder
+      stake.
+  - source: eip.md
+    locator: Security Considerations — Exit authorization / System-read access control
+    summary: msg.sender is the sole exit authorization, and only SYSTEM_ADDRESS can dequeue.
+  rationale: 'The EL contract''s value and minimum checks, and its msg.sender recording, are trusted by
+    CL builder stake crediting and exit authorization. This bounded cross-layer interaction needs targeted
+    adversarial cases: underfunded deposits, spoofed source_address, and non-system dequeue.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'Reference Implementation — "TODO: Add test cases and reference implementation"'
+    summary: Bytecode is missing. Addresses depend on bytecode that is not yet fixed.
+  - source: eip.md
+    locator: Request queue and system call — "reusing those contracts' storage layout"
+    summary: How a 184-byte record is packed into slots is not specified. State roots and gas depend on
+      it.
+  - source: eip.md
+    locator: Constants — "EIP-7804, a Draft, also claims `0x03`); final allocation is coordinated in consensus-specs"
+    summary: The request type byte is not settled.
+  rationale: 'Several consensus-visible outcomes have competing possibilities: the storage packing of
+    the 184-byte deposit record, the exact gas use and log layout, the final type byte, and the addresses.
+    All of these need agreement or a reference implementation before expected results can be fixed.'
+  confidence: medium
+  uncertainty_note: The EIP states that the bytecode will be supplied later, so the gap is localized rather
+    than spread across families.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: supporting/eip-7685.md
+    locator: Block Header — "ordered by `request_type` ascending"
+    summary: The new types must be ordered and committed alongside 0x00–0x02, with empty types excluded.
+  - source: eip.md
+    locator: Request queue and system call — "if any of the predeploys' system calls fails"
+    summary: End-of-block processing now includes four request predeploy calls plus deposit log parsing.
+  - source: eip.md
+    locator: Changes to EIP-7732
+    summary: Deposits to the validator deposit contract (EIP-6110), including 0xB0 credentials, stay type
+      0x00 and coexist with builder deposits.
+  rationale: 'The target couples the EIP-7685 commitment ordering with the EIP-6110, 7002 and 7251 request
+    sources. Coordinated scenarios are needed: blocks mixing all request types, one transaction calling
+    several predeploys, failure of any system call, and type ordering and empty-type exclusion.'
+  confidence: medium
+  uncertainty_note: Level 2 is also defensible if mixed-request tests are treated as simple extensions.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7685
+  - 7002
+  - 7251
+  - 6110
+  - 1559
+  - 7732
+  - 7804
+  unidentified_interactions: []
+  base_score: 3
+  bonus: 0
+  bonus_qualifying_eips:
+  - 7685
+  - 7002
+  - 7251
+  - 6110
+  interaction_details:
+  - eip: 7685
+    interaction: coordinated_cases
+    cases: 'requests_hash with 0x03/0x04 alongside 0x00–0x02: ascending type order, empty-type exclusion,
+      and blocks where only builder types are non-empty.'
+  - eip: 7002
+    interaction: coordinated_cases
+    cases: Same-block and same-transaction calls to the withdrawal and builder exit predeploys. Independent
+      excess and fee state per contract. System-call failure semantics across predeploys.
+  - eip: 7251
+    interaction: coordinated_cases
+    cases: Blocks combining consolidation and builder requests. Ordering of request output and independence
+      of each contract's queue.
+  - eip: 6110
+    interaction: coordinated_cases
+    cases: Validator deposit logs (including 0xB0 credentials) and builder deposit requests in the same
+      block. Each must produce the correct request type and data.
+  - eip: 1559
+    interaction: local_compatibility_check
+    cases: Check that fake_exponential with fraction 17 produces the expected fee values.
+  - eip: 7732
+    interaction: local_compatibility_check
+    cases: Check that builder requests flow in the execution requests of the EIP-7732 payload envelope.
+      The lifecycle changes are CL-only.
+  - eip: 7804
+    interaction: local_compatibility_check
+    cases: Check that the request-type allocation for 0x03 does not collide if both EIPs are active.
+totals:
+  primary_score: 22
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: Several consensus-visible details are left open. There is no reference bytecode, so gas use,
+    storage packing of the 184-byte deposit record, log data and the derived addresses are not fixed.
+    The 0x03 type byte conflicts with EIP-7804 and its allocation is deferred. The order of the new system
+    calls relative to the existing ones is not stated.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - transition_tool_interface_changes
+  - block_syncing_changes
+  - engine_api_changes
+  - new_fork_activation_mechanism
+  - cross_eip_interactions
+  criterion_ranges:
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: new_invariant_on_pre_existing_tests
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: transition_tool_interface_changes
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: block_syncing_changes
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: engine_api_changes
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: new_fork_activation_mechanism
+    minimum_score: 0
+    maximum_score: 3
+  - criterion: cross_eip_interactions
+    minimum_score: 2
+    maximum_score: 3
+  plausible_total_range:
+    minimum: 18
+    maximum: 30
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - How are 184-byte deposit records laid out across storage slots from slot 4?
+  - What are the final bytecode, deployment transactions and addresses?
+  - Is 0x03/0x04 the final allocation, given the EIP-7804 conflict?
+  - In what order are the builder system calls made relative to the EIP-7002/7251 calls?
+  - Does the exit contract use its own excess state with TARGET=2, or the deposit contract's fee? The
+    phrase 'same request fee as the deposit contract' is ambiguous.
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- The exit contract is said to charge 'the same request fee as the deposit contract', but it has its own
+  TARGET_EXIT_REQUESTS_PER_BLOCK and its own excess slot.
+- The system-call rule refers to a generic MAX_REQUESTS_PER_BLOCK and TARGET_REQUESTS_PER_BLOCK without
+  naming per-contract values explicitly.
+- Deployment addresses depend on bytecode that has not been audited or frozen, and the Reference Implementation
+  section is a TODO.
+- Overpayment beyond amount*1 gwei + fee is retained and not credited, so value boundaries need explicit
+  vectors.
+overall_confidence: medium

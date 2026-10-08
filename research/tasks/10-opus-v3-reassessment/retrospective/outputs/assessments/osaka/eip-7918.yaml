@@ -1,0 +1,592 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: osaka
+eip:
+  number: 7918
+  title: Blob base fee bounded by execution cost
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: 'This revision of EIP-7918 changes one consensus function: EIP-4844''s `calc_excess_blob_gas()`.
+    Under the old rule, the parent''s blob gas used is added to the excess and `TARGET_BLOB_GAS_PER_BLOCK`
+    is subtracted. Under the new rule, that subtraction is skipped when `TX_BASE_COST * parent.base_fee_per_gas`
+    is greater than `TARGET_BLOB_GAS_PER_BLOCK * get_base_fee_per_blob_gas(parent)`. This links the blob
+    fee update to the execution base fee and stops the blob base fee from staying far below the execution
+    cost of a blob-carrying transaction. The EIP adds no transactions, header fields, opcodes, precompiles,
+    system contracts or Engine API changes. Its effect reaches clients through header validation of `excess_blob_gas`
+    and through every value derived from the blob base fee.'
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/osaka/eip-7918/manifest.yaml
+    manifest_sha256: ec439d1b3ed078e0aaebbf03b328131063b7de8031ad2dc69df0d86d2c8b34c4
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7918/manifest.yaml
+    manifest_sha256: 8f167b017ab35052e137d8a4b5b49091ebdb8354b70af1ba92d2750809e19dc0
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680
+    path: EIPS/eip-7918.md
+    committed_at: '2025-03-26T19:04:25Z'
+    git_blob_sha: bd5700342ad5e1b41f973cc46b569a9a639694ee
+    content_sha256: eeca54feba9d22411496c6d0020ffe41b174d465361abfc6790e349ab14fbd8d
+    immutable_url: https://github.com/ethereum/EIPs/blob/d4a7453aacfc8dfcaf25cbafec3c1bff1b9e6680/EIPS/eip-7918.md
+    information_cutoff_at: '2025-03-26T23:25:10Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:42:00.779800Z'
+    session_id: assessment-run-f79f370d-aabd-4013-a9de-f82ca38b4980
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4844.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: ff0bf8ed87a8c9cc7ccc1326d2bfc3111e87fa075891235f452c15d949cc8af4
+    schema_sha256: 988ae909a91e454d511f7ffe7d4587d28bf7e94dd3d5c5de24a028f21ec2df01
+    started_at: '2026-10-08T09:42:00.779800Z'
+    finished_at: '2026-10-08T09:43:28.199816Z'
+    duration_ms: 84807
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 35433
+      cache_read_input_tokens: 0
+      output_tokens: 9919
+      output_tokens_details:
+        thinking_tokens: 3347
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 35433
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 9919
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 35433
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 35433
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 9919
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 35433
+        webSearchRequests: 0
+        costUSD: 0.481852
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 3347
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.481852
+  assessor_raw_output:
+    path: retrospective/outputs/raw/osaka/eip-7918.json
+    content_sha256: 401f881dccfd3b861d4ee0c766e6bb6990476b5809e526d353c12fe2dcc574d7
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only calc_excess_blob_gas() is changed; execution-gas charging, metering and limits are untouched.
+      The execution base fee is only read as an input.
+  rationale: No execution-gas accounting rule changes. The execution base fee is read but not modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The change is confined to a header-level function. No instruction behavior is touched.
+  rationale: No opcode's state-access or gas-charge ordering changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — "if TX_BASE_COST * parent.base_fee_per_gas > TARGET_BLOB_GAS_PER_BLOCK *
+      get_base_fee_per_blob_gas(parent)"
+    summary: Adds a new pricing condition that bounds the blob fee by execution cost. In that regime the
+      target is not subtracted, so excess_blob_gas grows by the full blob_gas_used.
+  - source: supporting/eip-4844.md
+    locator: Header extension — calc_excess_blob_gas
+    summary: 'Baseline rule: always subtract the target, floored at 0. The new branch changes the expected
+      excess_blob_gas values from this baseline rule.'
+  rationale: A new rule bounds the blob base fee by execution cost and links blob pricing to the execution
+    base fee. It replaces the baseline excess update in the execution-fee-led regime, so baseline expectations
+    for excess_blob_gas and the blob base fee change. This meets level 3.
+  confidence: medium
+  uncertainty_note: This could be read as a change to an existing rule (level 1) rather than a new mechanism.
+    There is no new gas type or fee; it is a new conditional regime.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Nothing related to state gas is changed.
+  rationale: No state-gas accounting changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund mechanism is introduced.
+  rationale: No new refund.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: excess_blob_gas changes only when the parent's execution base fee times TX_BASE_COST exceeds
+      the target blob gas times the blob base fee.
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation — "assert block.header.excess_blob_gas == calc_excess_blob_gas(block.parent.header)"
+    summary: Baseline tests check excess_blob_gas through header validation. Cases where the parent base
+      fee is high and the blob fee is low get different expected values.
+  rationale: Rework is limited to tests of excess_blob_gas and blob base fee evolution whose parameters
+    fall in the execution-fee-led regime (high parent base fee, low blob base fee). These are parameter
+    cases within one family.
+  confidence: medium
+  uncertainty_note: How many baseline vectors fall in that regime depends on the default base fees in
+    the tests and on the undefined value of TX_BASE_COST. If typical fixtures use a high base fee, rework
+    could extend to ordinary cases (level 2).
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new output field, log or commitment is introduced.
+  rationale: Only existing values change, which counts as rework, not a new assertion.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: 'Specification — calc_excess_blob_gas(parent: Header)'
+    summary: The new rule uses parent.base_fee_per_gas, parent.excess_blob_gas and parent.blob_gas_used.
+      The tool already needs these parent fields to compute base fee and excess.
+  rationale: The calculation needs only parent header values that the baseline already uses, so no interface
+    change is established.
+  confidence: medium
+  uncertainty_note: No transition-tool interface documentation was supplied. If the tool does not already
+    pass the parent base fee to the excess calculation, one field could be needed (level 1).
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The framework's helper for expected excess_blob_gas must take the parent execution base fee
+      and the new parity condition into account.
+  rationale: The existing helper that computes excess blob gas or blob base fee needs a local extension.
+    No new abstraction is required.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Integer fee arithmetic only.
+  rationale: No cryptographic change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — strict '>' comparison
+    summary: A single parity condition with a strict inequality. Equality falls into the subtracting branch.
+      It sits alongside the existing zero-floor check.
+  rationale: 'One boundary-sensitive mechanism: the fee-parity comparison, including the equality case
+    and its interaction with the zero floor and with fake_exponential rounding. It depends on parent base
+    fee, excess and blob gas used, but it is still a single mechanism.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 2
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation — excess_blob_gas assert
+    summary: Header validation compares excess_blob_gas with calc_excess_blob_gas(parent).
+  - source: eip.md
+    locator: Specification
+    summary: The validation now also depends on the parent's base_fee_per_gas and the derived blob base
+      fee.
+  rationale: Exactly one complex structural validation rule changes. The excess_blob_gas header check
+    depends on several parent fields and must be tested through block import, including rejection of headers
+    that use the old formula.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API change is described.
+  rationale: No Engine API fields or endpoints change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No contracts are added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contracts are involved.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No opcodes are added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Instruction semantics are unchanged. Only header-derived fee values may differ.
+  rationale: No opcode semantics change. Any opcode that reports the blob base fee keeps its semantics;
+    only the header input changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompiles are added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompiles change.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only the value of the existing excess_blob_gas field changes. The schema is unchanged.
+  rationale: No schema changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new transaction type is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation — "assert tx.max_fee_per_blob_gas >= get_base_fee_per_blob_gas(block.header)"
+    summary: The validity rule is unchanged. Only the blob base fee value it compares against can differ.
+  rationale: No transaction-validity rule changes. Blob transactions near the fee threshold are covered
+    as interaction cases, not as a new validity rule.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header field is added. The existing excess_blob_gas field gets a new derivation.
+  rationale: Only the value of an existing field changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only the rule changes. No state migration or code installation is required.
+  rationale: Only rule selection at the fork boundary. No activation-specific state transition.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Adds one multiplication and comparison. The blob base fee is computed with the existing fake_exponential.
+  rationale: No additional performance validation is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: The author states there are no known security risks.
+  - source: eip.md
+    locator: Specification
+    summary: Consensus-critical multiplications of base fees by constants. Large-value arithmetic must
+      not overflow differently across clients.
+  rationale: The new consensus arithmetic, including the large products of base fee and constant, can
+    be checked locally. No other component's security assumptions change.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — TX_BASE_COST
+    summary: TX_BASE_COST is used but never defined, and the supplied EIP-4844 does not define it either.
+  - source: supporting/eip-4844.md
+    locator: Parameters
+    summary: Defines TARGET_BLOB_GAS_PER_BLOCK as 393216 and nothing for TX_BASE_COST. The supplied text
+      gives no rule for the Prague-baseline or fork-boundary parameter values.
+  rationale: The value of TX_BASE_COST decides which branch is taken and therefore the consensus-visible
+    excess_blob_gas. It is undefined in the supplied documents, and its name allows competing values,
+    such as an intrinsic gas of 21000 or something else. Which target and update-fraction values apply
+    at the Prague→Osaka fork-boundary block is also not stated. Expected results cannot be fixed until
+    clients and the specification agree.
+  confidence: medium
+  uncertainty_note: An absent document might define TX_BASE_COST, so this is partly an evidence gap. The
+    name strongly suggests the base intrinsic transaction cost, which would make this level 1.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "The function calc_excess_blob_gas() from EIP-4844 is changed"
+    summary: Directly modifies EIP-4844's excess blob gas mechanism.
+  - source: supporting/eip-4844.md
+    locator: Gas accounting / Execution layer validation
+    summary: The blob base fee drives blob fee charging and the max_fee_per_blob_gas validity check, both
+      of which are affected by the new excess value.
+  rationale: Coordinated cases with EIP-4844 are needed. They are multi-block sequences in which parent
+    execution base fee and blob usage push excess_blob_gas into either regime, followed by checks of the
+    blob fee charged and of max_fee_per_blob_gas validity in the following blocks. The execution base
+    fee (EIP-1559 mechanism, not in the candidate list) is also coupled.
+  confidence: medium
+  uncertainty_note: Counting the EIP-1559 base-fee coupling as a separate interacting EIP could support
+    level 3.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 4844
+  unidentified_interactions:
+  - The execution base_fee_per_gas, which comes from the EIP-1559 fee mechanism and is not in the candidate
+    list, now feeds blob excess computation. Its evolution across blocks must be coordinated with the
+    blob regime switching.
+  - The Rationale mentions a Fusaka increase to the blob target, which shifts the parity threshold. The
+    Prague-baseline blob schedule and target parameters are not supplied.
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 4844
+  interaction_details:
+  - eip: 4844
+    interaction: coordinated_cases
+    cases: Multi-block chains in which parent base_fee_per_gas and blob_gas_used place calc_excess_blob_gas
+      in the execution-fee-led branch (no target subtraction) or the blob-fee-led branch, including the
+      equality case at parity and the zero floor. Follow-on blocks check the blob fee deducted and the
+      acceptance or rejection of blob transactions at the max_fee_per_blob_gas threshold. Headers carrying
+      an excess_blob_gas computed with the old formula must be rejected.
+totals:
+  primary_score: 13
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: TX_BASE_COST is used in the consensus condition but is not defined in the target or in the
+    supplied EIP-4844. The EIP uses the 4844 constant TARGET_BLOB_GAS_PER_BLOCK and get_base_fee_per_blob_gas(parent)
+    without saying which fork's target and update fraction apply on the Prague baseline or at the fork-boundary
+    block.
+  affected_criteria:
+  - blob_gas_accounting_changes
+  - patterns_affecting_pre_existing_tests
+  - transition_tool_interface_changes
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  criterion_ranges:
+  - criterion: blob_gas_accounting_changes
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: transition_tool_interface_changes
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: cross_eip_interactions
+    minimum_score: 2
+    maximum_score: 3
+  plausible_total_range:
+    minimum: 10
+    maximum: 16
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - 'What is the value of TX_BASE_COST: the 21000 intrinsic transaction gas or something else?'
+  - Which target and update-fraction parameters apply (4844 constants or later fork-dependent values)
+    for parent blocks on a Prague baseline?
+  - For the first Osaka block, whose parent is a Prague block, does the new rule apply when computing
+    the child's excess_blob_gas?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- TX_BASE_COST is undefined in the supplied documents.
+- The strict '>' comparison sends the exact-parity case to the subtracting branch. Tests should cover
+  equality.
+- get_base_fee_per_blob_gas(parent) uses the parent's excess_blob_gas, so the comparison is made on parent-block
+  fees, not on the child's fees. The Rationale lists alternatives using the updated fees, which are not
+  normative.
+- How the fork-dependent blob parameters on the Prague baseline relate to the 4844 constant names is unspecified
+  in the supplied text.
+overall_confidence: medium

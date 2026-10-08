@@ -1,0 +1,670 @@
+{
+ "case": "amsterdam/8038",
+ "run_id": "assessment-run-bfa77626-2257-437b-bcec-b96f97cfcf83",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:35:17.707752Z",
+ "finished_at": "2026-10-08T09:37:08.344601Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "873f39fad1f047ab39c34af40387789c77c552f78bfe3971d2668272b9d7f49a",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "380aa943816f38d4e49447095c45d5a38a4cfdf9881d9f0fc7612de2a05de679",
+ "output": {
+  "duration_api_ms": 108173,
+  "stop_reason": "tool_use",
+  "session_id": "8fa77d41-b1e9-4031-94d9-ec9759783cca",
+  "total_cost_usd": 0.568056,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 39121,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 12754,
+   "output_tokens_details": {
+    "thinking_tokens": 4327
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 39121,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 12754,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 39121,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 39121
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 12754,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 39121,
+    "webSearchRequests": 0,
+    "costUSD": 0.568056,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 4327,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"At this revision, EIP-8038 reprices state access. It raises four existing gas parameters: GAS_STORAGE_UPDATE, GAS_COLD_SLOAD, GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS. All new values are TBD. These parameters affect SSTORE, SLOAD, the *CALL family, BALANCE, SELFDESTRUCT and the EXT* opcodes. The EIP also adds one GAS_WARM_ACCESS to the cold and warm access cost of EXTCODESIZE and EXTCODECOPY. The Rationale coordinates the values with EIP-8032's depth-based SSTORE pricing and says that under EIP-2926, EXTCODESIZE keeps its previous formula. It adds no new mechanisms, encodings, header fields, opcodes or transaction types.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — parameter table\",\"summary\":\"Existing parameters GAS_STORAGE_UPDATE, GAS_COLD_SLOAD, GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS get new values, which are still TBD.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"access_gas_cost = GAS_WARM_ACCESS*2\\\"\",\"summary\":\"The existing EIP-2929-style cold/warm access formula for EXTCODESIZE and EXTCODECOPY gains one extra GAS_WARM_ACCESS term.\"}],\"rationale\":\"Existing accounting rules and parameters change: constant repricing plus an additive term in an existing cold/warm formula. No new accounting mechanism is introduced, so this is level 1.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — EXTCODESIZE/EXTCODECOPY formula\",\"summary\":\"Only the charged amount changes. The accessed_addresses check-then-add sequence is the same as the existing cold/warm logic.\"},{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-7928\",\"summary\":\"The text does not change which accesses are recorded in the block-level access list.\"}],\"rationale\":\"No instruction's order of state access versus gas charging changes, and the definition of a recordable access is unchanged.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Higher costs move out-of-gas points, which may change whether an access happens before a halt. That ordering is defined by EIP-2929 and EIP-7928, not changed by this EIP.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only execution-gas parameters for state access are changed. Blob gas is not mentioned.\"}],\"rationale\":\"No blob-gas accounting change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"GAS_STORAGE_UPDATE | 5,000 | TBD\\\"\",\"summary\":\"The existing SSTORE storage-write cost parameter is repriced.\"},{\"source\":\"eip.md\",\"locator\":\"Motivation\",\"summary\":\"The repricing is justified by state-access performance, not by state growth.\"}],\"rationale\":\"The only state-write-related change is the value of the existing SSTORE update cost parameter. No new state-gas mechanism or budget exists, so this is at most level 1.\",\"confidence\":\"low\",\"uncertainty_note\":\"GAS_STORAGE_UPDATE could be read purely as an execution-gas access charge, which would make this criterion 0.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund mechanism is introduced. Only cost parameters are changed.\"}],\"rationale\":\"No new refund mechanism. Any knock-on effect on existing SSTORE restore refunds that derive from these parameters is a repricing, which belongs under GAS and PAT.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Operations affected\\\" column\",\"summary\":\"The repricing affects SSTORE, SLOAD, *CALL opcodes, BALANCE, SELFDESTRUCT and EXT* opcodes, including warm-access costs.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — EXTCODESIZE/EXTCODECOPY formula\",\"summary\":\"The cold and warm expected costs for EXTCODESIZE and EXTCODECOPY change.\"}],\"rationale\":\"One common change, the repricing of the warm/cold and storage parameters, changes expected gas results in ordinary cases across distinct families. These include storage opcodes (SLOAD and SSTORE gas and refund paths), the call family (including calls to warm precompiles), account introspection (BALANCE and EXT*) and SELFDESTRUCT. It also changes any test whose gas outcome depends on these opcodes.\",\"confidence\":\"high\",\"uncertainty_note\":\"Exact rework depends on the TBD values. If GAS_WARM_ACCESS ends up unchanged, the rework is somewhat narrower, but it still spans several families.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new output, field, log or commitment is introduced.\"}],\"rationale\":\"Only expected gas values change, which is rework rather than a new assertion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only gas parameters and one formula change. No input or output fields are introduced.\"}],\"rationale\":\"No transition-tool interface change is required. The fork-specific gas schedule is internal.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only parameter values change, plus one additive cost term.\"}],\"rationale\":\"New parameter values in a fork gas schedule are not new primitives. Depth-aware SSTORE costing is EIP-8032's primitive.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Fork gas-cost helpers may need a local extension to distinguish the EXTCODESIZE and EXTCODECOPY formulas, especially under EIP-2926. That would be level 1 at most.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No cryptographic content.\"}],\"rationale\":\"No cryptographic mechanism changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — parameter table\",\"summary\":\"Several independent cost parameters change, each moving exact out-of-gas boundaries for the opcodes that use it.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — EXTCODESIZE/EXTCODECOPY formula\",\"summary\":\"A new cold/warm cost formula introduces new exact-gas boundaries for two opcodes.\"}],\"rationale\":\"Several boundary-sensitive rules change: exact-gas out-of-gas thresholds for SSTORE and SLOAD, for cold and warm account access, and for the new EXTCODE* formula. Cold/warm and exact-gas dimensions can mostly be tested per opcode, so no elevated matrix is established.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Interaction with EIP-8032's ACTIVATION_THRESHOLD and EIP-2200-style SSTORE paths could form an elevated matrix, but that depends on TBD values and on the prerequisite's own rules.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No block structure or decoding changes.\"}],\"rationale\":\"No RLP decoding or structural validation changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API content.\"}],\"rationale\":\"No Engine API change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No contracts are introduced.\"}],\"rationale\":\"No system contract is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only gas parameters change. No system contract is referenced.\"}],\"rationale\":\"System contract rules and code are unchanged. Higher gas costs for user calls into them are an ordinary repricing effect.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Gas consumed by system calls or user calls into existing system contracts rises. If any fee or gas assumption around them is tight, this could count as an indirect local change (level 1).\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new instructions.\"}],\"rationale\":\"No new opcode.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"gas cost formula for EXTCODESIZE and EXTCODECOPY is updated\\\"\",\"summary\":\"Only gas cost changes are specified for existing opcodes.\"}],\"rationale\":\"These are gas-only changes, so the criterion is 0 by definition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are introduced.\"}],\"rationale\":\"No new precompile.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — parameter table\",\"summary\":\"Only *CALL access costs change. Precompile gas schedules are not touched.\"}],\"rationale\":\"Calls to warm precompiles cost more through the CALL access cost, but no precompile's own gas schedule or semantics changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-2926\",\"summary\":\"The codeSize account field is introduced by EIP-2926, not by this EIP.\"}],\"rationale\":\"The target introduces no schema or codec change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction types.\"}],\"rationale\":\"No new envelope.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Intrinsic gas and access-list costs are not mentioned. Only opcode execution costs change.\"}],\"rationale\":\"No consensus transaction-validity or intrinsic-gas rule change is specified.\",\"confidence\":\"medium\",\"uncertainty_note\":\"It is not stated whether intrinsic access-list per-address or per-slot costs, or authorization-related account-access costs, track GAS_COLD_ACCOUNT_ACCESS.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"No new header member.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"Upon activation of this EIP, the following parameters ... are updated\\\"\",\"summary\":\"Activation is a rule and constant switch only.\"}],\"rationale\":\"Selecting a new gas schedule at the fork is not an activation-specific state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Benchmarking — \\\"we require stateful benchmarks, which are currently in development\\\"\",\"summary\":\"Setting the values depends on stateful benchmarks of state-access operations.\"},{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-8032\",\"summary\":\"The values must reflect worst-case contract size, either overall or up to ACTIVATION_THRESHOLD.\"},{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-7928\",\"summary\":\"The initial benchmarks will not take BAL-enabled optimizations into account.\"}],\"rationale\":\"The changed gas bounds for state-access workloads need targeted integrated, state-dependent benchmarks against a large state and worst-case contract sizes. These cover database reads for accounts, storage and code. No new cross-subsystem resource coupling is introduced.\",\"confidence\":\"medium\",\"uncertainty_note\":\"With TBD values, it is unclear how much the worst-case benchmarking would also need to cover EIP-8032 depth regimes and BAL parallel-IO interactions.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations\",\"summary\":\"Only application usability impact is noted.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — GAS_WARM_ACCESS row\",\"summary\":\"Warm access costs may change, affecting fixed-gas-stipend execution paths.\"}],\"rationale\":\"The changed security conditions are local: whether the new prices bound worst-case state-access DoS, and whether behaviour under fixed gas budgets (for example the 2300 stipend) is consistent. No cross-component trust invariant changes.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Breakage of existing contracts that rely on the stipend is an application concern and is not analysed in the EIP.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — parameter table \\\"TBD\\\" and \\\"<-- TODO -->\\\"\",\"summary\":\"All new parameter values are unspecified, so expected gas results cannot be fixed.\"},{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-2926 — \\\"EXTCODESIZE should maintain its previous cost formula\\\"\",\"summary\":\"This contradicts the Specification, which applies the extra GAS_WARM_ACCESS to EXTCODESIZE, even though EIP-2926 is a required prerequisite.\"},{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-8032\",\"summary\":\"Two parameter regimes (before and after EIP-8032) are described without a normative selection rule or values.\"},{\"source\":\"supporting/eip-2926.md\",\"locator\":\"Gas cost of code-accessing opcodes — \\\"reading a non-accessed chunk will incur a 200 warming cost\\\"\",\"summary\":\"It is unclear whether the extra EXTCODECOPY warm charge stacks with per-chunk warming.\"}],\"rationale\":\"There are localized competing outcomes. The EXTCODESIZE formula conflicts between the Specification and the Rationale under the EIP-2926 baseline. The choice between EIP-8032 regimes is open, and how EXTCODECOPY combines with chunk warming is unspecified. These need spec and client agreement before expected results can be fixed. Previously unobservable behaviour does not become consensus-visible.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The EXTCODECOPY and chunk-warming question partly depends on EIP-2926's own incompletely specified gas rules.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-8032\",\"summary\":\"SSTORE pricing combines the new GAS_STORAGE_UPDATE and GAS_COLD_SLOAD with EIP-8032's depth-based term above ACTIVATION_THRESHOLD.\"},{\"source\":\"supporting/eip-8032.md\",\"locator\":\"Gas cost changes — \\\"constant_sstore_gas(addr, slot) + LIN_FACTOR * ...\\\"\",\"summary\":\"The constant SSTORE part, which this EIP reprices, is added to the depth term.\"},{\"source\":\"eip.md\",\"locator\":\"Interaction with EIP-2926\",\"summary\":\"Under EIP-2926, EXTCODESIZE uses the previous formula while EXTCODECOPY gets the extra warm charge.\"},{\"source\":\"supporting/eip-2926.md\",\"locator\":\"Updating existing code — \\\"EXTCODESIZE/EXTCODEHASH/EXTCODECOPY behave the same\\\"\",\"summary\":\"EIP-7702 delegated accounts and legacy (not yet converted) contracts during the transition affect EXTCODE* cases.\"},{\"source\":\"eip.md\",\"locator\":\"Motivation — EIP-2929\",\"summary\":\"The repriced parameters are EIP-2929's cold/warm access parameters.\"},{\"source\":\"supporting/eip-7928.md\",\"locator\":\"Scope and Inclusion — \\\"Targets of BALANCE, EXTCODESIZE, EXTCODECOPY\\\"\",\"summary\":\"BAL recording of accessed addresses is unchanged, but gas-boundary cases affect which accesses occur.\"}],\"rationale\":\"The interactions with EIP-8032 (SSTORE below and above the threshold), EIP-2926 (EXTCODESIZE vs EXTCODECOPY, converted vs legacy code, delegated accounts) and EIP-2929 (cold/warm paths for each repriced opcode) each need coordinated cases. They are largely separable per opcode family rather than a coupled multi-EIP restructuring, so this is level 2. EIP-7928 needs only local checks.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If SSTORE vectors must jointly cover EIP-2929 cold/warm, EIP-8032 depth and EIP-2926 states, this could reach level 3.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":8032,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"SSTORE gas with the repriced GAS_STORAGE_UPDATE and GAS_COLD_SLOAD combined with the depth term. Cover accounts below and above ACTIVATION_THRESHOLD, cold and warm slots, and accounts without a depth field.\"},{\"eip\":2926,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"EXTCODESIZE keeping the previous formula (codeSize field) versus EXTCODECOPY with the extra GAS_WARM_ACCESS. Cover converted versus legacy contracts during the transition, EIP-7702 delegated accounts (code size 23), and EXTCODECOPY combined with chunk-warming costs.\"},{\"eip\":2929,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Cold/warm paths using the new parameters for SLOAD, SSTORE, the *CALL family, BALANCE, SELFDESTRUCT and EXT*, including addresses pre-warmed by access lists and the new EXTCODESIZE/EXTCODECOPY cold and warm amounts.\"},{\"eip\":7928,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Check that out-of-gas at the new access-cost boundaries still produces the BAL entries required by EIP-7928 for BALANCE, EXT* and CALL targets.\"}],\"unidentified_interactions\":[\"Warm-access repricing affects calls to precompiles and EIP-7702 delegation resolution, which the text does not cover.\",\"Existing SSTORE refund amounts derived from GAS_STORAGE_UPDATE, GAS_COLD_SLOAD and GAS_WARM_ACCESS (net-metering rules) change implicitly; the governing EIP is not named.\"]},\"under_specification\":{\"present\":true,\"summary\":\"All new parameter values are TBD. The Specification applies the extra GAS_WARM_ACCESS to EXTCODESIZE, but the EIP-2926 Rationale says EXTCODESIZE keeps its previous formula, even though EIP-2926 is required. The before- and after-EIP-8032 parameter regimes are described without a normative choice. The Backwards Compatibility text refers to calldata and floor cost rules that do not apply here.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":2,\"maximum_score\":2},{\"criterion\":\"cross_eip_interactions\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"state_gas_accounting_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"performance_risks\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":0,\"maximum_score\":1}],\"unresolved_questions\":[\"What are the new values of GAS_STORAGE_UPDATE, GAS_COLD_SLOAD, GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS?\",\"With EIP-2926 active, does EXTCODESIZE pay the extra GAS_WARM_ACCESS or not?\",\"Which parameter regime (before or after EIP-8032) applies when both EIPs are in the same fork?\",\"Does the extra EXTCODECOPY warm charge stack with EIP-2926 per-chunk warming costs?\",\"Do intrinsic access-list costs or EIP-7702 delegation access costs change along with GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS?\",\"Is GAS_WARM_ACCESS meant to change? The Abstract omits it but the table lists it.\"]},\"notable_ambiguities\":[\"The Specification and the EIP-2926 interaction section contradict each other on the EXTCODESIZE formula.\",\"All values are TBD (TODO markers), so expected gas results cannot be derived.\",\"The title and Abstract say 'increase', but the table includes GAS_WARM_ACCESS, which the Abstract does not mention.\",\"Backwards Compatibility refers to 'calldata cost rules' and 'floor cost values', apparently copied from another EIP.\",\"The table lists SELFDESTRUCT for cold account access but not for warm access.\",\"The SSTORE refund amounts that derive from the repriced parameters are not discussed.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "At this revision, EIP-8038 reprices state access. It raises four existing gas parameters: GAS_STORAGE_UPDATE, GAS_COLD_SLOAD, GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS. All new values are TBD. These parameters affect SSTORE, SLOAD, the *CALL family, BALANCE, SELFDESTRUCT and the EXT* opcodes. The EIP also adds one GAS_WARM_ACCESS to the cold and warm access cost of EXTCODESIZE and EXTCODECOPY. The Rationale coordinates the values with EIP-8032's depth-based SSTORE pricing and says that under EIP-2926, EXTCODESIZE keeps its previous formula. It adds no new mechanisms, encodings, header fields, opcodes or transaction types.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — parameter table",
+       "summary": "Existing parameters GAS_STORAGE_UPDATE, GAS_COLD_SLOAD, GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS get new values, which are still TBD."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"access_gas_cost = GAS_WARM_ACCESS*2\"",
+       "summary": "The existing EIP-2929-style cold/warm access formula for EXTCODESIZE and EXTCODECOPY gains one extra GAS_WARM_ACCESS term."
+      }
+     ],
+     "rationale": "Existing accounting rules and parameters change: constant repricing plus an additive term in an existing cold/warm formula. No new accounting mechanism is introduced, so this is level 1.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — EXTCODESIZE/EXTCODECOPY formula",
+       "summary": "Only the charged amount changes. The accessed_addresses check-then-add sequence is the same as the existing cold/warm logic."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-7928",
+       "summary": "The text does not change which accesses are recorded in the block-level access list."
+      }
+     ],
+     "rationale": "No instruction's order of state access versus gas charging changes, and the definition of a recordable access is unchanged.",
+     "confidence": "medium",
+     "uncertainty_note": "Higher costs move out-of-gas points, which may change whether an access happens before a halt. That ordering is defined by EIP-2929 and EIP-7928, not changed by this EIP.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only execution-gas parameters for state access are changed. Blob gas is not mentioned."
+      }
+     ],
+     "rationale": "No blob-gas accounting change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"GAS_STORAGE_UPDATE | 5,000 | TBD\"",
+       "summary": "The existing SSTORE storage-write cost parameter is repriced."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Motivation",
+       "summary": "The repricing is justified by state-access performance, not by state growth."
+      }
+     ],
+     "rationale": "The only state-write-related change is the value of the existing SSTORE update cost parameter. No new state-gas mechanism or budget exists, so this is at most level 1.",
+     "confidence": "low",
+     "uncertainty_note": "GAS_STORAGE_UPDATE could be read purely as an execution-gas access charge, which would make this criterion 0.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund mechanism is introduced. Only cost parameters are changed."
+      }
+     ],
+     "rationale": "No new refund mechanism. Any knock-on effect on existing SSTORE restore refunds that derive from these parameters is a repricing, which belongs under GAS and PAT.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Operations affected\" column",
+       "summary": "The repricing affects SSTORE, SLOAD, *CALL opcodes, BALANCE, SELFDESTRUCT and EXT* opcodes, including warm-access costs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — EXTCODESIZE/EXTCODECOPY formula",
+       "summary": "The cold and warm expected costs for EXTCODESIZE and EXTCODECOPY change."
+      }
+     ],
+     "rationale": "One common change, the repricing of the warm/cold and storage parameters, changes expected gas results in ordinary cases across distinct families. These include storage opcodes (SLOAD and SSTORE gas and refund paths), the call family (including calls to warm precompiles), account introspection (BALANCE and EXT*) and SELFDESTRUCT. It also changes any test whose gas outcome depends on these opcodes.",
+     "confidence": "high",
+     "uncertainty_note": "Exact rework depends on the TBD values. If GAS_WARM_ACCESS ends up unchanged, the rework is somewhat narrower, but it still spans several families.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new output, field, log or commitment is introduced."
+      }
+     ],
+     "rationale": "Only expected gas values change, which is rework rather than a new assertion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only gas parameters and one formula change. No input or output fields are introduced."
+      }
+     ],
+     "rationale": "No transition-tool interface change is required. The fork-specific gas schedule is internal.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only parameter values change, plus one additive cost term."
+      }
+     ],
+     "rationale": "New parameter values in a fork gas schedule are not new primitives. Depth-aware SSTORE costing is EIP-8032's primitive.",
+     "confidence": "medium",
+     "uncertainty_note": "Fork gas-cost helpers may need a local extension to distinguish the EXTCODESIZE and EXTCODECOPY formulas, especially under EIP-2926. That would be level 1 at most.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No cryptographic content."
+      }
+     ],
+     "rationale": "No cryptographic mechanism changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — parameter table",
+       "summary": "Several independent cost parameters change, each moving exact out-of-gas boundaries for the opcodes that use it."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — EXTCODESIZE/EXTCODECOPY formula",
+       "summary": "A new cold/warm cost formula introduces new exact-gas boundaries for two opcodes."
+      }
+     ],
+     "rationale": "Several boundary-sensitive rules change: exact-gas out-of-gas thresholds for SSTORE and SLOAD, for cold and warm account access, and for the new EXTCODE* formula. Cold/warm and exact-gas dimensions can mostly be tested per opcode, so no elevated matrix is established.",
+     "confidence": "medium",
+     "uncertainty_note": "Interaction with EIP-8032's ACTIVATION_THRESHOLD and EIP-2200-style SSTORE paths could form an elevated matrix, but that depends on TBD values and on the prerequisite's own rules.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No block structure or decoding changes."
+      }
+     ],
+     "rationale": "No RLP decoding or structural validation changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API content."
+      }
+     ],
+     "rationale": "No Engine API change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No contracts are introduced."
+      }
+     ],
+     "rationale": "No system contract is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only gas parameters change. No system contract is referenced."
+      }
+     ],
+     "rationale": "System contract rules and code are unchanged. Higher gas costs for user calls into them are an ordinary repricing effect.",
+     "confidence": "medium",
+     "uncertainty_note": "Gas consumed by system calls or user calls into existing system contracts rises. If any fee or gas assumption around them is tight, this could count as an indirect local change (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new instructions."
+      }
+     ],
+     "rationale": "No new opcode.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"gas cost formula for EXTCODESIZE and EXTCODECOPY is updated\"",
+       "summary": "Only gas cost changes are specified for existing opcodes."
+      }
+     ],
+     "rationale": "These are gas-only changes, so the criterion is 0 by definition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are introduced."
+      }
+     ],
+     "rationale": "No new precompile.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — parameter table",
+       "summary": "Only *CALL access costs change. Precompile gas schedules are not touched."
+      }
+     ],
+     "rationale": "Calls to warm precompiles cost more through the CALL access cost, but no precompile's own gas schedule or semantics changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-2926",
+       "summary": "The codeSize account field is introduced by EIP-2926, not by this EIP."
+      }
+     ],
+     "rationale": "The target introduces no schema or codec change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction types."
+      }
+     ],
+     "rationale": "No new envelope.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Intrinsic gas and access-list costs are not mentioned. Only opcode execution costs change."
+      }
+     ],
+     "rationale": "No consensus transaction-validity or intrinsic-gas rule change is specified.",
+     "confidence": "medium",
+     "uncertainty_note": "It is not stated whether intrinsic access-list per-address or per-slot costs, or authorization-related account-access costs, track GAS_COLD_ACCOUNT_ACCESS.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "No new header member.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"Upon activation of this EIP, the following parameters ... are updated\"",
+       "summary": "Activation is a rule and constant switch only."
+      }
+     ],
+     "rationale": "Selecting a new gas schedule at the fork is not an activation-specific state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Benchmarking — \"we require stateful benchmarks, which are currently in development\"",
+       "summary": "Setting the values depends on stateful benchmarks of state-access operations."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-8032",
+       "summary": "The values must reflect worst-case contract size, either overall or up to ACTIVATION_THRESHOLD."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-7928",
+       "summary": "The initial benchmarks will not take BAL-enabled optimizations into account."
+      }
+     ],
+     "rationale": "The changed gas bounds for state-access workloads need targeted integrated, state-dependent benchmarks against a large state and worst-case contract sizes. These cover database reads for accounts, storage and code. No new cross-subsystem resource coupling is introduced.",
+     "confidence": "medium",
+     "uncertainty_note": "With TBD values, it is unclear how much the worst-case benchmarking would also need to cover EIP-8032 depth regimes and BAL parallel-IO interactions.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations",
+       "summary": "Only application usability impact is noted."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — GAS_WARM_ACCESS row",
+       "summary": "Warm access costs may change, affecting fixed-gas-stipend execution paths."
+      }
+     ],
+     "rationale": "The changed security conditions are local: whether the new prices bound worst-case state-access DoS, and whether behaviour under fixed gas budgets (for example the 2300 stipend) is consistent. No cross-component trust invariant changes.",
+     "confidence": "medium",
+     "uncertainty_note": "Breakage of existing contracts that rely on the stipend is an application concern and is not analysed in the EIP.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — parameter table \"TBD\" and \"<-- TODO -->\"",
+       "summary": "All new parameter values are unspecified, so expected gas results cannot be fixed."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-2926 — \"EXTCODESIZE should maintain its previous cost formula\"",
+       "summary": "This contradicts the Specification, which applies the extra GAS_WARM_ACCESS to EXTCODESIZE, even though EIP-2926 is a required prerequisite."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-8032",
+       "summary": "Two parameter regimes (before and after EIP-8032) are described without a normative selection rule or values."
+      },
+      {
+       "source": "supporting/eip-2926.md",
+       "locator": "Gas cost of code-accessing opcodes — \"reading a non-accessed chunk will incur a 200 warming cost\"",
+       "summary": "It is unclear whether the extra EXTCODECOPY warm charge stacks with per-chunk warming."
+      }
+     ],
+     "rationale": "There are localized competing outcomes. The EXTCODESIZE formula conflicts between the Specification and the Rationale under the EIP-2926 baseline. The choice between EIP-8032 regimes is open, and how EXTCODECOPY combines with chunk warming is unspecified. These need spec and client agreement before expected results can be fixed. Previously unobservable behaviour does not become consensus-visible.",
+     "confidence": "medium",
+     "uncertainty_note": "The EXTCODECOPY and chunk-warming question partly depends on EIP-2926's own incompletely specified gas rules.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-8032",
+       "summary": "SSTORE pricing combines the new GAS_STORAGE_UPDATE and GAS_COLD_SLOAD with EIP-8032's depth-based term above ACTIVATION_THRESHOLD."
+      },
+      {
+       "source": "supporting/eip-8032.md",
+       "locator": "Gas cost changes — \"constant_sstore_gas(addr, slot) + LIN_FACTOR * ...\"",
+       "summary": "The constant SSTORE part, which this EIP reprices, is added to the depth term."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Interaction with EIP-2926",
+       "summary": "Under EIP-2926, EXTCODESIZE uses the previous formula while EXTCODECOPY gets the extra warm charge."
+      },
+      {
+       "source": "supporting/eip-2926.md",
+       "locator": "Updating existing code — \"EXTCODESIZE/EXTCODEHASH/EXTCODECOPY behave the same\"",
+       "summary": "EIP-7702 delegated accounts and legacy (not yet converted) contracts during the transition affect EXTCODE* cases."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Motivation — EIP-2929",
+       "summary": "The repriced parameters are EIP-2929's cold/warm access parameters."
+      },
+      {
+       "source": "supporting/eip-7928.md",
+       "locator": "Scope and Inclusion — \"Targets of BALANCE, EXTCODESIZE, EXTCODECOPY\"",
+       "summary": "BAL recording of accessed addresses is unchanged, but gas-boundary cases affect which accesses occur."
+      }
+     ],
+     "rationale": "The interactions with EIP-8032 (SSTORE below and above the threshold), EIP-2926 (EXTCODESIZE vs EXTCODECOPY, converted vs legacy code, delegated accounts) and EIP-2929 (cold/warm paths for each repriced opcode) each need coordinated cases. They are largely separable per opcode family rather than a coupled multi-EIP restructuring, so this is level 2. EIP-7928 needs only local checks.",
+     "confidence": "medium",
+     "uncertainty_note": "If SSTORE vectors must jointly cover EIP-2929 cold/warm, EIP-8032 depth and EIP-2926 states, this could reach level 3.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 8032,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "SSTORE gas with the repriced GAS_STORAGE_UPDATE and GAS_COLD_SLOAD combined with the depth term. Cover accounts below and above ACTIVATION_THRESHOLD, cold and warm slots, and accounts without a depth field."
+     },
+     {
+      "eip": 2926,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "EXTCODESIZE keeping the previous formula (codeSize field) versus EXTCODECOPY with the extra GAS_WARM_ACCESS. Cover converted versus legacy contracts during the transition, EIP-7702 delegated accounts (code size 23), and EXTCODECOPY combined with chunk-warming costs."
+     },
+     {
+      "eip": 2929,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Cold/warm paths using the new parameters for SLOAD, SSTORE, the *CALL family, BALANCE, SELFDESTRUCT and EXT*, including addresses pre-warmed by access lists and the new EXTCODESIZE/EXTCODECOPY cold and warm amounts."
+     },
+     {
+      "eip": 7928,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Check that out-of-gas at the new access-cost boundaries still produces the BAL entries required by EIP-7928 for BALANCE, EXT* and CALL targets."
+     }
+    ],
+    "unidentified_interactions": [
+     "Warm-access repricing affects calls to precompiles and EIP-7702 delegation resolution, which the text does not cover.",
+     "Existing SSTORE refund amounts derived from GAS_STORAGE_UPDATE, GAS_COLD_SLOAD and GAS_WARM_ACCESS (net-metering rules) change implicitly; the governing EIP is not named."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "All new parameter values are TBD. The Specification applies the extra GAS_WARM_ACCESS to EXTCODESIZE, but the EIP-2926 Rationale says EXTCODESIZE keeps its previous formula, even though EIP-2926 is required. The before- and after-EIP-8032 parameter regimes are described without a normative choice. The Backwards Compatibility text refers to calldata and floor cost rules that do not apply here.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 2,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "cross_eip_interactions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "state_gas_accounting_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "performance_risks",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 0,
+      "maximum_score": 1
+     }
+    ],
+    "unresolved_questions": [
+     "What are the new values of GAS_STORAGE_UPDATE, GAS_COLD_SLOAD, GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS?",
+     "With EIP-2926 active, does EXTCODESIZE pay the extra GAS_WARM_ACCESS or not?",
+     "Which parameter regime (before or after EIP-8032) applies when both EIPs are in the same fork?",
+     "Does the extra EXTCODECOPY warm charge stack with EIP-2926 per-chunk warming costs?",
+     "Do intrinsic access-list costs or EIP-7702 delegation access costs change along with GAS_COLD_ACCOUNT_ACCESS and GAS_WARM_ACCESS?",
+     "Is GAS_WARM_ACCESS meant to change? The Abstract omits it but the table lists it."
+    ]
+   },
+   "notable_ambiguities": [
+    "The Specification and the EIP-2926 interaction section contradict each other on the EXTCODESIZE formula.",
+    "All values are TBD (TODO markers), so expected gas results cannot be derived.",
+    "The title and Abstract say 'increase', but the table includes GAS_WARM_ACCESS, which the Abstract does not mention.",
+    "Backwards Compatibility refers to 'calldata cost rules' and 'floor cost values', apparently copied from another EIP.",
+    "The table lists SELFDESTRUCT for cold account access but not for warm access.",
+    "The SSTORE refund amounts that derive from the repriced parameters are not discussed."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 42709,
+  "type": "result",
+  "duration_ms": 108632,
+  "uuid": "247a2902-62ad-414c-bdeb-50aa37740e80",
+  "ttft_stream_ms": 1324,
+  "time_to_request_ms": 457,
+  "first_content_frame_ms": 1325,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

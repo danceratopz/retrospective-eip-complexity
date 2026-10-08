@@ -1,0 +1,672 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: cancun
+eip:
+  number: 4788
+  title: Beacon block root in the EVM
+  layers:
+  - execution
+  - consensus
+assessment:
+  historical_scope_summary: This revision of EIP-4788 adds a 32-byte parent beacon block root to the execution
+    block header, after `withdrawals_root`, starting at FORK_TIMESTAMP. At the start of each post-fork
+    block, before any transactions run, the protocol writes that root into the storage of HISTORY_STORAGE_ADDRESS
+    (0xff..fd). It writes once for every slot from the parent block's slot up to, but not including, the
+    current block's slot, at key `slot % 8192`, so a ring buffer holds the history. A new opcode, BEACON_ROOT
+    (0x48), pops a slot number, charges a constant 20 gas and returns `sload(HISTORY_STORAGE_ADDRESS,
+    slot % 8192)`. A missing value reads as 0. The revision does not define the slot conversion, Engine
+    API delivery, test cases or security considerations.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/cancun/eip-4788/manifest.yaml
+    manifest_sha256: 44b008d95ec9161ac7ffa2cf4e1ef2a32b395830ef6b008cc80428c7622bc310
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/cancun/eip-4788/manifest.yaml
+    manifest_sha256: 1393703c6e239f96caa9e662bf32da9bad889f8caac79a1754228cdd322ea53c
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 5b909b76ac2bed7fbf710b8896217e60f1c0f822
+    path: EIPS/eip-4788.md
+    committed_at: '2023-04-13T13:59:33Z'
+    git_blob_sha: a2553d4b785e7b1231d42a99afce0ef697675d05
+    content_sha256: 4df9dad7b1f5db2d27dd277bc04edfe12e16c2e7cf966f4db305101c6ebe81eb
+    immutable_url: https://github.com/ethereum/EIPs/blob/5b909b76ac2bed7fbf710b8896217e60f1c0f822/EIPS/eip-4788.md
+    information_cutoff_at: '2023-04-27'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:37:08.653684Z'
+    session_id: assessment-run-cc1c4864-434e-4b4d-90f8-9621b27c6051
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2935.md
+  - supporting/ethereum-consensus-specs--ssz-simple-serialize.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: b708064fc3cef9536d1bf602d53a26a34a57bd2b021b19a8fb4c20fae3c0f828
+    schema_sha256: 18557f81f23557452b065231afc15735d74a92b4673043ea2565728e6016ca1e
+    started_at: '2026-10-08T09:37:08.653684Z'
+    finished_at: '2026-10-08T09:39:23.478513Z'
+    duration_ms: 132574
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 31770
+      cache_read_input_tokens: 0
+      output_tokens: 14505
+      output_tokens_details:
+        thinking_tokens: 6071
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 31770
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 14505
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 31770
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 31770
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 14505
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 31770
+        webSearchRequests: 0
+        costUSD: 0.544268
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 6071
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.544268
+  assessor_raw_output:
+    path: retrospective/outputs/raw/cancun/eip-4788.json
+    content_sha256: 38df34b5d548243670ba83e36fa147fe73ece3164ed06f0a401fc08b20f54e2f
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification (constants table) "G_beacon_root | 20"
+    summary: The new opcode has a constant gas cost of 20.
+  - source: eip.md
+    locator: Rationale / Gas cost of opcode
+    summary: The cost copies BLOCKHASH, although the opcode reads storage, which bypasses the cold/warm
+      storage-read pricing.
+  - source: eip.md
+    locator: EVM changes / Block processing
+    summary: The protocol's storage writes happen before any transactions. No gas charge is specified
+      for them.
+  rationale: No new accounting mechanism is added. There is a new constant gas entry for an instruction
+    that reads state outside the existing cold/warm storage pricing, and the system writes are unmetered.
+    This fits a parameter-level change (level 1) rather than a new mechanism.
+  confidence: medium
+  uncertainty_note: The spec does not say whether the read is subject to EIP-2929 warm/cold charging.
+    If it were, a new accounting interaction would push this toward 2. A strict reading that a new opcode's
+    fixed cost is not an accounting change would give 0.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: EVM changes / New opcode "sload(HISTORY_STORAGE_ADDRESS, slot % SLOTS_PER_HISTORICAL_ROOT)"
+    summary: BEACON_ROOT is a new instruction that reads another account's storage.
+  rationale: 'A new state-accessing operation needs an ordering rule: when gas is charged relative to
+    the read, and whether the read adds HISTORY_STORAGE_ADDRESS or its slot to the accessed sets. This
+    meets level 2. No existing opcode class''s ordering changes.'
+  confidence: medium
+  uncertainty_note: The spec gives no ordering or access-set rule. With a constant charge the ordering
+    may be trivial (low end 0).
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Nothing in the specification refers to blob gas.
+  rationale: Blob-gas accounting does not change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: EVM changes / Block processing
+    summary: The protocol writes storage, but no state-gas charging or budget is defined.
+  rationale: No state-gas accounting mechanism or parameter is introduced or changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund rules are introduced.
+  rationale: There is no new refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification (constants) "OPCODE_VALUE | 0x48"
+    summary: Opcode 0x48, previously undefined, becomes valid at the fork.
+  - source: eip.md
+    locator: Specification (constants) "HISTORY_STORAGE_ADDRESS"
+    summary: Address 0xff..fd now receives protocol writes, which affects any baseline test that uses
+      that address as an ordinary account.
+  rationale: 'Rework is confined to boundary cases in one family: invalid/undefined-opcode tests that
+    cover 0x48, plus incidental use of the newly reserved address. The universal header and storage-write
+    effects belong under INV.'
+  confidence: medium
+  uncertainty_note: If expected post-state roots in all blockchain tests are counted as rework rather
+    than a new assertion, this could be 2.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity
+    summary: Every post-fork header carries the new 32-byte root field.
+  - source: eip.md
+    locator: EVM changes / Block processing "At the start of processing any execution block where block.timestamp
+      >= FORK_TIMESTAMP"
+    summary: Every post-fork block performs a protocol-mandated storage write to HISTORY_STORAGE_ADDRESS.
+  rationale: Every post-fork block-level test must account for the new header field and the history-storage
+    write. The change is gated by timestamp, so pre-fork vectors do not need re-deriving. A universal
+    assertion without pre-fork changes is level 2.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: EVM changes / Block processing "parent_beacon_block_root = block_header.parent_beacon_block_root"
+    summary: Block processing needs the parent beacon block root as an input to the state transition.
+  - source: eip.md
+    locator: EVM changes / Block processing "convert_to_slot(start_timestamp)"
+    summary: Slot conversion needs the parent timestamp and an undefined timestamp-to-slot mapping.
+  rationale: The tool's environment needs one new field, the parent beacon block root, with no new exchange
+    mechanism (level 1).
+  confidence: medium
+  uncertainty_note: If convert_to_slot needs genesis time or slot-duration parameters, or the parent timestamp
+    must be supplied newly, multiple fields would change (2). No tool evidence was supplied.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity
+    summary: The new header field must be settable and checkable in generated blocks.
+  - source: eip.md
+    locator: EVM changes / Block processing
+    summary: Expected history storage depends on the timestamp gap and ring-buffer indexing.
+  rationale: The existing header and environment primitives need a local extension for the beacon root
+    field, plus a helper to model expected ring-buffer contents. No shared new abstraction is clearly
+    required.
+  confidence: medium
+  uncertainty_note: An expected-history-storage modeling abstraction across tests could be argued as level
+    2.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity "32 byte hash tree root of the parent beacon block"
+    summary: The EL only stores a 32-byte value computed by the CL. It does not verify it.
+  - source: supporting/ethereum-consensus-specs--ssz-simple-serialize.md
+    locator: Merkleization
+    summary: hash_tree_root is defined in the CL's SSZ specification. The EL never runs it under this
+      EIP.
+  rationale: The EL adds or changes no cryptographic verification, hashing or proof rule. The root is
+    opaque data.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: EVM changes / Block processing "for slot in range(start_slot, end_slot)"
+    summary: The number of writes depends on the timestamp gap between parent and child. Skipped slots
+      are filled, and the keys wrap modulo 8192.
+  - source: eip.md
+    locator: EVM changes / New opcode "slot % SLOTS_PER_HISTORICAL_ROOT"
+    summary: The read key wraps modulo 8192 for any 256-bit argument, so future or stale slots alias other
+      entries.
+  - source: eip.md
+    locator: Block processing "block.timestamp >= FORK_TIMESTAMP"
+    summary: There is a fork-activation timestamp boundary, and the first post-fork block has a pre-fork
+      parent.
+  rationale: 'There are several boundary-sensitive mechanisms: the fork-timestamp gate, the write loop
+    over skipped slots with modulo wrap, the opcode''s modular read with arbitrary arguments, and the
+    header field''s presence by timestamp. The write mechanism forms an elevated matrix: gap length (0,
+    1, many, at least 8192) × ring-wrap position × fork-boundary parent. These combine to determine which
+    keys hold which roots, so they cannot be tested independently.'
+  confidence: medium
+  uncertainty_note: If the gap and wrap dimensions are treated as separable, this would be 2. Undefined
+    slot conversion (rounding of non-aligned timestamps) adds further boundaries.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity "appended to the current block header structure ... grows after
+      (and including) the FORK_TIMESTAMP"
+    summary: Header RLP gains a field whose presence depends on the block's timestamp.
+  rationale: Header decoding and structural validation must require the 32-byte field from FORK_TIMESTAMP
+    onward and reject it before then. This is one rule that depends on another field (timestamp), so it
+    is complex (level 2).
+  confidence: medium
+  uncertainty_note: If treated as a simple local length/presence check this would be 1. The EL cannot
+    validate the value itself.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity
+    summary: The EL must set a header field holding CL-derived data, which implies the CL must supply
+      it.
+  - source: eip.md
+    locator: Reference Implementation "TODO"
+    summary: No Engine API changes are specified.
+  rationale: The EL can only obtain the parent beacon block root from the CL, so at least one Engine API
+    field must carry it. The revision specifies no field or endpoint, so the minimum supported reading
+    is used.
+  confidence: low
+  uncertainty_note: Delivery (new versioned methods, payload attributes for block building) is entirely
+    unspecified. Plausible range is 0–3.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Background "block roots are stored in a canonical place in the execution state ... in given
+      contract's storage"
+    summary: A protocol-designated account at 0xff..fd holds persistent storage.
+  - source: eip.md
+    locator: EVM changes / New opcode "a read of the history contract's storage"
+    summary: The spec itself calls it the history contract. It is written by the protocol and read by
+      the opcode.
+  rationale: Exactly one protocol-designated, stateful (ring-buffer storage) contract location is introduced,
+    which is level 2.
+  confidence: medium
+  uncertainty_note: No code is specified. If a code-less storage account is not treated as an EVM system
+    contract, this could be 0.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: supporting/eip-2935.md
+    locator: Specification "HISTORY_STORAGE_ADDRESS | 0xff...fe"
+    summary: EIP-2935's history address is distinct and is not part of the Shanghai+Cancun baseline.
+  rationale: No existing system contract's rules change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: EVM changes / New opcode "consumes one word from the stack"
+    summary: BEACON_ROOT at 0x48 pops 1 word, pushes 1 word and takes no immediates.
+  - source: eip.md
+    locator: Specification (constants) "G_beacon_root | 20"
+    summary: Constant gas cost.
+  rationale: Exactly one simple instruction is introduced (fixed stack effects, no immediate data, constant
+    gas).
+  confidence: high
+  uncertainty_note: The gas constant is named inconsistently (G_beacon_root vs G_beacon_state_root), but
+    both refer to the single value 20.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Why not repurpose BLOCKHASH?
+    summary: BLOCKHASH is explicitly left unchanged.
+  rationale: No existing defined instruction changes semantics. 0x48 was undefined, so it counts under
+    added opcodes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is introduced.
+  rationale: No new precompile.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile changes.
+  rationale: No precompile is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity "this field is appended to the current block header structure"
+    summary: The RLP schema of the execution block header gains a 32-byte field after withdrawals_root.
+  rationale: The execution header serialization schema changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction type is defined.
+  rationale: No new transaction envelope.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: There are no transaction-validity or intrinsic-gas rule changes.
+  rationale: Transaction validity is unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity "set 32 bytes of the execution block header after the withdrawals_root"
+    summary: Adds parent_beacon_block_root to the execution block header.
+  rationale: An EL execution-header member is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: EVM changes / Block processing
+    summary: The writes are recurring per-block processing that starts at FORK_TIMESTAMP. No one-time
+      migration or code installation is specified.
+  rationale: Starting recurring block processing does not count. No activation-specific state conversion
+    or code installation is specified.
+  confidence: medium
+  uncertainty_note: The account's nonce/code status at activation is unspecified. A required activation-time
+    installation (for example, to avoid empty-account clearing) would make this 3.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: EVM changes / Block processing "for slot in range(start_slot, end_slot)"
+    summary: Unmetered system storage writes scale with the timestamp gap. Nothing bounds the loop.
+  - source: eip.md
+    locator: Rationale / Gas cost of opcode
+    summary: A storage read is priced at 20 gas, the BLOCKHASH price, well below SLOAD's cold-read pricing.
+  - source: eip.md
+    locator: Rationale / Beacon block root instead of state root "constant amount of work"
+    summary: The rationale claims constant work, which conflicts with the per-slot loop.
+  rationale: Two bounded interactions need targeted integrated benchmarks. First, gas-unmetered storage
+    writes proportional to skipped slots during block processing, up to and beyond 8192 slots. Second,
+    a 20-gas trie storage read that contracts can repeat across many keys.
+  confidence: medium
+  uncertainty_note: Whether implementations cap the loop at 8192 iterations is unspecified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block structure and validity
+    summary: The EL commits CL-supplied data it cannot verify, and exposes it to contracts as a trust
+      anchor.
+  - source: eip.md
+    locator: Security Considerations "TODO"
+    summary: No security analysis is provided.
+  - source: eip.md
+    locator: EVM changes / New opcode "slot % SLOTS_PER_HISTORICAL_ROOT"
+    summary: Out-of-window slots silently alias to other slots' roots.
+  rationale: 'The change creates a bounded cross-layer trust interaction: CL-provided roots enter EL state
+    and consensus, and contracts are invited to rely on them. It also adds DoS surfaces (an underpriced
+    read and unmetered writes) and the reserved-address state. Each needs targeted integration review.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: EVM changes / Block processing "convert_to_slot(start_timestamp)"
+    summary: convert_to_slot is never defined (genesis time, seconds per slot, rounding), but it decides
+      the consensus-visible storage keys.
+  - source: eip.md
+    locator: EVM changes / New opcode "gas cost of G_beacon_state_root"
+    summary: The text names a constant that differs from the one in the table.
+  - source: eip.md
+    locator: Background / Block processing
+    summary: The account state (nonce/code, empty-account treatment), access-set warming and behavior
+      for very large gaps are unspecified.
+  rationale: 'Several localized, consensus-visible outcomes have competing interpretations and need client
+    agreement: how slots are converted, whether and how the history account exists (and so the state root),
+    whether the opcode warms accessed sets, and loop behavior for large gaps. This is level 2.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Background "inspired by EIP-2935"
+    summary: The opcode design is modeled on EIP-2935's history storage approach.
+  - source: supporting/eip-2935.md
+    locator: Specification
+    summary: EIP-2935 uses a separate address (0xff..fe) and modifies BLOCKHASH. The target uses 0xff..fd
+      and leaves BLOCKHASH unchanged.
+  - source: eip.md
+    locator: Block structure and validity "after the withdrawals_root"
+    summary: Header field placement depends on the existing withdrawals header field.
+  rationale: Only local compatibility checks are needed. The header field must sit after withdrawals_root.
+    If EIP-2935 were also active, its history address and BLOCKHASH behavior would need to stay unaffected.
+    The target's behavior can otherwise be tested on its own.
+  confidence: medium
+  uncertainty_note: EIP-2935 is not part of the assessed Cancun baseline, and the evidence does not establish
+    that it is scheduled alongside this EIP.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 2935
+  unidentified_interactions:
+  - The header field must be appended after the Shanghai withdrawals_root field, so header ordering and
+    RLP must be checked with withdrawals present.
+  base_score: 1
+  bonus: 0
+  bonus_qualifying_eips: []
+  interaction_details:
+  - eip: 2935
+    interaction: local_compatibility_check
+    cases: 'If both are active: the 0xff..fd and 0xff..fe history storage locations do not collide, and
+      BLOCKHASH semantics are unchanged by BEACON_ROOT. No target-specific coordinated scenarios are needed.'
+totals:
+  primary_score: 30
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: 'The revision leaves several things undefined: convert_to_slot, how the root reaches the EL
+    (Engine API), the history account''s nonce/code status and empty-account treatment, whether the opcode
+    affects accessed sets, and how large timestamp gaps are bounded. Test Cases, Reference Implementation
+    and Security Considerations are all TODO, and the gas-constant name is inconsistent.'
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - transition_tool_interface_changes
+  - edge_boundary_conditions
+  - block_syncing_changes
+  - engine_api_changes
+  - added_system_contracts
+  - new_fork_activation_mechanism
+  - performance_risks
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: state_access_ordering_within_opcode_execution
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: transition_tool_interface_changes
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: edge_boundary_conditions
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: block_syncing_changes
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: engine_api_changes
+    minimum_score: 0
+    maximum_score: 3
+  - criterion: added_system_contracts
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: new_fork_activation_mechanism
+    minimum_score: 0
+    maximum_score: 3
+  - criterion: performance_risks
+    minimum_score: 1
+    maximum_score: 3
+  plausible_total_range:
+    minimum: 21
+    maximum: 38
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - How does convert_to_slot map timestamps to slots (genesis time, slot duration, rounding), and where
+    does the EL get these parameters?
+  - How does the parent beacon block root reach the EL (Engine API fields/methods, payload attributes
+    for building)?
+  - Does HISTORY_STORAGE_ADDRESS need a nonce or code, and is it protected from EIP-161 empty-account
+    clearing?
+  - Does BEACON_ROOT add the history address or slot to EIP-2929 accessed sets or interact with warm/cold
+    pricing?
+  - Is the skipped-slot write loop capped (for example at SLOTS_PER_HISTORICAL_ROOT) for very large timestamp
+    gaps?
+  - Is the opcode gas constant G_beacon_root or G_beacon_state_root (both presumably 20)?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- The text calls the opcode gas constant G_beacon_state_root, but the table defines only G_beacon_root
+  = 20.
+- The rationale claims constant work per block, while the pseudocode loops over every skipped slot.
+- The opcode reduces any slot modulo 8192, so requests for future or out-of-window slots return aliased
+  stale roots instead of 0.
+- The history account is called a contract but has no code or account fields specified.
+overall_confidence: medium

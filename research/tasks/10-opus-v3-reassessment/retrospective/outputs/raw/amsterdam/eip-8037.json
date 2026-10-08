@@ -1,0 +1,792 @@
+{
+ "case": "amsterdam/8037",
+ "run_id": "assessment-run-b77cd7fd-2be9-420b-aac4-01ce435cdfb6",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:34:10.846587Z",
+ "finished_at": "2026-10-08T09:36:54.270962Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "dca37b709ef89f661db8d55f21f18af7aee565115d6835752eebb3666ba852ac",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "66fb7af2e44ddca910c7e540d8bf6b612e91e281e7c26d40be286a864cd5cc50",
+ "output": {
+  "duration_api_ms": 160495,
+  "stop_reason": "tool_use",
+  "session_id": "ef9627c7-d1bf-40e3-9a21-c3720fe5a147",
+  "total_cost_usd": 0.7857120000000001,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 52373,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 18336,
+   "output_tokens_details": {
+    "thinking_tokens": 6572
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 52373,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 18336,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 52373,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 52373
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 18336,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 52373,
+    "webSearchRequests": 0,
+    "costUSD": 0.7857120000000001,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 6572,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8037 (revision c47ae3be, requires EIP-2780) reprices state creation using a cost of 1,900 gas per state byte. It raises GAS_CREATE, GAS_CODE_DEPOSIT, GAS_NEW_ACCOUNT, GAS_SELF_DESTRUCT_NEW_ACCOUNT, GAS_STORAGE_SET, and the EIP-7702 PER_EMPTY_ACCOUNT_COST and PER_AUTH_BASE_COST. It adds a two-dimensional metering scheme, derived from EIP-8011, with `gas` and `code_deposit_gas` dimensions, so that code deposit cost does not count against the EIP-7825 transaction cap or the block gas limit. It also changes how contract deployment is charged. A new code-existence lookup waives the code deposit charge for runtime bytecode that is already stored. A warm/cold storage-access charge and a keccak hash charge per word of runtime code are added for CREATE, CREATE2 and creation transactions.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameter changes\",\"summary\":\"Seven existing gas parameters are repriced (e.g., GAS_CREATE 32,000→212,800, GAS_STORAGE_SET 20,000→60,800, PER_AUTH_BASE_COST 12,500→43,700).\"},{\"source\":\"eip.md\",\"locator\":\"Multidimensional metering for code deposit gas\",\"summary\":\"Adds an independent metering of code deposit costs with two dimensions, gas and code_deposit_gas.\"},{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation\",\"summary\":\"Adds a conditional code deposit charge (zero if the code already exists), plus storage_access_cost (warm/cold) and hash_cost = GAS_KECCAK256_WORD * ceil(L/32) for contract creation.\"},{\"source\":\"supporting/eip-7702.md\",\"locator\":\"Behavior — step 7\",\"summary\":\"Refund of PER_EMPTY_ACCOUNT_COST - PER_AUTH_BASE_COST; both terms are repriced by the target, so the refund changes from 12,500 to 169,100.\"}],\"rationale\":\"The EIP adds new accounting mechanisms (separate code_deposit_gas metering, the dedup-dependent deposit charge, and access and hash charges at creation). It also changes the expected gas of many baseline operations (SSTORE set, CREATE/CREATE2, CALL to a new account, SELFDESTRUCT, EIP-7702 authorizations). This meets level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"The exact semantics of the second dimension (whether it is deducted from the transaction's gas limit) are under-specified, but level 3 holds under any reading.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation — \\\"first check whether the code already exists in the state trie\\\"\",\"summary\":\"Creation now performs a code-existence lookup in state and charges GAS_WARM_ACCESS or GAS_COLD_SLOAD relative to that access.\"},{\"source\":\"eip.md\",\"locator\":\"CREATE vs CREATE2\",\"summary\":\"The runtime-code hash and lookup apply to both CREATE and CREATE2, in addition to CREATE2's existing init-code hashing.\"}],\"rationale\":\"A new state-accessing step, the code-hash existence check, is added to the return path of CREATE, CREATE2 and creation transactions. It needs an ordering rule relative to the hash charge, the deposit charge and the out-of-gas point. This affects multiple operations, but no rule for an entire opcode class or for recordable accesses changes across operations, so the score is 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Several points are unspecified: what 'warm' means for a code hash, whether this access enters any access-tracking set, and the order of the hash, lookup and deposit charges.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No blob-gas parameters or rules are mentioned.\"},{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Why are we choosing this resource split? — \\\"not considering the blob resource\\\"\",\"summary\":\"The metering scheme the target derives from explicitly excludes blobs.\"}],\"rationale\":\"The EIP does not change blob-gas accounting.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Harmonization across state creation — \\\"set cost_per_state_byte to 1900\\\"\",\"summary\":\"Introduces a unified state-byte rate from which all state-creation parameters are derived.\"},{\"source\":\"eip.md\",\"locator\":\"Multidimensional metering for code deposit gas\",\"summary\":\"Code deposit gas is metered in its own dimension, separate from ordinary gas.\"},{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation — \\\"If CodeExists(...) == true, do not charge code-deposit storage gas\\\"\",\"summary\":\"State-dependent deduplication decides whether a state-writing charge applies.\"}],\"rationale\":\"Beyond changing state-byte rates (level 1), the EIP introduces a new charging mechanism for state writes: a separately metered code_deposit_gas dimension and a charge that is waived based on deduplication. This meets level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"How the code_deposit_gas dimension interacts with the transaction gas limit and the block gas limit is not fully specified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new refund mechanism is defined. Duplicate code is simply not charged rather than refunded.\"},{\"source\":\"supporting/eip-7702.md\",\"locator\":\"Behavior — step 7\",\"summary\":\"The existing 7702 refund is only repriced through changed parameters.\"}],\"rationale\":\"No additional refund mechanism is introduced. Repricing the existing EIP-7702 refund belongs under GAS.\",\"confidence\":\"high\",\"uncertainty_note\":\"It is unspecified whether the SSTORE restore refunds derived from GAS_STORAGE_SET scale with the new value. Either way, that is a repricing, not a new mechanism.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameter changes — \\\"Operations affected\\\"\",\"summary\":\"The changes affect CREATE, CREATE2, creation transactions, new-EOA funding, SELFDESTRUCT, SSTORE and EIP-7702 delegation.\"},{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation\",\"summary\":\"Every contract creation picks up access and hash costs and a deposit charge that depends on deduplication.\"}],\"rationale\":\"One common repricing of state creation forces rework of ordinary cases across distinct families: SSTORE gas tests, CREATE/CREATE2 and creation-transaction gas, CALL/value-transfer account creation, SELFDESTRUCT to a new beneficiary, and 7702 intrinsic gas and refunds. Any test that hardcodes gas or relies on contract deployment fitting in a gas budget is affected. This meets level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — Multidimensional metering — \\\"a two-dimensional version of EIP-8011 is still required\\\"\",\"summary\":\"The target requires the 8011-style metering mechanism, in two dimensions.\"},{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Block header extension\",\"summary\":\"In EIP-8011, the metering adds a max_gas_metered header field, computed per block from per-transaction gas vectors.\"}],\"rationale\":\"If the required two-dimensional metering carries the 8011-style per-block metered-gas output, every post-fork block test must check a new value (bottleneck metered gas). Pre-fork vectors are unaffected, so the score is 2.\",\"confidence\":\"low\",\"uncertainty_note\":\"The target does not state which 8011 outputs (header field, per-transaction vector) are required. If none are, no new assertion arises.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":2,\"evidence\":[{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Gas accounting — \\\"gas_used_vector ... is returned by the execute_transaction function\\\"\",\"summary\":\"The metering returns a per-transaction gas vector in addition to gas_used.\"},{\"source\":\"eip.md\",\"locator\":\"Multidimensional metering for code deposit gas\",\"summary\":\"Two dimensions (gas, code_deposit_gas) must be tracked.\"}],\"rationale\":\"The transition tool would need to report per-transaction code_deposit_gas (or a gas vector) and the block-level metered gas or header value. That is multiple fields with no new exchange mechanism, so the score is 2.\",\"confidence\":\"low\",\"uncertainty_note\":\"No supplied tool evidence exists, and which outputs are needed depends on the unspecified metering design.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Multidimensional metering for code deposit gas\",\"summary\":\"Gas expectations now have two dimensions.\"},{\"source\":\"eip.md\",\"locator\":\"Duplicated bytecode discount — \\\"Ordering & same-block deployments\\\"\",\"summary\":\"Tests must build pre-states with or without existing code objects and sequence deployments within a block.\"}],\"rationale\":\"The target's test suite needs new expectation abstractions: a two-dimensional gas-used expectation for creations, and helpers that compute deposit, access and hash costs depending on whether the code already exists. This is level 2. Whether that representation must become a shared one that changes block-gas and base-fee checks across families depends on unresolved metering details.\",\"confidence\":\"low\",\"uncertainty_note\":\"If the 8011-style header and block metering are adopted, the framework's block gas and base-fee model changes for all families, which would be level 3.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"CREATE vs CREATE2 — \\\"the runtime hash must be computed\\\"\",\"summary\":\"keccak256 of runtime code is used for the existence lookup. This is an unchanged primitive already used for code hashes.\"}],\"rationale\":\"Only an existing hashing primitive is reused, and only its gas charge is new. No cryptographic rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation\",\"summary\":\"Deposit charge depends on code existence, the access charge on warm/cold status, and the hash cost on ceil(L/32).\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — Multidimensional metering — \\\"this cap would limit the maximum contract size ... to roughly 6kb\\\"\",\"summary\":\"Independent metering is meant to lift the 7825 cap for code deposit, changing the boundaries for maximum deployable size.\"},{\"source\":\"supporting/eip-170.md\",\"locator\":\"Specification\",\"summary\":\"The MAX_CODE_SIZE 24,576 boundary still applies.\"},{\"source\":\"eip.md\",\"locator\":\"Duplicated bytecode discount — \\\"Ordering & same-block deployments\\\" / \\\"Empty code handling\\\"\",\"summary\":\"Same-block ordering and empty-code special cases.\"}],\"rationale\":\"Several boundary-sensitive mechanisms change. These include the dedup existence boundary, warm/cold access cost, the per-word hash rounding, the out-of-gas point at code deposit, the 7825 cap versus the separately metered deposit gas, the EIP-170 size limit, and the 2780 new-account surcharge conditions. The dedup charge forms an elevated matrix over these dimensions: code existence (prior block, earlier transaction, same transaction, reverted creation) × warm/cold × CREATE/CREATE2/creation transaction × empty versus non-empty code × size near 24,576. These combinations change the outcome together, so the score is 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":3,\"evidence\":[{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Block header extension; Block validity condition; Base fee update rule\",\"summary\":\"Adds a header field, validates max_gas_metered <= gas_limit, and bases the base fee on parent.max_gas_metered.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — Independent metering — \\\"doesn't contribute to the block gas limit\\\"\",\"summary\":\"Block gas limit validation must exclude code deposit gas.\"}],\"rationale\":\"The required two-dimensional 8011 version brings several block-level rules: header decoding of the new field, a gas-limit validity check against metered gas, and a base-fee rule that depends on the parent block. At least two of these are complex (they depend on execution or on other blocks), so the score is 3.\",\"confidence\":\"low\",\"uncertainty_note\":\"The target does not state whether the header field and base-fee change are adopted. If only the gas-used exclusion applies, the score could be 1 or 2.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":1,\"evidence\":[{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Block header extension\",\"summary\":\"A new execution-header field (max_gas_metered) would need to be carried wherever header fields are exchanged.\"},{\"source\":\"eip.md\",\"locator\":\"Multidimensional metering for code deposit gas\",\"summary\":\"The target requires a two-dimensional version of this metering.\"}],\"rationale\":\"If the header field is adopted, the execution payload would need one additional field. No endpoint-level change is indicated, so the score is 1.\",\"confidence\":\"low\",\"uncertainty_note\":\"No supplied document mentions the Engine API. The score could be 0 if no header field is added.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contracts are introduced.\"}],\"rationale\":\"No system contract is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No existing system contract is referenced or changed.\"}],\"rationale\":\"No system contract's rules or surrounding protocol behavior change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new instructions are introduced.\"}],\"rationale\":\"No new opcode is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation — \\\"simply link the new account's codeHash to the existing code object\\\"\",\"summary\":\"Deduplication changes how code is stored and charged. The resulting account codeHash and observable code are the same.\"},{\"source\":\"eip.md\",\"locator\":\"Parameter changes\",\"summary\":\"Changes to SSTORE, CREATE, CREATE2 and SELFDESTRUCT are gas parameter changes.\"}],\"rationale\":\"The changes to CREATE, CREATE2, SSTORE and SELFDESTRUCT are gas-only or internal storage optimizations. Stack, memory/state effects and return values are unchanged.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If separate metering means code deposit no longer causes an out-of-gas halt in the creating frame, the exceptional-halt semantics of CREATE would change and the score would be 3. The text does not say.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are introduced.\"}],\"rationale\":\"No new precompile is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile semantics or gas changes.\"}],\"rationale\":\"No precompile changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Block header extension — \\\"[..., parent_beacon_block_root, requests_hash, max_gas_metered]\\\"\",\"summary\":\"The 8011 metering extends the header RLP sequence with a 64-bit field.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — Multidimensional metering — \\\"a two-dimensional version of EIP-8011 is still required\\\"\",\"summary\":\"The target requires this metering.\"}],\"rationale\":\"The required 8011-derived metering appends a field to the execution block header RLP schema, so the score is 3.\",\"confidence\":\"low\",\"uncertainty_note\":\"The target does not explicitly state that the header field is part of the two-dimensional version.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new transaction envelope is defined.\"}],\"rationale\":\"No new transaction type.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameter changes\",\"summary\":\"Intrinsic-relevant parameters change: GAS_CREATE (creation transactions) and PER_EMPTY_ACCOUNT_COST (per 7702 authorization).\"},{\"source\":\"eip.md\",\"locator\":\"Mispricing with respect to ETH transfers\",\"summary\":\"The EIP-2780 state-dependent intrinsic surcharge applies GAS_NEW_ACCOUNT (repriced to 212,800).\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — Multidimensional metering — \\\"allows to lift this limit for contract creation transactions\\\"\",\"summary\":\"The EIP-7825 transaction gas cap must stop constraining code deposit gas.\"},{\"source\":\"supporting/eip-7825.md\",\"locator\":\"Gas Cap\",\"summary\":\"Transactions with gasLimit > 16,777,216 are invalid.\"}],\"rationale\":\"Intrinsic gas values change for creation transactions, 7702 transactions and 2780 new-account transfers. Lifting the 7825 cap for code deposit also changes how creation transactions are checked against the gas limit. These need dedicated cases, but the baseline validation sequence remains usable, so the score is 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"How the 7825 cap applies to a transaction whose gas limit must cover code deposit is unspecified. Depending on the design, it could require restructuring validity checks (level 3) or be only a parameter change (level 1).\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":3,\"evidence\":[{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Block header extension\",\"summary\":\"Adds max_gas_metered to the execution header.\"},{\"source\":\"eip.md\",\"locator\":\"Multidimensional metering for code deposit gas — \\\"The specification is derived from EIP-8011\\\"\",\"summary\":\"The target adopts a two-dimensional version of 8011.\"}],\"rationale\":\"The 8011-derived metering that the target requires adds an execution-header member (max_gas_metered) to the execution block header schema, so the score is 3.\",\"confidence\":\"low\",\"uncertainty_note\":\"The target does not explicitly require the header field. It might rely only on transaction-level separation, in which case the score would be 0.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"requires a scheduled network upgrade\\\"\",\"summary\":\"Only rule and constant changes apply at activation. No state migration is required.\"}],\"rationale\":\"No activation-specific state transition is required.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — Independent metering — \\\"doesn't contribute to the block gas limit or the individual transaction limit\\\"\",\"summary\":\"The block gas limit no longer bounds code deposit work, and the EIP states that benchmarking is needed.\"},{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation\",\"summary\":\"Every creation adds a database lookup of the code hash plus hashing.\"},{\"source\":\"supporting/eip-7825.md\",\"locator\":\"Motivation\",\"summary\":\"The transaction cap exists to limit DoS and validation time. The target exempts code deposit from it.\"}],\"rationale\":\"Code deposit bytes are no longer bounded by the block or transaction gas limit. This couples block size and propagation, code storage writes, hashing and the cost of dedup lookups in ways that existing gas-limit benchmarks do not cover. Adversarial blocks full of maximum-size deployments, with and without duplicates, need integrated stress testing across execution, database and networking, so the score is 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The actual per-block bound on code deposit depends on the unspecified metering design.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — Independent metering — \\\"could potentially be exploited by an attacker to create very large contracts\\\"\",\"summary\":\"The EIP acknowledges a DoS risk from gas that is outside the limits.\"},{\"source\":\"eip.md\",\"locator\":\"Duplicated bytecode discount — \\\"Hashing cost is necessary\\\"\",\"summary\":\"Hash cost protects against abuse with large constructor outputs.\"},{\"source\":\"eip.md\",\"locator\":\"Mispricing with respect to ETH transfers\",\"summary\":\"The repricing creates a cheaper way to create accounts that depends on EIP-2780 to close.\"}],\"rationale\":\"Exempting code deposit from the transaction and block gas limits changes the DoS assumptions that EIP-7825 and block validation rely on. The dedup lookup and linking also introduce a state-dependent charge open to griefing (cold lookups, reorg and same-block visibility). Each of these is a bounded interaction that needs targeted integration and fuzzing review, so the score is 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If code deposit truly has no block-level bound, the invariant that the gas limit bounds block work is broken across components, which would argue for level 3.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Multidimensional metering for code deposit gas\",\"summary\":\"Only says the design is derived from 8011 with two dimensions. It does not say how the transaction gas_limit, the 7825 cap, receipts' gas used, the block gas limit or the base fee treat code_deposit_gas.\"},{\"source\":\"supporting/eip-8011.md\",\"locator\":\"Gas accounting — \\\"A transaction still has the same one-dimensional gas_limit\\\"\",\"summary\":\"In 8011, the transaction limit applies to the sum of dimensions and the block limit applies to the maximum dimension. This conflicts with the target's claim that deposit gas counts toward neither limit.\"},{\"source\":\"eip.md\",\"locator\":\"Contract deployment cost calculation — \\\"GAS_WARM_ACCESS (if warm) | GAS_COLD_SLOAD (if cold)\\\"\",\"summary\":\"Does not define what warm or cold means for a code hash, or whether the access is recorded.\"},{\"source\":\"supporting/eip-2780.md\",\"locator\":\"Parameters — GAS_NEW_ACCOUNT 25,000\",\"summary\":\"The prerequisite fixes GAS_NEW_ACCOUNT at 25,000 while the target sets 212,800, and the target never states which value the surcharge uses.\"}],\"rationale\":\"Gas metering split across two dimensions is new and consensus-visible, and the rule is left unresolved. The target's statements contradict the 8011 model it adopts on how the transaction cap, transaction gas limit and block gas limit apply. Resolving this changes gas-used, validity and base-fee expectations across many families. Further open points include warm/cold semantics for code lookups, CodeExists for code created by reverted or same-transaction creations, and the interaction with the 2780 constant. This meets level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Some gaps might be resolved by an unsupplied later version or two-dimensional 8011 text. They are judged as written.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — Multidimensional metering\",\"summary\":\"Couples the EIP-7825 cap, EIP-170 maximum size and EIP-8011 metering.\"},{\"source\":\"eip.md\",\"locator\":\"Mispricing with respect to ETH transfers\",\"summary\":\"Relies on the EIP-2780 surcharge using the repriced GAS_NEW_ACCOUNT.\"},{\"source\":\"eip.md\",\"locator\":\"Parameter changes — PER_EMPTY_ACCOUNT_COST, PER_AUTH_BASE_COST\",\"summary\":\"Reprices EIP-7702 intrinsic cost and refund.\"},{\"source\":\"supporting/eip-7702.md\",\"locator\":\"Gas Costs; Behavior step 7\",\"summary\":\"Defines the per-authorization intrinsic cost and the refund formula affected by the repricing.\"}],\"rationale\":\"The target couples behavior from several EIPs: the 7825 cap, the 170 size limit and the 8011 metering jointly decide whether large deployments succeed; 2780's intrinsic surcharge uses the repriced new-account cost; and 7702's intrinsic cost and refund change. Each needs coordinated scenarios, so the score is 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The 8011 interaction depends on how much of 8011 the two-dimensional version adopts.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":170,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Deploy contracts of 24,576 bytes (and 24,577 bytes, which must fail) whose combined gas exceeds the 7825 cap but which should succeed under separate code_deposit_gas metering. Also test duplicate maximum-size code paying only access and hash costs.\"},{\"eip\":2780,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Value-transfer transactions to a non-existent account must charge the repriced GAS_NEW_ACCOUNT (212,800 rather than 2780's 25,000). Exclusions for precompile targets and value=0 still apply. Creation transactions must not be double-charged on top of GAS_CREATE.\"},{\"eip\":7702,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Intrinsic gas of 212,800 per authorization tuple. Refund of 169,100 when the authority already exists, interacting with the global refund cap. Invalid or duplicate tuples still pay the new cost.\"},{\"eip\":7825,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Creation transactions or CREATE calls whose code deposit gas pushes total gas past 2^24 must not be capped. Non-creation transactions remain capped at 2^24. Transactions with gasLimit above 2^24 must be checked for validity.\"},{\"eip\":8011,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Two-dimensional gas_used vector per transaction. Block validity uses the bottleneck dimension against the gas limit. Base fee uses the parent's metered gas. Header field max_gas_metered for blocks dominated by code deposit versus ordinary gas.\"}],\"unidentified_interactions\":[\"Warm/cold access-cost semantics (GAS_WARM_ACCESS/GAS_COLD_SLOAD) applied to the new runtime-code-hash lookup, and its relation to access lists and accessed sets.\",\"SSTORE refund and restore schedules derived from GAS_STORAGE_SET, which is repriced from 20,000 to 60,800. Whether those refunds scale is unspecified.\",\"CREATE2 init-code hashing charge, which remains separate from the new runtime-code hash charge.\",\"SELFDESTRUCT to a new beneficiary account, repriced via GAS_SELF_DESTRUCT_NEW_ACCOUNT.\",\"Base-fee and block gas-limit mechanics (EIP-1559-style) affected by excluding code deposit gas from the block limit.\",\"eth_estimateGas behavior (non-consensus) must reflect the new costs.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The two-dimensional metering is specified only by reference to EIP-8011, and the target's own statements contradict that reference. The target says code deposit counts toward neither the transaction cap nor the block gas limit, while 8011 applies the transaction limit to the sum of dimensions and the block limit to the bottleneck dimension. As a result, transaction validity under the 7825 cap, header contents, block validity and base fee are unresolved. The dedup lookup's warm/cold semantics and the visibility of code from reverted or same-transaction creations are also undefined. The EIP-2780 GAS_NEW_ACCOUNT value conflicts with the target's value.\",\"affected_criteria\":[{\"criterion\":\"new_block_header_fields\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"encoding_changes_rlp_ssz\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"block_syncing_changes\",\"minimum_score\":1,\"maximum_score\":3},{\"criterion\":\"engine_api_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"new_invariant_on_pre_existing_tests\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":1,\"maximum_score\":3},{\"criterion\":\"modified_opcodes\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"security_risks\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"state_access_ordering_within_opcode_execution\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"Is code_deposit_gas deducted from the transaction's gas_limit? If so, how can a creation transaction exceed the EIP-7825 2^24 cap without its gasLimit field being invalid?\",\"Does code_deposit_gas count toward the block gas limit (as 8011's bottleneck dimension would imply) or not (as the target's Security Considerations state)?\",\"Is the 8011 max_gas_metered header field and base-fee rule adopted in the two-dimensional version?\",\"What do 'warm' and 'cold' mean for the code-hash existence check, and is the hash added to any accessed set?\",\"Does CodeExists see code stored by an earlier creation in the same transaction, or by a creation that was later reverted?\",\"Do storage_access_cost and hash_cost apply when creation fails (out of gas, size limit exceeded) or returns empty code?\",\"Does the EIP-2780 surcharge use 25,000 or the repriced 212,800 GAS_NEW_ACCOUNT?\",\"Do SSTORE refunds derived from GAS_STORAGE_SET scale with the new 60,800 value?\",\"Can code deposit cause an out-of-gas halt in the creating frame when it is metered separately?\"]},\"notable_ambiguities\":[\"The target says code deposit gas 'doesn't contribute to the block gas limit or the individual transaction limit', but the EIP-8011 model it cites keeps a single transaction gas_limit over the sum of dimensions and caps blocks on the bottleneck dimension.\",\"The rationale table counts '25,000 new account' within a deployment's cost, which is inconsistent with the price-impact example that charges only GAS_CREATE. It is unclear whether CREATE also charges GAS_NEW_ACCOUNT.\",\"GAS_NEW_ACCOUNT is 25,000 in the supplied EIP-2780 and 212,800 in the target.\",\"The Backwards Compatibility text refers to 'new calldata cost rules' and 'floor cost values', which this EIP does not define. This appears to be leftover text.\",\"'Empty code handling: Clients can treat empty code as a special case ... making it effectively free' is permissive language. It is unclear whether hash and access costs are charged for empty runtime code.\",\"How the EIP-7702 refund (now 169,100 per existing authority) interacts with the global refund cap is not discussed.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8037 (revision c47ae3be, requires EIP-2780) reprices state creation using a cost of 1,900 gas per state byte. It raises GAS_CREATE, GAS_CODE_DEPOSIT, GAS_NEW_ACCOUNT, GAS_SELF_DESTRUCT_NEW_ACCOUNT, GAS_STORAGE_SET, and the EIP-7702 PER_EMPTY_ACCOUNT_COST and PER_AUTH_BASE_COST. It adds a two-dimensional metering scheme, derived from EIP-8011, with `gas` and `code_deposit_gas` dimensions, so that code deposit cost does not count against the EIP-7825 transaction cap or the block gas limit. It also changes how contract deployment is charged. A new code-existence lookup waives the code deposit charge for runtime bytecode that is already stored. A warm/cold storage-access charge and a keccak hash charge per word of runtime code are added for CREATE, CREATE2 and creation transactions.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameter changes",
+       "summary": "Seven existing gas parameters are repriced (e.g., GAS_CREATE 32,000→212,800, GAS_STORAGE_SET 20,000→60,800, PER_AUTH_BASE_COST 12,500→43,700)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Multidimensional metering for code deposit gas",
+       "summary": "Adds an independent metering of code deposit costs with two dimensions, gas and code_deposit_gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation",
+       "summary": "Adds a conditional code deposit charge (zero if the code already exists), plus storage_access_cost (warm/cold) and hash_cost = GAS_KECCAK256_WORD * ceil(L/32) for contract creation."
+      },
+      {
+       "source": "supporting/eip-7702.md",
+       "locator": "Behavior — step 7",
+       "summary": "Refund of PER_EMPTY_ACCOUNT_COST - PER_AUTH_BASE_COST; both terms are repriced by the target, so the refund changes from 12,500 to 169,100."
+      }
+     ],
+     "rationale": "The EIP adds new accounting mechanisms (separate code_deposit_gas metering, the dedup-dependent deposit charge, and access and hash charges at creation). It also changes the expected gas of many baseline operations (SSTORE set, CREATE/CREATE2, CALL to a new account, SELFDESTRUCT, EIP-7702 authorizations). This meets level 3.",
+     "confidence": "high",
+     "uncertainty_note": "The exact semantics of the second dimension (whether it is deducted from the transaction's gas limit) are under-specified, but level 3 holds under any reading.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation — \"first check whether the code already exists in the state trie\"",
+       "summary": "Creation now performs a code-existence lookup in state and charges GAS_WARM_ACCESS or GAS_COLD_SLOAD relative to that access."
+      },
+      {
+       "source": "eip.md",
+       "locator": "CREATE vs CREATE2",
+       "summary": "The runtime-code hash and lookup apply to both CREATE and CREATE2, in addition to CREATE2's existing init-code hashing."
+      }
+     ],
+     "rationale": "A new state-accessing step, the code-hash existence check, is added to the return path of CREATE, CREATE2 and creation transactions. It needs an ordering rule relative to the hash charge, the deposit charge and the out-of-gas point. This affects multiple operations, but no rule for an entire opcode class or for recordable accesses changes across operations, so the score is 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Several points are unspecified: what 'warm' means for a code hash, whether this access enters any access-tracking set, and the order of the hash, lookup and deposit charges.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No blob-gas parameters or rules are mentioned."
+      },
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Why are we choosing this resource split? — \"not considering the blob resource\"",
+       "summary": "The metering scheme the target derives from explicitly excludes blobs."
+      }
+     ],
+     "rationale": "The EIP does not change blob-gas accounting.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Harmonization across state creation — \"set cost_per_state_byte to 1900\"",
+       "summary": "Introduces a unified state-byte rate from which all state-creation parameters are derived."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Multidimensional metering for code deposit gas",
+       "summary": "Code deposit gas is metered in its own dimension, separate from ordinary gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation — \"If CodeExists(...) == true, do not charge code-deposit storage gas\"",
+       "summary": "State-dependent deduplication decides whether a state-writing charge applies."
+      }
+     ],
+     "rationale": "Beyond changing state-byte rates (level 1), the EIP introduces a new charging mechanism for state writes: a separately metered code_deposit_gas dimension and a charge that is waived based on deduplication. This meets level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "How the code_deposit_gas dimension interacts with the transaction gas limit and the block gas limit is not fully specified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new refund mechanism is defined. Duplicate code is simply not charged rather than refunded."
+      },
+      {
+       "source": "supporting/eip-7702.md",
+       "locator": "Behavior — step 7",
+       "summary": "The existing 7702 refund is only repriced through changed parameters."
+      }
+     ],
+     "rationale": "No additional refund mechanism is introduced. Repricing the existing EIP-7702 refund belongs under GAS.",
+     "confidence": "high",
+     "uncertainty_note": "It is unspecified whether the SSTORE restore refunds derived from GAS_STORAGE_SET scale with the new value. Either way, that is a repricing, not a new mechanism.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameter changes — \"Operations affected\"",
+       "summary": "The changes affect CREATE, CREATE2, creation transactions, new-EOA funding, SELFDESTRUCT, SSTORE and EIP-7702 delegation."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation",
+       "summary": "Every contract creation picks up access and hash costs and a deposit charge that depends on deduplication."
+      }
+     ],
+     "rationale": "One common repricing of state creation forces rework of ordinary cases across distinct families: SSTORE gas tests, CREATE/CREATE2 and creation-transaction gas, CALL/value-transfer account creation, SELFDESTRUCT to a new beneficiary, and 7702 intrinsic gas and refunds. Any test that hardcodes gas or relies on contract deployment fitting in a gas budget is affected. This meets level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Multidimensional metering — \"a two-dimensional version of EIP-8011 is still required\"",
+       "summary": "The target requires the 8011-style metering mechanism, in two dimensions."
+      },
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Block header extension",
+       "summary": "In EIP-8011, the metering adds a max_gas_metered header field, computed per block from per-transaction gas vectors."
+      }
+     ],
+     "rationale": "If the required two-dimensional metering carries the 8011-style per-block metered-gas output, every post-fork block test must check a new value (bottleneck metered gas). Pre-fork vectors are unaffected, so the score is 2.",
+     "confidence": "low",
+     "uncertainty_note": "The target does not state which 8011 outputs (header field, per-transaction vector) are required. If none are, no new assertion arises.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Gas accounting — \"gas_used_vector ... is returned by the execute_transaction function\"",
+       "summary": "The metering returns a per-transaction gas vector in addition to gas_used."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Multidimensional metering for code deposit gas",
+       "summary": "Two dimensions (gas, code_deposit_gas) must be tracked."
+      }
+     ],
+     "rationale": "The transition tool would need to report per-transaction code_deposit_gas (or a gas vector) and the block-level metered gas or header value. That is multiple fields with no new exchange mechanism, so the score is 2.",
+     "confidence": "low",
+     "uncertainty_note": "No supplied tool evidence exists, and which outputs are needed depends on the unspecified metering design.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Multidimensional metering for code deposit gas",
+       "summary": "Gas expectations now have two dimensions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Duplicated bytecode discount — \"Ordering & same-block deployments\"",
+       "summary": "Tests must build pre-states with or without existing code objects and sequence deployments within a block."
+      }
+     ],
+     "rationale": "The target's test suite needs new expectation abstractions: a two-dimensional gas-used expectation for creations, and helpers that compute deposit, access and hash costs depending on whether the code already exists. This is level 2. Whether that representation must become a shared one that changes block-gas and base-fee checks across families depends on unresolved metering details.",
+     "confidence": "low",
+     "uncertainty_note": "If the 8011-style header and block metering are adopted, the framework's block gas and base-fee model changes for all families, which would be level 3.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "CREATE vs CREATE2 — \"the runtime hash must be computed\"",
+       "summary": "keccak256 of runtime code is used for the existence lookup. This is an unchanged primitive already used for code hashes."
+      }
+     ],
+     "rationale": "Only an existing hashing primitive is reused, and only its gas charge is new. No cryptographic rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation",
+       "summary": "Deposit charge depends on code existence, the access charge on warm/cold status, and the hash cost on ceil(L/32)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Multidimensional metering — \"this cap would limit the maximum contract size ... to roughly 6kb\"",
+       "summary": "Independent metering is meant to lift the 7825 cap for code deposit, changing the boundaries for maximum deployable size."
+      },
+      {
+       "source": "supporting/eip-170.md",
+       "locator": "Specification",
+       "summary": "The MAX_CODE_SIZE 24,576 boundary still applies."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Duplicated bytecode discount — \"Ordering & same-block deployments\" / \"Empty code handling\"",
+       "summary": "Same-block ordering and empty-code special cases."
+      }
+     ],
+     "rationale": "Several boundary-sensitive mechanisms change. These include the dedup existence boundary, warm/cold access cost, the per-word hash rounding, the out-of-gas point at code deposit, the 7825 cap versus the separately metered deposit gas, the EIP-170 size limit, and the 2780 new-account surcharge conditions. The dedup charge forms an elevated matrix over these dimensions: code existence (prior block, earlier transaction, same transaction, reverted creation) × warm/cold × CREATE/CREATE2/creation transaction × empty versus non-empty code × size near 24,576. These combinations change the outcome together, so the score is 3.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Block header extension; Block validity condition; Base fee update rule",
+       "summary": "Adds a header field, validates max_gas_metered <= gas_limit, and bases the base fee on parent.max_gas_metered."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — Independent metering — \"doesn't contribute to the block gas limit\"",
+       "summary": "Block gas limit validation must exclude code deposit gas."
+      }
+     ],
+     "rationale": "The required two-dimensional 8011 version brings several block-level rules: header decoding of the new field, a gas-limit validity check against metered gas, and a base-fee rule that depends on the parent block. At least two of these are complex (they depend on execution or on other blocks), so the score is 3.",
+     "confidence": "low",
+     "uncertainty_note": "The target does not state whether the header field and base-fee change are adopted. If only the gas-used exclusion applies, the score could be 1 or 2.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Block header extension",
+       "summary": "A new execution-header field (max_gas_metered) would need to be carried wherever header fields are exchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Multidimensional metering for code deposit gas",
+       "summary": "The target requires a two-dimensional version of this metering."
+      }
+     ],
+     "rationale": "If the header field is adopted, the execution payload would need one additional field. No endpoint-level change is indicated, so the score is 1.",
+     "confidence": "low",
+     "uncertainty_note": "No supplied document mentions the Engine API. The score could be 0 if no header field is added.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contracts are introduced."
+      }
+     ],
+     "rationale": "No system contract is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No existing system contract is referenced or changed."
+      }
+     ],
+     "rationale": "No system contract's rules or surrounding protocol behavior change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new instructions are introduced."
+      }
+     ],
+     "rationale": "No new opcode is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation — \"simply link the new account's codeHash to the existing code object\"",
+       "summary": "Deduplication changes how code is stored and charged. The resulting account codeHash and observable code are the same."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Parameter changes",
+       "summary": "Changes to SSTORE, CREATE, CREATE2 and SELFDESTRUCT are gas parameter changes."
+      }
+     ],
+     "rationale": "The changes to CREATE, CREATE2, SSTORE and SELFDESTRUCT are gas-only or internal storage optimizations. Stack, memory/state effects and return values are unchanged.",
+     "confidence": "medium",
+     "uncertainty_note": "If separate metering means code deposit no longer causes an out-of-gas halt in the creating frame, the exceptional-halt semantics of CREATE would change and the score would be 3. The text does not say.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are introduced."
+      }
+     ],
+     "rationale": "No new precompile is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile semantics or gas changes."
+      }
+     ],
+     "rationale": "No precompile changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Block header extension — \"[..., parent_beacon_block_root, requests_hash, max_gas_metered]\"",
+       "summary": "The 8011 metering extends the header RLP sequence with a 64-bit field."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Multidimensional metering — \"a two-dimensional version of EIP-8011 is still required\"",
+       "summary": "The target requires this metering."
+      }
+     ],
+     "rationale": "The required 8011-derived metering appends a field to the execution block header RLP schema, so the score is 3.",
+     "confidence": "low",
+     "uncertainty_note": "The target does not explicitly state that the header field is part of the two-dimensional version.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new transaction envelope is defined."
+      }
+     ],
+     "rationale": "No new transaction type.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameter changes",
+       "summary": "Intrinsic-relevant parameters change: GAS_CREATE (creation transactions) and PER_EMPTY_ACCOUNT_COST (per 7702 authorization)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Mispricing with respect to ETH transfers",
+       "summary": "The EIP-2780 state-dependent intrinsic surcharge applies GAS_NEW_ACCOUNT (repriced to 212,800)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Multidimensional metering — \"allows to lift this limit for contract creation transactions\"",
+       "summary": "The EIP-7825 transaction gas cap must stop constraining code deposit gas."
+      },
+      {
+       "source": "supporting/eip-7825.md",
+       "locator": "Gas Cap",
+       "summary": "Transactions with gasLimit > 16,777,216 are invalid."
+      }
+     ],
+     "rationale": "Intrinsic gas values change for creation transactions, 7702 transactions and 2780 new-account transfers. Lifting the 7825 cap for code deposit also changes how creation transactions are checked against the gas limit. These need dedicated cases, but the baseline validation sequence remains usable, so the score is 2.",
+     "confidence": "medium",
+     "uncertainty_note": "How the 7825 cap applies to a transaction whose gas limit must cover code deposit is unspecified. Depending on the design, it could require restructuring validity checks (level 3) or be only a parameter change (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Block header extension",
+       "summary": "Adds max_gas_metered to the execution header."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Multidimensional metering for code deposit gas — \"The specification is derived from EIP-8011\"",
+       "summary": "The target adopts a two-dimensional version of 8011."
+      }
+     ],
+     "rationale": "The 8011-derived metering that the target requires adds an execution-header member (max_gas_metered) to the execution block header schema, so the score is 3.",
+     "confidence": "low",
+     "uncertainty_note": "The target does not explicitly require the header field. It might rely only on transaction-level separation, in which case the score would be 0.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"requires a scheduled network upgrade\"",
+       "summary": "Only rule and constant changes apply at activation. No state migration is required."
+      }
+     ],
+     "rationale": "No activation-specific state transition is required.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — Independent metering — \"doesn't contribute to the block gas limit or the individual transaction limit\"",
+       "summary": "The block gas limit no longer bounds code deposit work, and the EIP states that benchmarking is needed."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation",
+       "summary": "Every creation adds a database lookup of the code hash plus hashing."
+      },
+      {
+       "source": "supporting/eip-7825.md",
+       "locator": "Motivation",
+       "summary": "The transaction cap exists to limit DoS and validation time. The target exempts code deposit from it."
+      }
+     ],
+     "rationale": "Code deposit bytes are no longer bounded by the block or transaction gas limit. This couples block size and propagation, code storage writes, hashing and the cost of dedup lookups in ways that existing gas-limit benchmarks do not cover. Adversarial blocks full of maximum-size deployments, with and without duplicates, need integrated stress testing across execution, database and networking, so the score is 3.",
+     "confidence": "medium",
+     "uncertainty_note": "The actual per-block bound on code deposit depends on the unspecified metering design.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — Independent metering — \"could potentially be exploited by an attacker to create very large contracts\"",
+       "summary": "The EIP acknowledges a DoS risk from gas that is outside the limits."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Duplicated bytecode discount — \"Hashing cost is necessary\"",
+       "summary": "Hash cost protects against abuse with large constructor outputs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Mispricing with respect to ETH transfers",
+       "summary": "The repricing creates a cheaper way to create accounts that depends on EIP-2780 to close."
+      }
+     ],
+     "rationale": "Exempting code deposit from the transaction and block gas limits changes the DoS assumptions that EIP-7825 and block validation rely on. The dedup lookup and linking also introduce a state-dependent charge open to griefing (cold lookups, reorg and same-block visibility). Each of these is a bounded interaction that needs targeted integration and fuzzing review, so the score is 2.",
+     "confidence": "medium",
+     "uncertainty_note": "If code deposit truly has no block-level bound, the invariant that the gas limit bounds block work is broken across components, which would argue for level 3.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Multidimensional metering for code deposit gas",
+       "summary": "Only says the design is derived from 8011 with two dimensions. It does not say how the transaction gas_limit, the 7825 cap, receipts' gas used, the block gas limit or the base fee treat code_deposit_gas."
+      },
+      {
+       "source": "supporting/eip-8011.md",
+       "locator": "Gas accounting — \"A transaction still has the same one-dimensional gas_limit\"",
+       "summary": "In 8011, the transaction limit applies to the sum of dimensions and the block limit applies to the maximum dimension. This conflicts with the target's claim that deposit gas counts toward neither limit."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Contract deployment cost calculation — \"GAS_WARM_ACCESS (if warm) | GAS_COLD_SLOAD (if cold)\"",
+       "summary": "Does not define what warm or cold means for a code hash, or whether the access is recorded."
+      },
+      {
+       "source": "supporting/eip-2780.md",
+       "locator": "Parameters — GAS_NEW_ACCOUNT 25,000",
+       "summary": "The prerequisite fixes GAS_NEW_ACCOUNT at 25,000 while the target sets 212,800, and the target never states which value the surcharge uses."
+      }
+     ],
+     "rationale": "Gas metering split across two dimensions is new and consensus-visible, and the rule is left unresolved. The target's statements contradict the 8011 model it adopts on how the transaction cap, transaction gas limit and block gas limit apply. Resolving this changes gas-used, validity and base-fee expectations across many families. Further open points include warm/cold semantics for code lookups, CodeExists for code created by reverted or same-transaction creations, and the interaction with the 2780 constant. This meets level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "Some gaps might be resolved by an unsupplied later version or two-dimensional 8011 text. They are judged as written.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Multidimensional metering",
+       "summary": "Couples the EIP-7825 cap, EIP-170 maximum size and EIP-8011 metering."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Mispricing with respect to ETH transfers",
+       "summary": "Relies on the EIP-2780 surcharge using the repriced GAS_NEW_ACCOUNT."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Parameter changes — PER_EMPTY_ACCOUNT_COST, PER_AUTH_BASE_COST",
+       "summary": "Reprices EIP-7702 intrinsic cost and refund."
+      },
+      {
+       "source": "supporting/eip-7702.md",
+       "locator": "Gas Costs; Behavior step 7",
+       "summary": "Defines the per-authorization intrinsic cost and the refund formula affected by the repricing."
+      }
+     ],
+     "rationale": "The target couples behavior from several EIPs: the 7825 cap, the 170 size limit and the 8011 metering jointly decide whether large deployments succeed; 2780's intrinsic surcharge uses the repriced new-account cost; and 7702's intrinsic cost and refund change. Each needs coordinated scenarios, so the score is 3.",
+     "confidence": "medium",
+     "uncertainty_note": "The 8011 interaction depends on how much of 8011 the two-dimensional version adopts.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 170,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Deploy contracts of 24,576 bytes (and 24,577 bytes, which must fail) whose combined gas exceeds the 7825 cap but which should succeed under separate code_deposit_gas metering. Also test duplicate maximum-size code paying only access and hash costs."
+     },
+     {
+      "eip": 2780,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Value-transfer transactions to a non-existent account must charge the repriced GAS_NEW_ACCOUNT (212,800 rather than 2780's 25,000). Exclusions for precompile targets and value=0 still apply. Creation transactions must not be double-charged on top of GAS_CREATE."
+     },
+     {
+      "eip": 7702,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Intrinsic gas of 212,800 per authorization tuple. Refund of 169,100 when the authority already exists, interacting with the global refund cap. Invalid or duplicate tuples still pay the new cost."
+     },
+     {
+      "eip": 7825,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Creation transactions or CREATE calls whose code deposit gas pushes total gas past 2^24 must not be capped. Non-creation transactions remain capped at 2^24. Transactions with gasLimit above 2^24 must be checked for validity."
+     },
+     {
+      "eip": 8011,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Two-dimensional gas_used vector per transaction. Block validity uses the bottleneck dimension against the gas limit. Base fee uses the parent's metered gas. Header field max_gas_metered for blocks dominated by code deposit versus ordinary gas."
+     }
+    ],
+    "unidentified_interactions": [
+     "Warm/cold access-cost semantics (GAS_WARM_ACCESS/GAS_COLD_SLOAD) applied to the new runtime-code-hash lookup, and its relation to access lists and accessed sets.",
+     "SSTORE refund and restore schedules derived from GAS_STORAGE_SET, which is repriced from 20,000 to 60,800. Whether those refunds scale is unspecified.",
+     "CREATE2 init-code hashing charge, which remains separate from the new runtime-code hash charge.",
+     "SELFDESTRUCT to a new beneficiary account, repriced via GAS_SELF_DESTRUCT_NEW_ACCOUNT.",
+     "Base-fee and block gas-limit mechanics (EIP-1559-style) affected by excluding code deposit gas from the block limit.",
+     "eth_estimateGas behavior (non-consensus) must reflect the new costs."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The two-dimensional metering is specified only by reference to EIP-8011, and the target's own statements contradict that reference. The target says code deposit counts toward neither the transaction cap nor the block gas limit, while 8011 applies the transaction limit to the sum of dimensions and the block limit to the bottleneck dimension. As a result, transaction validity under the 7825 cap, header contents, block validity and base fee are unresolved. The dedup lookup's warm/cold semantics and the visibility of code from reverted or same-transaction creations are also undefined. The EIP-2780 GAS_NEW_ACCOUNT value conflicts with the target's value.",
+    "affected_criteria": [
+     {
+      "criterion": "new_block_header_fields",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "encoding_changes_rlp_ssz",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "block_syncing_changes",
+      "minimum_score": 1,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "engine_api_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "new_invariant_on_pre_existing_tests",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 1,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "modified_opcodes",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "security_risks",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "state_access_ordering_within_opcode_execution",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Is code_deposit_gas deducted from the transaction's gas_limit? If so, how can a creation transaction exceed the EIP-7825 2^24 cap without its gasLimit field being invalid?",
+     "Does code_deposit_gas count toward the block gas limit (as 8011's bottleneck dimension would imply) or not (as the target's Security Considerations state)?",
+     "Is the 8011 max_gas_metered header field and base-fee rule adopted in the two-dimensional version?",
+     "What do 'warm' and 'cold' mean for the code-hash existence check, and is the hash added to any accessed set?",
+     "Does CodeExists see code stored by an earlier creation in the same transaction, or by a creation that was later reverted?",
+     "Do storage_access_cost and hash_cost apply when creation fails (out of gas, size limit exceeded) or returns empty code?",
+     "Does the EIP-2780 surcharge use 25,000 or the repriced 212,800 GAS_NEW_ACCOUNT?",
+     "Do SSTORE refunds derived from GAS_STORAGE_SET scale with the new 60,800 value?",
+     "Can code deposit cause an out-of-gas halt in the creating frame when it is metered separately?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The target says code deposit gas 'doesn't contribute to the block gas limit or the individual transaction limit', but the EIP-8011 model it cites keeps a single transaction gas_limit over the sum of dimensions and caps blocks on the bottleneck dimension.",
+    "The rationale table counts '25,000 new account' within a deployment's cost, which is inconsistent with the price-impact example that charges only GAS_CREATE. It is unclear whether CREATE also charges GAS_NEW_ACCOUNT.",
+    "GAS_NEW_ACCOUNT is 25,000 in the supplied EIP-2780 and 212,800 in the target.",
+    "The Backwards Compatibility text refers to 'new calldata cost rules' and 'floor cost values', which this EIP does not define. This appears to be leftover text.",
+    "'Empty code handling: Clients can treat empty code as a special case ... making it effectively free' is permissive language. It is unclear whether hash and access costs are charged for empty runtime code.",
+    "How the EIP-7702 refund (now 169,100 per existing authority) interacts with the global refund cap is not discussed."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 66959,
+  "type": "result",
+  "duration_ms": 160939,
+  "uuid": "8c18a68a-9222-49af-b3a2-dec5c5b4683d",
+  "ttft_stream_ms": 1504,
+  "time_to_request_ms": 433,
+  "first_content_frame_ms": 1505,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

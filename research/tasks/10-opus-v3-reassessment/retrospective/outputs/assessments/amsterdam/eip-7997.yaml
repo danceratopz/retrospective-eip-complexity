@@ -1,0 +1,643 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: amsterdam
+eip:
+  number: 7997
+  title: Deterministic Factory Contract
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: EIP-7997 (revision f8be9ce, Draft) sets the code of FACTORY_ADDRESS = 0x0B
+    to a fixed bytecode when the EIP activates. The bytecode is a minimal factory written for the Constantinople
+    instruction set, with no PUSH0. It reverts with empty data if calldata is shorter than 32 bytes. Otherwise
+    it treats the first 32 bytes as the salt and the rest as initcode, then runs CREATE2 with all of the
+    call's value. On success it returns the new address as a 32-byte word. On failure it reverts with
+    the same return data. The EIP adds no opcode, precompile, transaction type, header field, gas rule
+    or new cryptography. The work is a one-time code installation at activation, plus behavioural tests
+    of a stateless system contract that wraps existing CREATE2 and RETURNDATA semantics.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/amsterdam/eip-7997/manifest.yaml
+    manifest_sha256: 479a33dccff9718b4c9ab44dd989ef7bab6d6504f6e0cfb19417b5e75a18047e
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/amsterdam/eip-7997/manifest.yaml
+    manifest_sha256: c1aaeb41c3b20dcde034be74d0ebc9694672179234b233177b6ea310adc83654
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: f8be9ce27bdb513ba72abddde06cb5e806447230
+    path: EIPS/eip-7997.md
+    committed_at: '2025-08-19T16:32:51Z'
+    git_blob_sha: 9bd8766f329acc3b21d2fa6dc53d5655488891ab
+    content_sha256: 8fec7a727f75a9762f34427ed5046b49d59b63a9c16d38f319c8e1060ebd93bd
+    immutable_url: https://github.com/ethereum/EIPs/blob/f8be9ce27bdb513ba72abddde06cb5e806447230/EIPS/eip-7997.md
+    information_cutoff_at: '2025-08-21T13:34:18Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:33:45.056248Z'
+    session_id: assessment-run-93faf616-d359-4da9-b161-f3f4d0dbc298
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-155.md
+  - supporting/eip-211.md
+  - supporting/eip-1014.md
+  - supporting/eip-5792.md
+  - supporting/eip-7702.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: c769831ee495fb3d612633c67789ab78edbe6f1f8fb8f5086491ae1008b5c1ee
+    schema_sha256: 848f39387012978fa2bb383d75bc05c5940a10dda952f1621acf3b56248dc83f
+    started_at: '2026-10-08T09:33:45.056248Z'
+    finished_at: '2026-10-08T09:35:26.577923Z'
+    duration_ms: 99520
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 51320
+      cache_read_input_tokens: 0
+      output_tokens: 11186
+      output_tokens_details:
+        thinking_tokens: 3339
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 51320
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 11186
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 51320
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 51320
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 11186
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 51320
+        webSearchRequests: 0
+        costUSD: 0.634288
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 3339
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.634288
+  assessor_raw_output:
+    path: retrospective/outputs/raw/amsterdam/eip-7997.json
+    content_sha256: d4c65d057ed9b78397fbe5c290cc0ec30565bdcd860f2b52995397a9b060ba40
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: Only installs bytecode; the factory uses existing instructions under existing gas rules.
+      No gas parameter or accounting rule is defined.
+  rationale: No execution-gas accounting rule changes. Gas used by factory calls comes from ordinary charges
+    for existing instructions, including the CREATE2 hashcost from EIP-1014.
+  confidence: medium
+  uncertainty_note: The EIP calls 0x0B a 'system contract in the precompile range' but does not say whether
+    it joins the set of addresses that are warm by default under EIP-2929, as precompiles are. If it did,
+    the access cost for calling 0x0B would change (level 0–1).
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: No instruction's sequence is changed; the factory only calls CREATE2 internally.
+  rationale: No instruction's state-access or gas-charge ordering changes, and no new ordering rule is
+    introduced. Changed contract internals do not modify how an instruction orders its accesses.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No blob-related content.
+  rationale: No blob-gas accounting changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: Deployment goes through unchanged CREATE2; no state-gas mechanism is defined.
+  rationale: Using an unchanged state-writing operation (CREATE2) does not introduce state-gas accounting.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund rule is defined.
+  rationale: No new refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: '''set the code of FACTORY_ADDRESS to ...'' makes 0x0B a code-bearing account in the fork.'
+  - source: eip.md
+    locator: Rationale / Precompile-range system contract
+    summary: 0x0B is chosen as 'the next lowest address after existing precompiles'.
+  rationale: On the EIP's premise, baseline tests that treat 0x0B as an empty or non-existent account
+    need new expected values. Examples are EXTCODESIZE/EXTCODEHASH/EXTCODECOPY, calls to the address,
+    and tests that iterate over precompile-range addresses. This rework is confined to particular address-parameter
+    cases.
+  confidence: low
+  uncertainty_note: From general knowledge of the baseline, 0x0B may already be an active precompile in
+    Osaka (the BLS12-381 range). The supplied text does not mention this. If the address is occupied,
+    the rework could cover a whole precompile family (up to level 2).
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: A one-time code installation; no new log, receipt or header output.
+  rationale: Baseline tests gain no new output to assert. The installed account appears in pre-state or
+    allocation; it is not a new output produced while tests run.
+  confidence: medium
+  uncertainty_note: Fixtures that start at the fork must include the factory account in genesis, which
+    changes state roots. This is closer to fixture construction than to a new assertion (at most level
+    1).
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: The activation code insertion happens inside the client at the fork; no new input or output
+      field is defined.
+  rationale: Fork-aware behaviour (installing code at activation) needs no new t8n field or exchange mechanism.
+  confidence: medium
+  uncertainty_note: No t8n evidence was supplied. Whether the tool applies the insertion at the transition
+    block, or expects it in the supplied alloc, is a design choice.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale / Precompile-range system contract
+    summary: '''an irregular insertion of the code into a special address seems necessary''.'
+  rationale: 'The framework needs a local extension: fork-dependent pre-allocation of the factory account
+    in genesis, and fork-transition expectations that the code appears at activation. These are extensions
+    of existing pre-alloc and transition-fork primitives, not a new abstraction.'
+  confidence: medium
+  uncertainty_note: Actual framework support was not evidenced.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: supporting/eip-1014.md
+    locator: Specification
+    summary: CREATE2 address derivation keccak256(0xff ++ address ++ salt ++ keccak256(init_code)) is
+      unchanged and reused.
+  rationale: Unchanged hashing is reused; no cryptographic mechanism changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale / Input validation
+    summary: '''The factory reverts if the input is smaller than 32 bytes''.'
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: '''push 32 calldatasize lt jumpi @throw''; initcodesize = calldatasize - 32.'
+  rationale: 'One new boundary-sensitive rule: the 32-byte minimum calldata length (31 bytes reverts empty;
+    32 bytes is an empty-initcode deployment; 33+ bytes carries initcode). Other limits that tests should
+    exercise through the factory are inherited, not changed: initcode size, value, collisions and the
+    CREATE2 failure path.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block structure or decoding change.
+  rationale: No block RLP or structural validation change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API content.
+  rationale: No Engine API change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: '''A minimal CREATE2 factory is inserted as a system contract in the precompile range''.'
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: The bytecode uses no SSTORE/SLOAD; its only effect is an ordinary CREATE2 and returning or
+      reverting data.
+  rationale: Exactly one protocol-designated stateless contract (no persistent storage), with no protocol
+    effect beyond the ordinary call result.
+  confidence: high
+  uncertainty_note: The factory's account nonce changes with each successful CREATE2, but that is not
+    storage.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No existing system contract is referenced or changed.
+  rationale: Deploying a new system contract is not a modification.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Constantinople target, avoidance of PUSH0
+    summary: The factory uses only existing Constantinople-era opcodes.
+  rationale: No new instruction.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: CREATE2, RETURNDATASIZE and RETURNDATACOPY are used unchanged.
+  rationale: No instruction semantics change; calling new contract code does not count.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: Described as a system contract with EVM bytecode in the precompile range, not a native function.
+  rationale: EVM system contracts are excluded; no native precompile is added.
+  confidence: high
+  uncertainty_note: Clients may need to decide whether 0x0B is treated as a 'precompile' for EIP-2929
+    warm-set and EIP-7702 delegation purposes. That question is recorded under UNSP.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Precompile-range system contract
+    summary: Assumes 0x0B is 'the next lowest address after existing precompiles', i.e. unoccupied.
+  rationale: As written, the EIP changes no existing precompile.
+  confidence: low
+  uncertainty_note: From baseline protocol knowledge, Osaka may already have a precompile at 0x0B (BLS12-381
+    range). Installing code there would then collide with, or replace, a complex precompile. The supplied
+    text does not address this, so the plausible range is 0–3.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No serialized schema is changed.
+  rationale: No schema or codec change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale / Not a new transaction type
+    summary: A new creation transaction type was explicitly rejected in favour of a system contract.
+  rationale: No new transaction envelope.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction validity or intrinsic-gas rule is defined.
+  rationale: No consensus transaction-validity change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header or block field.
+  rationale: No header or block member added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: '''Upon activation of this EIP, set the code of FACTORY_ADDRESS to ...'''
+  - source: eip.md
+    locator: Rationale / Precompile-range system contract
+    summary: '''an irregular insertion of the code into a special address seems necessary''.'
+  rationale: 'Code installation at 0x0B is mandated by the protocol at activation and is not done by an
+    ordinary transaction. It is a one-time state transition at the fork block, unlike ordinary post-fork
+    processing. Tests must cover the transition: absent before, present from the activation block onward,
+    with balance and nonce handled correctly.'
+  confidence: high
+  uncertainty_note: The EIP does not say what happens to 0x0B's existing balance, nonce or storage, or
+    how activation behaves at genesis versus mid-chain.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: The factory simply wraps CREATE2; its costs are paid under existing gas rules.
+  rationale: Everything the factory does was already possible through user-deployed factories; no workload
+    or resource bound changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations / Frontrunnable deployments
+    summary: Deployments of environment-reading contracts may be frontrun; this is an application-level
+      concern.
+  - source: eip.md
+    locator: Rationale / No frontrunning protection
+    summary: The permissionless salt is a deliberate design choice.
+  rationale: 'Security conditions can be checked locally: the exact installed bytecode, correct revert
+    and return-data handling, value forwarding, and correct failure on address collision. Other components''
+    assumptions do not change. Frontrunning is application-level.'
+  confidence: medium
+  uncertainty_note: If 0x0B is treated as a precompile for EIP-7702 delegation or warm-set purposes, or
+    collides with an existing precompile, the impact goes beyond a local check (up to level 2).
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: '''inserted as a system contract in the precompile range''. The EIP does not say whether
+      0x0B counts as a precompile for protocol rules.'
+  - source: supporting/eip-7702.md
+    locator: Delegation indicator / Precompiles
+    summary: '''When a precompile address is the target of a delegation, the retrieved code is considered
+      empty''. Whether this applies to 0x0B is unresolved.'
+  - source: eip.md
+    locator: Specification / Factory Contract
+    summary: Only code is specified. Nonce, balance and storage handling of 0x0B at activation are not
+      stated.
+  - source: eip.md
+    locator: Rationale / Precompile-range system contract
+    summary: Assumes 0x0B is free, without addressing any existing precompile at that address in the baseline.
+  rationale: There are localized competing outcomes. (a) Is 0x0B in the EIP-2929 default-warm precompile
+    set, which changes call costs? (b) Does EIP-7702 delegation to 0x0B run empty code or the factory
+    code? (c) What are the account nonce and existing balance at activation? A zero nonce works for CREATE2,
+    while a nonce of 1 matches contract conventions; this affects the nonce after deployments. (d) A possible
+    collision with an existing baseline precompile at 0x0B. Each produces observable consensus results
+    and needs agreement before expected values can be fixed.
+  confidence: medium
+  uncertainty_note: Point (d) relies on general knowledge of the baseline precompile map rather than the
+    supplied text. Without (d) the level is still 2 because of (a) and (b).
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Preamble
+    summary: '''requires: 211, 1014''.'
+  - source: supporting/eip-1014.md
+    locator: Clarifications
+    summary: 'Collision behaviour: creation fails if the target has a nonzero nonce or code; CREATE2 address
+      is derived from the sender address.'
+  - source: supporting/eip-211.md
+    locator: Specification
+    summary: CREATE2 returns an empty buffer on success and failure data on failure; the factory re-emits
+      it.
+  - source: supporting/eip-7702.md
+    locator: Delegation indicator / Precompiles
+    summary: The rule for delegating to precompile addresses may or may not cover 0x0B.
+  rationale: 'Coordinated cross-EIP cases are needed. EIP-1014: addresses derived with sender 0x0B, repeated
+    salt/initcode collisions, and the factory''s nonce increment. EIP-211: revert data from failed initcode
+    passed through via RETURNDATACOPY, and the empty buffer on success. EIP-7702: EOAs delegating to 0x0B,
+    and delegated accounts calling the factory. These are bounded, not a coupled restructuring of shared
+    vectors, so level 2.'
+  confidence: medium
+  uncertainty_note: 'Unnumbered interactions may also need cases: EIP-2929 warm status, initcode size
+    and word-cost limits, the 0xEF code-prefix ban, static-context CREATE2 failure, and a possible baseline
+    precompile collision.'
+  exceptional_score_justification: null
+  interacting_eips:
+  - 1014
+  - 211
+  - 7702
+  unidentified_interactions:
+  - 'EIP-2929 access lists: whether 0x0B is warm by default like precompiles, which affects call gas to
+    the factory.'
+  - Initcode size limit and per-word initcode cost applied to factory-submitted initcode (calldata minus
+    32 bytes).
+  - The rule rejecting deployed code that starts with 0xEF, and the maximum code size, applied to code
+    deployed through the factory.
+  - 'STATICCALL into the factory: CREATE2 in a static context must fail and the factory reverts.'
+  - A possible collision with an existing baseline precompile at 0x0B (not addressed in the supplied text).
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 1014
+  - 211
+  - 7702
+  interaction_details:
+  - eip: 1014
+    interaction: coordinated_cases
+    cases: Through the factory, check that the CREATE2 address equals keccak256(0xff ++ 0x0B ++ salt ++
+      keccak256(initcode))[12:]. Repeated deployment of the same salt and initcode collides and fails,
+      and the factory then reverts. Check empty initcode (calldata exactly 32 bytes), the factory's nonce
+      increment after deployments, value endowment forwarding, and CREATE2 hashcost on large initcode.
+  - eip: 211
+    interaction: coordinated_cases
+    cases: When initcode reverts, the factory reverts with identical return data (RETURNDATASIZE/RETURNDATACOPY
+      of the CREATE2 failure buffer). Failures from out-of-gas, collision or insufficient balance produce
+      an empty return buffer and an empty revert. On success, the buffer from CREATE2 is empty and the
+      factory returns the 32-byte address.
+  - eip: 7702
+    interaction: coordinated_cases
+    cases: 'Check an EOA delegating to 0x0B: does the precompile-delegation rule give empty code, or does
+      the factory code run in the EOA''s context, deploying from the EOA''s address? Also check a delegated
+      EOA calling the factory, where the factory''s own address remains the CREATE2 sender.'
+totals:
+  primary_score: 12
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: The revision specifies only the bytecode to install at 0x0B. It does not say whether 0x0B counts
+    as a precompile for protocol rules (EIP-2929 default-warm set, EIP-7702 precompile-delegation rule).
+    It does not give the account's nonce, balance or storage handling at activation. It does not address
+    whether 0x0B is already occupied by a precompile in the baseline. Test Cases are TBD.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - patterns_affecting_pre_existing_tests
+  - modified_precompiles
+  - security_risks
+  - unspecified_behavior_requiring_cross_client_consensus
+  - cross_eip_interactions
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: modified_precompiles
+    minimum_score: 0
+    maximum_score: 3
+  - criterion: security_risks
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 2
+    maximum_score: 2
+  - criterion: cross_eip_interactions
+    minimum_score: 2
+    maximum_score: 3
+  plausible_total_range:
+    minimum: 12
+    maximum: 19
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - Is 0x0B added to the set of addresses that are warm by default (EIP-2929), like precompiles?
+  - Does EIP-7702 delegation to 0x0B count as delegating to a precompile (empty code) or to a normal contract?
+  - What nonce is set at 0x0B on activation, and is any existing balance or storage kept or cleared?
+  - How does the insertion interact with an existing precompile at 0x0B in the baseline, if there is one?
+  - At which block does the insertion happen (first fork block), and how does that apply at genesis?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- The rationale says 0x0B is the next free address after existing precompiles. Under the Osaka baseline
+  that address may already be an active precompile; the supplied text does not reconcile this.
+- '''System contract in the precompile range'' leaves it unclear whether precompile-specific protocol
+  rules (warm set, 7702 delegation handling) apply.'
+- The account nonce at installation is unspecified, so post-deployment nonce expectations are ambiguous.
+- The Test Cases section is TBD, so no reference vectors exist.
+overall_confidence: medium

@@ -1,0 +1,781 @@
+{
+ "case": "cancun/4844",
+ "run_id": "assessment-run-5828568a-d0e0-4449-8f95-a7cf02cf5d39",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:37:45.258422Z",
+ "finished_at": "2026-10-08T09:40:01.140087Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "f4c89de9d09d104918d07b453944f934c62072938fdee9601e3781d69ec9cf21",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "0921fa7d7d21bca0f67b625a15e040725664ca96b564a2ac70949d7f6107e9de",
+ "output": {
+  "duration_api_ms": 133414,
+  "stop_reason": "tool_use",
+  "session_id": "d7a3bafb-048e-4af5-ab4d-02b20f8f1ce1",
+  "total_cost_usd": 0.7891360000000001,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 60071,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 15428,
+   "output_tokens_details": {
+    "thinking_tokens": 5247
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 60071,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 15428,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 60071,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 60071
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 15428,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 60071,
+    "webSearchRequests": 0,
+    "costUSD": 0.7891360000000001,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 5247,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"This revision of EIP-4844 adds blob-carrying transactions. They use EIP-2718 type 0x05 with an SSZ-encoded `SignedBlobTransaction`. Blocks carry the minimal encoding, while the network/mempool encoding wraps the transaction with blobs, KZG commitments and an aggregated KZG proof that the EL must verify. A separate data-gas fee market is added: a new `excess_data_gas` header field, `fake_exponential` pricing, a target of 2 and a maximum of 4 blobs per block, and a data fee that is burned before execution and not refunded. The EIP also adds a `DATAHASH` opcode (0x49, 3 gas) and a KZG point-evaluation precompile (0x14, 50000 gas). Blob persistence is delegated to the consensus layer as sidecars.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Opcode to get versioned hashes — \\\"The opcode has a gas cost of `HASH_OPCODE_GAS`\\\"\",\"summary\":\"The new opcode has a fixed cost of 3 gas, which is an ordinary instruction cost.\"},{\"source\":\"eip.md\",\"locator\":\"Gas accounting — \\\"data gas as a new type of gas. It is independent of normal gas\\\"\",\"summary\":\"The new fee mechanism is data gas, which is separate from execution gas.\"},{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile — \\\"costs `POINT_EVALUATION_PRECOMPILE_GAS`\\\"\",\"summary\":\"The precompile has a constant cost of 50000 gas, which is an ordinary fee rather than an accounting rule.\"}],\"rationale\":\"No execution-gas accounting rule or settlement change is specified. The new accounting mechanism is data gas, which is scored under BLOB. Fixed costs for the opcode and precompile are ordinary fees.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Intrinsic gas for type-0x05 transactions is not stated. If clients treated it differently from EIP-1559/2930 intrinsic gas (for example, if calldata cost depended on SSZ encoding), this could become level 1.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Opcode to get versioned hashes\",\"summary\":\"DATAHASH reads only transaction context, not state.\"},{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile\",\"summary\":\"The precompile does pure verification and does not access state.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes, and no new state-accessing operation is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas accounting — calc_data_fee / get_data_gasprice\",\"summary\":\"Adds data gas, a per-blob gas amount (2**17) and an exponential price derived from excess_data_gas.\"},{\"source\":\"eip.md\",\"locator\":\"Header extension — calc_excess_data_gas\",\"summary\":\"Adds the running excess update with a target of 2**18 and clamping at zero.\"},{\"source\":\"eip.md\",\"locator\":\"Gas accounting — \\\"deducted from the sender balance before transaction execution and burned, and is not refunded\\\"\",\"summary\":\"Adds a new settlement rule for the data fee.\"}],\"rationale\":\"This introduces a completely new blob-gas mechanism: pricing, a per-block limit, an excess accumulator and burn settlement. No blob-gas rules exist in the baseline to change, so the new mechanism does not alter baseline gas expectations. This is level 2.\",\"confidence\":\"high\",\"uncertainty_note\":\"There is an inconsistency over whether the price uses the parent header or the current header (see UNSP). It affects expected values, not the level.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas accounting\",\"summary\":\"Only blob data is priced in the new gas type. No state-write accounting is introduced.\"}],\"rationale\":\"No state-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas accounting — \\\"is not refunded in case of transaction failure\\\"\",\"summary\":\"The data fee is explicitly non-refundable, and no refund mechanism is added.\"}],\"rationale\":\"No refund mechanism is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameters — `HASH_OPCODE_BYTE` 0x49\",\"summary\":\"A previously undefined opcode byte becomes valid, so baseline cases that expect 0x49 to be invalid change.\"},{\"source\":\"eip.md\",\"locator\":\"Parameters — `POINT_EVALUATION_PRECOMPILE_ADDRESS` Bytes20(0x14)\",\"summary\":\"Address 0x14 becomes a precompile, so baseline calls or enumerations covering this address change their results.\"},{\"source\":\"eip.md\",\"locator\":\"Header extension\",\"summary\":\"Header RLP gains a field, which changes block hashes for blocks built under the target fork.\"}],\"rationale\":\"Localized cases in several families need rework: invalid-opcode enumeration (0x49), and precompile-range or empty-account calls at 0x14. The header extension changes header construction, but the main effect of that is a new invariant scored under INV. There is no common rewrite across ordinary cases in multiple families, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether baseline tests actually touch 0x49 or 0x14 cannot be confirmed without a supplied suite.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Header extension — \\\"extended with a new 256-bit unsigned integer field `excess_data_gas`\\\"\",\"summary\":\"Every post-fork header has a new field that must be produced and validated.\"}],\"rationale\":\"All blockchain tests in the target fork must produce and check excess_data_gas, including blocks without blobs. This is a universal assertion, but there is no evidence that pre-fork vectors must be re-derived, so it is level 2.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Header extension — calc_excess_data_gas(parent, new_blobs)\",\"summary\":\"The tool needs the parent's excess_data_gas as input and must output or compute the current value.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type — \\\"single byte `BLOB_TX_TYPE` followed by an SSZ encoding\\\"\",\"summary\":\"The tool's transaction input must accept type 0x05, which has SSZ-specific fields (max_fee_per_data_gas, blob_versioned_hashes).\"},{\"source\":\"eip.md\",\"locator\":\"Gas accounting — validate_block\",\"summary\":\"Validity depends on the parent's data gasprice, so the environment must carry data-gas context.\"}],\"rationale\":\"Multiple semantic fields change: parent/current excess_data_gas, plus transaction fields for data gas and versioned hashes. The invocation protocol has no clear new exchange mechanism, so this is level 2.\",\"confidence\":\"low\",\"uncertainty_note\":\"No transition-tool evidence was supplied. Accepting SSZ-encoded transactions could count as a new mechanism, which would make this level 3.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"New transaction type — SignedBlobTransaction / tx_hash\",\"summary\":\"Transactions require SSZ serialization and signing over hash_tree_root, which is a new construction abstraction compared with RLP transactions.\"},{\"source\":\"eip.md\",\"locator\":\"Networking — BlobTransactionNetworkWrapper\",\"summary\":\"The network form needs generation of blobs, commitments and aggregated proofs.\"},{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile\",\"summary\":\"Precompile tests need valid KZG commitment, proof and versioned-hash construction.\"}],\"rationale\":\"The target suite needs new construction abstractions: SSZ transaction building and signing, KZG commitment and proof generation, and versioned-hash derivation. These are mostly confined to blob-related tests, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Supporting two encodings for one transaction (network and minimal) in shared block construction might affect other families, which would justify level 3.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Cryptographic Helpers — verify_kzg_proof(), verify_aggregate_kzg_proof()\",\"summary\":\"The EL must run single-point and aggregated KZG verification.\"},{\"source\":\"supporting/ethereum-consensus-specs--specs-eip4844-polynomial-commitments.md\",\"locator\":\"Trusted setup — \\\"contents TBD\\\"\",\"summary\":\"The trusted setup is not yet defined, so established test resources are not evidenced.\"},{\"source\":\"supporting/ethereum-consensus-specs--specs-eip4844-polynomial-commitments.md\",\"locator\":\"compute_challenges\",\"summary\":\"Aggregation uses a Fiat-Shamir transcript that is a new protocol construction.\"},{\"source\":\"eip.md\",\"locator\":\"Helpers — kzg_to_versioned_hash\",\"summary\":\"Adds a new versioned-hash derivation from commitments.\"}],\"rationale\":\"Multiple cryptographic mechanisms are added: pairing-based KZG point verification in the precompile, aggregated KZG verification with Fiat-Shamir in wrapper validation, and versioned-hash binding. The trusted setup is TBD and the KZG/Fiat-Shamir verification requires validation beyond established resources, so this is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"Whether hash() in kzg_to_versioned_hash is SHA-256 is not specified in the supplied text.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Header extension — calc_excess_data_gas\",\"summary\":\"The excess calculation clamps at zero against the target.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type — \\\"at most `MAX_DATA_GAS_PER_BLOCK // DATA_GAS_PER_BLOB` total blob commitments\\\"\",\"summary\":\"Sets a per-block maximum of 4 blobs.\"},{\"source\":\"eip.md\",\"locator\":\"Gas accounting — validate_block asserts\",\"summary\":\"The balance check combines gas*max_fee and data_gas*max_fee_per_data_gas, and max_fee_per_data_gas must be at least the data gasprice.\"},{\"source\":\"eip.md\",\"locator\":\"Opcode to get versioned hashes — \\\"if index < len(...)\\\"\",\"summary\":\"Defines index bounds for DATAHASH.\"},{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile — \\\"MUST reject non-canonical field elements\\\"\",\"summary\":\"Field elements must be strictly less than BLS_MODULUS.\"}],\"rationale\":\"Several independent boundary-sensitive rules are introduced. The affordability and data-gasprice checks form an elevated matrix: blob count × max_fee_per_data_gas × the parent's excess_data_gas (which sets the price) × gas limit × max_fee_per_gas × balance. These combinations jointly determine validity, so this is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"The balance check omits value, which may change the expected boundary.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Header extension\",\"summary\":\"Header RLP decoding gains excess_data_gas, which must equal calc_excess_data_gas(parent, new_blobs). This is complex because it depends on the parent and the block's transactions.\"},{\"source\":\"eip.md\",\"locator\":\"Header extension — \\\"For the first post-fork block, `parent.excess_data_gas` is evaluated as `0`\\\"\",\"summary\":\"Adds special handling at the fork boundary.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type — maximum blob commitments per block\",\"summary\":\"Adds a block-level blob-count limit.\"}],\"rationale\":\"Multiple block-import validation rules change: decoding the new header field, validating excess_data_gas against the parent and blob count (complex), and the per-block blob limit. Decoding SSZ transactions in the block body is also new. This is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Header extension\",\"summary\":\"Execution payloads must carry excess_data_gas, which implies a payload field.\"},{\"source\":\"eip.md\",\"locator\":\"Beacon chain validation — \\\"the contents of the blobs are propagated separately, as a 'sidecar'\\\" / \\\"Honest validator: produce beacon blocks with blobs, publish the blobs sidecars\\\"\",\"summary\":\"Blobs exist only in the EL mempool wrapper, so the CL must obtain them from the EL. This implies new EL→CL exchange behavior.\"},{\"source\":\"supporting/ethereum-consensus-specs--specs-eip4844\",\"locator\":\"tree listing — validator.md\",\"summary\":\"The validator spec that would define the exchange is listed but not supplied.\"}],\"rationale\":\"Endpoint-level behavior (retrieving blobs for block production) and the excess_data_gas payload field are both implied, but the supplied documents define neither concretely. Level 2 is the best-supported score; level 3 is plausible.\",\"confidence\":\"low\",\"uncertainty_note\":\"The Engine API is not specified in the supplied documents, and validator.md and beacon-chain.md are missing. The score could range from 1 to 3.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No protocol-designated EVM contract is introduced. The new address 0x14 is a native precompile.\"}],\"rationale\":\"No system contracts.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No existing system contract is referenced or changed.\"}],\"rationale\":\"No system contract changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Opcode to get versioned hashes — \\\"takes as input one stack argument `index`\\\"\",\"summary\":\"DATAHASH has no immediate data, a fixed one-in/one-out stack effect and a constant cost of 3 gas.\"}],\"rationale\":\"Exactly one simple instruction is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"Behavior in non-blob transactions (an empty list, so presumably zero) is implied but not explicit.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Opcode to get versioned hashes\",\"summary\":\"Only a new opcode at a previously undefined byte is added. No existing instruction semantics change.\"}],\"rationale\":\"No existing instruction changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile — \\\"versioned_hash | z | y | commitment | proof\\\"\",\"summary\":\"The input has a fixed 192-byte layout and constant gas of 50000.\"}],\"rationale\":\"There is one precompile with a fixed input layout and constant gas, so it is simple. That gives level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Handling of inputs that are not 192 bytes is not specified. If variable lengths had to be supported, the precompile would be complex (level 2).\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile\",\"summary\":\"Only a new precompile is added.\"}],\"rationale\":\"No existing precompile changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"New transaction type — SignedBlobTransaction SSZ container\",\"summary\":\"Adds a new SSZ transaction payload, with distinct network and minimal encodings.\"},{\"source\":\"eip.md\",\"locator\":\"Networking — BlobTransactionNetworkWrapper\",\"summary\":\"Adds a new peer-message payload containing blobs, commitments and an aggregated proof.\"},{\"source\":\"eip.md\",\"locator\":\"Header extension — RLP list with excess_data_gas\",\"summary\":\"The header RLP schema gains a field.\"}],\"rationale\":\"Transaction, network wrapper and header schemas all change, so this is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameters — `BLOB_TX_TYPE` Bytes1(0x05)\",\"summary\":\"Adds a new EIP-2718 type, 0x05, with its own SSZ payload.\"}],\"rationale\":\"A distinct transaction envelope is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas accounting — validate_block\",\"summary\":\"Validity depends on the parent block's data gasprice and on combined affordability across gas and data gas.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type — wrapper validity list\",\"summary\":\"Adds the versioned-hash version byte, count equality, commitment-hash binding and per-block blob limits.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type — tx_hash/get_origin\",\"summary\":\"The signature is recovered over an SSZ hash_tree_root with a type prefix.\"}],\"rationale\":\"Validity now depends on chain history through the parent's excess_data_gas. Testing the price threshold therefore needs coordinated multi-block scenarios that drive the excess up, and transaction construction moves to SSZ signing. Shared transaction construction and scenario sequencing must be restructured, which is level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"It is ambiguous which wrapper checks also apply at block level (for example, the version byte). Intrinsic gas is unspecified. The score could be 2 if multi-block construction is treated as local.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Header extension\",\"summary\":\"excess_data_gas is added to the execution header after withdrawals_root.\"}],\"rationale\":\"A new header member is added to the EL execution header.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Header extension — \\\"For the first post-fork block, `parent.excess_data_gas` is evaluated as `0`\\\"\",\"summary\":\"This is rule selection at the fork boundary, not a state migration.\"}],\"rationale\":\"No one-time state transition or account installation is required. The precompile is native.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile — POINT_EVALUATION_PRECOMPILE_GAS 50000\",\"summary\":\"The pairing-check cost needs benchmarking against the fixed gas price.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — Mempool issues\",\"summary\":\"Large blob transactions pose a mempool DoS risk, and propagation is announcement-only.\"},{\"source\":\"eip.md\",\"locator\":\"Networking — validate_blob_transaction_wrapper\",\"summary\":\"Aggregated KZG verification over blobs of 4096 field elements each runs on mempool ingress.\"}],\"rationale\":\"Component benchmarks are needed for the precompile. Targeted integrated benchmarks are needed for mempool ingress: large wrappers combined with aggregate KZG verification and the announce/request flow. This is a bounded interaction, so level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — Mempool issues\",\"summary\":\"Mempool DoS from large blobs.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type — wrapper verification\",\"summary\":\"The binding between EL versioned hashes, commitments and blobs must hold, because the CL relies on it for availability.\"},{\"source\":\"supporting/ethereum-consensus-specs--specs-eip4844-polynomial-commitments.md\",\"locator\":\"Trusted setup — \\\"reusing the `mainnet` settings in public networks is a critical security requirement\\\"\",\"summary\":\"KZG soundness depends on the setup.\"}],\"rationale\":\"New validation boundaries at mempool ingress, and the EL/CL cross-verification of versioned hashes against sidecar blobs, need targeted integration review and fuzzing. This is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The cross-layer data-availability trust split could be read as a shared invariant across components (level 3).\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas accounting — \\\"def calc_data_fee(tx, parent)... get_data_gasprice(header)\\\"\",\"summary\":\"The data fee function takes the parent but prices with `header`, while validate_block uses the parent header. These are competing outcomes for the price.\"},{\"source\":\"eip.md\",\"locator\":\"Point evaluation precompile\",\"summary\":\"Input-length handling and failure semantics (an assert) are not specified.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type\",\"summary\":\"Neither intrinsic gas nor the receipt payload for type 0x05 is stated, and it is unclear whether wrapper checks (version byte, blob limit) apply at block level.\"}],\"rationale\":\"Several localized competing interpretations need agreement before expected results can be fixed: which header's excess_data_gas sets the price, the precompile's length and failure behavior, and intrinsic gas. This is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Missing consensus-spec files might resolve some of these points.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"New transaction type — \\\"follow EIP-1559 semantics\\\"\",\"summary\":\"Blob transactions combine base fee and priority fee with the separate data fee.\"},{\"source\":\"eip.md\",\"locator\":\"New transaction type — EIP-2718 extended with \\\"wrapper data\\\"\",\"summary\":\"Two encodings of one typed transaction, with an SSZ payload, sit inside the typed envelope.\"},{\"source\":\"eip.md\",\"locator\":\"Header extension\",\"summary\":\"excess_data_gas follows the EIP-4895 withdrawals_root.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — Mempool issues (EIP-5793)\",\"summary\":\"Type and size are announced in eth/68.\"}],\"rationale\":\"EIP-1559 fee semantics need coordinated cases with data-gas affordability and burning. EIP-2718 envelope and trie handling need coordinated cases for SSZ payloads mixed with RLP types in blocks. The other interactions are local compatibility checks. This is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":1559,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Affordability that combines gas*max_fee_per_gas with data_gas*max_fee_per_data_gas; burning the base fee and data fee together with the priority-fee payment; the data fee deducted before execution and not refunded while unused execution gas is refunded; GASPRICE/effective gas price in blob transactions.\"},{\"eip\":2718,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Type-0x05 SSZ payloads in the transaction trie alongside RLP types; minimal vs network encodings; receipt type matching for type 0x05; signature domain separation using the type prefix.\"},{\"eip\":2930,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The SSZ AccessTuple list must produce the same warming and charging as EIP-2930.\"},{\"eip\":4895,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Header field ordering with excess_data_gas after withdrawals_root; blocks containing both withdrawals and blobs.\"},{\"eip\":5793,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"eth/68 announcements with type 0x05 and wrapper size; blob transactions not broadcast automatically.\"}],\"unidentified_interactions\":[\"Warm/cold access semantics for the new precompile address 0x14 (EIP-2929 precompile warming is not supplied).\",\"EL→CL blob handoff for sidecar construction (consensus validator/beacon-chain specs are not supplied).\"]},\"under_specification\":{\"present\":true,\"summary\":\"This draft leaves several points unresolved. The data gasprice is computed from an ambiguous header (parent vs current). Intrinsic gas and the receipt format for type 0x05 are not stated. Precompile input-length and failure semantics are missing. It is unclear which wrapper checks also apply at block level. The Engine API exchange of blobs is not specified, and the KZG trusted setup is TBD.\",\"affected_criteria\":[{\"criterion\":\"evm_gas_rule_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"engine_api_changes\",\"minimum_score\":1,\"maximum_score\":3},{\"criterion\":\"added_precompiles\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"security_risks\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"Does get_data_gasprice use the parent header's excess_data_gas or the current block's header (calc_data_fee takes `parent` but uses `header`)?\",\"What is the intrinsic gas of a blob transaction, and how is calldata cost computed for an SSZ payload?\",\"How does the point evaluation precompile handle inputs that are not 192 bytes, and how do assert failures behave (for example, consuming all gas)?\",\"Do the version-byte and per-block blob-count checks apply at block validation, or only to network wrappers?\",\"What is the receipt payload for type 0x05, and how is the transaction hash used in the trie and RPC?\",\"Must a blob transaction contain at least one blob? Can `to` be None (contract creation)?\",\"Which Engine API fields and methods carry excess_data_gas and blobs to the CL?\",\"The balance check omits `value`. Is that intended?\"]},\"notable_ambiguities\":[\"calc_data_fee(tx, parent) calls get_data_gasprice(header) while validate_block uses parent(block).header, so it is ambiguous which header prices the data fee.\",\"The KZG trusted setup contents are TBD in the supplied consensus spec.\",\"Wrapper-validation rules are described as EL verification \\\"after signature verification\\\", but whether they are block-validity or mempool-only rules is unclear.\",\"Type aliases define Blob as a Vector of BLSFieldElement (uint256) in the EIP but as a ByteVector in the consensus spec.\",\"The `hash` function used in kzg_to_versioned_hash is not named in the supplied text.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "This revision of EIP-4844 adds blob-carrying transactions. They use EIP-2718 type 0x05 with an SSZ-encoded `SignedBlobTransaction`. Blocks carry the minimal encoding, while the network/mempool encoding wraps the transaction with blobs, KZG commitments and an aggregated KZG proof that the EL must verify. A separate data-gas fee market is added: a new `excess_data_gas` header field, `fake_exponential` pricing, a target of 2 and a maximum of 4 blobs per block, and a data fee that is burned before execution and not refunded. The EIP also adds a `DATAHASH` opcode (0x49, 3 gas) and a KZG point-evaluation precompile (0x14, 50000 gas). Blob persistence is delegated to the consensus layer as sidecars.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Opcode to get versioned hashes — \"The opcode has a gas cost of `HASH_OPCODE_GAS`\"",
+       "summary": "The new opcode has a fixed cost of 3 gas, which is an ordinary instruction cost."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — \"data gas as a new type of gas. It is independent of normal gas\"",
+       "summary": "The new fee mechanism is data gas, which is separate from execution gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile — \"costs `POINT_EVALUATION_PRECOMPILE_GAS`\"",
+       "summary": "The precompile has a constant cost of 50000 gas, which is an ordinary fee rather than an accounting rule."
+      }
+     ],
+     "rationale": "No execution-gas accounting rule or settlement change is specified. The new accounting mechanism is data gas, which is scored under BLOB. Fixed costs for the opcode and precompile are ordinary fees.",
+     "confidence": "medium",
+     "uncertainty_note": "Intrinsic gas for type-0x05 transactions is not stated. If clients treated it differently from EIP-1559/2930 intrinsic gas (for example, if calldata cost depended on SSZ encoding), this could become level 1.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Opcode to get versioned hashes",
+       "summary": "DATAHASH reads only transaction context, not state."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile",
+       "summary": "The precompile does pure verification and does not access state."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes, and no new state-accessing operation is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — calc_data_fee / get_data_gasprice",
+       "summary": "Adds data gas, a per-blob gas amount (2**17) and an exponential price derived from excess_data_gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Header extension — calc_excess_data_gas",
+       "summary": "Adds the running excess update with a target of 2**18 and clamping at zero."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — \"deducted from the sender balance before transaction execution and burned, and is not refunded\"",
+       "summary": "Adds a new settlement rule for the data fee."
+      }
+     ],
+     "rationale": "This introduces a completely new blob-gas mechanism: pricing, a per-block limit, an excess accumulator and burn settlement. No blob-gas rules exist in the baseline to change, so the new mechanism does not alter baseline gas expectations. This is level 2.",
+     "confidence": "high",
+     "uncertainty_note": "There is an inconsistency over whether the price uses the parent header or the current header (see UNSP). It affects expected values, not the level.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting",
+       "summary": "Only blob data is priced in the new gas type. No state-write accounting is introduced."
+      }
+     ],
+     "rationale": "No state-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — \"is not refunded in case of transaction failure\"",
+       "summary": "The data fee is explicitly non-refundable, and no refund mechanism is added."
+      }
+     ],
+     "rationale": "No refund mechanism is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameters — `HASH_OPCODE_BYTE` 0x49",
+       "summary": "A previously undefined opcode byte becomes valid, so baseline cases that expect 0x49 to be invalid change."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Parameters — `POINT_EVALUATION_PRECOMPILE_ADDRESS` Bytes20(0x14)",
+       "summary": "Address 0x14 becomes a precompile, so baseline calls or enumerations covering this address change their results."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Header extension",
+       "summary": "Header RLP gains a field, which changes block hashes for blocks built under the target fork."
+      }
+     ],
+     "rationale": "Localized cases in several families need rework: invalid-opcode enumeration (0x49), and precompile-range or empty-account calls at 0x14. The header extension changes header construction, but the main effect of that is a new invariant scored under INV. There is no common rewrite across ordinary cases in multiple families, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether baseline tests actually touch 0x49 or 0x14 cannot be confirmed without a supplied suite.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Header extension — \"extended with a new 256-bit unsigned integer field `excess_data_gas`\"",
+       "summary": "Every post-fork header has a new field that must be produced and validated."
+      }
+     ],
+     "rationale": "All blockchain tests in the target fork must produce and check excess_data_gas, including blocks without blobs. This is a universal assertion, but there is no evidence that pre-fork vectors must be re-derived, so it is level 2.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Header extension — calc_excess_data_gas(parent, new_blobs)",
+       "summary": "The tool needs the parent's excess_data_gas as input and must output or compute the current value."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — \"single byte `BLOB_TX_TYPE` followed by an SSZ encoding\"",
+       "summary": "The tool's transaction input must accept type 0x05, which has SSZ-specific fields (max_fee_per_data_gas, blob_versioned_hashes)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — validate_block",
+       "summary": "Validity depends on the parent's data gasprice, so the environment must carry data-gas context."
+      }
+     ],
+     "rationale": "Multiple semantic fields change: parent/current excess_data_gas, plus transaction fields for data gas and versioned hashes. The invocation protocol has no clear new exchange mechanism, so this is level 2.",
+     "confidence": "low",
+     "uncertainty_note": "No transition-tool evidence was supplied. Accepting SSZ-encoded transactions could count as a new mechanism, which would make this level 3.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — SignedBlobTransaction / tx_hash",
+       "summary": "Transactions require SSZ serialization and signing over hash_tree_root, which is a new construction abstraction compared with RLP transactions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Networking — BlobTransactionNetworkWrapper",
+       "summary": "The network form needs generation of blobs, commitments and aggregated proofs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile",
+       "summary": "Precompile tests need valid KZG commitment, proof and versioned-hash construction."
+      }
+     ],
+     "rationale": "The target suite needs new construction abstractions: SSZ transaction building and signing, KZG commitment and proof generation, and versioned-hash derivation. These are mostly confined to blob-related tests, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Supporting two encodings for one transaction (network and minimal) in shared block construction might affect other families, which would justify level 3.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Cryptographic Helpers — verify_kzg_proof(), verify_aggregate_kzg_proof()",
+       "summary": "The EL must run single-point and aggregated KZG verification."
+      },
+      {
+       "source": "supporting/ethereum-consensus-specs--specs-eip4844-polynomial-commitments.md",
+       "locator": "Trusted setup — \"contents TBD\"",
+       "summary": "The trusted setup is not yet defined, so established test resources are not evidenced."
+      },
+      {
+       "source": "supporting/ethereum-consensus-specs--specs-eip4844-polynomial-commitments.md",
+       "locator": "compute_challenges",
+       "summary": "Aggregation uses a Fiat-Shamir transcript that is a new protocol construction."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Helpers — kzg_to_versioned_hash",
+       "summary": "Adds a new versioned-hash derivation from commitments."
+      }
+     ],
+     "rationale": "Multiple cryptographic mechanisms are added: pairing-based KZG point verification in the precompile, aggregated KZG verification with Fiat-Shamir in wrapper validation, and versioned-hash binding. The trusted setup is TBD and the KZG/Fiat-Shamir verification requires validation beyond established resources, so this is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "Whether hash() in kzg_to_versioned_hash is SHA-256 is not specified in the supplied text.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Header extension — calc_excess_data_gas",
+       "summary": "The excess calculation clamps at zero against the target."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — \"at most `MAX_DATA_GAS_PER_BLOCK // DATA_GAS_PER_BLOB` total blob commitments\"",
+       "summary": "Sets a per-block maximum of 4 blobs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — validate_block asserts",
+       "summary": "The balance check combines gas*max_fee and data_gas*max_fee_per_data_gas, and max_fee_per_data_gas must be at least the data gasprice."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Opcode to get versioned hashes — \"if index < len(...)\"",
+       "summary": "Defines index bounds for DATAHASH."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile — \"MUST reject non-canonical field elements\"",
+       "summary": "Field elements must be strictly less than BLS_MODULUS."
+      }
+     ],
+     "rationale": "Several independent boundary-sensitive rules are introduced. The affordability and data-gasprice checks form an elevated matrix: blob count × max_fee_per_data_gas × the parent's excess_data_gas (which sets the price) × gas limit × max_fee_per_gas × balance. These combinations jointly determine validity, so this is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "The balance check omits value, which may change the expected boundary.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Header extension",
+       "summary": "Header RLP decoding gains excess_data_gas, which must equal calc_excess_data_gas(parent, new_blobs). This is complex because it depends on the parent and the block's transactions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Header extension — \"For the first post-fork block, `parent.excess_data_gas` is evaluated as `0`\"",
+       "summary": "Adds special handling at the fork boundary."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — maximum blob commitments per block",
+       "summary": "Adds a block-level blob-count limit."
+      }
+     ],
+     "rationale": "Multiple block-import validation rules change: decoding the new header field, validating excess_data_gas against the parent and blob count (complex), and the per-block blob limit. Decoding SSZ transactions in the block body is also new. This is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Header extension",
+       "summary": "Execution payloads must carry excess_data_gas, which implies a payload field."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Beacon chain validation — \"the contents of the blobs are propagated separately, as a 'sidecar'\" / \"Honest validator: produce beacon blocks with blobs, publish the blobs sidecars\"",
+       "summary": "Blobs exist only in the EL mempool wrapper, so the CL must obtain them from the EL. This implies new EL→CL exchange behavior."
+      },
+      {
+       "source": "supporting/ethereum-consensus-specs--specs-eip4844",
+       "locator": "tree listing — validator.md",
+       "summary": "The validator spec that would define the exchange is listed but not supplied."
+      }
+     ],
+     "rationale": "Endpoint-level behavior (retrieving blobs for block production) and the excess_data_gas payload field are both implied, but the supplied documents define neither concretely. Level 2 is the best-supported score; level 3 is plausible.",
+     "confidence": "low",
+     "uncertainty_note": "The Engine API is not specified in the supplied documents, and validator.md and beacon-chain.md are missing. The score could range from 1 to 3.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No protocol-designated EVM contract is introduced. The new address 0x14 is a native precompile."
+      }
+     ],
+     "rationale": "No system contracts.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No existing system contract is referenced or changed."
+      }
+     ],
+     "rationale": "No system contract changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Opcode to get versioned hashes — \"takes as input one stack argument `index`\"",
+       "summary": "DATAHASH has no immediate data, a fixed one-in/one-out stack effect and a constant cost of 3 gas."
+      }
+     ],
+     "rationale": "Exactly one simple instruction is added.",
+     "confidence": "high",
+     "uncertainty_note": "Behavior in non-blob transactions (an empty list, so presumably zero) is implied but not explicit.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Opcode to get versioned hashes",
+       "summary": "Only a new opcode at a previously undefined byte is added. No existing instruction semantics change."
+      }
+     ],
+     "rationale": "No existing instruction changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile — \"versioned_hash | z | y | commitment | proof\"",
+       "summary": "The input has a fixed 192-byte layout and constant gas of 50000."
+      }
+     ],
+     "rationale": "There is one precompile with a fixed input layout and constant gas, so it is simple. That gives level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "Handling of inputs that are not 192 bytes is not specified. If variable lengths had to be supported, the precompile would be complex (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile",
+       "summary": "Only a new precompile is added."
+      }
+     ],
+     "rationale": "No existing precompile changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — SignedBlobTransaction SSZ container",
+       "summary": "Adds a new SSZ transaction payload, with distinct network and minimal encodings."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Networking — BlobTransactionNetworkWrapper",
+       "summary": "Adds a new peer-message payload containing blobs, commitments and an aggregated proof."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Header extension — RLP list with excess_data_gas",
+       "summary": "The header RLP schema gains a field."
+      }
+     ],
+     "rationale": "Transaction, network wrapper and header schemas all change, so this is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameters — `BLOB_TX_TYPE` Bytes1(0x05)",
+       "summary": "Adds a new EIP-2718 type, 0x05, with its own SSZ payload."
+      }
+     ],
+     "rationale": "A distinct transaction envelope is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — validate_block",
+       "summary": "Validity depends on the parent block's data gasprice and on combined affordability across gas and data gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — wrapper validity list",
+       "summary": "Adds the versioned-hash version byte, count equality, commitment-hash binding and per-block blob limits."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — tx_hash/get_origin",
+       "summary": "The signature is recovered over an SSZ hash_tree_root with a type prefix."
+      }
+     ],
+     "rationale": "Validity now depends on chain history through the parent's excess_data_gas. Testing the price threshold therefore needs coordinated multi-block scenarios that drive the excess up, and transaction construction moves to SSZ signing. Shared transaction construction and scenario sequencing must be restructured, which is level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "It is ambiguous which wrapper checks also apply at block level (for example, the version byte). Intrinsic gas is unspecified. The score could be 2 if multi-block construction is treated as local.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Header extension",
+       "summary": "excess_data_gas is added to the execution header after withdrawals_root."
+      }
+     ],
+     "rationale": "A new header member is added to the EL execution header.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Header extension — \"For the first post-fork block, `parent.excess_data_gas` is evaluated as `0`\"",
+       "summary": "This is rule selection at the fork boundary, not a state migration."
+      }
+     ],
+     "rationale": "No one-time state transition or account installation is required. The precompile is native.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile — POINT_EVALUATION_PRECOMPILE_GAS 50000",
+       "summary": "The pairing-check cost needs benchmarking against the fixed gas price."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — Mempool issues",
+       "summary": "Large blob transactions pose a mempool DoS risk, and propagation is announcement-only."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Networking — validate_blob_transaction_wrapper",
+       "summary": "Aggregated KZG verification over blobs of 4096 field elements each runs on mempool ingress."
+      }
+     ],
+     "rationale": "Component benchmarks are needed for the precompile. Targeted integrated benchmarks are needed for mempool ingress: large wrappers combined with aggregate KZG verification and the announce/request flow. This is a bounded interaction, so level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — Mempool issues",
+       "summary": "Mempool DoS from large blobs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — wrapper verification",
+       "summary": "The binding between EL versioned hashes, commitments and blobs must hold, because the CL relies on it for availability."
+      },
+      {
+       "source": "supporting/ethereum-consensus-specs--specs-eip4844-polynomial-commitments.md",
+       "locator": "Trusted setup — \"reusing the `mainnet` settings in public networks is a critical security requirement\"",
+       "summary": "KZG soundness depends on the setup."
+      }
+     ],
+     "rationale": "New validation boundaries at mempool ingress, and the EL/CL cross-verification of versioned hashes against sidecar blobs, need targeted integration review and fuzzing. This is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "The cross-layer data-availability trust split could be read as a shared invariant across components (level 3).",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas accounting — \"def calc_data_fee(tx, parent)... get_data_gasprice(header)\"",
+       "summary": "The data fee function takes the parent but prices with `header`, while validate_block uses the parent header. These are competing outcomes for the price."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Point evaluation precompile",
+       "summary": "Input-length handling and failure semantics (an assert) are not specified."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type",
+       "summary": "Neither intrinsic gas nor the receipt payload for type 0x05 is stated, and it is unclear whether wrapper checks (version byte, blob limit) apply at block level."
+      }
+     ],
+     "rationale": "Several localized competing interpretations need agreement before expected results can be fixed: which header's excess_data_gas sets the price, the precompile's length and failure behavior, and intrinsic gas. This is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Missing consensus-spec files might resolve some of these points.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — \"follow EIP-1559 semantics\"",
+       "summary": "Blob transactions combine base fee and priority fee with the separate data fee."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New transaction type — EIP-2718 extended with \"wrapper data\"",
+       "summary": "Two encodings of one typed transaction, with an SSZ payload, sit inside the typed envelope."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Header extension",
+       "summary": "excess_data_gas follows the EIP-4895 withdrawals_root."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — Mempool issues (EIP-5793)",
+       "summary": "Type and size are announced in eth/68."
+      }
+     ],
+     "rationale": "EIP-1559 fee semantics need coordinated cases with data-gas affordability and burning. EIP-2718 envelope and trie handling need coordinated cases for SSZ payloads mixed with RLP types in blocks. The other interactions are local compatibility checks. This is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 1559,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Affordability that combines gas*max_fee_per_gas with data_gas*max_fee_per_data_gas; burning the base fee and data fee together with the priority-fee payment; the data fee deducted before execution and not refunded while unused execution gas is refunded; GASPRICE/effective gas price in blob transactions."
+     },
+     {
+      "eip": 2718,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Type-0x05 SSZ payloads in the transaction trie alongside RLP types; minimal vs network encodings; receipt type matching for type 0x05; signature domain separation using the type prefix."
+     },
+     {
+      "eip": 2930,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The SSZ AccessTuple list must produce the same warming and charging as EIP-2930."
+     },
+     {
+      "eip": 4895,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Header field ordering with excess_data_gas after withdrawals_root; blocks containing both withdrawals and blobs."
+     },
+     {
+      "eip": 5793,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "eth/68 announcements with type 0x05 and wrapper size; blob transactions not broadcast automatically."
+     }
+    ],
+    "unidentified_interactions": [
+     "Warm/cold access semantics for the new precompile address 0x14 (EIP-2929 precompile warming is not supplied).",
+     "EL→CL blob handoff for sidecar construction (consensus validator/beacon-chain specs are not supplied)."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "This draft leaves several points unresolved. The data gasprice is computed from an ambiguous header (parent vs current). Intrinsic gas and the receipt format for type 0x05 are not stated. Precompile input-length and failure semantics are missing. It is unclear which wrapper checks also apply at block level. The Engine API exchange of blobs is not specified, and the KZG trusted setup is TBD.",
+    "affected_criteria": [
+     {
+      "criterion": "evm_gas_rule_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "engine_api_changes",
+      "minimum_score": 1,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "added_precompiles",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "security_risks",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Does get_data_gasprice use the parent header's excess_data_gas or the current block's header (calc_data_fee takes `parent` but uses `header`)?",
+     "What is the intrinsic gas of a blob transaction, and how is calldata cost computed for an SSZ payload?",
+     "How does the point evaluation precompile handle inputs that are not 192 bytes, and how do assert failures behave (for example, consuming all gas)?",
+     "Do the version-byte and per-block blob-count checks apply at block validation, or only to network wrappers?",
+     "What is the receipt payload for type 0x05, and how is the transaction hash used in the trie and RPC?",
+     "Must a blob transaction contain at least one blob? Can `to` be None (contract creation)?",
+     "Which Engine API fields and methods carry excess_data_gas and blobs to the CL?",
+     "The balance check omits `value`. Is that intended?"
+    ]
+   },
+   "notable_ambiguities": [
+    "calc_data_fee(tx, parent) calls get_data_gasprice(header) while validate_block uses parent(block).header, so it is ambiguous which header prices the data fee.",
+    "The KZG trusted setup contents are TBD in the supplied consensus spec.",
+    "Wrapper-validation rules are described as EL verification \"after signature verification\", but whether they are block-validity or mempool-only rules is unclear.",
+    "Type aliases define Blob as a Vector of BLSFieldElement (uint256) in the EIP but as a ByteVector in the consensus spec.",
+    "The `hash` function used in kzg_to_versioned_hash is not named in the supplied text."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 53664,
+  "type": "result",
+  "duration_ms": 133858,
+  "uuid": "d4b8a7ea-6f54-4e55-a8b9-46f6bd2a365f",
+  "ttft_stream_ms": 1111,
+  "time_to_request_ms": 433,
+  "first_content_frame_ms": 1111,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

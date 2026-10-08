@@ -1,0 +1,596 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: prague
+eip:
+  number: 7623
+  title: Increase calldata cost
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: 'At this revision, EIP-7623 changes how a transaction''s gas used is calculated.
+    It counts calldata "tokens" as zero bytes plus 4 × nonzero bytes. A transaction is then charged the
+    larger of two amounts: the standard cost (4 gas per token, plus EVM gas used, plus any contract-creation
+    cost) or a floor of 12 gas per token. In both cases the 21000 base cost is added. The goal is to make
+    data-heavy transactions with little execution pay up to 48 gas per nonzero byte, which cuts the maximum
+    block size. It adds no new transaction types, header fields, opcodes, precompiles or Engine API changes.'
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/prague/eip-7623/manifest.yaml
+    manifest_sha256: c6da17389db8fdd234fb14a3f76454d7f97287b7975cb8ed33891063d37034cf
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-7623/manifest.yaml
+    manifest_sha256: 8d88dd2da40f12afd2ff8f3f8d4a7a115cebea16d8bd26835788237c3a5909ba
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: fd4ec86e3b165ba99edf9c9e174c2f9ed78eeb3b
+    path: EIPS/eip-7623.md
+    committed_at: '2024-04-03T06:16:54Z'
+    git_blob_sha: cdce5e7966dba53e9e384dfcb7f71d1af66b32e4
+    content_sha256: ba2bb398013d77c9752ad8b892f80605a777454e8bbf7cb6e11acf7d5595a496
+    immutable_url: https://github.com/ethereum/EIPs/blob/fd4ec86e3b165ba99edf9c9e174c2f9ed78eeb3b/EIPS/eip-7623.md
+    information_cutoff_at: '2024-04-11'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:46:14.249544Z'
+    session_id: assessment-run-641f3e29-f39c-475b-9471-17e60c1e7b40
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-1559.md
+  - supporting/eip-4844.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 3212aa365063d761b25c2f801a35abcaab7b7e2146a352fd200a98b596f80067
+    schema_sha256: b5cf07518cf6a1499c8e3d95f9800337a55b51c4087e1257cd5b329593944ba2
+    started_at: '2026-10-08T09:46:14.249544Z'
+    finished_at: '2026-10-08T09:47:33.356163Z'
+    duration_ms: 77007
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 41864
+      cache_read_input_tokens: 0
+      output_tokens: 8726
+      output_tokens_details:
+        thinking_tokens: 2182
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 41864
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 8726
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 41864
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 41864
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 8726
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 41864
+        webSearchRequests: 0
+        costUSD: 0.50944
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 2182
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.50944
+  assessor_raw_output:
+    path: retrospective/outputs/raw/prague/eip-7623.json
+    content_sha256: 8e7a5706fac48749db6410c5e8927f06bb73fd1f545c7b7d33e2fbbf181825d2
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — "The formula for determining the gas used per transaction changes to"
+    summary: Gas used becomes 21000 + max(standard calldata + evm_gas_used + creation cost, TOTAL_COST_FLOOR_PER_TOKEN
+      * tokens_in_calldata).
+  - source: eip.md
+    locator: Rationale — "increase the cost of calldata to 48 gas for transactions that do not exceed
+      a certain threshold"
+    summary: Transactions with little execution relative to calldata get a different gas result than before.
+  rationale: 'The proposal adds a new settlement rule: a floor applied with max() after execution. It
+    also changes the expected gas used for existing calldata-heavy, low-execution transactions. That meets
+    level 3: a new mechanism that also changes the gas results of baseline operations.'
+  confidence: medium
+  uncertainty_note: One could read this as a reprice of an existing rule (level 1). However, the max-with-floor
+    settlement is structurally new. Its interaction with refunds and access-list costs is not specified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The changes are limited to transaction-level gas-used settlement. No instruction's ordering
+      is touched.
+  rationale: No opcode's state-access or gas-charge ordering changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation — "make room for adding more blobs"
+    summary: Blob parameters are mentioned only as a motivation. Blob-gas rules are not changed.
+  rationale: Blob-gas pricing and limits are unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No state-write accounting is introduced or changed.
+  rationale: No state gas accounting changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund mechanism is introduced. Refunds are not mentioned.
+  rationale: No new refund mechanism. How the floor interacts with existing refunds is left unspecified
+    (see UNSP), but that does not add a refund.
+  confidence: high
+  uncertainty_note: It is unclear whether evm_gas_used is measured before or after refunds.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — max(... , TOTAL_COST_FLOOR_PER_TOKEN * tokens_in_calldata)
+    summary: Any transaction where evm_gas_used is below 8 × tokens (e.g., data sent to EOAs or cheap
+      contracts) has a different gas used.
+  - source: supporting/eip-1559.md
+    locator: Specification — "gas_refund = transaction.gas_limit - gas_used"
+    summary: Gas used feeds sender refunds, coinbase priority fees and cumulative block gas, so expected
+      balances and block values change too.
+  rationale: 'Baseline tests that send nonzero calldata with little execution need new expected gas, balances,
+    receipt cumulative gas and block gas_used. These cases appear in several families: intrinsic-gas/calldata,
+    value transfers with data, and precompile calls direct from a transaction with large inputs. But they
+    are localized cases rather than a common rewrite of ordinary cases.'
+  confidence: medium
+  uncertainty_note: How broad the impact is depends on how often baseline vectors use calldata-heavy,
+    low-execution transactions. Without a supplied suite, this cannot be measured.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new log, header, receipt field or commitment is introduced.
+  rationale: Only existing values change. No new output needs an assertion.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Gas-used computation changes internally. No new input or output fields are needed.
+  rationale: The existing gasUsed outputs carry the changed values. The interface does not change.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "Let tokens_in_calldata = ..."
+    summary: Test expectations need a token count and a floor gas calculation.
+  rationale: The framework's existing intrinsic-gas / expected-gas-used helper needs a local extension
+    to compute the floor and the max. No new abstraction is needed.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No cryptographic rule is involved.
+  rationale: No cryptographic changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — max(...)
+    summary: The outcome flips at the point where standard + execution + creation cost equals 12 × tokens.
+  rationale: 'There is one boundary-sensitive mechanism: the floor-vs-standard threshold. Its dimensions
+    are zero/nonzero byte mix, execution gas and creation. A second boundary (gas_limit vs floor) may
+    exist but is not specified.'
+  confidence: medium
+  uncertainty_note: If gas_limit must cover the floor, that would be a second boundary rule (level 2).
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No change to block RLP decoding or structural validation.
+  rationale: Block gas_used changes only through execution rules, which this criterion excludes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API changes are specified.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contracts.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contracts are affected.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instructions.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No instruction semantics change.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new precompiles.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Precompile gas and behavior are unchanged.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No serialization changes.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new transaction envelope.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — tx.gasUsed formula
+    summary: Defines gas used but never says whether gas_limit must cover the floor, or whether intrinsic-gas
+      validation changes.
+  - source: supporting/eip-1559.md
+    locator: Specification — "signer.balance -= transaction.gas_limit * effective_gas_price"
+    summary: Upfront charging and block gas-limit checks depend on gas_limit and gas_used. The floor could
+      push gas used above gas_limit.
+  rationale: 'Best-supported reading: the change affects gas-used accounting, which feeds block gas-limit
+    inclusion. No new validation rule is stated. An implied gas_limit ≥ floor bound would be a local bound
+    change. So the score is level 1.'
+  confidence: low
+  uncertainty_note: If an intrinsic-gas floor validity rule is intended, this rises to 2. If nothing about
+    eligibility changes, it falls to 0.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header fields.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility — "requires a scheduled network upgrade"
+    summary: This is only rule selection at the fork. No state migration.
+  rationale: No activation-specific state transition is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale — "lower the maximum possible block size to roughly 0.6 MB"
+    summary: Changes the worst-case block-size bound.
+  - source: eip.md
+    locator: Security Considerations — "maximum possible block size is reduced"
+    summary: The load bound decreases.
+  rationale: The resource bound (maximum calldata per block) shrinks. Re-benchmarking the worst-case calldata
+    block at component level is enough, and baseline end-to-end assumptions do not become stricter.
+  confidence: low
+  uncertainty_note: Arguably 0, because the change only reduces load.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations — "no security concerns were raised"
+    summary: The EIP claims no security concerns.
+  - source: supporting/eip-1559.md
+    locator: Specification — "assert signer.balance >= 0"
+    summary: If the floor raises gas used above the prepaid gas_limit, sender-balance and fee-settlement
+      invariants could break.
+  rationale: 'There is one local invariant to check: gas used never exceeds gas_limit or the prepaid balance
+    under the floor. It can be checked locally within transaction processing.'
+  confidence: medium
+  uncertainty_note: Depends on how the unspecified gas_limit-vs-floor rule is resolved.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — tx.gasUsed formula
+    summary: The formula leaves out access-list intrinsic costs. It does not say whether evm_gas_used
+      is before or after refunds, or what happens when the floor exceeds gas_limit.
+  - source: eip.md
+    locator: Specification — "isContractCreation * (32000 + InitCodeWordGas * words(calldata))"
+    summary: Creation cost sits inside the max(), but the transaction types the floor applies to are not
+      stated.
+  rationale: 'Several localized outcomes are open to competing interpretations, each of which can be constructed
+    and observed in gas used. Examples: refund ordering relative to the floor; a gas_limit below the floor
+    (invalid vs capped); whether access-list gas counts toward the standard side. Clients and the spec
+    must agree before expected values can be fixed.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: supporting/eip-1559.md
+    locator: Specification — validate_block fee settlement
+    summary: Gas used drives the sender refund (gas_limit - gas_used), the priority fee to the coinbase,
+      and block gas_used, which feeds the base-fee update.
+  - source: eip.md
+    locator: Motivation — "cost for nonzero calldata bytes hasn't been adjusted since EIP-2028"
+    summary: The standard token cost reproduces the EIP-2028 pricing of 16 gas per nonzero byte and 4
+      per zero byte.
+  - source: supporting/eip-4844.md
+    locator: Blob transaction — "data ... follow the same semantics as EIP-1559"
+    summary: Blob transactions carry calldata, so the floor presumably applies to them alongside the separate
+      blob fee.
+  rationale: 'EIP-1559 fee settlement needs coordinated cases: refunds, priority-fee payment and base-fee
+    evolution when the floor applies. EIP-2028 and EIP-4844 need only local compatibility checks.'
+  confidence: medium
+  uncertainty_note: The interactions with EIP-2930 access lists and EIP-3860 initcode costs are unclear
+    from the formula.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 1559
+  - 2028
+  - 4844
+  unidentified_interactions:
+  - Initcode word gas (InitCodeWordGas) for contract creation sits inside the max() term. It needs creation
+    cases with large initcode near the floor threshold.
+  - Access-list intrinsic costs (EIP-2930 style, described in supporting/eip-1559.md) are missing from
+    the formula. Whether they count toward the standard side is unclear.
+  - 'Existing gas refunds: whether evm_gas_used is measured before or after refunds affects whether the
+    floor applies.'
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 1559
+  interaction_details:
+  - eip: 1559
+    interaction: coordinated_cases
+    cases: 'Floor-charged transactions: check sender refund (gas_limit - gas_used) × effective_gas_price,
+      coinbase priority fee on floor gas, cumulative block gas_used against the gas limit, and base-fee
+      update from a parent whose gas_used includes floor gas.'
+  - eip: 2028
+    interaction: local_compatibility_check
+    cases: Check that the standard side still charges 16 per nonzero byte and 4 per zero byte when execution
+      exceeds the floor threshold.
+  - eip: 4844
+    interaction: local_compatibility_check
+    cases: 'Type-3 blob transactions with calldata: floor applied to execution gas while the blob fee
+      stays independent.'
+totals:
+  primary_score: 14
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: The revision gives only a gas-used formula. It does not say whether a gas_limit below the floor
+    is invalid or capped, how refunds are ordered relative to the floor, whether access-list gas is included,
+    or which transaction types are covered.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - new_or_modified_transaction_validity_mechanisms
+  - security_risks
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: edge_boundary_conditions
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: new_or_modified_transaction_validity_mechanisms
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: security_risks
+    minimum_score: 1
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 11
+    maximum: 18
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - Must a transaction's gas_limit be at least 21000 + floor? If not, what happens when the floor exceeds
+    gas_limit?
+  - Is evm_gas_used in the max() measured before or after the refund counter is applied?
+  - Do access-list intrinsic costs count toward the standard side, the floor, or neither?
+  - Does the floor apply to all transaction types, including blob and contract-creation transactions?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- The formula leaves out the access-list intrinsic gas that is present in the baseline intrinsic cost.
+- The pseudo-code has an unbalanced brace, and 'tx.gasused' vs 'tx.gasUsed' is spelled inconsistently.
+- The Rationale's '48 gas' per nonzero byte equals 12 × 4 tokens, but the threshold of 'gas spent on EVM
+  operations' is only implied by the max().
+overall_confidence: medium

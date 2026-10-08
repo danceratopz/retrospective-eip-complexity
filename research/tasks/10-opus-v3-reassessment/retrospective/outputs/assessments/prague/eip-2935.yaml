@@ -1,0 +1,631 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: prague
+eip:
+  number: 2935
+  title: Serve historical block hashes from state
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: 'This early, Stagnant revision of EIP-2935 makes the protocol store each parent
+    block hash in storage at `HISTORY_STORAGE_ADDRESS` (0xff…fe). Before any transactions run in every
+    block after `FORK_BLKNUM`, the protocol performs `sstore(HISTORY_STORAGE_ADDRESS, block.number - 1,
+    block.prevhash)`. Once `block.number > FORK_BLKNUM + 256`, `BLOCKHASH` changes: it returns that stored
+    value for any `arg` with `FORK_BLKNUM <= arg < block.number`, and 0 otherwise. This extends `BLOCKHASH`
+    past the 256-block window. The revision specifies no contract code, gas changes, account-creation
+    rules, access-list behaviour or test cases.'
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/prague/eip-2935/manifest.yaml
+    manifest_sha256: f5a438fa2aca37593803da51da1ac7f0f1147ebfed3fcc2a5db8e0d02b381f22
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/prague/eip-2935/manifest.yaml
+    manifest_sha256: 50fd5ca71261e81ed61dbfa17291ea8831b36402ccbac7f48c6ce00abdbf0b5d
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: 9e393a79d9937f579acbdcb234a67869259d5a96
+    path: EIPS/eip-2935.md
+    committed_at: '2022-05-06T07:29:09Z'
+    git_blob_sha: bbe12f21b04e063460618376eff66d4807b480a2
+    content_sha256: bcdb09d0585aa779acea7ae0b5ba1050f5a14fc5890c7e58a172621ee6838847
+    immutable_url: https://github.com/ethereum/EIPs/blob/9e393a79d9937f579acbdcb234a67869259d5a96/EIPS/eip-2935.md
+    information_cutoff_at: '2024-04-11'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:44:20.794641Z'
+    session_id: assessment-run-74c9b634-4050-4839-a956-faab6d57423a
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 51df5de58b299fe4f9e917098617bffd5c4180d330d6df8615ca51b3ccac85f9
+    schema_sha256: 7c3a0b2a98c06d793049151d099f50ceee495da40633a2df5b56eb87550cc58b
+    started_at: '2026-10-08T09:44:20.794641Z'
+    finished_at: '2026-10-08T09:46:20.540598Z'
+    duration_ms: 117658
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 23041
+      cache_read_input_tokens: 0
+      output_tokens: 13167
+      output_tokens_details:
+        thinking_tokens: 5418
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 23041
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 13167
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 23041
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 23041
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 13167
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 23041
+        webSearchRequests: 0
+        costUSD: 0.447676
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 5418
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.447676
+  assessor_raw_output:
+    path: retrospective/outputs/raw/prague/eip-2935.json
+    content_sha256: 2226fdc0479863cefd1d1b031e80ffecbddf8e3fcb167c7a0ffd3c23cc548835
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Specifies only a pre-transaction sstore and new BLOCKHASH lookup logic; no gas cost, metering
+      or limit is stated for either.
+  rationale: No execution-gas accounting rule or parameter is changed by the text. BLOCKHASH keeps its
+    baseline charge, and the protocol-level write has no stated gas.
+  confidence: medium
+  uncertainty_note: The text does not say whether the internal sload adds storage-access gas to BLOCKHASH,
+    or whether the system sstore uses block gas. Either reading would make this level 1.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "return sload(HISTORY_STORAGE_ADDRESS, arg)"
+    summary: BLOCKHASH now reads account storage instead of history, so its access to state changes.
+  - source: eip.md
+    locator: Motivation — "the BLOCKHASH opcode would then access state and not history"
+    summary: Confirms that BLOCKHASH becomes a state-accessing instruction.
+  rationale: Only BLOCKHASH changes. Tests must fix whether its storage read warms HISTORY_STORAGE_ADDRESS
+    or the slot under the baseline access-list rules, and whether it is charged as cold or warm. No general
+    ordering rule for an opcode class changes.
+  confidence: low
+  uncertainty_note: Warm/cold and access-list effects are not specified. If no access-list effect is intended,
+    this could be 0. If it is treated as a new state-accessing operation needing its own ordering rule,
+    it could be 2.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Nothing about blobs or blob gas.
+  rationale: Blob-gas accounting is untouched.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Security Considerations — "Adding ~2.5 million storage slots per year"
+    summary: State growth is acknowledged, but no state-gas charging mechanism is introduced.
+  rationale: A protocol storage write is added, but no state-byte cost, budget or spill rule is introduced
+    or changed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund mechanism is mentioned.
+  rationale: No new refund is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility — "behavior within the previous 256-block range remains unchanged"
+    summary: Only queries outside the old 256-block window change result.
+  - source: eip.md
+    locator: Specification — "if FORK_BLKNUM <= arg < block.number, return sload"
+    summary: Arguments older than 256 blocks but at or after the fork block now return stored hashes instead
+      of 0.
+  rationale: 'Rework is limited to BLOCKHASH out-of-range boundary cases in post-activation chains: queries
+    older than 256 blocks that previously expected 0. This is a boundary subset of one family. The new
+    storage write in every block''s post-state is assessed under INV.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "At the start of processing any block where block.number > FORK_BLKNUM ...
+      run sstore(HISTORY_STORAGE_ADDRESS, ...)"
+    summary: Every post-fork block makes a protocol-mandated storage write, which changes post-state and
+      the state root.
+  rationale: Every post-fork block test, and every state test if the tool performs the pre-transaction
+    write, has a new protocol-mandated storage entry in its post-state. Pre-fork vectors are unaffected,
+    so the universal-assertion case is level 2.
+  confidence: medium
+  uncertainty_note: Whether single-transaction state tests apply the block-start write depends on test-harness
+    conventions not given in the documents.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "if FORK_BLKNUM <= arg < block.number"
+    summary: BLOCKHASH results depend on the numeric fork block, which named-fork selection does not supply.
+  - source: eip.md
+    locator: Specification — "block.prevhash"
+    summary: The block-start write needs the parent hash.
+  rationale: The tool must know the numeric activation block for the BLOCKHASH range and switch-over condition,
+    and must have the parent hash for the write. One new semantic input (activation block) is most likely
+    needed. The parent hash may already be derivable from existing block-hash inputs.
+  confidence: low
+  uncertainty_note: No tool evidence is supplied. The change could be none (if FORK_BLKNUM is derived
+    internally) or two fields (if the parent hash is also a new input).
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "When block.number > FORK_BLKNUM + 256"
+    summary: Tests need chains of more than 256 post-fork blocks and a numeric activation block.
+  rationale: Tests need long post-fork chains and fork-transition fixtures keyed to a block number. The
+    Cancun baseline activates forks by timestamp, so existing chain-building and transition-fork primitives
+    need a local extension. No new expectation abstraction is required.
+  confidence: medium
+  uncertainty_note: How well the existing framework supports block-number activation after the Merge is
+    not evidenced.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Stores existing block hashes; no new hashing, signing or proof rule.
+  rationale: Existing block hashes are stored without change. No cryptographic rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — "block.number > FORK_BLKNUM"
+    summary: Boundary for when the history write starts.
+  - source: eip.md
+    locator: Specification — "When block.number > FORK_BLKNUM + 256 ... if FORK_BLKNUM <= arg < block.number"
+    summary: Delayed logic switch, plus a range check bounded by the fork block and the current block.
+  rationale: 'There are several boundary-sensitive mechanisms: the write starting at FORK_BLKNUM+1, the
+    BLOCKHASH switch at FORK_BLKNUM+257, and the new argument range. These form an elevated matrix. The
+    result depends jointly on block.number relative to FORK_BLKNUM+256 and on arg relative to FORK_BLKNUM,
+    block.number-256 and block.number. For example, arg=FORK_BLKNUM or arg=block.number-257 gives a different
+    result before and after the switch, and arg=FORK_BLKNUM-1 must return 0.'
+  confidence: medium
+  uncertainty_note: Whether these dimensions count as an elevated matrix rather than independent boundaries
+    is a judgement call; 2 is defensible.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block or header decoding or structural validation change.
+  rationale: Only execution rules change; block structure validation is untouched.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API fields or methods mentioned.
+  rationale: The Engine API is unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Simple Summary — "Store historical block hashes in a contract"
+    summary: A protocol-designated contract or account holds the history.
+  - source: eip.md
+    locator: Specification — "HISTORY_STORAGE_ADDRESS | 0xfffffffffffffffffffffffffffffffffffffffe"
+    summary: A single protocol-designated address with persistent storage written by the protocol.
+  - source: eip.md
+    locator: Rationale — "Writing the EIP in EVM code" removed
+    summary: No EVM code is specified; the storage is maintained natively.
+  rationale: 'Exactly one protocol-designated stateful account is introduced: it has persistent storage
+    written every block and read by BLOCKHASH.'
+  confidence: medium
+  uncertainty_note: No code is specified, so the account may not count as an EVM 'contract'. Under that
+    reading the score would be 0.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No existing system contract is changed by the text.
+  rationale: No baseline system contract's rules change according to the supplied text.
+  confidence: medium
+  uncertainty_note: The address 0xff…fe may coincide with an address used by baseline Cancun system-call
+    machinery. The document does not mention this.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Simple Summary — "modify the BLOCKHASH (0x40) opcode"
+    summary: An existing opcode is modified; no new one is added.
+  rationale: No new instruction.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Specification — "change the logic of the BLOCKHASH opcode"
+    summary: BLOCKHASH's return value and data source change.
+  - source: eip.md
+    locator: Backwards Compatibility — "The range of BLOCKHASH is increased"
+    summary: Observable return values change for older arguments.
+  rationale: 'BLOCKHASH''s return values change: it now returns stored hashes beyond 256 blocks and reads
+    state.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile changed.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only storage values within the existing account/storage schema.
+  rationale: No serialized schema changes; the new storage entries use the existing format.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction type defined.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction validity or intrinsic gas rule.
+  rationale: Transaction validity is unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "block.prevhash"
+    summary: Uses the existing parent hash; no header member added.
+  rationale: No header or block field is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "At the start of processing any block where block.number > FORK_BLKNUM"
+    summary: Only recurring per-block processing starts; no backfill, migration or code installation is
+      specified.
+  rationale: Starting a recurring block-start write does not count as an activation-specific transition,
+    and no one-time installation is specified.
+  confidence: medium
+  uncertainty_note: If clients had to create or install the account (for example, set a nonce or code)
+    at activation to protect it from empty-account rules, this would become 3. The text does not require
+    it.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "return sload(HISTORY_STORAGE_ADDRESS, arg)"
+    summary: BLOCKHASH now performs a storage-trie read over a growing storage set.
+  - source: eip.md
+    locator: Security Considerations — "~2.5 million storage slots per year"
+    summary: The history account's storage grows without bound.
+  rationale: BLOCKHASH keeps its baseline low gas charge but now does a storage read over a large, growing
+    storage trie with an attacker-chosen key. Blocks that spam BLOCKHASH with distinct old arguments need
+    integrated benchmarks against the state database. This is a bounded interaction between the opcode
+    and the state backend.
+  confidence: medium
+  uncertainty_note: Whether any additional gas is intended is unspecified. With an appropriate storage-read
+    charge, component benchmarks (level 1) might be enough.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "HISTORY_STORAGE_ADDRESS"
+    summary: Protocol-critical storage lives in an ordinary account reachable by user transactions (calls,
+      value transfers).
+  - source: eip.md
+    locator: Backwards Compatibility — "The range of BLOCKHASH is increased"
+    summary: Contracts relying on BLOCKHASH returning 0 for old blocks see changed results.
+  rationale: 'Testing must show that user activity cannot corrupt or erase the history storage. Examples:
+    touching the account while it has no nonce, code or balance (baseline empty-account cleanup), value
+    transfers, and SELFDESTRUCT beneficiaries. Testing must also cover the changed BLOCKHASH assumption
+    for contracts. This is a bounded interaction between the new storage and baseline account-lifecycle
+    rules, needing targeted integration cases.'
+  confidence: medium
+  uncertainty_note: The account's existence and emptiness status is not specified. If the account were
+    properly installed, this would mostly reduce to local checks (level 1).
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "run sstore(HISTORY_STORAGE_ADDRESS, block.number - 1, block.prevhash)"
+    summary: Does not say whether or how the account is created (nonce, code, balance), so its emptiness
+      status and survival after being touched are open.
+  - source: eip.md
+    locator: Specification — "return sload(HISTORY_STORAGE_ADDRESS, arg)"
+    summary: Gas, and warm/cold or access-list effects of the internal read, are not specified.
+  - source: eip.md
+    locator: Specification — "FORK_BLKNUM | TBD"
+    summary: Activation is by block number, not defined relative to timestamp-based activation in the
+      baseline.
+  rationale: 'Several localized, consensus-visible outcomes have competing readings: (1) whether the storage-only
+    account counts as empty and can be deleted on touch; (2) the access-list and gas effects of BLOCKHASH''s
+    read; (3) whether the system write consumes block gas or changes the account. Expected state roots
+    and gas results cannot be fixed until clients agree on these.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Rationale — "Very similar ideas were proposed before in EIP-98 and EIP-210"
+    summary: EIP-98 and EIP-210 are cited only as superseded prior designs, not as active behavior the
+      target interacts with.
+  - source: eip.md
+    locator: Specification — sstore/sload on HISTORY_STORAGE_ADDRESS
+    summary: Uses baseline storage-access semantics, which interact with the baseline access-list and
+      empty-account rules.
+  rationale: The candidate EIPs are citations only. The unnumbered interactions with baseline storage-access
+    warmth and account-emptiness rules need local compatibility checks, such as BLOCKHASH followed by
+    accesses to the address, and touches of the address.
+  confidence: low
+  uncertainty_note: These interactions follow from baseline semantics, not from explicit text. They could
+    be 0 if not counted, or 2 if coordinated cases are needed.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions:
+  - BLOCKHASH's internal sload and the block-start sstore on HISTORY_STORAGE_ADDRESS interact with baseline
+    warm/cold storage-access and access-list rules. Local checks are needed for whether BLOCKHASH warms
+    the address or slot.
+  - The history account is storage-only, with no nonce, code or balance. It interacts with the baseline
+    empty-account touch and cleanup rules, plus value transfers and SELFDESTRUCT beneficiaries. Local
+    checks are needed that the history survives user interaction.
+  base_score: 1
+  bonus: 0
+  bonus_qualifying_eips: []
+  interaction_details: []
+totals:
+  primary_score: 21
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: This revision is a short Stagnant draft. It leaves out gas for the new BLOCKHASH read and the
+    system write, access-list effects, how the history account is created or what its status is (nonce/code),
+    how block-number activation fits timestamp-based forks, and any test cases.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - transition_tool_interface_changes
+  - added_system_contracts
+  - new_fork_activation_mechanism
+  - performance_risks
+  - security_risks
+  - cross_eip_interactions
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: state_access_ordering_within_opcode_execution
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: transition_tool_interface_changes
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: added_system_contracts
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: new_fork_activation_mechanism
+    minimum_score: 0
+    maximum_score: 3
+  - criterion: performance_risks
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: security_risks
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: cross_eip_interactions
+    minimum_score: 0
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 14
+    maximum: 28
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - Is HISTORY_STORAGE_ADDRESS created with a nonce or code? If not, is it an 'empty' account that can
+    be deleted when touched, wiping the stored history?
+  - Does BLOCKHASH's sload add the address or slot to the accessed sets, and does it change BLOCKHASH's
+    gas cost?
+  - Does the block-start sstore consume block gas, and does it touch or warm the account?
+  - How does FORK_BLKNUM map onto timestamp-based activation in the post-Merge baseline?
+  - Can calls or value transfers to 0xff…fe change its state, and how does that interact with any existing
+    protocol use of this address?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- Activation is by block number (FORK_BLKNUM) and BLOCKHASH switches 256 blocks later, while the Cancun
+  baseline activates forks by timestamp.
+- No code is given for HISTORY_STORAGE_ADDRESS, so whether it is a 'system contract' or just a protocol
+  storage account is ambiguous.
+- The address 0xff…fe may coincide with an address used by baseline system-call machinery; the document
+  does not address this.
+- Security Considerations expects the mechanism to be temporary (later replaced by an eth2 accumulator),
+  but this has no normative testing consequence.
+- The Test Cases and Implementation sections are TBD.
+overall_confidence: medium

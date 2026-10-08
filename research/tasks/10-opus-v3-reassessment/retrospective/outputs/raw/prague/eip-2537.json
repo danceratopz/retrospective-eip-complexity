@@ -1,0 +1,650 @@
+{
+ "case": "prague/2537",
+ "run_id": "assessment-run-f894d6aa-6b94-4153-8b4e-f3e244a53755",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:44:12.271844Z",
+ "finished_at": "2026-10-08T09:45:40.436737Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "f124a4247f9a20b96ac46219c416c24b046152e344c931433c1a480a9fdde584",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "bcb100bd4478a09accb66847b37216997305a5ebae592644a614af51ec852d9d",
+ "output": {
+  "duration_api_ms": 85467,
+  "stop_reason": "tool_use",
+  "session_id": "0faf8a19-8caa-4c57-b9b5-60a4bb26f1a6",
+  "total_cost_usd": 0.3616074,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 19459,
+   "cache_read_input_tokens": 10537,
+   "output_tokens": 10191,
+   "output_tokens_details": {
+    "thinking_tokens": 2796
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 19459,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 10191,
+     "cache_read_input_tokens": 10537,
+     "cache_creation_input_tokens": 19459,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 19459
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 10191,
+    "cacheReadInputTokens": 10537,
+    "cacheCreationInputTokens": 19459,
+    "webSearchRequests": 0,
+    "costUSD": 0.3616074,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 2796,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"This revision of EIP-2537 adds nine native precompiles at addresses 0x0c–0x14 for BLS12-381 operations: G1 and G2 addition, multiplication and multiexponentiation, pairing, and mapping Fp to G1 and Fp2 to G2. It defines strict byte encodings: 64-byte padded field elements that must be less than the modulus, (0,0) as the point at infinity, and 32-byte scalars that are not reduced. Every operation has its own error cases, and an error burns all supplied gas. Six precompiles have constant gas. The two multiexponentiation precompiles use a discount table for k up to 128, and pairing has a per-pair formula; all three compute k with floor division on the input length. The pairing call must perform subgroup checks. Activation is a plain block-number condition.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas schedule\",\"summary\":\"Gives fixed and formula-based gas costs for each new precompile. These are per-precompile fees, not changes to execution-gas accounting rules.\"},{\"source\":\"eip.md\",\"locator\":\"Gas burinig on error - \\\"Following the current state of all other precompiles\\\"\",\"summary\":\"Burning all gas on a precompile error is the existing behavior, applied here to the new precompiles.\"}],\"rationale\":\"No execution-gas charging, metering or settlement rule changes. The new precompile fees are ordinary per-function costs and are assessed under Added precompiles. Gas burning on error copies existing precompile behavior.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Under the baseline's existing warm-precompile rule, adding precompile addresses changes cold/warm gas for calls to 0x0c–0x14. That is an existing rule applied to new addresses and is scored under PAT, not here.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract\",\"summary\":\"The precompiles are pure computations on calldata and do not access state.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes, and the precompiles need no ordering rule.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Nothing about blobs or blob gas.\"}],\"rationale\":\"Blob-gas accounting is unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state-writing cost changes.\"}],\"rationale\":\"No state-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas schedule\",\"summary\":\"Gas costs only; no refunds are mentioned.\"}],\"rationale\":\"No refund mechanism is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Proposed addresses table\",\"summary\":\"Addresses 0x0c–0x14 become precompiles. Before this change they were ordinary empty accounts.\"}],\"rationale\":\"The only rework is in baseline cases that treat 0x0c–0x14 as non-precompile or empty accounts. Examples are precompile-range boundary tests and cold/warm access cases that target those addresses. This rework is confined to address-boundary cases within one family.\",\"confidence\":\"medium\",\"uncertainty_note\":\"How many baseline vectors use these addresses cannot be estimated without a suite.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new log, receipt, header or commitment outputs.\"}],\"rationale\":\"Baseline tests need no new assertion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract - \\\"If `block.number >= X`\\\"\",\"summary\":\"The precompiles are fork-gated and need no new transition-tool inputs or outputs.\"}],\"rationale\":\"No transition-tool interface change is required.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Fine points and encoding of base elements\",\"summary\":\"Defines custom 64-byte Fp, 128-byte Fp2, 128/256-byte G1/G2 and 32-byte scalar encodings.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"Expected results are given as algebraic properties, so tests must be able to construct and encode points.\"}],\"rationale\":\"Tests need BLS12-381 point and field encoding helpers to build precompile inputs and expected outputs. This is a local extension of the existing kind of precompile-input helper, not a new abstraction.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether existing helpers are available is unknown. The score reflects architectural need only.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract\",\"summary\":\"Adds G1/G2 addition, multiplication, multiexponentiation, pairing and two field-to-curve mappings.\"},{\"source\":\"eip.md\",\"locator\":\"Abstract - \\\"Mapping function does NOT perform mapping of the byte string into field element\\\"\",\"summary\":\"The mapping exposes only the field-to-curve step of SWU, defined in a separate document that was not supplied.\"},{\"source\":\"eip.md\",\"locator\":\"Subgroup checks - \\\"Subgroup check **is mandatory** during the pairing call\\\"\",\"summary\":\"Subgroup checks are required only for pairing. The add, mul and multiexponentiation error cases list only on-curve checks.\"},{\"source\":\"eip.md\",\"locator\":\"Benchmarking test cases\",\"summary\":\"Benchmark vectors are in a separate file that was not supplied.\"}],\"rationale\":\"Several cryptographic mechanisms are added: group arithmetic in two groups, multiexponentiation, pairing with subgroup checks, and SWU map-to-curve. Some behavior differs from standard library APIs. Mapping is only a partial hash-to-curve. Add, mul and multiexponentiation accept on-curve points without subgroup checks. Infinity is encoded as (0,0) with 64-byte padding. These cases need vectors built specifically for this EIP, beyond established resources. That meets level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The test resources and the mapping specification are in documents that were not supplied. If established vectors cover these exact behaviors, level 2 would apply.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Field elements encoding\",\"summary\":\"Field elements must be less than the modulus and the top 16 bytes must be zero. Otherwise the precompile returns an error.\"},{\"source\":\"eip.md\",\"locator\":\"Behavior on empty inputs\",\"summary\":\"Variable-length operations must return an error on empty input.\"},{\"source\":\"eip.md\",\"locator\":\"Gas schedule clarifications for G1/G2 Multiexponentiation\",\"summary\":\"k = floor(len/LEN_PER_PAIR). The gas cost is 0 when k is 0. Lengths that are not divisible still produce a gas value but then error.\"},{\"source\":\"eip.md\",\"locator\":\"G1/G2 Multiexponentiation\",\"summary\":\"The discount table covers k up to 128, with max_discount used above that.\"},{\"source\":\"eip.md\",\"locator\":\"Encoding of scalars for multiplication operation\",\"summary\":\"Scalars are not reduced. Scalars at or above the group order are valid.\"}],\"rationale\":\"There are several independent boundary-sensitive rules: the field-element range and padding, exact or multiple-of input length, empty input, infinity encoding, scalars at or above the group order, the discount-table cap at k=128, and on-curve versus subgroup membership. The multiexponentiation and pairing gas rules form an elevated matrix. Input length (exact multiple, non-multiple, empty, k=0) interacts with the floor-division gas formula, the gas supplied relative to that cost, and the later encoding error. Together these decide whether the call fails on gas or on encoding, and they cannot be tested independently.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No changes to block structure or decoding.\"}],\"rationale\":\"No block RLP or structural validation changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Engine API is not mentioned.\"}],\"rationale\":\"No Engine API changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Proposed addresses table\",\"summary\":\"Only native precompiles are added.\"}],\"rationale\":\"No system contracts are added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contracts are involved.\"}],\"rationale\":\"No existing system contract changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract\",\"summary\":\"Adds precompiles only, no opcodes.\"}],\"rationale\":\"No new instructions.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas burinig on error\",\"summary\":\"CALL and STATICCALL semantics are unchanged; only the callee behavior is new.\"}],\"rationale\":\"New callee behavior reached through unchanged instructions does not count as an opcode change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":4,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Proposed addresses table\",\"summary\":\"Nine distinct precompile addresses, 0x0c to 0x14.\"},{\"source\":\"eip.md\",\"locator\":\"Gas schedule clarifications for the variable-length input\",\"summary\":\"G1 multiexponentiation, G2 multiexponentiation and pairing take variable-length input and have dynamic gas.\"},{\"source\":\"eip.md\",\"locator\":\"ABI for operations\",\"summary\":\"Each precompile has its own input length, output format and error cases.\"}],\"rationale\":\"Several precompiles are added and at least one is complex, which meets level 3. The supplied scope goes well beyond that condition: nine distinct addresses, three of them complex with dynamic gas and their own validation and gas formulas.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether nine precompiles justify the exceptional level is a judgment call. Level 3 is the conservative alternative.\",\"exceptional_score_justification\":\"Level 3 needs only multiple precompiles with at least one complex. This EIP adds nine distinct addresses. Each has its own encoding, output and error rules. Three take variable-length input with dynamic gas: two use a 128-entry discount table and pairing uses a per-pair formula. That is roughly nine separate per-precompile test families of validity, error, gas and boundary cases, plus three dynamic-gas families. This is substantially more testing work within this criterion than the level-3 condition requires.\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility - \\\"There are no backward compatibility questions.\\\"\",\"summary\":\"Existing precompiles are untouched. BN254 is mentioned only for comparison.\"}],\"rationale\":\"No existing precompile changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Fine points and encoding of base elements\",\"summary\":\"New encodings apply only to precompile calldata and outputs, not to protocol objects.\"}],\"rationale\":\"No listed protocol object or interface changes its schema. Precompile input encoding is calldata.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new transaction type.\"}],\"rationale\":\"No new envelope.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No intrinsic-gas or transaction-validity rule changes.\"}],\"rationale\":\"Transaction validity is unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"No header changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract - \\\"If `block.number >= X`\\\"\",\"summary\":\"Activation is a plain rule selection. There is no state migration and no code installation.\"}],\"rationale\":\"No activation-specific state transition is required.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas schedule - \\\"Assuming a constant `30 MGas/second`\\\"\",\"summary\":\"Prices assume 30 Mgas/s throughput.\"},{\"source\":\"eip.md\",\"locator\":\"DDoS protection\",\"summary\":\"The gas schedule must reflect worst-case computation time.\"},{\"source\":\"eip.md\",\"locator\":\"Subgroup checks\",\"summary\":\"Pairing pricing assumes a fast subgroup check of about 35000 gas per pair.\"}],\"rationale\":\"Each precompile's worst case needs component benchmarks to confirm pricing. That includes the multiexponentiation discount table up to and beyond k=128, pairing per pair, and the mapping operations. The workload is CPU-bound inside each precompile and does not change baseline end-to-end assumptions.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The pairing gas formulas contradict each other, so the pricing to benchmark is uncertain.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Field elements encoding\",\"summary\":\"Strict range and padding checks on field elements.\"},{\"source\":\"eip.md\",\"locator\":\"Subgroup checks\",\"summary\":\"Pairing requires subgroup checks. The other operations check only that points are on the curve.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations - \\\"**IS NOT REQUIRED** to perform all the operations using constant time\\\"\",\"summary\":\"Constant-time implementation is explicitly not required.\"}],\"rationale\":\"The new security conditions are input validation, on-curve and subgroup checks, and worst-case gas. All of them sit inside the precompiles and can be checked locally, for example by differential fuzzing. No other component's assumptions change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Pairing operation - \\\"`43000*k + 65000`\\\"\",\"summary\":\"Gives the pairing gas formula as 43000*k + 65000.\"},{\"source\":\"eip.md\",\"locator\":\"Gas schedule clarifications for pairing - \\\"gas_cost = 23000*k + 115000\\\"\",\"summary\":\"Gives a different normative pairing gas formula, which contradicts the first.\"},{\"source\":\"eip.md\",\"locator\":\"Field to curve mapping\",\"summary\":\"The SWU algorithm and parameters are in a separate document that was not supplied.\"},{\"source\":\"eip.md\",\"locator\":\"ABI for G1 multiplication\",\"summary\":\"The error cases list on-curve checks only. Subgroup checks are not explicitly ruled in or out for mul and multiexponentiation.\"}],\"rationale\":\"The two pairing gas formulas give different, observable gas results for the same input. Expected values cannot be fixed until the specification is clarified or clients agree. The contradiction is localized to one precompile, which fits level 2.\",\"confidence\":\"high\",\"uncertainty_note\":\"The missing mapping document is an evidence gap, not an omission in this specification.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas burinig on error - \\\"supplied along with a `CALL` or `STATICCALL`\\\"\",\"summary\":\"Precompile behavior is reached through the existing call instructions and their gas forwarding.\"},{\"source\":\"eip.md\",\"locator\":\"Gas schedule clarifications for G1/G2 Multiexponentiation - \\\"already used in `Blake2f` precompile\\\"\",\"summary\":\"Cites the existing zero-gas precedent, the Blake2f precompile, for comparison only.\"}],\"rationale\":\"The interactions are local compatibility checks. New precompile addresses must be treated as warm precompiles under the baseline access-list rules. Calls must behave correctly across call types with the existing gas-forwarding rules. Otherwise the target can be tested on its own.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The interacting EIPs are not named in the document, and no candidate EIPs were supplied.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[],\"unidentified_interactions\":[\"Baseline access-list (warm/cold) rules: addresses 0x0c–0x14 become precompiles and should be warm. This needs only local checks of access gas on calls to the new addresses.\",\"Existing call instructions (CALL, STATICCALL, DELEGATECALL, CALLCODE) with the baseline gas-forwarding rules: calls to the new precompiles must burn all forwarded gas on error. This needs only local checks across call types.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The pairing gas formula appears twice with different values, 43000*k+65000 and 23000*k+115000. The field-to-curve mapping algorithm and the benchmark vectors are in separate documents that were not supplied. Whether add, mul and multiexponentiation need subgroup checks is only implied by their error-case lists.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":2,\"maximum_score\":2},{\"criterion\":\"cryptography\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"performance_risks\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":2,\"maximum_score\":3}],\"unresolved_questions\":[\"Which pairing gas formula is normative: 43000*k + 65000 or 23000*k + 115000?\",\"Must G1/G2 mul and multiexponentiation reject points that are on the curve but not in the subgroup?\",\"What exact SWU and isogeny parameters and cofactor-clearing steps do the mapping precompiles use? The referenced document was not supplied.\",\"The multiexponentiation gas function returns 0 for inputs shorter than one pair. Is the order of the gas check and the error for empty input observable beyond the burned gas?\"]},\"notable_ambiguities\":[\"Contradictory pairing gas formulas between the Gas schedule section and the gas schedule clarifications.\",\"The mapping precompiles depend on an external field_to_curve.md that was not supplied.\",\"Subgroup checks are mandatory only for pairing, and the requirement for the other operations is implicit.\",\"The text says multiexponentiation 'must' use Pippenger's algorithm. That is an implementation detail with no observable consensus effect.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "This revision of EIP-2537 adds nine native precompiles at addresses 0x0c–0x14 for BLS12-381 operations: G1 and G2 addition, multiplication and multiexponentiation, pairing, and mapping Fp to G1 and Fp2 to G2. It defines strict byte encodings: 64-byte padded field elements that must be less than the modulus, (0,0) as the point at infinity, and 32-byte scalars that are not reduced. Every operation has its own error cases, and an error burns all supplied gas. Six precompiles have constant gas. The two multiexponentiation precompiles use a discount table for k up to 128, and pairing has a per-pair formula; all three compute k with floor division on the input length. The pairing call must perform subgroup checks. Activation is a plain block-number condition.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas schedule",
+       "summary": "Gives fixed and formula-based gas costs for each new precompile. These are per-precompile fees, not changes to execution-gas accounting rules."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas burinig on error - \"Following the current state of all other precompiles\"",
+       "summary": "Burning all gas on a precompile error is the existing behavior, applied here to the new precompiles."
+      }
+     ],
+     "rationale": "No execution-gas charging, metering or settlement rule changes. The new precompile fees are ordinary per-function costs and are assessed under Added precompiles. Gas burning on error copies existing precompile behavior.",
+     "confidence": "medium",
+     "uncertainty_note": "Under the baseline's existing warm-precompile rule, adding precompile addresses changes cold/warm gas for calls to 0x0c–0x14. That is an existing rule applied to new addresses and is scored under PAT, not here.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract",
+       "summary": "The precompiles are pure computations on calldata and do not access state."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes, and the precompiles need no ordering rule.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Nothing about blobs or blob gas."
+      }
+     ],
+     "rationale": "Blob-gas accounting is unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state-writing cost changes."
+      }
+     ],
+     "rationale": "No state-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas schedule",
+       "summary": "Gas costs only; no refunds are mentioned."
+      }
+     ],
+     "rationale": "No refund mechanism is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Proposed addresses table",
+       "summary": "Addresses 0x0c–0x14 become precompiles. Before this change they were ordinary empty accounts."
+      }
+     ],
+     "rationale": "The only rework is in baseline cases that treat 0x0c–0x14 as non-precompile or empty accounts. Examples are precompile-range boundary tests and cold/warm access cases that target those addresses. This rework is confined to address-boundary cases within one family.",
+     "confidence": "medium",
+     "uncertainty_note": "How many baseline vectors use these addresses cannot be estimated without a suite.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new log, receipt, header or commitment outputs."
+      }
+     ],
+     "rationale": "Baseline tests need no new assertion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract - \"If `block.number >= X`\"",
+       "summary": "The precompiles are fork-gated and need no new transition-tool inputs or outputs."
+      }
+     ],
+     "rationale": "No transition-tool interface change is required.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Fine points and encoding of base elements",
+       "summary": "Defines custom 64-byte Fp, 128-byte Fp2, 128/256-byte G1/G2 and 32-byte scalar encodings."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "Expected results are given as algebraic properties, so tests must be able to construct and encode points."
+      }
+     ],
+     "rationale": "Tests need BLS12-381 point and field encoding helpers to build precompile inputs and expected outputs. This is a local extension of the existing kind of precompile-input helper, not a new abstraction.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether existing helpers are available is unknown. The score reflects architectural need only.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract",
+       "summary": "Adds G1/G2 addition, multiplication, multiexponentiation, pairing and two field-to-curve mappings."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Abstract - \"Mapping function does NOT perform mapping of the byte string into field element\"",
+       "summary": "The mapping exposes only the field-to-curve step of SWU, defined in a separate document that was not supplied."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Subgroup checks - \"Subgroup check **is mandatory** during the pairing call\"",
+       "summary": "Subgroup checks are required only for pairing. The add, mul and multiexponentiation error cases list only on-curve checks."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Benchmarking test cases",
+       "summary": "Benchmark vectors are in a separate file that was not supplied."
+      }
+     ],
+     "rationale": "Several cryptographic mechanisms are added: group arithmetic in two groups, multiexponentiation, pairing with subgroup checks, and SWU map-to-curve. Some behavior differs from standard library APIs. Mapping is only a partial hash-to-curve. Add, mul and multiexponentiation accept on-curve points without subgroup checks. Infinity is encoded as (0,0) with 64-byte padding. These cases need vectors built specifically for this EIP, beyond established resources. That meets level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "The test resources and the mapping specification are in documents that were not supplied. If established vectors cover these exact behaviors, level 2 would apply.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Field elements encoding",
+       "summary": "Field elements must be less than the modulus and the top 16 bytes must be zero. Otherwise the precompile returns an error."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Behavior on empty inputs",
+       "summary": "Variable-length operations must return an error on empty input."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas schedule clarifications for G1/G2 Multiexponentiation",
+       "summary": "k = floor(len/LEN_PER_PAIR). The gas cost is 0 when k is 0. Lengths that are not divisible still produce a gas value but then error."
+      },
+      {
+       "source": "eip.md",
+       "locator": "G1/G2 Multiexponentiation",
+       "summary": "The discount table covers k up to 128, with max_discount used above that."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Encoding of scalars for multiplication operation",
+       "summary": "Scalars are not reduced. Scalars at or above the group order are valid."
+      }
+     ],
+     "rationale": "There are several independent boundary-sensitive rules: the field-element range and padding, exact or multiple-of input length, empty input, infinity encoding, scalars at or above the group order, the discount-table cap at k=128, and on-curve versus subgroup membership. The multiexponentiation and pairing gas rules form an elevated matrix. Input length (exact multiple, non-multiple, empty, k=0) interacts with the floor-division gas formula, the gas supplied relative to that cost, and the later encoding error. Together these decide whether the call fails on gas or on encoding, and they cannot be tested independently.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No changes to block structure or decoding."
+      }
+     ],
+     "rationale": "No block RLP or structural validation changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Engine API is not mentioned."
+      }
+     ],
+     "rationale": "No Engine API changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Proposed addresses table",
+       "summary": "Only native precompiles are added."
+      }
+     ],
+     "rationale": "No system contracts are added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contracts are involved."
+      }
+     ],
+     "rationale": "No existing system contract changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract",
+       "summary": "Adds precompiles only, no opcodes."
+      }
+     ],
+     "rationale": "No new instructions.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas burinig on error",
+       "summary": "CALL and STATICCALL semantics are unchanged; only the callee behavior is new."
+      }
+     ],
+     "rationale": "New callee behavior reached through unchanged instructions does not count as an opcode change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 4,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Proposed addresses table",
+       "summary": "Nine distinct precompile addresses, 0x0c to 0x14."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas schedule clarifications for the variable-length input",
+       "summary": "G1 multiexponentiation, G2 multiexponentiation and pairing take variable-length input and have dynamic gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "ABI for operations",
+       "summary": "Each precompile has its own input length, output format and error cases."
+      }
+     ],
+     "rationale": "Several precompiles are added and at least one is complex, which meets level 3. The supplied scope goes well beyond that condition: nine distinct addresses, three of them complex with dynamic gas and their own validation and gas formulas.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether nine precompiles justify the exceptional level is a judgment call. Level 3 is the conservative alternative.",
+     "exceptional_score_justification": "Level 3 needs only multiple precompiles with at least one complex. This EIP adds nine distinct addresses. Each has its own encoding, output and error rules. Three take variable-length input with dynamic gas: two use a 128-entry discount table and pairing uses a per-pair formula. That is roughly nine separate per-precompile test families of validity, error, gas and boundary cases, plus three dynamic-gas families. This is substantially more testing work within this criterion than the level-3 condition requires."
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility - \"There are no backward compatibility questions.\"",
+       "summary": "Existing precompiles are untouched. BN254 is mentioned only for comparison."
+      }
+     ],
+     "rationale": "No existing precompile changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Fine points and encoding of base elements",
+       "summary": "New encodings apply only to precompile calldata and outputs, not to protocol objects."
+      }
+     ],
+     "rationale": "No listed protocol object or interface changes its schema. Precompile input encoding is calldata.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new transaction type."
+      }
+     ],
+     "rationale": "No new envelope.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No intrinsic-gas or transaction-validity rule changes."
+      }
+     ],
+     "rationale": "Transaction validity is unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "No header changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract - \"If `block.number >= X`\"",
+       "summary": "Activation is a plain rule selection. There is no state migration and no code installation."
+      }
+     ],
+     "rationale": "No activation-specific state transition is required.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas schedule - \"Assuming a constant `30 MGas/second`\"",
+       "summary": "Prices assume 30 Mgas/s throughput."
+      },
+      {
+       "source": "eip.md",
+       "locator": "DDoS protection",
+       "summary": "The gas schedule must reflect worst-case computation time."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Subgroup checks",
+       "summary": "Pairing pricing assumes a fast subgroup check of about 35000 gas per pair."
+      }
+     ],
+     "rationale": "Each precompile's worst case needs component benchmarks to confirm pricing. That includes the multiexponentiation discount table up to and beyond k=128, pairing per pair, and the mapping operations. The workload is CPU-bound inside each precompile and does not change baseline end-to-end assumptions.",
+     "confidence": "medium",
+     "uncertainty_note": "The pairing gas formulas contradict each other, so the pricing to benchmark is uncertain.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Field elements encoding",
+       "summary": "Strict range and padding checks on field elements."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Subgroup checks",
+       "summary": "Pairing requires subgroup checks. The other operations check only that points are on the curve."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations - \"**IS NOT REQUIRED** to perform all the operations using constant time\"",
+       "summary": "Constant-time implementation is explicitly not required."
+      }
+     ],
+     "rationale": "The new security conditions are input validation, on-curve and subgroup checks, and worst-case gas. All of them sit inside the precompiles and can be checked locally, for example by differential fuzzing. No other component's assumptions change.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Pairing operation - \"`43000*k + 65000`\"",
+       "summary": "Gives the pairing gas formula as 43000*k + 65000."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas schedule clarifications for pairing - \"gas_cost = 23000*k + 115000\"",
+       "summary": "Gives a different normative pairing gas formula, which contradicts the first."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Field to curve mapping",
+       "summary": "The SWU algorithm and parameters are in a separate document that was not supplied."
+      },
+      {
+       "source": "eip.md",
+       "locator": "ABI for G1 multiplication",
+       "summary": "The error cases list on-curve checks only. Subgroup checks are not explicitly ruled in or out for mul and multiexponentiation."
+      }
+     ],
+     "rationale": "The two pairing gas formulas give different, observable gas results for the same input. Expected values cannot be fixed until the specification is clarified or clients agree. The contradiction is localized to one precompile, which fits level 2.",
+     "confidence": "high",
+     "uncertainty_note": "The missing mapping document is an evidence gap, not an omission in this specification.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas burinig on error - \"supplied along with a `CALL` or `STATICCALL`\"",
+       "summary": "Precompile behavior is reached through the existing call instructions and their gas forwarding."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas schedule clarifications for G1/G2 Multiexponentiation - \"already used in `Blake2f` precompile\"",
+       "summary": "Cites the existing zero-gas precedent, the Blake2f precompile, for comparison only."
+      }
+     ],
+     "rationale": "The interactions are local compatibility checks. New precompile addresses must be treated as warm precompiles under the baseline access-list rules. Calls must behave correctly across call types with the existing gas-forwarding rules. Otherwise the target can be tested on its own.",
+     "confidence": "medium",
+     "uncertainty_note": "The interacting EIPs are not named in the document, and no candidate EIPs were supplied.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [],
+    "unidentified_interactions": [
+     "Baseline access-list (warm/cold) rules: addresses 0x0c–0x14 become precompiles and should be warm. This needs only local checks of access gas on calls to the new addresses.",
+     "Existing call instructions (CALL, STATICCALL, DELEGATECALL, CALLCODE) with the baseline gas-forwarding rules: calls to the new precompiles must burn all forwarded gas on error. This needs only local checks across call types."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The pairing gas formula appears twice with different values, 43000*k+65000 and 23000*k+115000. The field-to-curve mapping algorithm and the benchmark vectors are in separate documents that were not supplied. Whether add, mul and multiexponentiation need subgroup checks is only implied by their error-case lists.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 2,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "cryptography",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "performance_risks",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     }
+    ],
+    "unresolved_questions": [
+     "Which pairing gas formula is normative: 43000*k + 65000 or 23000*k + 115000?",
+     "Must G1/G2 mul and multiexponentiation reject points that are on the curve but not in the subgroup?",
+     "What exact SWU and isogeny parameters and cofactor-clearing steps do the mapping precompiles use? The referenced document was not supplied.",
+     "The multiexponentiation gas function returns 0 for inputs shorter than one pair. Is the order of the gas check and the error for empty input observable beyond the burned gas?"
+    ]
+   },
+   "notable_ambiguities": [
+    "Contradictory pairing gas formulas between the Gas schedule section and the gas schedule clarifications.",
+    "The mapping precompiles depend on an external field_to_curve.md that was not supplied.",
+    "Subgroup checks are mandatory only for pairing, and the requirement for the other operations is implicit.",
+    "The text says multiexponentiation 'must' use Pippenger's algorithm. That is an implementation detail with no observable consensus effect."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 28711,
+  "type": "result",
+  "duration_ms": 85965,
+  "uuid": "035c16b2-608b-47f9-9908-42e6a8c156b0",
+  "ttft_stream_ms": 1191,
+  "time_to_request_ms": 494,
+  "first_content_frame_ms": 1191,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

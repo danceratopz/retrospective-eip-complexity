@@ -1,0 +1,584 @@
+{
+ "case": "cancun/5656",
+ "run_id": "assessment-run-fdc70af1-8064-4528-ab82-10a691f60954",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:37:51.091309Z",
+ "finished_at": "2026-10-08T09:38:57.065988Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "5c8ff361fc0c2fde625d1efed574063db60cdb694dc0ff606ab931e12d7ce1b2",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "9e427a6aad26cf659417509fde6ae7f16493b06cf5297871b1466edae7a751f4",
+ "output": {
+  "duration_api_ms": 63555,
+  "stop_reason": "tool_use",
+  "session_id": "2ede390e-b198-4d3c-92d0-d13aa50ae239",
+  "total_cost_usd": 0.402044,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 31097,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 7663,
+   "output_tokens_details": {
+    "thinking_tokens": 1684
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 31097,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 7663,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 31097,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 31097
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 7663,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 31097,
+    "webSearchRequests": 0,
+    "costUSD": 0.402044,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1684,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-5656 (revision e9b6a228, status Review) adds one EVM instruction, MCOPY, at 0xb7. It pops dst, src and length from the stack and copies length bytes of memory from src to dst, behaving as if through an intermediate buffer, so the two regions may overlap. It returns no stack items. Its gas follows the existing W_copy formula: Gverylow + 3 per copied word, plus memory expansion. Memory is expanded only when length > 0 and src+length or dst+length goes past the current memory size. The EIP cites EIP-2929 only to explain why the identity precompile is a costly way to copy memory, and it changes no other opcode, precompile, transaction, header or API.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas costs — \\\"it should be considered part of the `W_copy` group of opcodes\\\"\",\"summary\":\"MCOPY reuses the existing W_copy gas formula (Gverylow + Gcopy per word + memory expansion), with no new accounting rule.\"},{\"source\":\"eip.md\",\"locator\":\"Semantics — \\\"The gas cost of this instruction mirrors that of other `Wcopy` instructions\\\"\",\"summary\":\"Confirms MCOPY reuses the existing copy-cost schedule.\"}],\"rationale\":\"No existing gas rule or parameter changes, and no new accounting mechanism is added. The new instruction is charged under the existing W_copy and memory-expansion rules, so gas results for baseline operations are unchanged. The new opcode's own gas tests are counted under Added opcodes and Edge conditions.\",\"confidence\":\"medium\",\"uncertainty_note\":\"A reviewer could treat adding a member to the W_copy schedule as a level-1 change. The rubric's exclusion of ordinary use of existing rules supports 0.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Semantics — \\\"It copies `length` bytes from the offset pointed at `src` to the offset pointed at `dst` in memory.\\\"\",\"summary\":\"MCOPY only touches memory; it reads or writes no account or storage state.\"}],\"rationale\":\"MCOPY does not access state, and no existing instruction's state-access or gas-charge ordering changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The specification covers only one memory instruction; blob gas is not mentioned.\"}],\"rationale\":\"No blob-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Semantics\",\"summary\":\"MCOPY has memory effects only and writes no persistent state.\"}],\"rationale\":\"No state-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas costs\",\"summary\":\"Only charges are defined; there are no refunds.\"}],\"rationale\":\"No refund mechanism is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"The instruction `MCOPY` is introduced at `0xb7`.\\\"\",\"summary\":\"Opcode 0xb7, previously undefined, becomes valid.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"Already deployed contracts using this instruction could change their behaviour\\\"\",\"summary\":\"Code containing 0xb7 that used to halt as an invalid instruction now executes MCOPY.\"}],\"rationale\":\"Rework is limited to baseline cases that use 0xb7 as an undefined or invalid opcode, such as invalid-opcode enumeration tests. That is a parameter case within one behavioral family.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No test suite was supplied, so the affected cases are estimated from the specification.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Output stack — \\\"This instruction returns no stack items.\\\"\",\"summary\":\"There is no new log, receipt, header or storage output.\"}],\"rationale\":\"Baseline tests need no additional assertion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only EVM execution semantics change; no block, transaction or environment fields are added.\"}],\"rationale\":\"No transition-tool input, output or protocol changes are required.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"The test cases are pre/post memory images, which can be checked with existing bytecode and storage-assertion primitives.\"}],\"rationale\":\"Memory results can be checked by writing them to storage or returning them with existing opcodes. No new abstraction is needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract\",\"summary\":\"A memory copy instruction; no cryptography is involved.\"}],\"rationale\":\"No cryptographic mechanism changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Semantics — \\\"If `length > 0` and (`src + length` or `dst + length`) is beyond the current memory length, the memory is extended\\\"\",\"summary\":\"Memory expansion depends on whether length is zero and on the larger of the two end offsets.\"},{\"source\":\"eip.md\",\"locator\":\"Semantics — \\\"Copying takes place as if an intermediate buffer was used, allowing the destination and source to overlap.\\\"\",\"summary\":\"Overlap semantics depend on the relative positions of src and dst.\"},{\"source\":\"eip.md\",\"locator\":\"Gas costs — \\\"words_copied = (length + 31) // 32\\\"\",\"summary\":\"Copy cost rounds up to whole words.\"}],\"rationale\":\"Several independent boundary-sensitive rules are introduced: the zero-length exemption from expansion; expansion driven by max(src+length, dst+length), including out-of-gas and offset-overflow limits; per-word rounding of copy cost; and forward versus backward overlap correctness. Each can be tested mostly on its own axis, so there is no elevated matrix.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Treating src, dst and length as one interacting matrix for expansion and overlap could support level 3. These dimensions are largely separable, however.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No block decoding or structural validation changes.\"}],\"rationale\":\"Execution-rule change only.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API is mentioned.\"}],\"rationale\":\"No Engine API changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No protocol-designated contracts.\"}],\"rationale\":\"No system contract is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contracts are affected.\"}],\"rationale\":\"No existing system contract changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — \\\"The instruction `MCOPY` is introduced at `0xb7`.\\\"\",\"summary\":\"Exactly one new instruction.\"},{\"source\":\"eip.md\",\"locator\":\"Gas costs — \\\"g_copy = 3 * words_copied + memory_expansion_cost\\\"\",\"summary\":\"Gas depends on length and on memory expansion, so it is dynamic.\"}],\"rationale\":\"Exactly one instruction is added. It has no immediate data and fixed stack effects, but its gas is dynamic (per word plus memory expansion), which makes it complex. That meets level 2.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only a new instruction is defined; no existing instruction's semantics change.\"}],\"rationale\":\"No existing instruction's semantics or availability change. Turning an undefined byte into MCOPY is counted under Added opcodes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation\",\"summary\":\"The identity precompile is mentioned only for comparison; no precompile is added.\"}],\"rationale\":\"No new precompile.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"Its cost is `15 + 3 * (length / 32)` gas\\\"\",\"summary\":\"The identity precompile is described but left unchanged.\"}],\"rationale\":\"No precompile semantics or gas changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No serialized objects change.\"}],\"rationale\":\"No schema or codec changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction envelope is introduced.\"}],\"rationale\":\"No new transaction type.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction validity or intrinsic gas rules are mentioned.\"}],\"rationale\":\"No transaction-validity changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields.\"}],\"rationale\":\"No new header or block member.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state migration or code installation at activation.\"}],\"rationale\":\"Only a rule selection at the fork; no activation-specific state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"copying 256 bytes costs ... 27 gas using this EIP\\\"\",\"summary\":\"Bulk memory copying becomes much cheaper per byte than with existing methods.\"},{\"source\":\"eip.md\",\"locator\":\"Gas costs\",\"summary\":\"Cost is 3 gas per word plus memory expansion.\"}],\"rationale\":\"The changed workload is per-word memory copying, including large overlapping copies, at 3 gas per word. Component benchmarks of MCOPY throughput against its gas price are enough; no subsystems are coupled.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No benchmark data was supplied.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"TBA\\\"\",\"summary\":\"No security analysis is provided.\"},{\"source\":\"eip.md\",\"locator\":\"Semantics — \\\"allowing the destination and source to overlap\\\"\",\"summary\":\"Correctness depends on handling overlap and memory bounds properly.\"}],\"rationale\":\"The security conditions are local: memory bounds and offset overflow, zero-length handling, and correct overlapping copies. They can be checked within the EVM interpreter without changing other components' assumptions.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The Security Considerations section is a placeholder (TBA).\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Semantics — \\\"The gas cost of this instruction mirrors that of other `Wcopy` instructions and is `Gverylow + Gcopy * ceil(length / 32)`.\\\"\",\"summary\":\"This formula leaves out memory expansion, unlike the Gas costs section and the preceding Semantics paragraph.\"},{\"source\":\"eip.md\",\"locator\":\"Gas costs — \\\"While the calculation in the yellow paper should be considered the final word\\\"\",\"summary\":\"Defers to the yellow paper's W_copy rules, which settles the intended outcome.\"},{\"source\":\"eip.md\",\"locator\":\"Semantics — \\\"If `length > 0` and ...\\\"\",\"summary\":\"Only implies, without stating outright, that zero-length copies with out-of-range offsets cause no expansion and no failure.\"}],\"rationale\":\"There are local omissions and textual inconsistencies: the Semantics gas formula omits memory expansion, and the zero-length, out-of-range-offset case is only implied. The surrounding rules, the deferral to W_copy, and the explicit length > 0 condition support a single intended outcome.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The case where src+length or dst+length overflows is not discussed explicitly. It presumably follows existing copy-opcode memory rules.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"the subsequent reduction by EIP-2929 made it slightly more economical\\\"\",\"summary\":\"EIP-2929 is cited only to motivate the comparison with identity-precompile call costs.\"},{\"source\":\"supporting/eip-2929.md\",\"locator\":\"Storage read changes\",\"summary\":\"EIP-2929 governs account and storage access costs, which MCOPY never touches.\"}],\"rationale\":\"MCOPY does not interact with EIP-2929's warm/cold access sets or call pricing. The citation is motivational only, so no coordinated cross-EIP cases are needed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[],\"unidentified_interactions\":[]},\"under_specification\":{\"present\":true,\"summary\":\"There are minor textual gaps. The Semantics section gives a gas formula without memory expansion, contradicting the Gas costs section, though the deference to the yellow paper's W_copy rules settles it. The zero-length, out-of-range-offset case is only implied by the length > 0 condition. The Security Considerations section is TBA.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"Does MCOPY with length == 0 and very large (or overflowing) src/dst offsets succeed with no memory expansion charge? The text implies yes but does not say so explicitly.\",\"Is the Semantics section's gas formula (without memory expansion) just an abbreviation? The Gas costs section suggests it is.\"]},\"notable_ambiguities\":[\"The two gas formulas differ: one includes memory_expansion_cost and the other does not.\",\"Behavior when src+length or dst+length overflows 2^256 is not stated and is assumed to follow existing copy-opcode rules.\",\"Security Considerations is TBA.\"],\"overall_confidence\":\"high\"}",
+  "structured_output": {
+   "scope_summary": "EIP-5656 (revision e9b6a228, status Review) adds one EVM instruction, MCOPY, at 0xb7. It pops dst, src and length from the stack and copies length bytes of memory from src to dst, behaving as if through an intermediate buffer, so the two regions may overlap. It returns no stack items. Its gas follows the existing W_copy formula: Gverylow + 3 per copied word, plus memory expansion. Memory is expanded only when length > 0 and src+length or dst+length goes past the current memory size. The EIP cites EIP-2929 only to explain why the identity precompile is a costly way to copy memory, and it changes no other opcode, precompile, transaction, header or API.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas costs — \"it should be considered part of the `W_copy` group of opcodes\"",
+       "summary": "MCOPY reuses the existing W_copy gas formula (Gverylow + Gcopy per word + memory expansion), with no new accounting rule."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Semantics — \"The gas cost of this instruction mirrors that of other `Wcopy` instructions\"",
+       "summary": "Confirms MCOPY reuses the existing copy-cost schedule."
+      }
+     ],
+     "rationale": "No existing gas rule or parameter changes, and no new accounting mechanism is added. The new instruction is charged under the existing W_copy and memory-expansion rules, so gas results for baseline operations are unchanged. The new opcode's own gas tests are counted under Added opcodes and Edge conditions.",
+     "confidence": "medium",
+     "uncertainty_note": "A reviewer could treat adding a member to the W_copy schedule as a level-1 change. The rubric's exclusion of ordinary use of existing rules supports 0.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Semantics — \"It copies `length` bytes from the offset pointed at `src` to the offset pointed at `dst` in memory.\"",
+       "summary": "MCOPY only touches memory; it reads or writes no account or storage state."
+      }
+     ],
+     "rationale": "MCOPY does not access state, and no existing instruction's state-access or gas-charge ordering changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The specification covers only one memory instruction; blob gas is not mentioned."
+      }
+     ],
+     "rationale": "No blob-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Semantics",
+       "summary": "MCOPY has memory effects only and writes no persistent state."
+      }
+     ],
+     "rationale": "No state-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas costs",
+       "summary": "Only charges are defined; there are no refunds."
+      }
+     ],
+     "rationale": "No refund mechanism is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"The instruction `MCOPY` is introduced at `0xb7`.\"",
+       "summary": "Opcode 0xb7, previously undefined, becomes valid."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"Already deployed contracts using this instruction could change their behaviour\"",
+       "summary": "Code containing 0xb7 that used to halt as an invalid instruction now executes MCOPY."
+      }
+     ],
+     "rationale": "Rework is limited to baseline cases that use 0xb7 as an undefined or invalid opcode, such as invalid-opcode enumeration tests. That is a parameter case within one behavioral family.",
+     "confidence": "medium",
+     "uncertainty_note": "No test suite was supplied, so the affected cases are estimated from the specification.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Output stack — \"This instruction returns no stack items.\"",
+       "summary": "There is no new log, receipt, header or storage output."
+      }
+     ],
+     "rationale": "Baseline tests need no additional assertion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only EVM execution semantics change; no block, transaction or environment fields are added."
+      }
+     ],
+     "rationale": "No transition-tool input, output or protocol changes are required.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "The test cases are pre/post memory images, which can be checked with existing bytecode and storage-assertion primitives."
+      }
+     ],
+     "rationale": "Memory results can be checked by writing them to storage or returning them with existing opcodes. No new abstraction is needed.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract",
+       "summary": "A memory copy instruction; no cryptography is involved."
+      }
+     ],
+     "rationale": "No cryptographic mechanism changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Semantics — \"If `length > 0` and (`src + length` or `dst + length`) is beyond the current memory length, the memory is extended\"",
+       "summary": "Memory expansion depends on whether length is zero and on the larger of the two end offsets."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Semantics — \"Copying takes place as if an intermediate buffer was used, allowing the destination and source to overlap.\"",
+       "summary": "Overlap semantics depend on the relative positions of src and dst."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas costs — \"words_copied = (length + 31) // 32\"",
+       "summary": "Copy cost rounds up to whole words."
+      }
+     ],
+     "rationale": "Several independent boundary-sensitive rules are introduced: the zero-length exemption from expansion; expansion driven by max(src+length, dst+length), including out-of-gas and offset-overflow limits; per-word rounding of copy cost; and forward versus backward overlap correctness. Each can be tested mostly on its own axis, so there is no elevated matrix.",
+     "confidence": "medium",
+     "uncertainty_note": "Treating src, dst and length as one interacting matrix for expansion and overlap could support level 3. These dimensions are largely separable, however.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No block decoding or structural validation changes."
+      }
+     ],
+     "rationale": "Execution-rule change only.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API is mentioned."
+      }
+     ],
+     "rationale": "No Engine API changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No protocol-designated contracts."
+      }
+     ],
+     "rationale": "No system contract is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contracts are affected."
+      }
+     ],
+     "rationale": "No existing system contract changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — \"The instruction `MCOPY` is introduced at `0xb7`.\"",
+       "summary": "Exactly one new instruction."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas costs — \"g_copy = 3 * words_copied + memory_expansion_cost\"",
+       "summary": "Gas depends on length and on memory expansion, so it is dynamic."
+      }
+     ],
+     "rationale": "Exactly one instruction is added. It has no immediate data and fixed stack effects, but its gas is dynamic (per word plus memory expansion), which makes it complex. That meets level 2.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only a new instruction is defined; no existing instruction's semantics change."
+      }
+     ],
+     "rationale": "No existing instruction's semantics or availability change. Turning an undefined byte into MCOPY is counted under Added opcodes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation",
+       "summary": "The identity precompile is mentioned only for comparison; no precompile is added."
+      }
+     ],
+     "rationale": "No new precompile.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"Its cost is `15 + 3 * (length / 32)` gas\"",
+       "summary": "The identity precompile is described but left unchanged."
+      }
+     ],
+     "rationale": "No precompile semantics or gas changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No serialized objects change."
+      }
+     ],
+     "rationale": "No schema or codec changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction envelope is introduced."
+      }
+     ],
+     "rationale": "No new transaction type.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction validity or intrinsic gas rules are mentioned."
+      }
+     ],
+     "rationale": "No transaction-validity changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields."
+      }
+     ],
+     "rationale": "No new header or block member.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state migration or code installation at activation."
+      }
+     ],
+     "rationale": "Only a rule selection at the fork; no activation-specific state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"copying 256 bytes costs ... 27 gas using this EIP\"",
+       "summary": "Bulk memory copying becomes much cheaper per byte than with existing methods."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas costs",
+       "summary": "Cost is 3 gas per word plus memory expansion."
+      }
+     ],
+     "rationale": "The changed workload is per-word memory copying, including large overlapping copies, at 3 gas per word. Component benchmarks of MCOPY throughput against its gas price are enough; no subsystems are coupled.",
+     "confidence": "medium",
+     "uncertainty_note": "No benchmark data was supplied.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"TBA\"",
+       "summary": "No security analysis is provided."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Semantics — \"allowing the destination and source to overlap\"",
+       "summary": "Correctness depends on handling overlap and memory bounds properly."
+      }
+     ],
+     "rationale": "The security conditions are local: memory bounds and offset overflow, zero-length handling, and correct overlapping copies. They can be checked within the EVM interpreter without changing other components' assumptions.",
+     "confidence": "medium",
+     "uncertainty_note": "The Security Considerations section is a placeholder (TBA).",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Semantics — \"The gas cost of this instruction mirrors that of other `Wcopy` instructions and is `Gverylow + Gcopy * ceil(length / 32)`.\"",
+       "summary": "This formula leaves out memory expansion, unlike the Gas costs section and the preceding Semantics paragraph."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas costs — \"While the calculation in the yellow paper should be considered the final word\"",
+       "summary": "Defers to the yellow paper's W_copy rules, which settles the intended outcome."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Semantics — \"If `length > 0` and ...\"",
+       "summary": "Only implies, without stating outright, that zero-length copies with out-of-range offsets cause no expansion and no failure."
+      }
+     ],
+     "rationale": "There are local omissions and textual inconsistencies: the Semantics gas formula omits memory expansion, and the zero-length, out-of-range-offset case is only implied. The surrounding rules, the deferral to W_copy, and the explicit length > 0 condition support a single intended outcome.",
+     "confidence": "medium",
+     "uncertainty_note": "The case where src+length or dst+length overflows is not discussed explicitly. It presumably follows existing copy-opcode memory rules.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"the subsequent reduction by EIP-2929 made it slightly more economical\"",
+       "summary": "EIP-2929 is cited only to motivate the comparison with identity-precompile call costs."
+      },
+      {
+       "source": "supporting/eip-2929.md",
+       "locator": "Storage read changes",
+       "summary": "EIP-2929 governs account and storage access costs, which MCOPY never touches."
+      }
+     ],
+     "rationale": "MCOPY does not interact with EIP-2929's warm/cold access sets or call pricing. The citation is motivational only, so no coordinated cross-EIP cases are needed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [],
+    "unidentified_interactions": []
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "There are minor textual gaps. The Semantics section gives a gas formula without memory expansion, contradicting the Gas costs section, though the deference to the yellow paper's W_copy rules settles it. The zero-length, out-of-range-offset case is only implied by the length > 0 condition. The Security Considerations section is TBA.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Does MCOPY with length == 0 and very large (or overflowing) src/dst offsets succeed with no memory expansion charge? The text implies yes but does not say so explicitly.",
+     "Is the Semantics section's gas formula (without memory expansion) just an abbreviation? The Gas costs section suggests it is."
+    ]
+   },
+   "notable_ambiguities": [
+    "The two gas formulas differ: one includes memory_expansion_cost and the other does not.",
+    "Behavior when src+length or dst+length overflows 2^256 is not stated and is assumed to follow existing copy-opcode rules.",
+    "Security Considerations is TBA."
+   ],
+   "overall_confidence": "high"
+  },
+  "ttft_ms": 18341,
+  "type": "result",
+  "duration_ms": 63990,
+  "uuid": "58397d1b-da24-469b-a182-4447e2b01a96",
+  "ttft_stream_ms": 2722,
+  "time_to_request_ms": 432,
+  "first_content_frame_ms": 2722,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

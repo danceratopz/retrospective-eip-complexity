@@ -1,0 +1,569 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: osaka
+eip:
+  number: 7951
+  title: Precompile for secp256r1 Curve Support
+  layers:
+  - execution
+assessment:
+  historical_scope_summary: EIP-7951, at the revision supplied, adds one native precompile, P256VERIFY,
+    at address 0x100. It performs ECDSA signature verification over secp256r1 (P-256). It accepts exactly
+    160 bytes (h, r, s, qx, qy) and charges a constant 3450 gas. It returns 32 bytes holding 1 for a valid
+    signature and empty output for any failure, and it never reverts. It requires r and s in (0, n), qx
+    and qy below p, an on-curve public key that is not the point at infinity, a check that the computed
+    R' is not infinity, and a comparison of R'.x with r modulo n. It is described as interface-compatible
+    with RIP-7212 and as fixing RIP-7212's missing infinity check and non-modular comparison.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/retrospective/inputs/packages/osaka/eip-7951/manifest.yaml
+    manifest_sha256: 25fcce1af981419146b83ed126ad0da82e76ef6dbe9cfb6018d524ebc9ccfa17
+  source_package:
+    manifest_path: research/tasks/05-retrospective-complexity-assignment/inputs/fork-eips/osaka/eip-7951/manifest.yaml
+    manifest_sha256: 142c4d44db325727937dc00b44d96ac08c2617c4ca6dec48a385a3c1112a6347
+  historical_eip:
+    repository: ethereum/EIPs
+    commit: d386b29b5a31bd5cfd8d21bbf4e8a0c87734085e
+    path: EIPS/eip-7951.md
+    committed_at: '2025-07-01T20:21:20Z'
+    git_blob_sha: f4600e688beaeaf11fa6292ea3477e9ca3febe56
+    content_sha256: 4fca0c5daef344b79ec1d19297ecf6a36f41bf31e02a29038a05701948aeebed
+    immutable_url: https://github.com/ethereum/EIPs/blob/d386b29b5a31bd5cfd8d21bbf4e8a0c87734085e/EIPS/eip-7951.md
+    information_cutoff_at: '2025-07-02T17:49:36Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  session_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:43:55.485582Z'
+    session_id: assessment-run-e209588b-8d9e-4247-b159-c78b4f54e9a2
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: e033a012637ac1effbf664a480c5c8f9dfffce0d74200fb55507dd8342648200
+    schema_sha256: bcb100bd4478a09accb66847b37216997305a5ebae592644a614af51ec852d9d
+    started_at: '2026-10-08T09:43:55.485582Z'
+    finished_at: '2026-10-08T09:45:01.077753Z'
+    duration_ms: 63631
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 16070
+      cache_read_input_tokens: 10537
+      output_tokens: 7492
+      output_tokens_details:
+        thinking_tokens: 1622
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 16070
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 7492
+        cache_read_input_tokens: 10537
+        cache_creation_input_tokens: 16070
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 16070
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 7492
+        cacheReadInputTokens: 10537
+        cacheCreationInputTokens: 16070
+        webSearchRequests: 0
+        costUSD: 0.2805154
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 1622
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.2805154
+  assessor_raw_output:
+    path: retrospective/outputs/raw/osaka/eip-7951.json
+    content_sha256: 8419b338a02973eee7b8e4592cefa9e3c24762e9c1db776b99a9bc0117069848
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas Schedule / P256VERIFY operation
+    summary: Constant 3450 gas fee for the new precompile; no execution-gas accounting rule is changed.
+  - source: eip.md
+    locator: Gas Burning on Error
+    summary: Invalid inputs consume the same gas as success; this is a fixed precompile fee, not a new
+      accounting mechanism.
+  rationale: Constant precompile fees are ordinary contract fees under the template. No metering, limit
+    or settlement rule changes.
+  confidence: medium
+  uncertainty_note: Adding a precompile address implicitly extends the pre-warmed precompile address set
+    (an access-cost effect for address 0x100). The EIP does not state this, and it could arguably count
+    as a level-1 parameter change.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Precompile
+    summary: Introduces a stateless precompile; no instruction ordering is specified or changed.
+  rationale: No instruction's state-access or gas-charge ordering changes, and no new state-accessing
+    operation is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No blob-related content.
+  rationale: No blob-gas changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The precompile performs no state writes; no state-gas rules are mentioned.
+  rationale: No state-gas accounting changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas Schedule
+    summary: Only a constant charge; no refund is introduced.
+  rationale: No refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Precompile
+    summary: Address 0x100 becomes a precompile, so baseline cases that treat 0x100 as an ordinary empty
+      account, or that enumerate precompile addresses, change expectation.
+  rationale: 'Rework is confined to boundary cases in the precompile-address and warm-access family: calls
+    to 0x100 now return precompile output and are warm. Ordinary tests are unaffected.'
+  confidence: medium
+  uncertainty_note: Whether any baseline tests target 0x100 is not evidenced, so this could be 0.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new log, header, receipt field or protocol-mandated write.
+  rationale: Baseline tests need no new assertion.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new block, transaction or environment inputs or outputs are introduced.
+  rationale: Only fork-aware precompile activation is needed; there is no interface change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: Test vectors are provided as a JSON data file; precompile call tests use existing call constructions.
+  rationale: Testing uses standard precompile-call patterns and vectors. Vectors are data, not new primitives.
+  confidence: medium
+  uncertainty_note: Generating valid P-256 signatures for custom cases may need a signing helper (a local
+    extension, level 1), but adding a library is arguably not a framework primitive.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Curve Parameters
+    summary: Standard NIST SP 800-186 secp256r1 parameters.
+  - source: eip.md
+    locator: Signature Verification Algorithm
+    summary: ECDSA verification per FIPS 186-5, with explicit input validation, an R'-at-infinity check
+      and modular comparison.
+  - source: eip.md
+    locator: Test Cases
+    summary: References a test-vector file for implementations.
+  rationale: Exactly one established mechanism (P-256 ECDSA verification), with NIST standards and a referenced
+    test-vector set as resources.
+  confidence: medium
+  uncertainty_note: The test-vector file is not supplied. Validation details that are Ethereum-specific
+    (unreduced h, empty output on failure) need custom cases, but these remain within established ECDSA
+    semantics.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Input Validation
+    summary: 'Several independent boundary rules: exact length 160, 0<r<n and 0<s<n, qx and qy < p, on-curve,
+      not infinity.'
+  - source: eip.md
+    locator: Signature Verification Algorithm
+    summary: R' infinity check and r' ≡ r (mod n) comparison, where R'.x may exceed n.
+  - source: eip.md
+    locator: Encoding of Scalars
+    summary: Scalar h is not required to be below n.
+  rationale: 'Multiple boundary-sensitive mechanisms are introduced: length, r/s range, coordinate range,
+    curve membership, R'' infinity and the modular x-comparison. Each can be tested largely independently,
+    so there is no elevated matrix.'
+  confidence: high
+  uncertainty_note: Constructing the R'.x ≥ n case and the R' = infinity case needs specially crafted
+    vectors. These are hard to build but are not interacting dimensions.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block structure changes.
+  rationale: No RLP or structural block validation changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API content.
+  rationale: No Engine API changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Precompile
+    summary: Native precompile, not an EVM system contract.
+  rationale: Precompiles are excluded from this criterion.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contracts are touched.
+  rationale: No system contract changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instruction.
+  rationale: No opcodes are added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Precompile
+    summary: Only callee behavior at 0x100 changes; call instructions are unchanged.
+  rationale: Changed callee behavior through unchanged instructions does not count.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Precompile
+    summary: P256VERIFY at 0x100 with constant 3450 gas.
+  - source: eip.md
+    locator: Input
+    summary: Fixed 160-byte supported input.
+  rationale: Exactly one precompile, with a fixed supported input length and constant gas, which makes
+    it simple.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: RIP-7212 is an L2 precompile, not an existing mainnet (Prague) precompile.
+  rationale: No existing L1 precompile changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Points and Encoding
+    summary: Encodings apply only to precompile calldata, not to protocol objects.
+  rationale: Precompile input formats are not listed serialized protocol objects.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction type is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction validity or intrinsic gas changes.
+  rationale: Precompile outputs are excluded.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header fields.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Precompile
+    summary: Native precompile activated by rule selection; no state migration or code installation.
+  rationale: Rule selection alone does not count.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas Cost Justification
+    summary: 3450 gas is justified by benchmarking against ECRECOVER (about 15% more expensive).
+  - source: eip.md
+    locator: Side-Channel Resistance
+    summary: Constant-time algorithms are not required, so worst-case inputs may vary in cost.
+  rationale: Component benchmarks of the precompile, including worst-case inputs, are enough to validate
+    the 3450 gas pricing. Baseline end-to-end assumptions do not change.
+  confidence: medium
+  uncertainty_note: Benchmark data is not supplied.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Fixes
+    summary: The R' infinity check and modular comparison prevent implementation-dependent results and
+      consensus failures.
+  - source: eip.md
+    locator: Malleability
+    summary: Signatures are malleable; non-malleability is left to applications.
+  rationale: Security conditions such as input validation and deterministic verification can be checked
+    locally, for example by differential fuzzing of the precompile. No other component's assumptions change.
+  confidence: medium
+  uncertainty_note: Applications migrating from RIP-7212 assumptions are outside EL testing.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Precompile
+    summary: States the address and gas, but does not explicitly state inclusion in the warm precompile
+      set, or the fork-activation behavior of 0x100.
+  - source: eip.md
+    locator: Point of Infinity Encoding
+    summary: (0,0) is called the infinity encoding but is also off-curve; checks 4 and 5 overlap, yet
+      both give the same failure outcome.
+  - source: eip.md
+    locator: Reference Implementation
+    summary: No reference implementation; the sentence is truncated.
+  rationale: 'These are minor localized omissions. The surrounding rules support one intended outcome:
+    treating 0x100 like other precompiles and returning empty output on all failures. There are no competing
+    normative outcomes.'
+  confidence: medium
+  uncertainty_note: The withheld test-vector file might resolve some edge outcomes.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Interface compatibility with RIP-7212 (address, input/output, gas).
+  - source: eip.md
+    locator: Precompile
+    summary: A new precompile address interacts with general precompile call semantics (warm access, call
+      variants, gas forwarding).
+  rationale: 'Only local compatibility checks are needed: calling via CALL, STATICCALL and DELEGATECALL,
+    warm-access treatment of 0x100, and out-of-gas handling. The precompile can otherwise be tested independently.
+    No candidate interacting EIPs were supplied.'
+  confidence: medium
+  uncertainty_note: The interaction with the warm-access rules is implied, not stated.
+  exceptional_score_justification: null
+  interacting_eips: []
+  unidentified_interactions:
+  - New precompile address 0x100 implicitly joins the set of precompiles treated as warm under access-list
+    gas rules; local check of the call cost to 0x100.
+  - RIP-7212 interface compatibility (same address, I/O, gas), with behavior differences for R' at infinity
+    and r' ≥ n edge cases; local vector checks only.
+  base_score: 1
+  bonus: 0
+  bonus_qualifying_eips: []
+  interaction_details: []
+totals:
+  primary_score: 9
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: 'Minor gaps: the spec does not explicitly state that 0x100 is in the warm precompile set, the
+    referenced test vectors are not supplied, the reference-implementation sentence is truncated, and
+    the infinity-encoding and on-curve checks overlap. All failures give the same empty output, so outcomes
+    are largely determined.'
+  affected_criteria:
+  - evm_gas_rule_changes
+  - patterns_affecting_pre_existing_tests
+  - unspecified_behavior_requiring_cross_client_consensus
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 0
+    maximum_score: 1
+  plausible_total_range:
+    minimum: 7
+    maximum: 10
+  plausible_tiers:
+  - low
+  unresolved_questions:
+  - Is address 0x100 included in the pre-warmed precompile address set from fork activation?
+  - What do the referenced (unsupplied) test vectors cover?
+hindsight_control:
+  internet_access_attempted: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'
+notable_ambiguities:
+- The EIP says (0,0) encodes infinity, but (0,0) is already off-curve, so check 5 is redundant with check
+  4.
+- The message hash h is not reduced or bounded; implementations must handle h ≥ n consistently.
+- Cases where R'.x ≥ n and where R' is infinity need specially crafted vectors that are hard to construct.
+- Address 0x100 lies outside the contiguous low precompile range; warm-set treatment is implied but not
+  stated.
+overall_confidence: high

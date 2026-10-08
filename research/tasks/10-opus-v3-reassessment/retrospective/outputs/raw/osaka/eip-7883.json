@@ -1,0 +1,576 @@
+{
+ "case": "osaka/7883",
+ "run_id": "assessment-run-6b28d7c1-eab7-4f5a-bea1-60bc7c57549d",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:40:58.366365Z",
+ "finished_at": "2026-10-08T09:42:00.498015Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "40ed9e284bcfcc48c7b387d58db24ab15b9943d0bec1987ffd32820a1138728b",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "f5574c63e5d1a3e42d274cca05625d8406c7362e857d3aeb32fbe31a486bbe98",
+ "output": {
+  "duration_api_ms": 59656,
+  "stop_reason": "tool_use",
+  "session_id": "8c927ecb-1853-4bc5-bbab-bf74af451fe0",
+  "total_cost_usd": 0.36549600000000004,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 27531,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 7262,
+   "output_tokens_details": {
+    "thinking_tokens": 1748
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 27531,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 7262,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 27531,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 27531
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 7262,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 27531,
+    "webSearchRequests": 0,
+    "costUSD": 0.36549600000000004,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1748,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-7883, at the assessed revision, changes only the gas cost of the existing ModExp precompile at 0x05. It changes three things in the EIP-2565 pricing formula. The minimum price goes from 200 to 500 gas. The per-byte multiplier for exponents longer than 32 bytes goes from 8 to 16. Multiplication complexity doubles when the base or modulus is longer than 32 bytes. The precompile's interface and arithmetic are unchanged. The EIP gives an updated table of gas results for named test vectors.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — 'the gas cost of calling the precompile at address ... 0x05 will be calculated as follows'\",\"summary\":\"Replaces the gas formula for an existing precompile. This changes the execution gas charged for baseline ModExp calls.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — '1. Increase minimal price from 200 to 500'\",\"summary\":\"Changes parameters in the existing accounting rule; no new mechanism is added.\"}],\"rationale\":\"Existing execution-gas parameters and formula terms change: the floor, the exponent multiplier and a 32-byte doubling in complexity. No new accounting mechanism is introduced, which is level 1.\",\"confidence\":\"high\",\"uncertainty_note\":\"Precompile gas could be treated only under ~PC. It is scored here too because baseline execution-gas results change.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — 'There are no changes to the underlying interface or arithmetic algorithms'\",\"summary\":\"Only the precompile's internal pricing changes. The order in which instructions access state is untouched.\"}],\"rationale\":\"No instruction's access order or gas-charge order changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Changes only ModExp execution gas.\"}],\"rationale\":\"Blob gas is unaffected.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state-writing cost is involved.\"}],\"rationale\":\"State-gas accounting does not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund is mentioned.\"}],\"rationale\":\"No refund mechanism is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — 'Below is a table with the updated test vectors'\",\"summary\":\"Most existing ModExp vectors (nagydani, marius, guido, marcin) get new expected gas, mostly increases of 83–150%.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — 'This change is backwards incompatible'\",\"summary\":\"Baseline gas expectations change.\"}],\"rationale\":\"Ordinary cases throughout the ModExp precompile test family need new expected gas. Calls supplying exactly the old gas would now run out of gas. This is confined to one behavioral family, so level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Other baseline tests that call ModExp incidentally with tight gas could also need rework. This cannot be measured without a test suite.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new output, log or field is introduced.\"}],\"rationale\":\"Only existing gas values change, which counts under PAT.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"A gas-formula change selected by fork. No new input or output fields.\"}],\"rationale\":\"No transition-tool interface change is needed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — 'the existing test vectors can be reused'\",\"summary\":\"Existing vectors are reused with new expected gas.\"}],\"rationale\":\"Existing precompile-call and gas-check primitives are enough.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — 'no changes to the underlying interface or arithmetic algorithms'\",\"summary\":\"ModExp arithmetic and outputs are unchanged.\"}],\"rationale\":\"No cryptographic mechanism or validation rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — 'if max_length <= 32: ... elif max_length > 32: multiplication_complexity = 2 * words**2'\",\"summary\":\"Adds a new 32/33-byte boundary on max(base_length, modulus_length) that doubles complexity.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — 'iteration_count = (16 * (exponent_length - 32))'\",\"summary\":\"Changes the cost slope above the 32-byte exponent-length boundary.\"},{\"source\":\"eip.md\",\"locator\":\"Specification — 'return max(500, ...)'\",\"summary\":\"Moves the floor that decides when the minimum price applies.\"}],\"rationale\":\"Several boundary-sensitive rules change or are added: the complexity doubling at 32 bytes, the exponent-length slope above 32 bytes and the 500-gas floor. The floor depends on the product of the other two terms, but each boundary can still be tested with targeted vectors. No elevated matrix is established, so level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Combining the floor with the two 32-byte regimes might be argued as an elevated matrix (level 3).\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No change to block structure or decoding.\"}],\"rationale\":\"No block RLP or structural validation change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API change.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No contract is deployed.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only a native precompile is affected.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Precompile gas changes are reached through unchanged CALL-family instructions.\"}],\"rationale\":\"The template excludes changed precompile cost through an unchanged instruction.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — 'precompile at address 0x...05'\",\"summary\":\"Modifies an existing address only.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The ModExp (0x05) gas formula changes.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases — 'no changes to the underlying interface or arithmetic algorithms'\",\"summary\":\"Outputs, accepted inputs and failure rules stay the same.\"}],\"rationale\":\"Exactly one precompile has a gas-only change and none has a behavior change, so level 1.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — 'no changes to the underlying interface'\",\"summary\":\"No serialization change.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction type is introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only execution-time precompile gas changes. Intrinsic gas and validity rules are untouched.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — 'Upon activation of this EIP'\",\"summary\":\"Only rule selection at activation. No state migration.\"}],\"rationale\":\"Rule or constant selection does not count.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — 'make ModExp at least as fast as EcRecover precompile in all cases'\",\"summary\":\"Sets a throughput target: ModExp gas per unit time must be no better than EcRecover's.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — 'risk of potentially overpriced ModExp scenarios'\",\"summary\":\"The repricing needs benchmark validation in both directions.\"}],\"rationale\":\"Component benchmarks of ModExp across input shapes are enough to validate the new prices. Integrated performance assumptions do not change, so level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — 'no new functionality is introduced or made cheaper'\",\"summary\":\"Only cost increases. The DoS-pricing boundary for ModExp is adjusted locally.\"},{\"source\":\"supporting/eip-2565.md\",\"locator\":\"Security Considerations — 'potential DoS vector'\",\"summary\":\"The relevant security condition is DoS through underpricing.\"}],\"rationale\":\"The changed DoS-pricing condition can be checked locally for this one precompile. No other component's assumptions change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification — calculate_gas_cost pseudocode\",\"summary\":\"Complete formula given, with explicit 32-byte thresholds and a floor.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases table\",\"summary\":\"Expected values for the named vectors, consistent with the formula (e.g. nagydani_1_pow0x10001: 2*8^2*16/3 = 682).\"}],\"rationale\":\"The pricing outcome is fully determined. How 'exponent' (the exponent head) is defined is inherited from EIP-198, which was not supplied. That is an evidence gap, not an omission in this spec.\",\"confidence\":\"high\",\"uncertainty_note\":\"The inputs for the marcin vectors are named but not supplied, so they cannot be checked independently.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — 'modifying the ModExp precompile pricing algorithm introduced in EIP-2565'\",\"summary\":\"The target replaces terms of EIP-2565's formula and keeps the rest.\"},{\"source\":\"supporting/eip-2565.md\",\"locator\":\"Specification\",\"summary\":\"Defines the baseline formula, including the 200 floor, multiplier 8 and words**2.\"}],\"rationale\":\"The interaction with EIP-2565 needs only local compatibility checks. The terms carried over (word rounding, iteration count for exponents ≤32 bytes, the /3 divisor) must stay the same. Gas must switch from EIP-2565 to EIP-7883 pricing at the fork boundary. No coordinated multi-EIP scenarios are needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Interactions with call-gas forwarding or warm/cold precompile access come from EIPs that were not supplied. They are unchanged by this EIP.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":2565,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Check the carried-over formula terms (ceil(max_length/8) words, iteration count for exponents ≤32 bytes, the /3 divisor). Check that gas switches from EIP-2565 pricing before the fork to EIP-7883 pricing after it, using the same vectors.\"}],\"unidentified_interactions\":[]},\"under_specification\":{\"present\":false,\"summary\":\"The pricing formula is complete and fully specified. The only gaps are evidence gaps: the exponent-head semantics come from EIP-198 (not supplied), and the inputs for the named test vectors are not included.\",\"affected_criteria\":[],\"unresolved_questions\":[]},\"notable_ambiguities\":[\"The meaning of 'exponent' (the first 32 bytes of the exponent when exponent_length > 32) is inherited from EIP-198, which was not supplied.\",\"The marcin_* test vector inputs are named but not supplied, so their expected values (including the 0% rows) cannot be checked independently.\",\"Whether a precompile gas-only repricing also counts under GAS, not just ~PC, is a template interpretation; both were scored at 1.\"],\"overall_confidence\":\"high\"}",
+  "structured_output": {
+   "scope_summary": "EIP-7883, at the assessed revision, changes only the gas cost of the existing ModExp precompile at 0x05. It changes three things in the EIP-2565 pricing formula. The minimum price goes from 200 to 500 gas. The per-byte multiplier for exponents longer than 32 bytes goes from 8 to 16. Multiplication complexity doubles when the base or modulus is longer than 32 bytes. The precompile's interface and arithmetic are unchanged. The EIP gives an updated table of gas results for named test vectors.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — 'the gas cost of calling the precompile at address ... 0x05 will be calculated as follows'",
+       "summary": "Replaces the gas formula for an existing precompile. This changes the execution gas charged for baseline ModExp calls."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — '1. Increase minimal price from 200 to 500'",
+       "summary": "Changes parameters in the existing accounting rule; no new mechanism is added."
+      }
+     ],
+     "rationale": "Existing execution-gas parameters and formula terms change: the floor, the exponent multiplier and a 32-byte doubling in complexity. No new accounting mechanism is introduced, which is level 1.",
+     "confidence": "high",
+     "uncertainty_note": "Precompile gas could be treated only under ~PC. It is scored here too because baseline execution-gas results change.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — 'There are no changes to the underlying interface or arithmetic algorithms'",
+       "summary": "Only the precompile's internal pricing changes. The order in which instructions access state is untouched."
+      }
+     ],
+     "rationale": "No instruction's access order or gas-charge order changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Changes only ModExp execution gas."
+      }
+     ],
+     "rationale": "Blob gas is unaffected.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state-writing cost is involved."
+      }
+     ],
+     "rationale": "State-gas accounting does not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund is mentioned."
+      }
+     ],
+     "rationale": "No refund mechanism is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — 'Below is a table with the updated test vectors'",
+       "summary": "Most existing ModExp vectors (nagydani, marius, guido, marcin) get new expected gas, mostly increases of 83–150%."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — 'This change is backwards incompatible'",
+       "summary": "Baseline gas expectations change."
+      }
+     ],
+     "rationale": "Ordinary cases throughout the ModExp precompile test family need new expected gas. Calls supplying exactly the old gas would now run out of gas. This is confined to one behavioral family, so level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Other baseline tests that call ModExp incidentally with tight gas could also need rework. This cannot be measured without a test suite.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new output, log or field is introduced."
+      }
+     ],
+     "rationale": "Only existing gas values change, which counts under PAT.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "A gas-formula change selected by fork. No new input or output fields."
+      }
+     ],
+     "rationale": "No transition-tool interface change is needed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — 'the existing test vectors can be reused'",
+       "summary": "Existing vectors are reused with new expected gas."
+      }
+     ],
+     "rationale": "Existing precompile-call and gas-check primitives are enough.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — 'no changes to the underlying interface or arithmetic algorithms'",
+       "summary": "ModExp arithmetic and outputs are unchanged."
+      }
+     ],
+     "rationale": "No cryptographic mechanism or validation rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — 'if max_length <= 32: ... elif max_length > 32: multiplication_complexity = 2 * words**2'",
+       "summary": "Adds a new 32/33-byte boundary on max(base_length, modulus_length) that doubles complexity."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — 'iteration_count = (16 * (exponent_length - 32))'",
+       "summary": "Changes the cost slope above the 32-byte exponent-length boundary."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification — 'return max(500, ...)'",
+       "summary": "Moves the floor that decides when the minimum price applies."
+      }
+     ],
+     "rationale": "Several boundary-sensitive rules change or are added: the complexity doubling at 32 bytes, the exponent-length slope above 32 bytes and the 500-gas floor. The floor depends on the product of the other two terms, but each boundary can still be tested with targeted vectors. No elevated matrix is established, so level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Combining the floor with the two 32-byte regimes might be argued as an elevated matrix (level 3).",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No change to block structure or decoding."
+      }
+     ],
+     "rationale": "No block RLP or structural validation change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API change."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No contract is deployed."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only a native precompile is affected."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Precompile gas changes are reached through unchanged CALL-family instructions."
+      }
+     ],
+     "rationale": "The template excludes changed precompile cost through an unchanged instruction.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — 'precompile at address 0x...05'",
+       "summary": "Modifies an existing address only."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The ModExp (0x05) gas formula changes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — 'no changes to the underlying interface or arithmetic algorithms'",
+       "summary": "Outputs, accepted inputs and failure rules stay the same."
+      }
+     ],
+     "rationale": "Exactly one precompile has a gas-only change and none has a behavior change, so level 1.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — 'no changes to the underlying interface'",
+       "summary": "No serialization change."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction type is introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only execution-time precompile gas changes. Intrinsic gas and validity rules are untouched."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — 'Upon activation of this EIP'",
+       "summary": "Only rule selection at activation. No state migration."
+      }
+     ],
+     "rationale": "Rule or constant selection does not count.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — 'make ModExp at least as fast as EcRecover precompile in all cases'",
+       "summary": "Sets a throughput target: ModExp gas per unit time must be no better than EcRecover's."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — 'risk of potentially overpriced ModExp scenarios'",
+       "summary": "The repricing needs benchmark validation in both directions."
+      }
+     ],
+     "rationale": "Component benchmarks of ModExp across input shapes are enough to validate the new prices. Integrated performance assumptions do not change, so level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — 'no new functionality is introduced or made cheaper'",
+       "summary": "Only cost increases. The DoS-pricing boundary for ModExp is adjusted locally."
+      },
+      {
+       "source": "supporting/eip-2565.md",
+       "locator": "Security Considerations — 'potential DoS vector'",
+       "summary": "The relevant security condition is DoS through underpricing."
+      }
+     ],
+     "rationale": "The changed DoS-pricing condition can be checked locally for this one precompile. No other component's assumptions change.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification — calculate_gas_cost pseudocode",
+       "summary": "Complete formula given, with explicit 32-byte thresholds and a floor."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases table",
+       "summary": "Expected values for the named vectors, consistent with the formula (e.g. nagydani_1_pow0x10001: 2*8^2*16/3 = 682)."
+      }
+     ],
+     "rationale": "The pricing outcome is fully determined. How 'exponent' (the exponent head) is defined is inherited from EIP-198, which was not supplied. That is an evidence gap, not an omission in this spec.",
+     "confidence": "high",
+     "uncertainty_note": "The inputs for the marcin vectors are named but not supplied, so they cannot be checked independently.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — 'modifying the ModExp precompile pricing algorithm introduced in EIP-2565'",
+       "summary": "The target replaces terms of EIP-2565's formula and keeps the rest."
+      },
+      {
+       "source": "supporting/eip-2565.md",
+       "locator": "Specification",
+       "summary": "Defines the baseline formula, including the 200 floor, multiplier 8 and words**2."
+      }
+     ],
+     "rationale": "The interaction with EIP-2565 needs only local compatibility checks. The terms carried over (word rounding, iteration count for exponents ≤32 bytes, the /3 divisor) must stay the same. Gas must switch from EIP-2565 to EIP-7883 pricing at the fork boundary. No coordinated multi-EIP scenarios are needed.",
+     "confidence": "medium",
+     "uncertainty_note": "Interactions with call-gas forwarding or warm/cold precompile access come from EIPs that were not supplied. They are unchanged by this EIP.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 2565,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Check the carried-over formula terms (ceil(max_length/8) words, iteration count for exponents ≤32 bytes, the /3 divisor). Check that gas switches from EIP-2565 pricing before the fork to EIP-7883 pricing after it, using the same vectors."
+     }
+    ],
+    "unidentified_interactions": []
+   },
+   "under_specification": {
+    "present": false,
+    "summary": "The pricing formula is complete and fully specified. The only gaps are evidence gaps: the exponent-head semantics come from EIP-198 (not supplied), and the inputs for the named test vectors are not included.",
+    "affected_criteria": [],
+    "unresolved_questions": []
+   },
+   "notable_ambiguities": [
+    "The meaning of 'exponent' (the first 32 bytes of the exponent when exponent_length > 32) is inherited from EIP-198, which was not supplied.",
+    "The marcin_* test vector inputs are named but not supplied, so their expected values (including the 0% rows) cannot be checked independently.",
+    "Whether a precompile gas-only repricing also counts under GAS, not just ~PC, is a template interpretation; both were scored at 1."
+   ],
+   "overall_confidence": "high"
+  },
+  "ttft_ms": 17849,
+  "type": "result",
+  "duration_ms": 60093,
+  "uuid": "53a69275-141f-49ea-aeb1-1742e933fac0",
+  "ttft_stream_ms": 1125,
+  "time_to_request_ms": 438,
+  "first_content_frame_ms": 1125,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

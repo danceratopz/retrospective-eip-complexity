@@ -1,0 +1,601 @@
+{
+ "case": "osaka/7825",
+ "run_id": "assessment-run-44d3f838-53f3-4d5e-af51-1283510d154f",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:40:22.149267Z",
+ "finished_at": "2026-10-08T09:42:18.051166Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "9ec591fddfb3dd3d8774ce30c83680465fcfa9866031e6a9eb871579304d90c5",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "bcb100bd4478a09accb66847b37216997305a5ebae592644a614af51ec852d9d",
+ "output": {
+  "duration_api_ms": 113295,
+  "stop_reason": "tool_use",
+  "session_id": "7d40c3ce-1337-413e-abda-ed2fd95ec6a4",
+  "total_cost_usd": 0.4070252,
+  "usage": {
+   "input_tokens": 4,
+   "cache_creation_input_tokens": 15405,
+   "cache_read_input_tokens": 33746,
+   "output_tokens": 13851,
+   "output_tokens_details": {
+    "thinking_tokens": 1582
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 15405,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 6353,
+     "cache_read_input_tokens": 23209,
+     "cache_creation_input_tokens": 2733,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2733
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 4,
+    "outputTokens": 13851,
+    "cacheReadInputTokens": 33746,
+    "cacheCreationInputTokens": 15405,
+    "webSearchRequests": 0,
+    "costUSD": 0.4070252,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 1582,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 3,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"This revision of EIP-7825 sets a fixed protocol-level cap of 30,000,000 gas on any single transaction's gasLimit. The cap does not depend on the block gas limit, which can still be higher. A transaction whose gasLimit exceeds 30M is rejected from the txpool. A block containing such a transaction is invalid and is rejected during validation before processing. The EIP adds no new transaction type, header field, opcode, precompile or system contract.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Protocol Adjustment — \\\"The `GAS_LIMIT` parameter for transactions will be capped in client implementations at 30 million\\\"\",\"summary\":\"Adds a fixed upper bound on the per-transaction gas limit. Gas charging and metering rules are otherwise unchanged.\"}],\"rationale\":\"The available execution gas per transaction is now bounded by a constant instead of only by the block gas limit. This changes an existing limit parameter without adding a new accounting mechanism (opcode costs, refunds and settlement are unchanged), so level 1 fits.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The cap could instead be treated purely as a transaction-validity rule (TXV), which would make this 0.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only transaction- and block-level gasLimit validation is specified. No instruction-level access or charging order changes.\"}],\"rationale\":\"No opcode's state-access or gas-charge ordering changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas Cap\",\"summary\":\"The cap applies to the transaction gasLimit. Blob gas is not mentioned.\"}],\"rationale\":\"No blob-gas accounting rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"State Bloat Risks\\\"\",\"summary\":\"State growth is given as motivation only. No state-gas accounting is specified.\"}],\"rationale\":\"State-write accounting is unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund mechanism is introduced.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"not backward-compatible with transactions that specify gas limits exceeding 30 million\\\"\",\"summary\":\"Any transaction with gasLimit above 30M becomes invalid in the target fork.\"},{\"source\":\"eip.md\",\"locator\":\"Changes to EVM Behavior — Block Validation\",\"summary\":\"A block containing a transaction above the cap is invalid, so baseline block tests using such transactions would fail.\"}],\"rationale\":\"Baseline state and blockchain tests that set transaction gas limits above 30M must be changed to lower limits, or their expected results must change to invalid. This affects localized high-gas cases in several families: large-gas or near-block-gas-limit cases, memory/copy-expansion stress cases, deep-call and large-deployment cases. There is no common rewrite across ordinary cases, so level 2 fits. No suite was supplied, so the extent is estimated from the specification.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If many baseline fixtures use very large default gas limits, the rework could be broader (level 3). If few do, it could be narrower (level 1).\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new log, receipt, header or storage output is introduced.\"}],\"rationale\":\"Baseline tests need no new assertion. Changed validity outcomes are rework, scored under PAT.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Protocol Adjustment\",\"summary\":\"A fixed constant cap that requires no new input or output fields.\"}],\"rationale\":\"The cap is a fork-dependent constant. Rejected transactions are reported through the existing rejection or exception reporting. No interface change is required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"A new error identifier (`MAX_GAS_LIMIT_EXCEEDED`) may need to be mapped in exception reporting. That is a value, not a field change.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas Cap — \\\"rejected with an appropriate error code (e.g., `MAX_GAS_LIMIT_EXCEEDED`)\\\"\",\"summary\":\"Introduces a new transaction rejection reason.\"}],\"rationale\":\"The framework needs a local extension: a new transaction-exception value and a fork-dependent cap constant. No new abstraction is required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"This could be 0 if a new exception value is not considered an extension of a primitive.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No cryptographic content.\"}],\"rationale\":\"No cryptographic changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Changes to EVM Behavior — \\\"`gasLimit` > 30 million\\\"\",\"summary\":\"A single threshold: a gasLimit of exactly 30M is valid and 30M+1 is invalid.\"},{\"source\":\"eip.md\",\"locator\":\"Protocol Adjustment — \\\"independent of the block gas limit\\\"\",\"summary\":\"The cap applies independently of the block gas limit.\"}],\"rationale\":\"There is one boundary-sensitive mechanism: the per-transaction gasLimit threshold at 30,000,000. It must be tested with block gas limits above and below the cap and across transaction types, but it remains a single mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Changes to EVM Behavior — Block Validation \\\"before processing, any block having a transaction with `gasLimit` > 30 million is deemed invalid\\\"\",\"summary\":\"Adds a block validation rule that is checked before execution and depends only on each transaction's gasLimit field.\"}],\"rationale\":\"One simple, local block-validation rule is added: a check on a single transaction field, done before processing and tested through block import. Level 1 fits.\",\"confidence\":\"medium\",\"uncertainty_note\":\"This could be seen as an ordinary transaction-validity rule rather than structural block validation (0).\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API changes are specified.\"}],\"rationale\":\"No Engine API field or endpoint changes. Payloads with an oversized transaction are rejected as invalid through the existing status rules.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No contracts are introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contracts are referenced.\"}],\"rationale\":\"No system contract rules change. Whether the cap applies to system calls is not stated (see UNSP), but the cap is defined for transactions only.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the cap were read as applying to system calls, existing system-call conventions might be affected.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new instructions.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction semantics change.\"}],\"rationale\":\"Opcode semantics are unchanged. The GASLIMIT opcode still reports the block gas limit.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only constrains the value of the existing gasLimit field.\"}],\"rationale\":\"No schema or codec change. Only the range of valid values for an existing field changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new transaction envelope.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas Cap — \\\"Transactions specifying gas limits higher than 30 million gas will be rejected\\\"\",\"summary\":\"Adds an upper bound on the existing gasLimit field for all transactions.\"},{\"source\":\"eip.md\",\"locator\":\"Changes to EVM Behavior — Block Validation\",\"summary\":\"The bound is a consensus rule enforced at block validation.\"}],\"rationale\":\"Only a local bound on an existing field is added. There is no new validation dependency or sequence, and existing transaction-validity test construction can be reused. Level 1 fits.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The ordering against other gas-limit checks (for example gasLimit > block gas limit, or intrinsic gas) is not specified, which may need dedicated cases (level 2).\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state migration or code installation is specified.\"}],\"rationale\":\"Activation only selects the new rule. There is no one-time state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"Validation Overhead\\\"\",\"summary\":\"The cap is meant to bound the worst-case execution time of a single transaction.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — Why 30 Million?\",\"summary\":\"The value is chosen relative to typical block sizes.\"}],\"rationale\":\"The changed resource bound is the maximum gas per transaction. Worst-case single-transaction benchmarks must be re-baselined to the 30M cap, and benchmark workloads that use larger single transactions must be split. These are component-level checks that do not add new resource coupling.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — DoS Mitigation\",\"summary\":\"A fixed cap limits the DoS potential of a single transaction.\"},{\"source\":\"eip.md\",\"locator\":\"Changes to EVM Behavior — Txpool Validation / Block Validation\",\"summary\":\"Enforcement must be consistent between the txpool and block validation.\"}],\"rationale\":\"The new check can be validated locally. The security risk is a consensus split if clients enforce the boundary inconsistently (> versus >=, or not at all at block import). No assumptions used by other components change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"maximum gas usage per transaction\\\"\",\"summary\":\"The abstract talks about gas used, while the specification checks the gasLimit field.\"},{\"source\":\"eip.md\",\"locator\":\"Gas Cap — \\\"(e.g., `MAX_GAS_LIMIT_EXCEEDED`)\\\"\",\"summary\":\"The error code is given only as an example.\"},{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Does not address system calls, check ordering, or a named constant or activation.\"}],\"rationale\":\"Several localized details are omitted: the precedence of this check relative to other validity checks, whether protocol system calls are exempt, and the exact error identifier. The normative Specification section consistently uses gasLimit > 30M, which supports one intended outcome for consensus validity. Level 1 fits.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the 'gas usage' wording in the abstract were taken as normative, competing outcomes would arise (level 2).\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Protocol Adjustment — \\\"independent of the block gas limit\\\"\",\"summary\":\"The cap coexists with the existing block-gas-limit validity rules.\"},{\"source\":\"eip.md\",\"locator\":\"Gas Cap — \\\"any single transaction\\\"\",\"summary\":\"The cap applies to all transaction types defined by earlier EIPs.\"}],\"rationale\":\"The cap must be checked for compatibility across all existing typed transactions and alongside the existing transaction gasLimit-versus-block-gas-limit rule. These are local compatibility checks, and the cap can otherwise be tested independently. No candidate EIPs were supplied.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Interactions with intrinsic or floor gas rules that might require gasLimit > 30M for large calldata or initcode are not discussed in the supplied text.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[],\"unidentified_interactions\":[\"Applies to every existing transaction type (legacy and typed). Local checks are needed so that each type is rejected above 30M and accepted at 30M.\",\"Coexists with the existing rule that a transaction's gasLimit must not exceed the remaining block gas. Precedence when both are violated, and behavior when the block gas limit is below 30M, need local checks.\",\"Intrinsic-gas rules for large calldata or contract-creation initcode may push the required gasLimit above 30M, making such transactions impossible. This is mentioned only as 'large contract deployments' needing re-architecting.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The normative rule (reject when gasLimit > 30,000,000) is clear. Missing details include: precedence relative to other validity checks, whether protocol system calls are exempt, the exact error identifier, and wording in the abstract ('gas usage') that differs from the gasLimit-based specification.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"evm_gas_rule_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"block_syncing_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"modified_system_contracts\",\"minimum_score\":0,\"maximum_score\":1}],\"unresolved_questions\":[\"Is the cap on the gasLimit field (Specification) or on gas actually used (Abstract)?\",\"Does the cap apply to protocol system calls that execute with their own gas budgets?\",\"What is the precedence when a transaction exceeds both the 30M cap and the available block gas, or fails intrinsic-gas checks?\",\"Is the error code normative, or only illustrative?\"]},\"notable_ambiguities\":[\"The Abstract says 'maximum gas usage per transaction' while the Specification checks the gasLimit field.\",\"The error code `MAX_GAS_LIMIT_EXCEEDED` is given only as an example ('e.g.').\",\"Applicability to system calls and the ordering against other validity checks are not specified.\",\"The section titled 'Changes to EVM Behavior' contains only txpool and block-validation rules; it changes no EVM execution.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "This revision of EIP-7825 sets a fixed protocol-level cap of 30,000,000 gas on any single transaction's gasLimit. The cap does not depend on the block gas limit, which can still be higher. A transaction whose gasLimit exceeds 30M is rejected from the txpool. A block containing such a transaction is invalid and is rejected during validation before processing. The EIP adds no new transaction type, header field, opcode, precompile or system contract.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Protocol Adjustment — \"The `GAS_LIMIT` parameter for transactions will be capped in client implementations at 30 million\"",
+       "summary": "Adds a fixed upper bound on the per-transaction gas limit. Gas charging and metering rules are otherwise unchanged."
+      }
+     ],
+     "rationale": "The available execution gas per transaction is now bounded by a constant instead of only by the block gas limit. This changes an existing limit parameter without adding a new accounting mechanism (opcode costs, refunds and settlement are unchanged), so level 1 fits.",
+     "confidence": "medium",
+     "uncertainty_note": "The cap could instead be treated purely as a transaction-validity rule (TXV), which would make this 0.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only transaction- and block-level gasLimit validation is specified. No instruction-level access or charging order changes."
+      }
+     ],
+     "rationale": "No opcode's state-access or gas-charge ordering changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas Cap",
+       "summary": "The cap applies to the transaction gasLimit. Blob gas is not mentioned."
+      }
+     ],
+     "rationale": "No blob-gas accounting rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"State Bloat Risks\"",
+       "summary": "State growth is given as motivation only. No state-gas accounting is specified."
+      }
+     ],
+     "rationale": "State-write accounting is unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund mechanism is introduced."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"not backward-compatible with transactions that specify gas limits exceeding 30 million\"",
+       "summary": "Any transaction with gasLimit above 30M becomes invalid in the target fork."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Changes to EVM Behavior — Block Validation",
+       "summary": "A block containing a transaction above the cap is invalid, so baseline block tests using such transactions would fail."
+      }
+     ],
+     "rationale": "Baseline state and blockchain tests that set transaction gas limits above 30M must be changed to lower limits, or their expected results must change to invalid. This affects localized high-gas cases in several families: large-gas or near-block-gas-limit cases, memory/copy-expansion stress cases, deep-call and large-deployment cases. There is no common rewrite across ordinary cases, so level 2 fits. No suite was supplied, so the extent is estimated from the specification.",
+     "confidence": "medium",
+     "uncertainty_note": "If many baseline fixtures use very large default gas limits, the rework could be broader (level 3). If few do, it could be narrower (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new log, receipt, header or storage output is introduced."
+      }
+     ],
+     "rationale": "Baseline tests need no new assertion. Changed validity outcomes are rework, scored under PAT.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Protocol Adjustment",
+       "summary": "A fixed constant cap that requires no new input or output fields."
+      }
+     ],
+     "rationale": "The cap is a fork-dependent constant. Rejected transactions are reported through the existing rejection or exception reporting. No interface change is required.",
+     "confidence": "medium",
+     "uncertainty_note": "A new error identifier (`MAX_GAS_LIMIT_EXCEEDED`) may need to be mapped in exception reporting. That is a value, not a field change.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas Cap — \"rejected with an appropriate error code (e.g., `MAX_GAS_LIMIT_EXCEEDED`)\"",
+       "summary": "Introduces a new transaction rejection reason."
+      }
+     ],
+     "rationale": "The framework needs a local extension: a new transaction-exception value and a fork-dependent cap constant. No new abstraction is required.",
+     "confidence": "medium",
+     "uncertainty_note": "This could be 0 if a new exception value is not considered an extension of a primitive.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No cryptographic content."
+      }
+     ],
+     "rationale": "No cryptographic changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Changes to EVM Behavior — \"`gasLimit` > 30 million\"",
+       "summary": "A single threshold: a gasLimit of exactly 30M is valid and 30M+1 is invalid."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Protocol Adjustment — \"independent of the block gas limit\"",
+       "summary": "The cap applies independently of the block gas limit."
+      }
+     ],
+     "rationale": "There is one boundary-sensitive mechanism: the per-transaction gasLimit threshold at 30,000,000. It must be tested with block gas limits above and below the cap and across transaction types, but it remains a single mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Changes to EVM Behavior — Block Validation \"before processing, any block having a transaction with `gasLimit` > 30 million is deemed invalid\"",
+       "summary": "Adds a block validation rule that is checked before execution and depends only on each transaction's gasLimit field."
+      }
+     ],
+     "rationale": "One simple, local block-validation rule is added: a check on a single transaction field, done before processing and tested through block import. Level 1 fits.",
+     "confidence": "medium",
+     "uncertainty_note": "This could be seen as an ordinary transaction-validity rule rather than structural block validation (0).",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API changes are specified."
+      }
+     ],
+     "rationale": "No Engine API field or endpoint changes. Payloads with an oversized transaction are rejected as invalid through the existing status rules.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No contracts are introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contracts are referenced."
+      }
+     ],
+     "rationale": "No system contract rules change. Whether the cap applies to system calls is not stated (see UNSP), but the cap is defined for transactions only.",
+     "confidence": "medium",
+     "uncertainty_note": "If the cap were read as applying to system calls, existing system-call conventions might be affected.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new instructions."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction semantics change."
+      }
+     ],
+     "rationale": "Opcode semantics are unchanged. The GASLIMIT opcode still reports the block gas limit.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only constrains the value of the existing gasLimit field."
+      }
+     ],
+     "rationale": "No schema or codec change. Only the range of valid values for an existing field changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new transaction envelope."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas Cap — \"Transactions specifying gas limits higher than 30 million gas will be rejected\"",
+       "summary": "Adds an upper bound on the existing gasLimit field for all transactions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Changes to EVM Behavior — Block Validation",
+       "summary": "The bound is a consensus rule enforced at block validation."
+      }
+     ],
+     "rationale": "Only a local bound on an existing field is added. There is no new validation dependency or sequence, and existing transaction-validity test construction can be reused. Level 1 fits.",
+     "confidence": "medium",
+     "uncertainty_note": "The ordering against other gas-limit checks (for example gasLimit > block gas limit, or intrinsic gas) is not specified, which may need dedicated cases (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state migration or code installation is specified."
+      }
+     ],
+     "rationale": "Activation only selects the new rule. There is no one-time state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"Validation Overhead\"",
+       "summary": "The cap is meant to bound the worst-case execution time of a single transaction."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — Why 30 Million?",
+       "summary": "The value is chosen relative to typical block sizes."
+      }
+     ],
+     "rationale": "The changed resource bound is the maximum gas per transaction. Worst-case single-transaction benchmarks must be re-baselined to the 30M cap, and benchmark workloads that use larger single transactions must be split. These are component-level checks that do not add new resource coupling.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — DoS Mitigation",
+       "summary": "A fixed cap limits the DoS potential of a single transaction."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Changes to EVM Behavior — Txpool Validation / Block Validation",
+       "summary": "Enforcement must be consistent between the txpool and block validation."
+      }
+     ],
+     "rationale": "The new check can be validated locally. The security risk is a consensus split if clients enforce the boundary inconsistently (> versus >=, or not at all at block import). No assumptions used by other components change.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"maximum gas usage per transaction\"",
+       "summary": "The abstract talks about gas used, while the specification checks the gasLimit field."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas Cap — \"(e.g., `MAX_GAS_LIMIT_EXCEEDED`)\"",
+       "summary": "The error code is given only as an example."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Does not address system calls, check ordering, or a named constant or activation."
+      }
+     ],
+     "rationale": "Several localized details are omitted: the precedence of this check relative to other validity checks, whether protocol system calls are exempt, and the exact error identifier. The normative Specification section consistently uses gasLimit > 30M, which supports one intended outcome for consensus validity. Level 1 fits.",
+     "confidence": "medium",
+     "uncertainty_note": "If the 'gas usage' wording in the abstract were taken as normative, competing outcomes would arise (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Protocol Adjustment — \"independent of the block gas limit\"",
+       "summary": "The cap coexists with the existing block-gas-limit validity rules."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas Cap — \"any single transaction\"",
+       "summary": "The cap applies to all transaction types defined by earlier EIPs."
+      }
+     ],
+     "rationale": "The cap must be checked for compatibility across all existing typed transactions and alongside the existing transaction gasLimit-versus-block-gas-limit rule. These are local compatibility checks, and the cap can otherwise be tested independently. No candidate EIPs were supplied.",
+     "confidence": "medium",
+     "uncertainty_note": "Interactions with intrinsic or floor gas rules that might require gasLimit > 30M for large calldata or initcode are not discussed in the supplied text.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [],
+    "unidentified_interactions": [
+     "Applies to every existing transaction type (legacy and typed). Local checks are needed so that each type is rejected above 30M and accepted at 30M.",
+     "Coexists with the existing rule that a transaction's gasLimit must not exceed the remaining block gas. Precedence when both are violated, and behavior when the block gas limit is below 30M, need local checks.",
+     "Intrinsic-gas rules for large calldata or contract-creation initcode may push the required gasLimit above 30M, making such transactions impossible. This is mentioned only as 'large contract deployments' needing re-architecting."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The normative rule (reject when gasLimit > 30,000,000) is clear. Missing details include: precedence relative to other validity checks, whether protocol system calls are exempt, the exact error identifier, and wording in the abstract ('gas usage') that differs from the gasLimit-based specification.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "evm_gas_rule_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "block_syncing_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "modified_system_contracts",
+      "minimum_score": 0,
+      "maximum_score": 1
+     }
+    ],
+    "unresolved_questions": [
+     "Is the cap on the gasLimit field (Specification) or on gas actually used (Abstract)?",
+     "Does the cap apply to protocol system calls that execute with their own gas budgets?",
+     "What is the precedence when a transaction exceeds both the 30M cap and the available block gas, or fails intrinsic-gas checks?",
+     "Is the error code normative, or only illustrative?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The Abstract says 'maximum gas usage per transaction' while the Specification checks the gasLimit field.",
+    "The error code `MAX_GAS_LIMIT_EXCEEDED` is given only as an example ('e.g.').",
+    "Applicability to system calls and the ordering against other validity checks are not specified.",
+    "The section titled 'Changes to EVM Behavior' contains only txpool and block-validation rules; it changes no EVM execution."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 16980,
+  "type": "result",
+  "duration_ms": 113708,
+  "uuid": "f2bbdeb8-28ad-455c-a6d3-450347141ceb",
+  "ttft_stream_ms": 1112,
+  "time_to_request_ms": 391,
+  "first_content_frame_ms": 1113,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}
