@@ -50,7 +50,7 @@ The EIP-8081 Scheduled (SFI), Considered (CFI) and Proposed (PFI) for Inclusion 
 
 - `prospective/inputs/cohort.yaml` freezes EIP-8081's blob and the 35 entries with their list (2 SFI, 12 CFI, 21 PFI).
 - `prospective/inputs/cohort-review.yaml` applies Task 08's layer-applicability gate. Dispositions the project owner approved in Task 08 are reused; the seven EIPs added since are proposed by the coordinator and marked `proposed_pending_owner_review`. Consensus-only and informational, nonbinding entries are `not_applicable_to_el_rubric` and get no score or tier.
-- Packages follow Task 08's package policy through the Task 05 `supporting_documents` engine at the snapshot commit; consensus-spec links stay provenance only. The prompt's baseline is Amsterdam plus the changes the EIP requires.
+- Packages follow Task 08's package policy through the Task 05 `supporting_documents` engine at the snapshot commit; consensus-spec links stay provenance only. A linked EIP number that is absent from `ethereum/EIPs` but present in `ethereum/ERCs` is supplied from ERCs `f2f4ff22452dec9d340ba9b8b1ee33c962a613d6`, the last ERCs commit before the EIPs snapshot (2026-10-06T22:00:13Z); this adds ERC-7562 to EIP-8141. Any other absent reference is listed to the model as not supplied. The prompt's baseline is Amsterdam plus the changes the EIP requires.
 - Outputs: `prospective/outputs/assessments/hegota-2026-10-08/eip-<n>.yaml` and raw JSON under `prospective/outputs/raw/hegota-2026-10-08/`. Each record carries its EIP-8081 list and the EIPs commit.
 
 ## Do not reuse
@@ -68,8 +68,8 @@ From the repository root, with complete clones of `ethereum/EIPs` and `ethspecs/
 ```bash
 P=research/tasks/05-retrospective-complexity-assignment
 T=research/tasks/10-opus-v3-reassessment/scripts
-uv run --project $P --locked python $T/prepare.py --eips-repo ../EIPs --pm-repo ../pm
-uv run --project $P --locked python $T/prepare.py --eips-repo ../EIPs --pm-repo ../pm --check
+uv run --project $P --locked python $T/prepare.py --eips-repo ../EIPs --ercs-repo ../ERCs --pm-repo ../pm
+uv run --project $P --locked python $T/prepare.py --eips-repo ../EIPs --ercs-repo ../ERCs --pm-repo ../pm --check
 uv run --project $P --locked python $T/run.py --only shanghai/3855 amsterdam/7928 hegota/8141   # pilot
 uv run --project $P --locked python $T/run.py                                                  # all; resumes
 uv run --project $P --locked python $T/validate.py

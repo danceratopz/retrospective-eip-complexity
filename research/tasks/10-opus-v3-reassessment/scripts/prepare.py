@@ -552,7 +552,44 @@ def snapshot_supporting(
         for leftover in sorted(target.rglob("*"), reverse=True):
             leftover.unlink() if leftover.is_file() else leftover.rmdir()
         target.rmdir() if target.exists() else None
-    return supporting, provenance_only, unavailable
+    still_unavailable = []
+    for number in unavailable:
+        record = linked_erc(number, package_dir)
+        if record:
+            supporting.append(record)
+        else:
+            still_unavailable.append(number)
+    return supporting, provenance_only, still_unavailable
+
+
+ERCS_REPO: Path | None = None
+
+
+def linked_erc(number: int, package_dir: Path) -> dict[str, Any] | None:
+    """A linked EIP number that moved to ethereum/ERCs, pinned at the configured ERCs snapshot commit."""
+    pin = common.config()["prospective"].get("ercs")
+    if not pin or ERCS_REPO is None:
+        return None
+    path = f"ERCS/erc-{number}.md"
+    try:
+        data, blob = package_engine.git_blob(ERCS_REPO, pin["commit"], path)
+    except InputError:
+        return None
+    if package_engine.git_commit_time(ERCS_REPO, pin["commit"]) != pin["committed_at"]:
+        raise InputError("ERCs commit time differs from config")
+    output = package_dir / "supporting" / f"erc-{number}.md"
+    write(output, data)
+    return {
+        "kind": "linked_erc",
+        "repository": "ethereum/ERCs",
+        "commit": pin["commit"],
+        "commit_time": pin["committed_at"],
+        "path": path,
+        "git_blob_sha": blob,
+        "content_sha256": sha256(data),
+        "immutable_url": f"https://github.com/ethereum/ERCs/blob/{pin['commit']}/{path}",
+        "package_path": output.relative_to(package_dir).as_posix(),
+    }
 
 
 PROVENANCE_REASON = (
@@ -566,14 +603,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--eips-repo", type=Path, required=True)
     parser.add_argument("--pm-repo", type=Path, required=True)
     parser.add_argument("--external-repo", action="append", default=[], metavar="REPOSITORY=PATH")
+    parser.add_argument("--ercs-repo", type=Path, help="ethereum/ERCs clone for linked EIPs that moved to ERCs")
     parser.add_argument("--check", action="store_true", help="Require byte-identical regeneration")
     return parser.parse_args()
 
 
 def main() -> int:
-    global CHECK
+    global CHECK, ERCS_REPO
     args = parse_args()
     CHECK = args.check
+    ERCS_REPO = args.ercs_repo.resolve() if args.ercs_repo else None
+    if common.config()["prospective"].get("ercs") and ERCS_REPO is None:
+        raise InputError("config pins an ERCs commit; pass --ercs-repo")
     view, manifest = prepare_rubric(args.pm_repo.resolve())
     retro = prepare_retrospective(view, manifest)
     prospective = prepare_prospective(
