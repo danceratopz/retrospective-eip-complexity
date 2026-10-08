@@ -10,6 +10,7 @@ const { spec, label, description, fit = false, compact = false } = Astro.props;
 </figure>
 <script>
   import embed from 'vega-embed';
+  import { THEME_EVENT, themedSpec } from '../lib/theme';
 
   function fittedSpec(rawSpec: any, element: HTMLElement) {
     const spec = structuredClone(rawSpec);
@@ -46,6 +47,9 @@ const { spec, label, description, fit = false, compact = false } = Astro.props;
     element.dataset.overflow = element.scrollWidth > element.clientWidth + 1 ? 'true' : 'false';
   }
 
+  const loaded = new Map<HTMLElement, any>();
+  const draw = (element: HTMLElement, spec: any) => embed(element, themedSpec(fittedSpec(spec, element)), { actions: false, renderer: 'svg' });
+
   for (const element of document.querySelectorAll<HTMLElement>('[data-vega-spec]:not([data-rendered])')) {
     element.setAttribute('data-rendered', 'true');
     const status = element.querySelector('.chart-status');
@@ -54,11 +58,15 @@ const { spec, label, description, fit = false, compact = false } = Astro.props;
         if (!response.ok) throw new Error(`Chart request failed: ${response.status}`);
         return response.json();
       })
-      .then((spec) => embed(element, fittedSpec(spec, element), { actions: false, renderer: 'svg' }))
+      .then((spec) => { loaded.set(element, spec); return draw(element, spec); })
       .then(() => {
         markOverflow(element);
         new ResizeObserver(() => markOverflow(element)).observe(element);
       })
       .catch((error) => { if (status) status.textContent = `Chart unavailable: ${error.message}`; });
   }
+
+  document.addEventListener(THEME_EVENT, () => {
+    for (const [element, spec] of loaded) draw(element, spec).then(() => markOverflow(element));
+  });
 </script>

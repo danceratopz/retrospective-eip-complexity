@@ -117,12 +117,12 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
 
 <style>
   .explorer-controls { display: grid; gap: 1rem; margin-block: 1rem; }
-  .explorer-controls fieldset { border: 1px solid var(--border, #cbd5e1); border-radius: 8px; padding: 0.75rem 1rem; min-width: 0; }
+  .explorer-controls fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 0.75rem 1rem; min-width: 0; }
   .evaluation-picker label { display: inline-flex; gap: 0.35rem; align-items: center; margin-inline-end: 1rem; }
   .evaluation-picker details { margin-top: 0.5rem; }
   .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
-  .chip { border: 1px solid var(--border, #94a3b8); border-radius: 999px; padding: 0.35rem 0.9rem; background: transparent; color: inherit; cursor: pointer; font: inherit; }
-  .chip[aria-pressed='true'] { background: var(--accent, #3457d5); border-color: var(--accent, #3457d5); color: #fff; }
+  .chip { border: 1px solid var(--field-line); border-radius: 999px; padding: 0.35rem 0.9rem; background: transparent; color: inherit; cursor: pointer; font: inherit; }
+  .chip[aria-pressed='true'] { background: var(--button-bg); border-color: var(--button-bg); color: var(--on-accent); }
   .chip-meta { font-size: 0.8em; opacity: 0.85; }
   .hegota-readout { font-weight: 600; margin: 0.25rem 0 0.5rem; }
   .hegota-eip-group { border: 0; padding: 0; margin: 0.75rem 0 0; }
@@ -134,6 +134,7 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
 <script>
   import embed from 'vega-embed';
   import { stackedBarHtml } from '../lib/stacked-bar';
+  import { THEME_EVENT, chartColors, chartConfig } from '../lib/theme';
 
   const root = document.querySelector<HTMLElement>('[data-shipping-explorer]');
   if (root) {
@@ -174,6 +175,7 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
     function spec(total: number, count: number) {
       const evaluation = payload.evaluations[state.evaluation];
       const showHegota = state.evaluation === payload.builder_evaluation && count > 0;
+      const c = chartColors();
       const forkMax = Math.max(...evaluation.rows.map((row: any) => row.total_score));
       const domainMax = Math.ceil((Math.max(forkMax, showHegota ? total : 0) * 1.15) / 50) * 50;
       const band = evaluation.fit.band
@@ -195,19 +197,19 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
         width,
         height: Math.round(width * 0.8),
         layer: [
-          { data: { values: band }, mark: { type: 'area', color: '#94a3b8', opacity: 0.22 }, encoding: { x, y: { ...y, field: 'lower' }, y2: { field: 'upper' } } },
-          { data: { values: band }, mark: { type: 'line', color: '#64748b', strokeDash: [6, 4], strokeWidth: 1.5 }, encoding: { x, y: { ...y, field: 'fit' } } },
-          { data: { values: points.filter((row: any) => !row.projected) }, mark: { type: 'point', filled: true, size: 130, color: '#3457d5', stroke: 'white', strokeWidth: 1 }, encoding: { x, y: { ...y, field: 'shipping_days' }, tooltip } },
-          { data: { values: points.filter((row: any) => row.projected) }, mark: { type: 'point', filled: false, size: 150, strokeWidth: 2.5, color: '#3457d5' }, encoding: { x, y: { ...y, field: 'shipping_days' }, tooltip } },
-          { data: { values: points }, mark: { type: 'text', align: 'left', dx: 8, fontSize: 11 }, encoding: { x, y: { ...y, field: 'shipping_days' }, text: { field: 'fork_short' } } },
+          { data: { values: band }, mark: { type: 'area', color: c.band, opacity: 0.25 }, encoding: { x, y: { ...y, field: 'lower' }, y2: { field: 'upper' } } },
+          { data: { values: band }, mark: { type: 'line', color: c.fit, strokeDash: [6, 4], strokeWidth: 1.5 }, encoding: { x, y: { ...y, field: 'fit' } } },
+          { data: { values: points.filter((row: any) => !row.projected) }, mark: { type: 'point', filled: true, size: 130, color: c.point, stroke: c.surface, strokeWidth: 1 }, encoding: { x, y: { ...y, field: 'shipping_days' }, tooltip } },
+          { data: { values: points.filter((row: any) => row.projected) }, mark: { type: 'point', filled: false, size: 150, strokeWidth: 2.5, color: c.point }, encoding: { x, y: { ...y, field: 'shipping_days' }, tooltip } },
+          { data: { values: points }, mark: { type: 'text', align: 'left', dx: 8, fontSize: 11, color: c.ink }, encoding: { x, y: { ...y, field: 'shipping_days' }, text: { field: 'fork_short' } } },
           ...(showHegota
             ? [
-                { data: { values: [{ x: total }] }, mark: { type: 'rule', color: '#b45309', strokeWidth: 2.5, strokeDash: [2, 3] }, encoding: { x, tooltip: [{ field: 'x', title: 'Hegotá scenario total', type: 'quantitative' }] } },
-                { data: { values: [{ x: total, label: `Hegotá scenario: ${total}` }] }, mark: { type: 'text', color: '#b45309', align: total > domainMax * 0.7 ? 'right' : 'left', dx: total > domainMax * 0.7 ? -6 : 6, dy: 8, baseline: 'top', fontWeight: 'bold', fontSize: 12 }, encoding: { x, y: { value: 0 }, text: { field: 'label' } } },
+                { data: { values: [{ x: total }] }, mark: { type: 'rule', color: c.hegota, strokeWidth: 2.5, strokeDash: [2, 3] }, encoding: { x, tooltip: [{ field: 'x', title: 'Hegotá scenario total', type: 'quantitative' }] } },
+                { data: { values: [{ x: total, label: `Hegotá scenario: ${total}` }] }, mark: { type: 'text', color: c.hegota, align: total > domainMax * 0.7 ? 'right' : 'left', dx: total > domainMax * 0.7 ? -6 : 6, dy: 8, baseline: 'top', fontWeight: 'bold', fontSize: 12 }, encoding: { x, y: { value: 0 }, text: { field: 'label' } } },
               ]
             : []),
         ],
-        config: { axis: { labelColor: '#475569', titleColor: '#334155', gridColor: '#e2e8f0' }, view: { stroke: null }, background: null },
+        config: chartConfig(),
       };
     }
 
@@ -271,6 +273,7 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(render, 150);
     }).observe(chart);
+    document.addEventListener(THEME_EVENT, render);
     render();
   }
 </script>
