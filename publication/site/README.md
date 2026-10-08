@@ -39,6 +39,7 @@ compare-index.json  compact per-assessment criterion scores for the client-side 
 | Comparison | `AssessmentCompare.astro` (Human vs LLM on one EIP), `lib/compare-view.ts` + `pages/eips/compare.astro` (up to four EIPs) | Difference-oriented comparison |
 | Status | `StatusBadge`, `EvaluatorBadge`, `TierBadge` | Shared badges so missing, incomplete, and not-applicable states never look like zero |
 | Pages | `pages/eips/[eip].astro` → `EipDetail`; `pages/forks/[fork].astro` and `pages/prospective/hegota.astro` → `ForkPage`; `pages/eips/index.astro` → `OccurrenceTable`; `pages/results/…` → `ForkComposition` | Thin page files over shared components |
+| Slides | `layouts/SlideDeck.astro`, `components/slides/`, `lib/decks/`, `pages/slides/` | Keyboard-driven decks (arrows, F fullscreen, D theme, print) whose numbers come from one per-deck data module over the payload; interim numbers are stamped on every slide that shows them |
 
 ### URL state
 
