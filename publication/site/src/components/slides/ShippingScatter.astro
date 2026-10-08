@@ -1,0 +1,123 @@
+---
+/**
+ * Fork shipping time against complexity at cutoff, with an OLS fit and its 95% confidence band, drawn as
+ * static SVG so it projects and prints without JavaScript. With `lists`, it adds a Hegotá marker whose
+ * position follows the SFI/CFI/PFI toggles rendered beside it.
+ */
+import type { ForkRow, LinearFit, ListSummary } from '../../lib/decks/hegota-scope';
+import { LIST_ORDER } from '../../lib/decks/hegota-scope';
+import { SNAPSHOT_STATUS_LABELS } from '../../lib/labels';
+import { plural } from '../../lib/format';
+
+interface Props {
+  id: string;
+  rows: ForkRow[];
+  fit: LinearFit;
+  stamp?: string;
+  lists?: ListSummary[];
+  label: string;
+}
+
+const { id, rows, fit, stamp, lists, label } = Astro.props as Props;
+const width = 960;
+const height = 470;
+const margin = { left: 78, right: 28, top: 26, bottom: 62 };
+const plotWidth = width - margin.left - margin.right;
+const plotHeight = height - margin.top - margin.bottom;
+
+const observedMax = Math.max(...rows.map((row) => row.total));
+const listMax = lists ? lists.reduce((sum, list) => sum + list.total, 0) : 0;
+const niceStep = (span: number) => [25, 50, 100, 200, 250, 500].find((step) => span / step <= 7) ?? 1000;
+const xStep = niceStep(Math.max(observedMax, listMax) * 1.08);
+const xMax = Math.ceil((Math.max(observedMax, listMax) * 1.08) / xStep) * xStep;
+const yStep = 100;
+const yMax = Math.ceil((Math.max(...rows.map((row) => row.days)) * 1.25) / yStep) * yStep;
+const sx = (value: number) => margin.left + (value / xMax) * plotWidth;
+const sy = (value: number) => margin.top + plotHeight - (value / yMax) * plotHeight;
+const xTicks = Array.from({ length: xMax / xStep + 1 }, (_, index) => index * xStep);
+const yTicks = Array.from({ length: yMax / yStep + 1 }, (_, index) => index * yStep);
+
+const observedMin = Math.min(...rows.map((row) => row.total));
+const bandFrom = Math.max(0, observedMin - (observedMax - observedMin) * 0.15);
+const bandTo = observedMax + (observedMax - observedMin) * 0.15;
+const samples = Array.from({ length: 61 }, (_, index) => bandFrom + (index / 60) * (bandTo - bandFrom));
+const upper = samples.map((x) => `${sx(x).toFixed(1)},${sy(fit.predict(x) + fit.halfWidth(x)).toFixed(1)}`);
+const lower = samples.map((x) => `${sx(x).toFixed(1)},${sy(fit.predict(x) - fit.halfWidth(x)).toFixed(1)}`).reverse();
+const band = [...upper, ...lower].join(' ');
+const fitWithin = `M${sx(0)},${sy(fit.predict(0))} L${sx(observedMax)},${sy(fit.predict(observedMax))}`;
+const fitBeyond = `M${sx(observedMax)},${sy(fit.predict(observedMax))} L${sx(xMax)},${sy(fit.predict(xMax))}`;
+const clipId = `${id}-clip`;
+const description = `${rows.map((row) => `${row.name}: ${row.total} points, ${row.days} days${row.projected ? ' (projected mainnet)' : ''}`).join('; ')}. Least-squares fit slope ${fit.slope.toFixed(2)} days per point, r = ${fit.r.toFixed(2)}, n = ${fit.n}.`;
+---
+<figure class="slide-chart" id={id} data-scatter data-x-max={xMax} data-left={margin.left} data-plot-width={plotWidth}>
+  {lists && (
+    <fieldset class="list-toggles">
+      <legend>Hegotá lists to include</legend>
+      {LIST_ORDER.map((key) => {
+        const list = lists.find((item) => item.key === key)!;
+        return (
+          <label>
+            <input type="checkbox" checked={key === 'SFI'} data-list-total={list.total} data-list-scored={list.scored} data-list-key={key} />
+            <span><strong>{key}</strong> {SNAPSHOT_STATUS_LABELS[key]} <span class="muted">· {list.scored} scored · {list.total}</span></span>
+          </label>
+        );
+      })}
+    </fieldset>
+  )}
+  <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={label}>
+    <desc>{description}</desc>
+    <defs><clipPath id={clipId}><rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} /></clipPath></defs>
+    {yTicks.map((tick) => <g class="grid"><line x1={margin.left} x2={width - margin.right} y1={sy(tick)} y2={sy(tick)} /><text x={margin.left - 10} y={sy(tick) + 5} text-anchor="end">{tick}</text></g>)}
+    {xTicks.map((tick) => <g class="grid"><line x1={sx(tick)} x2={sx(tick)} y1={margin.top} y2={margin.top + plotHeight} /><text x={sx(tick)} y={margin.top + plotHeight + 24} text-anchor="middle">{tick}</text></g>)}
+    <text class="axis-title" x={margin.left + plotWidth / 2} y={height - 10} text-anchor="middle">EL complexity score sum at cutoff</text>
+    <text class="axis-title" transform={`translate(18 ${margin.top + plotHeight / 2}) rotate(-90)`} text-anchor="middle">Days, first ≥2-EL devnet → mainnet</text>
+    <g clip-path={`url(#${clipId})`}>
+      <polygon class="band" points={band} />
+      <path class="fit" d={fitWithin} />
+      <path class="fit extrapolated" d={fitBeyond} />
+    </g>
+    {lists && <rect class="observed-range" x={sx(observedMin)} y={margin.top + plotHeight - 6} width={sx(observedMax) - sx(observedMin)} height="6" />}
+    {rows.map((row) => (
+      <g class:list={['point', row.projected && 'projected']}>
+        <circle cx={sx(row.total)} cy={sy(row.days)} r="9" />
+        <text x={sx(row.total) + 14} y={sy(row.days) + 5}>{row.name}{row.projected && ' (projected)'}</text>
+      </g>
+    ))}
+    {lists && (
+      <g class="hegota-marker" data-hegota-marker transform={`translate(${sx(lists[0].total)} 0)`}>
+        <line x1="0" x2="0" y1={margin.top} y2={margin.top + plotHeight} />
+        <text x="8" y={margin.top + 18} data-hegota-label>Hegotá {lists[0].total}</text>
+      </g>
+    )}
+    {stamp && <text class="stamp" x={width - margin.right - 8} y={margin.top + plotHeight - 14} text-anchor="end">{stamp}</text>}
+  </svg>
+  {lists && <p class="list-readout" aria-live="polite" data-hegota-readout>SFI: {lists[0].total} points across {plural(lists[0].scored, 'scored EIP', 'scored EIPs')}.</p>}
+</figure>
+
+<script>
+  for (const figure of document.querySelectorAll<HTMLElement>('[data-scatter]')) {
+    const marker = figure.querySelector<SVGGElement>('[data-hegota-marker]');
+    if (!marker) continue;
+    const label = figure.querySelector<SVGTextElement>('[data-hegota-label]')!;
+    const readout = figure.querySelector<HTMLElement>('[data-hegota-readout]')!;
+    const boxes = [...figure.querySelectorAll<HTMLInputElement>('[data-list-total]')];
+    const xMax = Number(figure.dataset.xMax);
+    const left = Number(figure.dataset.left);
+    const plotWidth = Number(figure.dataset.plotWidth);
+    const update = () => {
+      const checked = boxes.filter((box) => box.checked);
+      const total = checked.reduce((sum, box) => sum + Number(box.dataset.listTotal), 0);
+      const scored = checked.reduce((sum, box) => sum + Number(box.dataset.listScored), 0);
+      marker.style.display = checked.length ? '' : 'none';
+      marker.setAttribute('transform', `translate(${left + (total / xMax) * plotWidth} 0)`);
+      const name = checked.map((box) => box.dataset.listKey).join(' + ');
+      const flip = total / xMax > 0.75;
+      label.setAttribute('x', flip ? '-8' : '8');
+      label.setAttribute('text-anchor', flip ? 'end' : 'start');
+      label.textContent = `Hegotá ${total}`;
+      readout.textContent = checked.length ? `${name}: ${total} points across ${scored} scored ${scored === 1 ? 'EIP' : 'EIPs'}.` : 'No Hegotá lists selected.';
+    };
+    boxes.forEach((box) => box.addEventListener('change', update));
+    update();
+  }
+</script>

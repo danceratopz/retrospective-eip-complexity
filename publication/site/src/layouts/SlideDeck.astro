@@ -1,0 +1,228 @@
+---
+/**
+ * Presentation layout: full-viewport slides that scroll like a page, with keyboard navigation
+ * (arrows, Page Up/Down, Home/End), F for fullscreen, D for light/dark, ? for help, a progress bar,
+ * and a landscape print stylesheet. Keeps the site's landmarks so every slide stays a
+ * normal page, and shares the site's theme choice (same `theme` storage key and `data-theme` attributes).
+ */
+import '../styles/global.css';
+import Tooltip from '../components/Tooltip.astro';
+import { basePath } from '../lib/data.js';
+import { criterionCss } from '../lib/criteria';
+import type { DeckEntry } from '../lib/decks';
+
+interface Props {
+  deck: DeckEntry;
+  slides: Array<{ id: string; title: string }>;
+  stamp?: string;
+}
+
+const { deck, slides, stamp } = Astro.props as Props;
+---
+<!doctype html>
+<html lang="en" class="deck-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={deck.summary} />
+    <title>{deck.title} · Slides · Retrospective LLM-Based Complexity Evaluations</title>
+    <style set:html={criterionCss()}></style>
+    <script is:inline>
+      (() => {
+        // Same theme contract as the site layout: follow the system theme until the reader chooses.
+        const root = document.documentElement;
+        const media = matchMedia('(prefers-color-scheme: dark)');
+        let override = null;
+        const stored = () => {
+          try { const value = localStorage.getItem('theme'); return override ?? (value === 'light' || value === 'dark' ? value : null); } catch { return override; }
+        };
+        const apply = () => {
+          const choice = stored();
+          if (choice) root.dataset.theme = choice; else delete root.dataset.theme;
+          const effective = choice ?? (media.matches ? 'dark' : 'light');
+          const changed = Boolean(root.dataset.themeEffective) && root.dataset.themeEffective !== effective;
+          root.dataset.themeEffective = effective;
+          if (changed) document.dispatchEvent(new CustomEvent('themechange', { detail: { theme: effective } }));
+        };
+        window.__setTheme = (theme) => {
+          const choice = theme === (media.matches ? 'dark' : 'light') ? null : theme;
+          try { if (choice) localStorage.setItem('theme', choice); else localStorage.removeItem('theme'); } catch { override = choice ?? (theme === 'dark' ? 'dark' : 'light'); }
+          apply();
+        };
+        media.addEventListener('change', () => { if (!stored()) apply(); });
+        apply();
+      })();
+    </script>
+  </head>
+  <body class="deck">
+    <a class="skip-link" href="#content">Skip to slides</a>
+    <div class="deck-progress" aria-hidden="true"><span data-progress></span></div>
+    <header class="deck-header">
+      <a class="deck-brand" href={basePath('slides/')}><span>Slides</span> {deck.title}</a>
+      <nav aria-label="Slides in this deck">
+        <ol class="deck-nav">
+          {slides.map((slide, index) => <li><a href={`#${slide.id}`} data-slide-link={slide.id} title={slide.title}><span class="visually-hidden">{slide.title}, slide </span>{index + 1}</a></li>)}
+        </ol>
+      </nav>
+      <div class="deck-tools">
+        {stamp && <span class="deck-stamp">{stamp}</span>}
+        <button type="button" data-action="prev" aria-label="Previous slide">←</button>
+        <span class="deck-count" aria-live="polite" data-count>1 / {slides.length}</span>
+        <button type="button" data-action="next" aria-label="Next slide">→</button>
+        <button class="deck-theme" type="button" data-theme-toggle aria-pressed="false" aria-label="Dark mode" title="Switch between light and dark mode (D)">
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 14.5A9 9 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5Z" /></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor" /><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" /></svg>
+        </button>
+        <button type="button" data-action="help" aria-label="Keyboard shortcuts">?</button>
+      </div>
+    </header>
+    <main id="content" class="deck-main"><slot /></main>
+    <dialog class="deck-help" data-help>
+      <h2>Keyboard</h2>
+      <dl>
+        <dt>→ · Page Down</dt><dd>Next slide</dd>
+        <dt>← · Page Up</dt><dd>Previous slide</dd>
+        <dt>Home · End</dt><dd>First or last slide</dd>
+        <dt>F</dt><dd>Toggle fullscreen</dd>
+        <dt>D</dt><dd>Toggle light or dark mode</dd>
+      </dl>
+      <form method="dialog"><button>Close</button></form>
+    </dialog>
+    <Tooltip />
+    <script>
+      const sections = [...document.querySelectorAll<HTMLElement>('.slide')];
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-slide-link]')];
+      const count = document.querySelector<HTMLElement>('[data-count]')!;
+      const progress = document.querySelector<HTMLElement>('[data-progress]')!;
+      const help = document.querySelector<HTMLDialogElement>('[data-help]')!;
+      let current = Math.max(0, sections.findIndex((section) => `#${section.id}` === location.hash));
+
+      const mark = (index: number) => {
+        current = index;
+        count.textContent = `${index + 1} / ${sections.length}`;
+        progress.style.width = `${((index + 1) / sections.length) * 100}%`;
+        links.forEach((link, linkIndex) => (linkIndex === index ? link.setAttribute('aria-current', 'step') : link.removeAttribute('aria-current')));
+      };
+      const go = (index: number) => {
+        const target = sections[Math.min(Math.max(index, 0), sections.length - 1)];
+        target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+        history.replaceState(null, '', `#${target.id}`);
+        mark(sections.indexOf(target));
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) if (entry.isIntersecting) mark(sections.indexOf(entry.target as HTMLElement));
+        },
+        { rootMargin: '-45% 0px -45% 0px' },
+      );
+      sections.forEach((section) => observer.observe(section));
+      mark(current);
+
+      document.querySelector('[data-action="prev"]')!.addEventListener('click', () => go(current - 1));
+      document.querySelector('[data-action="next"]')!.addEventListener('click', () => go(current + 1));
+      document.querySelector('[data-action="help"]')!.addEventListener('click', () => help.showModal());
+      const themeButton = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!;
+      const syncTheme = () => themeButton.setAttribute('aria-pressed', String(document.documentElement.dataset.themeEffective === 'dark'));
+      const toggleTheme = () => {
+        (window as any).__setTheme(document.documentElement.dataset.themeEffective === 'dark' ? 'light' : 'dark');
+        syncTheme();
+      };
+      themeButton.addEventListener('click', toggleTheme);
+      document.addEventListener('themechange', syncTheme);
+      syncTheme();
+      addEventListener('keydown', (event) => {
+        const target = event.target as HTMLElement;
+        const typing = /TEXTAREA|SELECT/.test(target.tagName) || (target instanceof HTMLInputElement && !['checkbox', 'radio', 'button'].includes(target.type));
+        if (help.open || typing || event.ctrlKey || event.metaKey || event.altKey) return;
+        const key = event.key;
+        if (key === 'ArrowRight' || key === 'PageDown') { event.preventDefault(); go(current + 1); }
+        else if (key === 'ArrowLeft' || key === 'PageUp') { event.preventDefault(); go(current - 1); }
+        else if (key === 'Home') { event.preventDefault(); go(0); }
+        else if (key === 'End') { event.preventDefault(); go(sections.length - 1); }
+        else if (key.toLowerCase() === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
+        else if (key.toLowerCase() === 'd') toggleTheme();
+        else if (key === '?') help.showModal();
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .deck-root { scroll-snap-type: y proximity; scroll-padding-top: var(--deck-header); --deck-header: 3.4rem; }
+  .deck { background: var(--paper); --header-bg: rgb(255 255 255 / 94%); --other-eips: #a9b4cf; --other-eips-ink: #17202a; }
+  :root[data-theme-effective="dark"] .deck { --header-bg: rgb(17 21 27 / 94%); --other-eips: #3b4558; --other-eips-ink: #e6e9ee; }
+  .visually-hidden { clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
+  .deck-progress { height: 3px; left: 0; position: fixed; right: 0; top: 0; z-index: 30; }
+  .deck-progress span { background: var(--accent); display: block; height: 100%; transition: width .2s ease; width: 0; }
+  .deck-header { align-items: center; display: flex; gap: 1.25rem; height: var(--deck-header); justify-content: space-between; left: 0; padding: 0 1.25rem; position: fixed; right: 0; top: 0; z-index: 20; background: var(--header-bg); }
+  .deck-brand { color: var(--ink); font-size: .9rem; font-weight: 700; overflow: hidden; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+  .deck-brand span { color: var(--accent-dark); font-size: .72rem; font-weight: 800; letter-spacing: .12em; margin-right: .4rem; text-transform: uppercase; }
+  .deck-nav { display: flex; gap: .3rem; list-style: none; margin: 0; padding: 0; }
+  .deck-nav a { border: 1px solid var(--line); border-radius: 999px; color: var(--muted); display: inline-grid; font-size: .78rem; font-weight: 700; height: 1.75rem; place-items: center; text-decoration: none; width: 1.75rem; }
+  .deck-nav a[aria-current] { background: var(--accent-dark); border-color: var(--accent-dark); color: white; }
+  .deck-tools { align-items: center; display: flex; gap: .45rem; white-space: nowrap; }
+  .deck-tools button { background: var(--surface); border: 1px solid var(--line); border-radius: .4rem; color: var(--ink); cursor: pointer; font: inherit; font-size: .85rem; padding: .2rem .55rem; }
+  .deck-theme { display: inline-grid; place-items: center; }
+  .deck-theme svg { height: 1rem; width: 1rem; }
+  .deck-theme .icon-sun { display: none; }
+  :root[data-theme-effective="dark"] .deck-theme .icon-sun { display: inline; }
+  :root[data-theme-effective="dark"] .deck-theme .icon-moon { display: none; }
+  .deck-count { color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; min-width: 3.2rem; text-align: center; }
+  .deck-stamp, .stamp-chip { background: var(--warn-bg); border: 1px dashed var(--warn-line); border-radius: .35rem; color: var(--warn-ink); font-size: .72rem; font-weight: 800; letter-spacing: .04em; padding: .15rem .5rem; text-transform: uppercase; }
+  .deck-main { max-width: none; padding: 0; }
+  .slide { align-items: center; border-bottom: 1px solid var(--line); display: flex; min-height: 100svh; padding: calc(var(--deck-header) + 1rem) clamp(1.25rem, 5vw, 4.5rem) 1.25rem; scroll-snap-align: start; }
+  .slide-inner { margin: 0 auto; max-width: 1180px; width: 100%; }
+  .slide h1 { font-size: clamp(2.3rem, 5.2vw, 4.6rem); max-width: 20ch; }
+  .slide h2 { font-size: clamp(1.7rem, min(3.2vw, 5.4svh), 2.8rem); margin: 0 0 .8rem; max-width: 40ch; }
+  .slide .lede { font-size: clamp(1.15rem, 2vw, 1.55rem); max-width: 62ch; }
+  .slide .eyebrow { font-size: .85rem; }
+  .slide-points { font-size: clamp(1.1rem, 1.8vw, 1.45rem); line-height: 1.5; max-width: 62ch; padding-left: 1.2em; }
+  .slide-points li + li { margin-top: .7rem; }
+  .slide-links { color: var(--muted); font-size: .95rem; margin: .6rem 0 0; }
+  .slide .caveat { font-size: .95rem; margin: .4rem 0 0; padding: .45rem .9rem; }
+  .deck-help { border: 1px solid var(--line); border-radius: .8rem; padding: 1.4rem 1.8rem; }
+  .deck-help h2 { margin-top: 0; }
+  .deck-help dl { display: grid; gap: .4rem 1.4rem; grid-template-columns: auto 1fr; }
+  .deck-help dt { font-weight: 700; }
+  .deck-help dd { margin: 0; }
+  .slide-chart { margin: 0; }
+  .slide-chart svg { display: block; height: auto; max-height: calc(100svh - var(--deck-header) - var(--chart-reserve, 20rem)); width: 100%; }
+  .slide-chart:has(.list-toggles) { --chart-reserve: 23.5rem; }
+  .slide-chart .grid line { stroke: var(--chart-grid); stroke-width: 1; }
+  .slide-chart .grid text, .slide-chart .axis-title { fill: var(--chart-muted); font-size: 15px; }
+  .slide-chart .axis-title { font-weight: 700; }
+  .slide-chart .band { fill: var(--chart-band); fill-opacity: .22; }
+  .slide-chart .fit { fill: none; stroke: var(--chart-fit); stroke-width: 2.5; }
+  .slide-chart .fit.extrapolated { stroke-dasharray: 6 6; stroke-opacity: .6; }
+  .slide-chart .point circle { fill: var(--chart-point); stroke: var(--chart-point); stroke-width: 2.5; }
+  .slide-chart .point.projected circle { fill: var(--paper); }
+  .slide-chart .point text { fill: var(--chart-ink); font-size: 17px; font-weight: 700; }
+  .slide-chart .observed-range { fill: var(--ink); fill-opacity: .18; }
+  .slide-chart .hegota-marker line { stroke: var(--chart-hegota); stroke-width: 4; }
+  .slide-chart .hegota-marker text { fill: var(--chart-hegota); font-size: 19px; font-weight: 800; }
+  .slide-chart .stamp { fill: var(--warn-ink); font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+  .list-toggles { border: 1px solid var(--line); border-radius: .6rem; display: flex; flex-wrap: wrap; gap: .3rem 1.6rem; margin: 0 0 .4rem; padding: .3rem 1rem .5rem; }
+  .list-toggles legend { color: var(--muted); font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .list-toggles label { align-items: center; cursor: pointer; display: flex; font-size: 1rem; gap: .5rem; }
+  .list-toggles input { accent-color: var(--chart-hegota); height: 1.15rem; width: 1.15rem; }
+  .list-readout { color: var(--chart-hegota); font-size: 1.1rem; font-weight: 700; margin: .4rem 0 0; }
+  @media (max-height: 780px) and (min-width: 861px) {
+    .slide-points { font-size: 1.12rem; line-height: 1.42; }
+    .slide-points li + li { margin-top: .4rem; }
+    .slide h2 { margin-bottom: .5rem; }
+  }
+  @media (max-width: 860px) {
+    .deck-header { flex-wrap: wrap; height: auto; padding: .4rem .9rem; row-gap: .3rem; }
+    .deck-root { --deck-header: 5.6rem; }
+    .deck-nav a { height: 1.5rem; width: 1.5rem; }
+    .deck-stamp { display: none; }
+  }
+  @media print {
+    @page { size: landscape; margin: 0; }
+    .deck-root { scroll-snap-type: none; }
+    .deck-header, .deck-progress, .deck-help, .skip-link { display: none !important; }
+    .slide { break-after: page; height: 100vh; min-height: 0; padding: 8mm 12mm; }
+    .slide-chart svg { max-height: 70vh; }
+  }
+</style>

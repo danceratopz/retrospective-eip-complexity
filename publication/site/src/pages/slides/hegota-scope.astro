@@ -1,0 +1,219 @@
+---
+import SlideDeck from '../../layouts/SlideDeck.astro';
+import Slide from '../../components/slides/Slide.astro';
+import ShippingScatter from '../../components/slides/ShippingScatter.astro';
+import StackedBar from '../../components/StackedBar.astro';
+import { loadPublication, basePath } from '../../lib/data.js';
+import type { Publication } from '../../lib/domain';
+import { deck } from '../../lib/decks';
+import { SCORES, TEMPLATE_V1_URL, TEMPLATE_V2_PR_URL, TEMPLATE_V2_URL, TEMPLATE_V3_PR_URL, TEMPLATE_V3_URL, forkRows, hegotaLists, hegotaSnapshot, linearFit } from '../../lib/decks/hegota-scope';
+
+const data = loadPublication() as Publication;
+const entry = deck('hegota-scope');
+const rows = forkRows(data);
+const fit = linearFit(rows.map((row) => ({ x: row.total, y: row.days })));
+const lists = hegotaLists(data);
+const snapshot = hegotaSnapshot(data);
+const snapshotDate = new Date(snapshot.cutoff).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const forkMax = Math.max(...rows.map((row) => row.total));
+const stamp = SCORES.stamp;
+const eipNumber = (label: string) => Number(label.replace(/\D/g, ''));
+const eipPage = (eip: number, fork: string) => basePath(`eips/${eip}/?fork=${fork}`);
+const EIPS_SITE = 'https://eips.ethereum.org/EIPS/eip-';
+const occurrenceOf = (eip: number, fork: string) => data.eips.find((item) => item.eip === eip)?.occurrences.find((item) => item.fork === fork);
+const scoreOf = (eip: number, fork: string) => occurrenceOf(eip, fork)?.llm?.score ?? 0;
+const titleOf = (eip: number, fork: string) => {
+  const occurrence = occurrenceOf(eip, fork);
+  return occurrence?.default_assessment_id ? data.assessments[occurrence.default_assessment_id]?.title ?? '' : '';
+};
+/** Amsterdam's billed EL headliner, and the EIP that scored like one without the billing. */
+const UNOFFICIAL = { fork: 'amsterdam', headliner: 7928, eip: 8037 };
+const unofficialScore = scoreOf(UNOFFICIAL.eip, UNOFFICIAL.fork);
+const unofficialTitle = titleOf(UNOFFICIAL.eip, UNOFFICIAL.fork);
+interface Highlight { eip: number; score: number; kind: 'headliner' | 'unofficial' }
+const highlightsFor = (row: (typeof rows)[number]): Highlight[] =>
+  row.fork === UNOFFICIAL.fork
+    ? [
+        { eip: UNOFFICIAL.headliner, score: scoreOf(UNOFFICIAL.headliner, row.fork), kind: 'headliner' },
+        { eip: UNOFFICIAL.eip, score: unofficialScore, kind: 'unofficial' },
+      ]
+    : [{ eip: eipNumber(row.heaviestEip), score: row.heaviestScore, kind: 'headliner' }];
+const share = (part: number, whole: number) => `${Math.round((part / whole) * 100)}%`;
+
+const slides = [
+  { id: 'question', title: 'The question' },
+  { id: 'template', title: 'The complexity assessment template' },
+  { id: 'retrospective', title: 'Applying it retrospectively' },
+  { id: 'template-v3', title: 'Pinning the template down' },
+  { id: 'previous-forks', title: 'Previous forks' },
+  { id: 'build-hegota', title: 'Live: build your own Hegotá' },
+  { id: 'closing', title: 'Are we optimizing for the right outcome?' },
+];
+---
+<SlideDeck deck={entry} slides={slides} stamp={stamp}>
+  <Slide id="question" title="The question">
+    <p class="eyebrow">{entry.venue} · Hegotá scoping</p>
+    <h1>Could EIP complexity assessments help size Hegotá?</h1>
+    <p class="lede">How much are we putting into Hegotá, compared with what previous forks actually took to ship?</p>
+    <p class="slide-links">Study site: <a href={basePath('')}>Retrospective LLM-Based Complexity Evaluations</a> · <a href={basePath('prospective/hegota/')}>Hegotá evaluations</a></p>
+  </Slide>
+
+  <Slide id="template" title="The complexity assessment template">
+    <p class="eyebrow">Background</p>
+    <h2>Amsterdam saw the introduction of the “EIP Complexity Assessment Template (v1)”</h2>
+    <p class="lede">The aim was to help gauge how difficult it would be to implement and ship each Execution Layer EIP to mainnet, and to help us size and scope devnets.</p>
+    <div class="template-versions">
+      <div class="template-cards">
+        <div class="card">
+          <p class="eyebrow">v1 · November 2025</p>
+          <p><a href={TEMPLATE_V1_URL}>Template v1</a>: 24 criteria, nominal range 0–72. Used for the human Amsterdam assessments.</p>
+        </div>
+        <div class="card">
+          <p class="eyebrow">v2 · August 2026</p>
+          <p><a href={TEMPLATE_V2_URL}>Template v2</a> (<a href={TEMPLATE_V2_PR_URL}>ethspecs/pm#101</a>): calibrated against the testing work each Amsterdam EIP actually produced. Five new criteria, cross-EIP interactions uncapped: 28 criteria, range 0–84.</p>
+        </div>
+      </div>
+      <div class="card criterion-example">
+        <p class="eyebrow">Example criterion · v1 and v2</p>
+        <p class="criterion-question"><strong>Added opcodes</strong> — Introduces new opcodes</p>
+        <ol class="criterion-choices" role="list">
+          <li><span class="choice-score">0</span>No new opcodes are introduced.</li>
+          <li><span class="choice-score">1</span>A new simple opcode is introduced (no data portion, no complex stack mechanics, and a constant gas cost).</li>
+          <li><span class="choice-score">2</span>Multiple new simple opcodes are introduced, or a single new complex opcode is introduced (has data portion, or complex stack mechanics, or a dynamic gas cost).</li>
+          <li><span class="choice-score">3</span>Multiple new opcodes are introduced, and at least one of them is complex.</li>
+        </ol>
+        <p class="muted criterion-tally">One answer per criterion; the scores add up to the EIP’s total.</p>
+      </div>
+    </div>
+  </Slide>
+
+  <Slide id="retrospective" title="Applying it retrospectively">
+    <p class="eyebrow">The study</p>
+    <h2>A retrospective study to gauge the reliability of the complexity assessments</h2>
+    <ul class="slide-points">
+      <li>Score every EIP of previous forks retrospectively: does total fork complexity track how long the fork took to ship? <strong>Is there any signal?</strong></li>
+      <li>By hand that is a huge amount of work; with LLMs it is very feasible, and assessments are already AI-assisted anyway.</li>
+      <li>Fully automated: same model (Claude Opus 5.5), template and sandbox for every EIP, each read at its fork’s scoping version; Hegotá at current EIPs master.</li>
+      <li><strong>It estimates testing and specification work, not engineering hours.</strong></li>
+      <li><strong>Execution Layer only:</strong> the templates assess EL effort, so consensus-layer work such as <a href={`${EIPS_SITE}7732`}>ePBS (EIP-7732)</a> is not counted.</li>
+    </ul>
+    <p class="slide-links">{stamp && <><span class="stamp-chip">{stamp}</span> </>}More: <a href={basePath('study/')}>Study design and limitations</a> · <a href={basePath('human-vs-llm/')}>Human vs LLM on Amsterdam</a> · <a href="https://steel.ethereum.foundation/">STEEL</a></p>
+  </Slide>
+
+  <Slide id="template-v3" title="Pinning the template down">
+    <p class="eyebrow">Template v3 · <a href={TEMPLATE_V3_PR_URL}>ethspecs/pm#147</a> (open)</p>
+    <h2>Humans read the template well; LLMs need less room to read between the lines</h2>
+    <p class="lede"><a href={TEMPLATE_V3_URL}>Template v3</a> keeps the same 28 criteria and scores, but pins down what each one means.</p>
+    <div class="criterion-diff">
+      <div class="criterion-diff-head"><span></span><strong>v2</strong><strong>v3</strong></div>
+      <div class="criterion-diff-row">
+        <p class="criterion-name"><code>+OP</code> Added opcodes</p>
+        <p>“Introduces new opcodes.”</p>
+        <p>Introduces previously undefined EVM instructions. <mark>Contract bytecode, transaction frames and new introspection selector values are not new opcodes.</mark> <mark>A prerequisite’s instruction already exists in the baseline.</mark></p>
+      </div>
+      <div class="criterion-diff-row">
+        <p class="criterion-name"><code>INV</code> New invariant on pre-existing tests</p>
+        <p>“Tests that are not about this EIP must nonetheless assert something this EIP produces.” Level 1: “a narrow, contrived category”; level 2: “a broad category”.</p>
+        <p>Baseline tests must check <mark>an output that did not exist before</mark>, such as a new log, header or receipt field, block commitment or protocol-mandated storage write. <mark>Changed gas costs or expected values are rework, not a new assertion.</mark></p>
+      </div>
+    </div>
+  </Slide>
+
+  <Slide id="previous-forks" title="Previous forks">
+    <p class="eyebrow">Previous forks · EL side only {stamp && <span class="stamp-chip">{stamp}</span>}</p>
+    <h2>Forks vary a lot, and big forks are dominated by one or two headliners</h2>
+    <div class="fork-bars" role="list">
+      {rows.map((row) => {
+        const highlights = highlightsFor(row);
+        const others = row.total - highlights.reduce((sum, item) => sum + item.score, 0);
+        return (
+          <div class="fork-bar" role="listitem">
+            <div class="fork-bar-name"><strong>{row.name}</strong><span class="muted">{row.eipCount} EIPs</span></div>
+            <StackedBar
+              segments={[
+                ...highlights.map((item) => ({
+                  id: `eip-${item.eip}`,
+                  score: item.score,
+                  color: item.kind === 'unofficial' ? 'var(--chart-hegota)' : 'var(--accent-dark)',
+                  ink: 'var(--paper)',
+                  abbreviation: `EIP-${item.eip}${item.kind === 'unofficial' ? ' ★' : ''}`,
+                  detail: `${item.kind === 'unofficial' ? 'Unofficial headliner' : row.fork === UNOFFICIAL.fork ? 'Official EL headliner' : 'Heaviest EIP'}: ${share(item.score, row.total)} of the fork`,
+                })),
+                { id: 'rest', score: others, color: 'var(--other-eips)', ink: 'var(--other-eips-ink)', abbreviation: 'Other EIPs', detail: `${row.eipCount - highlights.length} other EIPs` },
+              ]}
+              definitions={Object.fromEntries([...highlights.map((item) => [`eip-${item.eip}`, `EIP-${item.eip} ${titleOf(item.eip, row.fork)}`.trim()]), ['rest', 'Other EIPs']])}
+              total={row.total}
+              max={forkMax}
+              size="large"
+              label={`${row.name} EL complexity at cutoff`}
+              showTotal={true}
+            />
+            <span class="fork-bar-share muted">
+              {highlights.map((item, index) => (
+                <>{index > 0 && <br />}<a class:list={[item.kind === 'unofficial' && 'unofficial']} href={eipPage(item.eip, row.fork)}>EIP-{item.eip}</a>: {item.score} ({share(item.score, row.total)}){item.kind === 'unofficial' && <span class="unofficial"> ★</span>}</>
+              ))}
+            </span>
+            {row.fork === UNOFFICIAL.fork && (
+              <p class="ghost-headliner"><span>+ <a href={`${EIPS_SITE}7732`}>ePBS (EIP-7732)</a></span> Amsterdam’s CL headliner, invisible to an EL-only rubric</p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+    <p class="muted">EL complexity score sum of EIPs included by each fork’s evaluation cutoff. Blue: heaviest EIP (Amsterdam: the official EL headliner, BALs). <span class="unofficial">Amber ★: EIP-{UNOFFICIAL.eip}{unofficialTitle && `, ${unofficialTitle}`}, Amsterdam’s unofficial headliner.</span></p>
+  </Slide>
+
+  <Slide id="build-hegota" title="Live: build your own Hegotá">
+    <p class="eyebrow">Live demo {stamp && <span class="stamp-chip">{stamp}</span>}</p>
+    <h2>This is where the current scope sits <span class="aside">(place your bets)</span></h2>
+    <ShippingScatter id="build-scatter" rows={rows} fit={fit} stamp={stamp} lists={lists} label="Historical forks with fit and band; a movable marker shows the Hegotá complexity total for the selected lists" />
+    <p class="caveat"><strong>Very uncertain.</strong> Five data points, scope still changing, and the model knows how past forks turned out. The grey strip marks the range past forks cover; beyond it the dashed line is extrapolation. Lists as of {snapshotDate} (<a href={`https://github.com/ethereum/EIPs/tree/${snapshot.eipsCommit}`}>EIPs {snapshot.eipsCommit.slice(0, 7)}</a>); every candidate: <a href={basePath('prospective/hegota/')}>Hegotá evaluations</a>.</p>
+  </Slide>
+
+  <Slide id="closing" title="Are we optimizing for the right outcome?" class="closing">
+    <h2>Are we optimizing for the right outcome?</h2>
+    <ul class="slide-points">
+      <li>Complexity scores provide signals — but imo these numbers aren’t the goal.</li>
+      <li>There’s a bigger opportunity here…</li>
+      <li>We should optimize this scoping process for hardening specs faster: giving authors concrete feedback.</li>
+      <li>The question isn’t whether we use automated tooling and human judgment, but how we combine them most effectively.</li>
+    </ul>
+    <p class="slide-links">Links: <a href={basePath('')}>study site</a> · <a href={basePath('slides/hegota-scope/')}>these slides</a> · <a href={TEMPLATE_V3_PR_URL}>template v3 (ethspecs/pm#147)</a> · <a href="https://github.com/danceratopz/retrospective-eip-complexity">source</a> · <a href="https://steel.ethereum.foundation/">STEEL</a></p>
+  </Slide>
+</SlideDeck>
+
+<style>
+  .fork-bars { display: grid; gap: .9rem; margin: 1.2rem 0; }
+  .fork-bar { align-items: center; display: grid; gap: 1rem; grid-template-columns: 11rem minmax(0, 1fr) 12rem; }
+  .fork-bar-name { display: grid; font-size: 1.1rem; line-height: 1.3; }
+  .fork-bar-name .muted { font-size: .88rem; }
+  .fork-bar-share { font-size: .95rem; text-align: right; }
+  .template-versions { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); margin-top: .8rem; }
+  .template-cards { display: grid; gap: 1rem; }
+  .template-versions .card { font-size: 1.02rem; padding: .9rem 1.1rem; }
+  .template-versions .eyebrow { margin: 0 0 .3rem; }
+  .template-versions p:last-child { margin-bottom: 0; }
+  .criterion-question { font-size: 1.15rem; margin: 0 0 .5rem; }
+  .criterion-choices { display: grid; gap: .35rem; list-style: none; margin: 0; padding: 0; }
+  .criterion-choices li { align-items: baseline; display: grid; gap: .6rem; grid-template-columns: 1.7rem 1fr; line-height: 1.35; }
+  .choice-score { background: var(--accent-dark); border-radius: .3rem; color: var(--paper); font-weight: 800; text-align: center; }
+  .criterion-tally { font-size: .9rem; margin-top: .6rem; }
+  .criterion-diff { border: 1px solid var(--line); border-radius: .7rem; font-size: 1.02rem; overflow: hidden; }
+  .criterion-diff-head, .criterion-diff-row { display: grid; gap: 1.2rem; grid-template-columns: 13rem minmax(0, 1fr) minmax(0, 1.4fr); padding: .6rem 1rem; }
+  .criterion-diff-head { background: var(--soft); color: var(--muted); font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; }
+  .criterion-diff-row + .criterion-diff-row { border-top: 1px solid var(--line); }
+  .criterion-diff-row p { margin: 0; }
+  .criterion-name { font-weight: 700; }
+  .criterion-diff mark { background: var(--info-bg); border-radius: .2rem; color: inherit; padding: 0 .15rem; }
+  .unofficial { color: var(--chart-hegota); font-weight: 700; }
+  .ghost-headliner { color: var(--muted); font-size: .92rem; grid-column: 2 / -1; margin: -.45rem 0 0; }
+  .ghost-headliner span { border: 2px dashed var(--line); border-radius: .3rem; color: var(--ink); display: inline-block; font-weight: 700; margin-right: .5rem; padding: .05rem .6rem; }
+  .aside { color: var(--muted); font-size: .55em; font-weight: 600; letter-spacing: 0; }
+  .closing .slide-points { font-size: clamp(1.05rem, 1.7vw, 1.35rem); max-width: 70ch; }
+  @media (max-width: 760px) {
+    .template-versions, .criterion-diff-head, .criterion-diff-row { grid-template-columns: 1fr; }
+    .criterion-diff-head { display: none; }
+    .fork-bar { grid-template-columns: 1fr; gap: .3rem; }
+    .fork-bar-share { text-align: left; }
+  }
+</style>

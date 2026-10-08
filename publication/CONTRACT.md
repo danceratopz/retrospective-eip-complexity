@@ -48,7 +48,7 @@ The landing page must not lead with a correlation coefficient. Scores and associ
 
 ## Route and template contract
 
-Route identity, path parameters, source record types, templates, labels, provenance requirements, navigation, release states, and allowed cross-links are machine-owned by [`contract/routes.json`](contract/routes.json). The global navigation is Study, Forks, EIPs, Results, and Human vs LLM.
+Route identity, path parameters, source record types, templates, labels, provenance requirements, navigation, release states, and allowed cross-links are machine-owned by [`contract/routes.json`](contract/routes.json). The global navigation is Study, Forks, EIPs, Results, Human vs LLM, and Slides. Slide decks under `/slides/{deck}/` render only values from the sanitized payload and stamp interim numbers on every slide that shows them.
 
 The required route families are:
 

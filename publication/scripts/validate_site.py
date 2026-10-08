@@ -351,7 +351,7 @@ def validate() -> dict[str, int]:
     require(manifest["source_records"] == sorted(manifest["source_records"], key=lambda item: item["path"]), "source records are not stable-sorted")
 
     html_files = sorted(DIST.rglob("*.html"))
-    require(len(html_files) == 156, f"expected 156 static pages, found {len(html_files)}")
+    require(len(html_files) == 158, f"expected 158 static pages, found {len(html_files)}")
     broken: list[str] = []
     chart_pages = 0
     for html_path in html_files:
@@ -421,6 +421,15 @@ def validate() -> dict[str, int]:
         and 'aria-label="View the source repository on GitHub (opens in a new tab)"' in home_html,
         "accessible source-repository link is missing",
     )
+    require('href="/retrospective-eip-complexity/slides/">Slides</a>' in home_html, "Slides navigation is missing")
+    slides_html = (DIST / "slides/index.html").read_text(encoding="utf-8")
+    require('href="/retrospective-eip-complexity/slides/hegota-scope/"' in slides_html, "slides index must link every deck")
+    deck_html = (DIST / "slides/hegota-scope/index.html").read_text(encoding="utf-8")
+    require(deck_html.count('<section class="slide') == 7, "Hegotá scope deck must have seven slides")
+    require(deck_html.count("data-slide-link=") == 7, "deck navigation must list every slide")
+    require(deck_html.count("data-list-total=") == 3, "live Hegotá chart must offer SFI, CFI, and PFI toggles")
+    if "Interim numbers" in deck_html:
+        require(deck_html.count('class="stamp-chip"') >= 4, "interim numbers must be stamped on every numeric slide")
     require(
         'http-equiv="refresh" content="0; url=/retrospective-eip-complexity/"' in legacy_study_html
         and '<meta name="robots" content="noindex">' in legacy_study_html,

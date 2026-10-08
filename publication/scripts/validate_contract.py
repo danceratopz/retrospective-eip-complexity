@@ -43,6 +43,8 @@ ROUTE_FAMILIES = {
     "result_predicted_vs_observed",
     "human_llm_comparison",
     "prospective_hegota",
+    "slide_index",
+    "slide_deck",
 }
 LABEL_KEYS = {
     "historical_retrospective",
