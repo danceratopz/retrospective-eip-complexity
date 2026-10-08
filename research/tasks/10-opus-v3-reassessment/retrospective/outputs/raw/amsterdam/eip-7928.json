@@ -1,0 +1,756 @@
+{
+ "case": "amsterdam/7928",
+ "run_id": "assessment-run-e0b510c7-3190-487d-8690-7eab81bbea02",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:26:09.157001Z",
+ "finished_at": "2026-10-08T09:28:35.436080Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "bfccbcebfe8babdde8a00dbebdcf8a47272cc57a4c1e533e6dc8b20a40140d94",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "e62f244c9d9c006aadf4c690204b8a7fc0aabf03bd6af11e319c17b1a678b642",
+ "output": {
+  "duration_api_ms": 143255,
+  "stop_reason": "tool_use",
+  "session_id": "02dbf596-329e-41ff-b062-d7a85c9d70a3",
+  "total_cost_usd": 0.666344,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 42657,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 16254,
+   "output_tokens_details": {
+    "thinking_tokens": 5715
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 42657,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 16254,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 42657,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 42657
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 16254,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 42657,
+    "webSearchRequests": 0,
+    "costUSD": 0.666344,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 5715,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"At this revision, EIP-7928 adds a mandatory Block-Level Access List (BAL). The BAL is an SSZ structure carried in the block body and committed to by a new `bal_hash` header field. It records every address accessed during block execution, sorted, along with storage writes (slot → [tx_index → new value]), read-only storage keys, and post-transaction balance, nonce and code values, each indexed by transaction. It also covers changes made by withdrawals and by system contracts (EIP-2935, EIP-4788, EIP-7002, EIP-7251). Block validation re-executes the block, builds the BAL from the gathered accesses (with reference to EIP-2929 accessed sets), and requires its hash to equal `bal_hash`. Any missing or extra entry makes the block invalid. Gas, opcode and transaction semantics are not changed.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The specification adds a header field, an SSZ BAL and BAL validation. It defines no gas charge, metering change or limit, and the BAL size is not charged gas.\"}],\"rationale\":\"No execution-gas accounting rule changes, so level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures — \\\"Addresses accessed without state changes (e.g., STATICCALL targets, BALANCE opcode targets)\\\"\",\"summary\":\"Every address accessed during block execution must enter the BAL, including targets of read-only opcodes.\"},{\"source\":\"eip.md\",\"locator\":\"Edge Cases — \\\"Accessed but unchanged: Include with empty changes (EXTCODEHASH, EXTCODESIZE, BALANCE targets)\\\"\",\"summary\":\"Defines BAL-recordable accesses across the EXT*, BALANCE, CALL-family and SELFDESTRUCT opcode classes.\"},{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"comparing execution-gathered accesses (per EIP-2929) with the BAL\\\"\",\"summary\":\"Ties BAL inclusion to EIP-2929 access tracking, which is transaction-scoped and reverts with its scope.\"},{\"source\":\"supporting/eip-2929.md\",\"locator\":\"Specification — \\\"if a scope reverts, the access lists should be in the state they were in before that scope was entered\\\"\",\"summary\":\"The baseline access sets revert with the scope and are pre-seeded with precompiles, sender and to. How these map to BAL inclusion determines the expected results.\"}],\"rationale\":\"The rubric counts which accesses enter the block-level access list. This EIP creates a block-wide definition of a recordable access that applies to every state-accessing opcode class: SLOAD/SSTORE, BALANCE/EXT*, CALL-family, CREATE/CREATE2 and SELFDESTRUCT. Each needs cases for cold/warm, reverted vs successful frames, out-of-gas before or after access, and static vs non-static calls. That is a definition change across operations, so level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Gas-charge ordering itself does not change. A reading that the EIP only reuses EIP-2929 sets would support level 2.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Nothing in the specification concerns blobs or blob gas.\"}],\"rationale\":\"No blob-gas changes, so level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state-byte cost, state-gas budget or spill rule is introduced.\"}],\"rationale\":\"No state-gas accounting changes, so level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Edge Cases — \\\"Gas refunds: Final balance of sender recorded after each transactions\\\"\",\"summary\":\"Existing refunds are only reflected in the recorded balances. No new refund mechanism is added.\"}],\"rationale\":\"No new refund mechanism, so level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Structure Modification — \\\"bal_hash: Hash32\\\"\",\"summary\":\"A new header field and a new body element change how every block is constructed and change block hashes.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"SSZ BAL embedded as opaque bytes in RLP block\\\"\",\"summary\":\"The block RLP layout changes.\"}],\"rationale\":\"Gas and execution results of baseline tests are unchanged. Tests that hand-construct block RLP or headers need reworked inputs: header-validation, RLP block-structure and invalid-block families, plus any fixtures with fixed block hashes. That is localized rework in several families without a common behavioral rewrite, so level 2. Adding the BAL assertion to ordinary tests is scored under INV.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Without a supplied test suite, the breadth of hand-crafted block fixtures is estimated.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"The BAL MUST be complete and accurate. Missing or spurious entries invalidate the block.\\\"\",\"summary\":\"Every block in the fork must carry a correct BAL and bal_hash, which is a new output checked for every executed block.\"}],\"rationale\":\"Every baseline blockchain test in the target fork must additionally produce and check a correct BAL/bal_hash. The rubric caps a universal assertion at level 2 unless pre-fork vectors must also be re-derived, and nothing supplied shows that.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"State Transition Function — validate_bal / build_bal_from_accesses\",\"summary\":\"The state transition must collect per-transaction accesses, withdrawal changes and system-contract changes into a BAL and compare its hash.\"},{\"source\":\"eip.md\",\"locator\":\"Block Structure Modification\",\"summary\":\"New header field bal_hash and a BAL body element.\"}],\"rationale\":\"t8n must compute and output the block access list, and possibly its hash. That needs a new mechanism: block-wide access tracking across system calls, transactions and withdrawals. Treating the BAL and its hash as one semantic output gives level 2: a new mechanism with at most one field.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No t8n specification is supplied. If the BAL, bal_hash and a BAL input for validation count as separate fields, the score would be 3.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures\",\"summary\":\"A nested SSZ BAL (account → field → tx_index → change) must be represented, expected and compared.\"},{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"Missing or spurious entries invalidate the block\\\"\",\"summary\":\"Every block must carry a correct BAL, which affects block construction in all blockchain-test families.\"}],\"rationale\":\"The framework's shared block model must include an SSZ BAL body element and the bal_hash header field. That changes how every blockchain-test family builds blocks, and invalid-BAL modifiers and BAL expectation abstractions are also needed. This is a shared representation that changes construction across families, so level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the BAL is produced purely by the client or t8n and checked only in BAL-specific tests, level 2 would suffice.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"assert block.bal_hash == compute_bal_hash(computed_bal)\\\"\",\"summary\":\"A commitment hash over the BAL. compute_bal_hash is not defined.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"SSZ encoding: Enables efficient Merkle proofs\\\"\",\"summary\":\"Hints at SSZ merkleization but does not specify it.\"}],\"rationale\":\"Only a commitment to a new structure is added, presumably with an existing hash primitive. Changed hashed bytes belong under encoding, so level 0.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The hash function is unspecified. If SSZ hash_tree_root is required, which the EL baseline does not use, the score could be 1.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures — MAX_TXS, MAX_SLOTS, MAX_ACCOUNTS, MAX_CODE_SIZE, MAX_CODE_CHANGES = 1, TxIndex = uint16, Balance = uint128\",\"summary\":\"New SSZ list and type bounds, including at most one code change per account per block.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures — storage writes vs reads\",\"summary\":\"Classification depends on pre-value, post-value, same-value writes, zeroing and read-then-write.\"},{\"source\":\"eip.md\",\"locator\":\"Edge Cases — \\\"Zero-value transfers: Include address, omit from balance_changes\\\"\",\"summary\":\"Zero vs non-zero value transfers produce different BAL entries.\"}],\"rationale\":\"Several boundary-sensitive mechanisms are introduced: list and size limits, MAX_CODE_CHANGES = 1, and the zero-value balance rule. Storage classification is an elevated matrix: whether the slot is read, whether the written value equals the original, zero vs non-zero, reverted vs committed frames, and multiple transactions touching the same slot all interact to decide between storage_changes, storage_reads and absence. Level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Several of these outcomes are also under-specified (see UNSP).\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Structure Modification\",\"summary\":\"New header field and new block body element must be decoded.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures — Ordering requirements\",\"summary\":\"Structural ordering rules for addresses, storage keys and transaction indices.\"},{\"source\":\"eip.md\",\"locator\":\"State Transition Function — bal_hash check\",\"summary\":\"The bal_hash check depends on executing the full block against state.\"}],\"rationale\":\"There are multiple new decode and validation rules: header field, body BAL decoding, SSZ list bounds and ordering. At least one, bal_hash equality with the execution-derived BAL, is complex, so level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Structure Modification — \\\"The block body includes a BlockAccessList\\\"\",\"summary\":\"A new body element and header field must travel with execution payloads. The text specifies no Engine API changes.\"}],\"rationale\":\"A new body element and header commitment would need to be carried in the execution payload exchanged with the CL, probably as multiple fields (BAL, bal_hash). Given the evidence gap, level 2 is the best-supported estimate.\",\"confidence\":\"low\",\"uncertainty_note\":\"The supplied revision is silent on the Engine API. The actual change could range from one field to a new versioned endpoint plus fields (1–3).\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"process_system_contracts\",\"summary\":\"Only existing system contracts (EIP-7002, EIP-7251, EIP-2935, EIP-4788) are tracked. No new contract is introduced.\"}],\"rationale\":\"No new system contract, so level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Edge Cases — \\\"System Contract caused changes: Are recorded with transaction index transaction_count + 1\\\"\",\"summary\":\"System-contract storage diffs gain a new recorded output convention.\"},{\"source\":\"eip.md\",\"locator\":\"process_system_contracts\",\"summary\":\"Storage diffs of the EIP-7002, EIP-7251, EIP-2935 and EIP-4788 contracts are recorded in the BAL. Their rules are not changed.\"}],\"rationale\":\"Contract rules are unchanged. Only an indirect output convention changes: system-call diffs must be recorded in the BAL under a special index. Level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The listed addresses and slots for EIP-2935 (0x…01, %8191) and EIP-4788 may conflict with those EIPs, which are not supplied. That is treated as an evidence gap or ambiguity, not as a modification.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new instruction is defined.\"}],\"rationale\":\"Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Edge Cases\",\"summary\":\"Opcodes are only observed for BAL recording. Their stack, state, return and halt semantics are unchanged.\"}],\"rationale\":\"Access recording alone does not count as a semantic change, so level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is introduced.\"}],\"rationale\":\"Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile semantics or gas change.\"}],\"rationale\":\"Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"Whether precompile accesses appear in the BAL is an UNSP issue, not a precompile change.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures\",\"summary\":\"New SSZ BlockAccessList, AccountChanges, SlotChanges and change containers.\"},{\"source\":\"eip.md\",\"locator\":\"Block Structure Modification — \\\"bal_hash: Hash32\\\"\",\"summary\":\"The header RLP gains a field.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"SSZ BAL embedded as opaque bytes in RLP block\\\"\",\"summary\":\"The block body RLP gains an SSZ-encoded element.\"}],\"rationale\":\"The header schema, block body schema and a new SSZ BAL schema are all introduced, so level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new transaction envelope.\"}],\"rationale\":\"Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures — \\\"MAX_TXS = 30_000\\\", \\\"TxIndex = uint16\\\"\",\"summary\":\"BAL list bounds implicitly cap the transactions, slots and accounts a valid block can carry.\"},{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"Clients MAY invalidate immediately if any transaction exceeds declared state.\\\"\",\"summary\":\"Optional early invalidation of the block when a transaction exceeds declared state. Block validity, not transaction eligibility, is affected.\"}],\"rationale\":\"Transaction eligibility rules and intrinsic gas are unchanged. The only effect is an implicit bound from the BAL list limits on the transactions or state a block can hold, which is a local bound, so level 1.\",\"confidence\":\"low\",\"uncertainty_note\":\"The text does not say whether the MAX_* limits are enforced as block validity rules. Plausible range 0–2.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Structure Modification — \\\"class Header: ... bal_hash: Hash32\\\"\",\"summary\":\"Adds bal_hash to the execution header and a BlockAccessList to the block body.\"}],\"rationale\":\"New execution-header member (bal_hash) and new block-body element, so level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Only requires a hard fork for the structural change. No state migration or code installation.\"}],\"rationale\":\"No activation-specific state transition, so level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block Size Considerations — \\\"Worst-case (36m gas): ~0.93 MiB\\\"\",\"summary\":\"The BAL adds un-gas-metered block size that scales with accesses.\"},{\"source\":\"eip.md\",\"locator\":\"Asynchronous Validation\",\"summary\":\"Claims verification runs alongside parallel IO/EVM without delaying processing, which is a new assumption to validate.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — Validation Overhead / Block Size\",\"summary\":\"Validation overhead and propagation impact are acknowledged.\"}],\"rationale\":\"The change couples execution tracking (per-transaction diffs, including up to 24 KB code entries), SSZ encoding and hashing, block size and propagation, and parallel IO scheduling. Adversarial blocks that maximize accounts, slots or balance changes per gas need integrated stress testing across execution, networking and validation subsystems. Level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The supplied size figures come from historical analysis. Worst-case adversarial composition is not quantified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"Missing or spurious entries invalidate the block.\\\"\",\"summary\":\"Block validity now depends on exact equality between the BAL and execution.\"},{\"source\":\"eip.md\",\"locator\":\"Motivation — \\\"State reconstruction without executing transactions\\\"\",\"summary\":\"Syncing nodes may apply BAL diffs without execution, which trusts the BAL.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"Post-execution values enable state reconstruction during sync without individual proofs\\\"\",\"summary\":\"Sync, parallel execution and validation components all rely on the BAL invariant.\"}],\"rationale\":\"A shared validation and trust invariant (BAL correctness) is consumed by block validation, parallel prefetch and execution, and executionless sync. Malicious BALs (missing, spurious, mis-ordered or with wrong values) need coordinated adversarial scenarios across these components, so level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If clients only validate the BAL after full sequential execution, the risk narrows to level 2.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Edge Cases — \\\"recorded with transaction index transaction_count + 1\\\"\",\"summary\":\"Contradicts the code, which uses len(block.transactions) and the comment \\\"tx_index = transaction_count\\\". Pre-transaction system calls get the same index as post-transaction changes.\"},{\"source\":\"eip.md\",\"locator\":\"validate_bal — process_system_contracts called twice\",\"summary\":\"Records EIP-2935/EIP-4788 writes twice with the same index. Withdrawals share the index too.\"},{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"per EIP-2929\\\"\",\"summary\":\"Does not say whether reverted-frame accesses, precompiles pre-warmed by EIP-2929, or unused EIP-2930 entries are included.\"},{\"source\":\"supporting/eip-2929.md\",\"locator\":\"Specification — accessed_addresses initialized to include the set of all precompiles\",\"summary\":\"Literal reuse would put all precompiles into every BAL.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures — \\\"Slots in pre-state but not written\\\"; MAX_CODE_CHANGES = 1\",\"summary\":\"Vague storage-read rule. Multiple code changes per account per block have no encoding.\"},{\"source\":\"eip.md\",\"locator\":\"State Transition Function — compute_bal_hash\",\"summary\":\"The hash function is undefined, and so is the header field position.\"}],\"rationale\":\"Which addresses and slots were accessed — including reverted frames, out-of-gas paths and pre-warmed sets — was previously unobservable and now becomes consensus-visible. The supplied rules give competing interpretations and outright contradictions (system/withdrawal transaction index, duplicate recording, hash function), so agreement on shared rules and re-baselining across opcode, system-call and withdrawal families are needed. Level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"Some apparent conflicts with EIP-2935/EIP-4788 addresses cannot be verified because those EIPs are not supplied.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"process_system_contracts\",\"summary\":\"Couples the BAL to EIP-7002, EIP-7251, EIP-2935 and EIP-4788 system-call storage diffs.\"},{\"source\":\"eip.md\",\"locator\":\"State Transition Function — \\\"per EIP-2929\\\"\",\"summary\":\"BAL contents are tied to EIP-2929 access tracking.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ Data Structures — \\\"EIP-7702 authorities\\\"\",\"summary\":\"Nonce (and implicitly code) changes from EIP-7702 authorizations must be recorded.\"},{\"source\":\"eip.md\",\"locator\":\"Motivation — EIP-2930\",\"summary\":\"EIP-2930 access-list pre-warming feeds into EIP-2929 sets.\"}],\"rationale\":\"The BAL's expected contents depend jointly on EIP-2929/EIP-2930 access semantics, four system-contract EIPs and EIP-7702 delegation. Shared block vectors need coordinated scenarios that combine these, so level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"EIP-7792 is linked only via an apparent mislink for EIP-7702 and is not counted.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":2929,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"BAL inclusion for cold vs warm accesses; accesses in reverted sub-calls (EIP-2929 sets revert); CALL failure modes and out-of-gas around the access; whether always-warm precompiles, tx.sender/tx.to and CREATE addresses added before collision checks appear in the BAL.\"},{\"eip\":2930,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Transactions whose EIP-2930 access list declares addresses or slots never actually touched: whether they enter the BAL. Duplicate entries.\"},{\"eip\":2935,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"History-storage write of parent_hash recorded as a storage change with the system transaction index. Ring-buffer slot reuse. Interaction with user transactions reading or calling the contract in the same block.\"},{\"eip\":4788,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Beacon-root timestamp and root slot writes recorded with the system index, including the pre-transaction call ordering vs the index. Blocks where user transactions also call the contract.\"},{\"eip\":7002,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Withdrawal-request queue storage diffs: user transactions enqueue (per-transaction index) and the end-of-block dequeue (system index) on the same slots. Empty-queue blocks.\"},{\"eip\":7251,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Consolidation-request queue: the same enqueue/dequeue BAL recording across user-transaction and system indices.\"},{\"eip\":7702,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Authority nonce increments and delegation-designator code changes recorded in the BAL. Multiple delegations of one authority in a block versus MAX_CODE_CHANGES = 1. Invalid or skipped authorizations. Accesses through delegated code.\"}],\"unidentified_interactions\":[\"Consensus-layer withdrawals (EIP-4895 behaviour, not numbered in the text): withdrawal recipients recorded with post-withdrawal balance at index len(transactions), including zero-amount withdrawals and recipients also touched by transactions.\",\"SELFDESTRUCT beneficiary balance changes and selfdestructed-account code/balance recording (current SELFDESTRUCT semantics not supplied).\",\"Fee recipient / priority-fee payments (fee-market rules not supplied): coinbase balance recorded after each transaction, including zero-tip transactions.\",\"CREATE/CREATE2 nonce and code recording, including failed or collided creations.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The revision contradicts itself on the transaction index for system-contract and withdrawal changes, and records pre-transaction system calls with the post-transaction index (twice). It does not say whether reverted-frame accesses, precompiles pre-warmed by EIP-2929, or unused EIP-2930 entries are included. The hash function, header field position and Engine API carriage are undefined. Several storage-read and code-change rules are vague or cannot express multiple changes. The worked example is internally inconsistent.\",\"affected_criteria\":[{\"criterion\":\"state_access_ordering_within_opcode_execution\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"cryptography\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"engine_api_changes\",\"minimum_score\":1,\"maximum_score\":3},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"security_risks\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"Is the system-contract and withdrawal transaction index transaction_count or transaction_count + 1, and how are pre-transaction system calls (EIP-2935, EIP-4788) distinguished from post-transaction ones (EIP-7002, EIP-7251)?\",\"Does process_system_contracts being called twice produce duplicate StorageChange entries?\",\"Are accesses in reverted or out-of-gas frames included in the BAL, given that EIP-2929 sets revert with scope?\",\"Are precompiles, tx.sender/tx.to and EIP-2930 access-list entries that are never actually touched included?\",\"What is compute_bal_hash (keccak of the SSZ bytes vs hash_tree_root), and where in the header does bal_hash sit?\",\"How are multiple code changes to one account in a block encoded when MAX_CODE_CHANGES = 1?\",\"What does 'Slots in pre-state but not written' mean for storage_reads?\",\"Is a balance that changes and then returns to its pre-transaction value within a transaction recorded? Is a zero-tip coinbase recorded?\",\"Are the MAX_TXS / MAX_SLOTS / MAX_ACCOUNTS bounds enforced as block-validity rules?\",\"How is the BAL carried over the Engine API?\"]},\"notable_ambiguities\":[\"The Edge Cases text says the system-contract index is transaction_count + 1, but process_system_contracts passes len(block.transactions) and comments 'tx_index = transaction_count'.\",\"The EIP-2935 address is given as 0x…0001 with slot (number-1) % 8191, and the EIP-4788 slots use % 8192. These cannot be checked against the prerequisite EIPs, which are not supplied.\",\"The EIP-7702 hyperlink points to eip-7792.md (Verifiable logs). EIP-7792 is not treated as a scheduled interaction.\",\"build_bal_from_accesses sorts storage_reads with key=lambda x: x.slot although the elements are raw keys. The example's storage_reads is bytes, not a list, and the example balance hex values do not match the stated ETH amounts.\",\"Nonce changes are listed for 'contracts that performed a successful CREATE', so failed CREATEs that still bump the nonce are ambiguous.\",\"'Clients MAY invalidate immediately if any transaction exceeds declared state' is optional behaviour whose observable effect on the final validity outcome is unclear.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "At this revision, EIP-7928 adds a mandatory Block-Level Access List (BAL). The BAL is an SSZ structure carried in the block body and committed to by a new `bal_hash` header field. It records every address accessed during block execution, sorted, along with storage writes (slot → [tx_index → new value]), read-only storage keys, and post-transaction balance, nonce and code values, each indexed by transaction. It also covers changes made by withdrawals and by system contracts (EIP-2935, EIP-4788, EIP-7002, EIP-7251). Block validation re-executes the block, builds the BAL from the gathered accesses (with reference to EIP-2929 accessed sets), and requires its hash to equal `bal_hash`. Any missing or extra entry makes the block invalid. Gas, opcode and transaction semantics are not changed.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The specification adds a header field, an SSZ BAL and BAL validation. It defines no gas charge, metering change or limit, and the BAL size is not charged gas."
+      }
+     ],
+     "rationale": "No execution-gas accounting rule changes, so level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures — \"Addresses accessed without state changes (e.g., STATICCALL targets, BALANCE opcode targets)\"",
+       "summary": "Every address accessed during block execution must enter the BAL, including targets of read-only opcodes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Edge Cases — \"Accessed but unchanged: Include with empty changes (EXTCODEHASH, EXTCODESIZE, BALANCE targets)\"",
+       "summary": "Defines BAL-recordable accesses across the EXT*, BALANCE, CALL-family and SELFDESTRUCT opcode classes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"comparing execution-gathered accesses (per EIP-2929) with the BAL\"",
+       "summary": "Ties BAL inclusion to EIP-2929 access tracking, which is transaction-scoped and reverts with its scope."
+      },
+      {
+       "source": "supporting/eip-2929.md",
+       "locator": "Specification — \"if a scope reverts, the access lists should be in the state they were in before that scope was entered\"",
+       "summary": "The baseline access sets revert with the scope and are pre-seeded with precompiles, sender and to. How these map to BAL inclusion determines the expected results."
+      }
+     ],
+     "rationale": "The rubric counts which accesses enter the block-level access list. This EIP creates a block-wide definition of a recordable access that applies to every state-accessing opcode class: SLOAD/SSTORE, BALANCE/EXT*, CALL-family, CREATE/CREATE2 and SELFDESTRUCT. Each needs cases for cold/warm, reverted vs successful frames, out-of-gas before or after access, and static vs non-static calls. That is a definition change across operations, so level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "Gas-charge ordering itself does not change. A reading that the EIP only reuses EIP-2929 sets would support level 2.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Nothing in the specification concerns blobs or blob gas."
+      }
+     ],
+     "rationale": "No blob-gas changes, so level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state-byte cost, state-gas budget or spill rule is introduced."
+      }
+     ],
+     "rationale": "No state-gas accounting changes, so level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Edge Cases — \"Gas refunds: Final balance of sender recorded after each transactions\"",
+       "summary": "Existing refunds are only reflected in the recorded balances. No new refund mechanism is added."
+      }
+     ],
+     "rationale": "No new refund mechanism, so level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Structure Modification — \"bal_hash: Hash32\"",
+       "summary": "A new header field and a new body element change how every block is constructed and change block hashes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"SSZ BAL embedded as opaque bytes in RLP block\"",
+       "summary": "The block RLP layout changes."
+      }
+     ],
+     "rationale": "Gas and execution results of baseline tests are unchanged. Tests that hand-construct block RLP or headers need reworked inputs: header-validation, RLP block-structure and invalid-block families, plus any fixtures with fixed block hashes. That is localized rework in several families without a common behavioral rewrite, so level 2. Adding the BAL assertion to ordinary tests is scored under INV.",
+     "confidence": "medium",
+     "uncertainty_note": "Without a supplied test suite, the breadth of hand-crafted block fixtures is estimated.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"The BAL MUST be complete and accurate. Missing or spurious entries invalidate the block.\"",
+       "summary": "Every block in the fork must carry a correct BAL and bal_hash, which is a new output checked for every executed block."
+      }
+     ],
+     "rationale": "Every baseline blockchain test in the target fork must additionally produce and check a correct BAL/bal_hash. The rubric caps a universal assertion at level 2 unless pre-fork vectors must also be re-derived, and nothing supplied shows that.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — validate_bal / build_bal_from_accesses",
+       "summary": "The state transition must collect per-transaction accesses, withdrawal changes and system-contract changes into a BAL and compare its hash."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block Structure Modification",
+       "summary": "New header field bal_hash and a BAL body element."
+      }
+     ],
+     "rationale": "t8n must compute and output the block access list, and possibly its hash. That needs a new mechanism: block-wide access tracking across system calls, transactions and withdrawals. Treating the BAL and its hash as one semantic output gives level 2: a new mechanism with at most one field.",
+     "confidence": "medium",
+     "uncertainty_note": "No t8n specification is supplied. If the BAL, bal_hash and a BAL input for validation count as separate fields, the score would be 3.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures",
+       "summary": "A nested SSZ BAL (account → field → tx_index → change) must be represented, expected and compared."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"Missing or spurious entries invalidate the block\"",
+       "summary": "Every block must carry a correct BAL, which affects block construction in all blockchain-test families."
+      }
+     ],
+     "rationale": "The framework's shared block model must include an SSZ BAL body element and the bal_hash header field. That changes how every blockchain-test family builds blocks, and invalid-BAL modifiers and BAL expectation abstractions are also needed. This is a shared representation that changes construction across families, so level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "If the BAL is produced purely by the client or t8n and checked only in BAL-specific tests, level 2 would suffice.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"assert block.bal_hash == compute_bal_hash(computed_bal)\"",
+       "summary": "A commitment hash over the BAL. compute_bal_hash is not defined."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"SSZ encoding: Enables efficient Merkle proofs\"",
+       "summary": "Hints at SSZ merkleization but does not specify it."
+      }
+     ],
+     "rationale": "Only a commitment to a new structure is added, presumably with an existing hash primitive. Changed hashed bytes belong under encoding, so level 0.",
+     "confidence": "medium",
+     "uncertainty_note": "The hash function is unspecified. If SSZ hash_tree_root is required, which the EL baseline does not use, the score could be 1.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures — MAX_TXS, MAX_SLOTS, MAX_ACCOUNTS, MAX_CODE_SIZE, MAX_CODE_CHANGES = 1, TxIndex = uint16, Balance = uint128",
+       "summary": "New SSZ list and type bounds, including at most one code change per account per block."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures — storage writes vs reads",
+       "summary": "Classification depends on pre-value, post-value, same-value writes, zeroing and read-then-write."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Edge Cases — \"Zero-value transfers: Include address, omit from balance_changes\"",
+       "summary": "Zero vs non-zero value transfers produce different BAL entries."
+      }
+     ],
+     "rationale": "Several boundary-sensitive mechanisms are introduced: list and size limits, MAX_CODE_CHANGES = 1, and the zero-value balance rule. Storage classification is an elevated matrix: whether the slot is read, whether the written value equals the original, zero vs non-zero, reverted vs committed frames, and multiple transactions touching the same slot all interact to decide between storage_changes, storage_reads and absence. Level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "Several of these outcomes are also under-specified (see UNSP).",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Structure Modification",
+       "summary": "New header field and new block body element must be decoded."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures — Ordering requirements",
+       "summary": "Structural ordering rules for addresses, storage keys and transaction indices."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — bal_hash check",
+       "summary": "The bal_hash check depends on executing the full block against state."
+      }
+     ],
+     "rationale": "There are multiple new decode and validation rules: header field, body BAL decoding, SSZ list bounds and ordering. At least one, bal_hash equality with the execution-derived BAL, is complex, so level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Structure Modification — \"The block body includes a BlockAccessList\"",
+       "summary": "A new body element and header field must travel with execution payloads. The text specifies no Engine API changes."
+      }
+     ],
+     "rationale": "A new body element and header commitment would need to be carried in the execution payload exchanged with the CL, probably as multiple fields (BAL, bal_hash). Given the evidence gap, level 2 is the best-supported estimate.",
+     "confidence": "low",
+     "uncertainty_note": "The supplied revision is silent on the Engine API. The actual change could range from one field to a new versioned endpoint plus fields (1–3).",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "process_system_contracts",
+       "summary": "Only existing system contracts (EIP-7002, EIP-7251, EIP-2935, EIP-4788) are tracked. No new contract is introduced."
+      }
+     ],
+     "rationale": "No new system contract, so level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Edge Cases — \"System Contract caused changes: Are recorded with transaction index transaction_count + 1\"",
+       "summary": "System-contract storage diffs gain a new recorded output convention."
+      },
+      {
+       "source": "eip.md",
+       "locator": "process_system_contracts",
+       "summary": "Storage diffs of the EIP-7002, EIP-7251, EIP-2935 and EIP-4788 contracts are recorded in the BAL. Their rules are not changed."
+      }
+     ],
+     "rationale": "Contract rules are unchanged. Only an indirect output convention changes: system-call diffs must be recorded in the BAL under a special index. Level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "The listed addresses and slots for EIP-2935 (0x…01, %8191) and EIP-4788 may conflict with those EIPs, which are not supplied. That is treated as an evidence gap or ambiguity, not as a modification.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new instruction is defined."
+      }
+     ],
+     "rationale": "Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Edge Cases",
+       "summary": "Opcodes are only observed for BAL recording. Their stack, state, return and halt semantics are unchanged."
+      }
+     ],
+     "rationale": "Access recording alone does not count as a semantic change, so level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is introduced."
+      }
+     ],
+     "rationale": "Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile semantics or gas change."
+      }
+     ],
+     "rationale": "Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "Whether precompile accesses appear in the BAL is an UNSP issue, not a precompile change.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures",
+       "summary": "New SSZ BlockAccessList, AccountChanges, SlotChanges and change containers."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block Structure Modification — \"bal_hash: Hash32\"",
+       "summary": "The header RLP gains a field."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"SSZ BAL embedded as opaque bytes in RLP block\"",
+       "summary": "The block body RLP gains an SSZ-encoded element."
+      }
+     ],
+     "rationale": "The header schema, block body schema and a new SSZ BAL schema are all introduced, so level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new transaction envelope."
+      }
+     ],
+     "rationale": "Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures — \"MAX_TXS = 30_000\", \"TxIndex = uint16\"",
+       "summary": "BAL list bounds implicitly cap the transactions, slots and accounts a valid block can carry."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"Clients MAY invalidate immediately if any transaction exceeds declared state.\"",
+       "summary": "Optional early invalidation of the block when a transaction exceeds declared state. Block validity, not transaction eligibility, is affected."
+      }
+     ],
+     "rationale": "Transaction eligibility rules and intrinsic gas are unchanged. The only effect is an implicit bound from the BAL list limits on the transactions or state a block can hold, which is a local bound, so level 1.",
+     "confidence": "low",
+     "uncertainty_note": "The text does not say whether the MAX_* limits are enforced as block validity rules. Plausible range 0–2.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Structure Modification — \"class Header: ... bal_hash: Hash32\"",
+       "summary": "Adds bal_hash to the execution header and a BlockAccessList to the block body."
+      }
+     ],
+     "rationale": "New execution-header member (bal_hash) and new block-body element, so level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Only requires a hard fork for the structural change. No state migration or code installation."
+      }
+     ],
+     "rationale": "No activation-specific state transition, so level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block Size Considerations — \"Worst-case (36m gas): ~0.93 MiB\"",
+       "summary": "The BAL adds un-gas-metered block size that scales with accesses."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Asynchronous Validation",
+       "summary": "Claims verification runs alongside parallel IO/EVM without delaying processing, which is a new assumption to validate."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — Validation Overhead / Block Size",
+       "summary": "Validation overhead and propagation impact are acknowledged."
+      }
+     ],
+     "rationale": "The change couples execution tracking (per-transaction diffs, including up to 24 KB code entries), SSZ encoding and hashing, block size and propagation, and parallel IO scheduling. Adversarial blocks that maximize accounts, slots or balance changes per gas need integrated stress testing across execution, networking and validation subsystems. Level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "The supplied size figures come from historical analysis. Worst-case adversarial composition is not quantified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"Missing or spurious entries invalidate the block.\"",
+       "summary": "Block validity now depends on exact equality between the BAL and execution."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Motivation — \"State reconstruction without executing transactions\"",
+       "summary": "Syncing nodes may apply BAL diffs without execution, which trusts the BAL."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"Post-execution values enable state reconstruction during sync without individual proofs\"",
+       "summary": "Sync, parallel execution and validation components all rely on the BAL invariant."
+      }
+     ],
+     "rationale": "A shared validation and trust invariant (BAL correctness) is consumed by block validation, parallel prefetch and execution, and executionless sync. Malicious BALs (missing, spurious, mis-ordered or with wrong values) need coordinated adversarial scenarios across these components, so level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "If clients only validate the BAL after full sequential execution, the risk narrows to level 2.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Edge Cases — \"recorded with transaction index transaction_count + 1\"",
+       "summary": "Contradicts the code, which uses len(block.transactions) and the comment \"tx_index = transaction_count\". Pre-transaction system calls get the same index as post-transaction changes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "validate_bal — process_system_contracts called twice",
+       "summary": "Records EIP-2935/EIP-4788 writes twice with the same index. Withdrawals share the index too."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"per EIP-2929\"",
+       "summary": "Does not say whether reverted-frame accesses, precompiles pre-warmed by EIP-2929, or unused EIP-2930 entries are included."
+      },
+      {
+       "source": "supporting/eip-2929.md",
+       "locator": "Specification — accessed_addresses initialized to include the set of all precompiles",
+       "summary": "Literal reuse would put all precompiles into every BAL."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures — \"Slots in pre-state but not written\"; MAX_CODE_CHANGES = 1",
+       "summary": "Vague storage-read rule. Multiple code changes per account per block have no encoding."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — compute_bal_hash",
+       "summary": "The hash function is undefined, and so is the header field position."
+      }
+     ],
+     "rationale": "Which addresses and slots were accessed — including reverted frames, out-of-gas paths and pre-warmed sets — was previously unobservable and now becomes consensus-visible. The supplied rules give competing interpretations and outright contradictions (system/withdrawal transaction index, duplicate recording, hash function), so agreement on shared rules and re-baselining across opcode, system-call and withdrawal families are needed. Level 3.",
+     "confidence": "high",
+     "uncertainty_note": "Some apparent conflicts with EIP-2935/EIP-4788 addresses cannot be verified because those EIPs are not supplied.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "process_system_contracts",
+       "summary": "Couples the BAL to EIP-7002, EIP-7251, EIP-2935 and EIP-4788 system-call storage diffs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Transition Function — \"per EIP-2929\"",
+       "summary": "BAL contents are tied to EIP-2929 access tracking."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ Data Structures — \"EIP-7702 authorities\"",
+       "summary": "Nonce (and implicitly code) changes from EIP-7702 authorizations must be recorded."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Motivation — EIP-2930",
+       "summary": "EIP-2930 access-list pre-warming feeds into EIP-2929 sets."
+      }
+     ],
+     "rationale": "The BAL's expected contents depend jointly on EIP-2929/EIP-2930 access semantics, four system-contract EIPs and EIP-7702 delegation. Shared block vectors need coordinated scenarios that combine these, so level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "EIP-7792 is linked only via an apparent mislink for EIP-7702 and is not counted.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 2929,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "BAL inclusion for cold vs warm accesses; accesses in reverted sub-calls (EIP-2929 sets revert); CALL failure modes and out-of-gas around the access; whether always-warm precompiles, tx.sender/tx.to and CREATE addresses added before collision checks appear in the BAL."
+     },
+     {
+      "eip": 2930,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Transactions whose EIP-2930 access list declares addresses or slots never actually touched: whether they enter the BAL. Duplicate entries."
+     },
+     {
+      "eip": 2935,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "History-storage write of parent_hash recorded as a storage change with the system transaction index. Ring-buffer slot reuse. Interaction with user transactions reading or calling the contract in the same block."
+     },
+     {
+      "eip": 4788,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Beacon-root timestamp and root slot writes recorded with the system index, including the pre-transaction call ordering vs the index. Blocks where user transactions also call the contract."
+     },
+     {
+      "eip": 7002,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Withdrawal-request queue storage diffs: user transactions enqueue (per-transaction index) and the end-of-block dequeue (system index) on the same slots. Empty-queue blocks."
+     },
+     {
+      "eip": 7251,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Consolidation-request queue: the same enqueue/dequeue BAL recording across user-transaction and system indices."
+     },
+     {
+      "eip": 7702,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Authority nonce increments and delegation-designator code changes recorded in the BAL. Multiple delegations of one authority in a block versus MAX_CODE_CHANGES = 1. Invalid or skipped authorizations. Accesses through delegated code."
+     }
+    ],
+    "unidentified_interactions": [
+     "Consensus-layer withdrawals (EIP-4895 behaviour, not numbered in the text): withdrawal recipients recorded with post-withdrawal balance at index len(transactions), including zero-amount withdrawals and recipients also touched by transactions.",
+     "SELFDESTRUCT beneficiary balance changes and selfdestructed-account code/balance recording (current SELFDESTRUCT semantics not supplied).",
+     "Fee recipient / priority-fee payments (fee-market rules not supplied): coinbase balance recorded after each transaction, including zero-tip transactions.",
+     "CREATE/CREATE2 nonce and code recording, including failed or collided creations."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The revision contradicts itself on the transaction index for system-contract and withdrawal changes, and records pre-transaction system calls with the post-transaction index (twice). It does not say whether reverted-frame accesses, precompiles pre-warmed by EIP-2929, or unused EIP-2930 entries are included. The hash function, header field position and Engine API carriage are undefined. Several storage-read and code-change rules are vague or cannot express multiple changes. The worked example is internally inconsistent.",
+    "affected_criteria": [
+     {
+      "criterion": "state_access_ordering_within_opcode_execution",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "cryptography",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "engine_api_changes",
+      "minimum_score": 1,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "security_risks",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Is the system-contract and withdrawal transaction index transaction_count or transaction_count + 1, and how are pre-transaction system calls (EIP-2935, EIP-4788) distinguished from post-transaction ones (EIP-7002, EIP-7251)?",
+     "Does process_system_contracts being called twice produce duplicate StorageChange entries?",
+     "Are accesses in reverted or out-of-gas frames included in the BAL, given that EIP-2929 sets revert with scope?",
+     "Are precompiles, tx.sender/tx.to and EIP-2930 access-list entries that are never actually touched included?",
+     "What is compute_bal_hash (keccak of the SSZ bytes vs hash_tree_root), and where in the header does bal_hash sit?",
+     "How are multiple code changes to one account in a block encoded when MAX_CODE_CHANGES = 1?",
+     "What does 'Slots in pre-state but not written' mean for storage_reads?",
+     "Is a balance that changes and then returns to its pre-transaction value within a transaction recorded? Is a zero-tip coinbase recorded?",
+     "Are the MAX_TXS / MAX_SLOTS / MAX_ACCOUNTS bounds enforced as block-validity rules?",
+     "How is the BAL carried over the Engine API?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The Edge Cases text says the system-contract index is transaction_count + 1, but process_system_contracts passes len(block.transactions) and comments 'tx_index = transaction_count'.",
+    "The EIP-2935 address is given as 0x…0001 with slot (number-1) % 8191, and the EIP-4788 slots use % 8192. These cannot be checked against the prerequisite EIPs, which are not supplied.",
+    "The EIP-7702 hyperlink points to eip-7792.md (Verifiable logs). EIP-7792 is not treated as a scheduled interaction.",
+    "build_bal_from_accesses sorts storage_reads with key=lambda x: x.slot although the elements are raw keys. The example's storage_reads is bytes, not a list, and the example balance hex values do not match the stated ETH amounts.",
+    "Nonce changes are listed for 'contracts that performed a successful CREATE', so failed CREATEs that still bump the nonce are ambiguous.",
+    "'Clients MAY invalidate immediately if any transaction exceeds declared state' is optional behaviour whose observable effect on the final validity outcome is unclear."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 58520,
+  "type": "result",
+  "duration_ms": 143645,
+  "uuid": "41966cef-7b13-4d67-b493-d15139d3df2f",
+  "ttft_stream_ms": 1600,
+  "time_to_request_ms": 401,
+  "first_content_frame_ms": 1600,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

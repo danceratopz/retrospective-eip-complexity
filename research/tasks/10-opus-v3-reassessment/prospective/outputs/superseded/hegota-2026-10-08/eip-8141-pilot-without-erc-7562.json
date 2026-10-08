@@ -1,0 +1,803 @@
+{
+ "case": "hegota/8141",
+ "run_id": "assessment-run-34fe719f-626b-47e0-9f46-bc583cad4f46",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:26:09.186591Z",
+ "finished_at": "2026-10-08T09:29:13.955210Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "106b66a1a4b272d1c9432af2b754e6c882c17b05dd00ba705ffd4c57e04f7793",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "8c9cc21ef7be9d8722a61dcfc37aa7e67837d11da0fde1370f4b7ed2679874ed",
+ "output": {
+  "duration_api_ms": 182202,
+  "stop_reason": "tool_use",
+  "session_id": "f6c6c836-6415-453f-9629-dc0469eca46d",
+  "total_cost_usd": 1.860428,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 181010,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 20617,
+   "output_tokens_details": {
+    "thinking_tokens": 10196
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 181010,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 20617,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 181010,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 181010
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 20617,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 181010,
+    "webSearchRequests": 0,
+    "costUSD": 1.860428,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 10196,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8141 adds a new EIP-2718 transaction type, 0x06 (the frame transaction). It carries an explicit sender, a list of up to 64 frames (DEFAULT, VERIFY or SENDER mode, each with its own execution and state-gas limits, value and data), a list of signatures (ARBITRARY, SECP256K1 or P256), fees and optional blobs. Validity and gas payment are decided by EVM execution: VERIFY frames call the new APPROVE opcode (0xaa) to set sender approval and a payer. Accounts without code get a protocol-defined \\\"default code\\\" path. The EIP also adds introspection opcodes (TXPARAM, FRAMEDATALOAD, FRAMEDATACOPY, FRAMEPARAM, SIGPARAM, SIGDATACOPY), atomic batches, per-frame receipts carrying a payer field, and an expiry-verifier contract at a fixed address. It defines a two-dimensional settlement and block-reservation model built on EIP-8037, EIP-7778 and EIP-7976, plus mempool and networking rules.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas Accounting\",\"summary\":\"Defines a new intrinsic-gas formula (FRAME_TX_INTRINSIC_COST, per-frame cost, signature verification cost, value_transfer_cost), max_gas, and settlement in which the calldata floor is compared against the execution component.\"},{\"source\":\"eip.md\",\"locator\":\"Behavior — \\\"Charge the resolved target's warm or cold account access\\\"\",\"summary\":\"Adds a new warm/cold access charge at frame entry, drawn from each frame's own execution pool.\"},{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting\",\"summary\":\"Defines per-dimension execution and state reservations for including a frame transaction in a block.\"}],\"rationale\":\"These are new execution-gas mechanisms (per-frame pools, frame-entry access charge, frame intrinsic gas, a frame-specific settlement and floor rule, block reservation), and they apply only to the new transaction type. Expected gas results for baseline transactions and operations do not change, which fits level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Some would read the frame-specific rules as changing existing rules: the accessed_addresses initialization (frame target not pre-warmed) and the departure from the EIP-8037 payment rule. That reading would give level 3.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Behavior — \\\"before the balance check and before dispatch\\\"\",\"summary\":\"Fixes the order at frame entry: access charge, then balance check, then new-account state charge, then dispatch.\"},{\"source\":\"eip.md\",\"locator\":\"APPROVE Instruction — Behavior\",\"summary\":\"APPROVE checks payer balance, then sender existence (state-gas charge), then the nonce increment, then max_cost collection, in a fixed order.\"},{\"source\":\"eip.md\",\"locator\":\"Signature Validation — \\\"must not be added to the block-level access list\\\"\",\"summary\":\"Signature validation using ecrecover or P256VERIFY must not add those precompiles to the block-level access list.\"}],\"rationale\":\"New state-accessing operations (frame entry, APPROVE) need their own ordering rules, and there is a specific access-list exclusion. No existing opcode class has its ordering rule changed, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"EIP-7928 (block-level access lists) is not supplied, so how the frame target, payer and expiry verifier are recorded in the access list cannot be verified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Blob handling\",\"summary\":\"The payer pays the blob fee as blob_gas * blob_base_fee. max_fee_per_blob_gas is used only for the inclusion check, and blobs are optional for this type.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction settlement — max_cost\",\"summary\":\"max_cost includes blob_gas * blob_base_fee and is collected at APPROVE by the payer, who may differ from the sender.\"}],\"rationale\":\"Blob fees are collected and settled through a new path: the payer, at APPROVE time, using blob_base_fee in max_cost. Blob accounting for type-3 transactions and the block blob limits are unchanged, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"This could be read as merely carrying existing blobs with the same fee, which would be level 1.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Frame gas pools\",\"summary\":\"Each frame has its own state_gas_left pool shared across call depths. The EIP-8037 reservoir model does not apply.\"},{\"source\":\"eip.md\",\"locator\":\"State-gas attribution and refills\",\"summary\":\"State-gas charges are attributed to frame receipts and the owning frame is journaled. A cross-frame refill reduces the owner frame's gas_used.state instead of crediting the current frame.\"},{\"source\":\"eip.md\",\"locator\":\"APPROVE Instruction — Behavior\",\"summary\":\"APPROVE charges STATE_BYTES_PER_NEW_ACCOUNT*CPSB state gas if the sender does not exist. Value-carrying frames get a frame-level account-creation charge.\"}],\"rationale\":\"Per-frame state-gas budgets, owner attribution and cross-frame refills that are journaled and reversed on batch rollback form a new state-gas charging mechanism, which is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"State-gas attribution and refills — \\\"owner != current_frame_index\\\"\",\"summary\":\"A refill for a charge paid by an earlier frame reduces that frame's receipt state usage and is returned to the payer at settlement. Eligibility depends on journaled ownership history.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction settlement\",\"summary\":\"The refund_counter is shared across frames, and changes by reverted or unrolled frames are discarded. Skipped-frame budgets are refunded.\"}],\"rationale\":\"Returning cross-frame refills to the payer is a history-dependent (complex) return mechanism that exists only in frame transactions. Refund behavior for baseline transactions does not change, so this is level 2.\",\"confidence\":\"low\",\"uncertainty_note\":\"The refill itself is an EIP-8037 concept and the EIP explicitly says refills are not refunds. Under that reading the score would be 0.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Introspection — \\\"Executing any of them in the context of any other transaction type results in an exceptional halt\\\"\",\"summary\":\"Opcodes 0xaa and 0xb0–0xb5 become defined, but outside frame transactions they halt exceptionally.\"},{\"source\":\"eip.md\",\"locator\":\"Frame Transaction — FRAME_TX_TYPE 0x06\",\"summary\":\"Type 0x06 becomes a valid transaction type.\"}],\"rationale\":\"Behavior of baseline transactions is otherwise unchanged. Rework is limited to boundary cases such as tests that treat 0x06 as an unknown type or these byte values as undefined opcodes, which is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Receipt Encoding\",\"summary\":\"The new receipt fields (payer, per-frame receipts) exist only for frame transactions.\"}],\"rationale\":\"No new output appears in baseline transactions or blocks, so baseline tests need no new assertion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Payload Encoding\",\"summary\":\"Transaction input needs a sender field, frames, a signatures list (with schemes, signer and msg) and a fees list.\"},{\"source\":\"eip.md\",\"locator\":\"Receipt Encoding\",\"summary\":\"Receipt output needs payer and per-frame [status, [execution, state], logs], with no transaction-level status.\"}],\"rationale\":\"Several semantic fields change in transaction input and receipt output, which is at least level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No t8n evidence was supplied. If producing multi-scheme signatures (including P256) over the elided signature hash counts as a new signing mechanism, the score would be 3.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Frame Transaction / Field Definitions\",\"summary\":\"Tests need a frame-transaction model: frames, modes, flags, two-dimensional limits and signature entries.\"},{\"source\":\"eip.md\",\"locator\":\"Receipt Encoding\",\"summary\":\"Expectations must cover per-frame receipts, including state-gas values that later frames can change.\"}],\"rationale\":\"The target's suite needs new construction abstractions (frame transaction builder, P256 signer, signature-hash elision) and new expectations (frame receipts, payer). That is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Running existing opcode families inside frame contexts (ORIGIN, BLOBHASH, state gas) could make this a shared execution facility, which would be level 3.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Signature Validation\",\"summary\":\"New transaction-signature validation for SECP256K1 (explicit msg, arbitrary signer, low-s) and for P256 (low-s, signer = keccak256(qx||qy)[12:], P256VERIFY).\"},{\"source\":\"eip.md\",\"locator\":\"Signature Hash\",\"summary\":\"A new canonical signature hash that elides the raw bytes of signatures with empty msg.\"}],\"rationale\":\"Several cryptographic validation rules are added or changed. P256 as a transaction-signature scheme, with mandatory low-s and keccak-derived addresses, needs validation that the supplied packet does not show is covered by established resources. That is level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The P256VERIFY definition and its test resources are not supplied. If P256 is treated as established, the score would be 2.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Constraints\",\"summary\":\"Sets bounds: MAX_FRAMES, flags < 8, total_frame_gas < 2^64, msg length 0 or 32 with a nonzero digest, signer length, and the TX_MAX_GAS_LIMIT check using max(intrinsic + execution, floor).\"},{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting\",\"summary\":\"A transaction is included only if both the execution and state reservations fit the remaining capacity.\"},{\"source\":\"eip.md\",\"locator\":\"Expiry Verifier Frame\",\"summary\":\"Requires block.timestamp <= expiry and exactly 8 bytes of data.\"}],\"rationale\":\"There are many boundary-sensitive mechanisms. Settlement and block reservation form an elevated matrix: execution vs. state dimensions × refund cap × calldata floor × revert, halt and batch rollback. That is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Payload Encoding / Constraints\",\"summary\":\"Blocks must decode and structurally validate a new transaction type.\"},{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting — \\\"assert execution_reservation <= ...\\\"\",\"summary\":\"The inclusion check depends on the cumulative counters of earlier transactions in the block.\"}],\"rationale\":\"Decoding the new type and its static constraints is one rule change; the per-dimension reservation check, which depends on earlier transactions, is another and is complex. Multiple rules with at least one complex is level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If transaction-level checks are treated as ordinary execution rules rather than block structural validation, the score would be 2.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Networking\",\"summary\":\"Specifies only devp2p Receipts and PooledTransactions changes. No Engine API change is stated.\"}],\"rationale\":\"No Engine API fields or endpoints change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Blob bundles in payloads for blob-carrying frame transactions are not discussed.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Expiry Verifier Frame\",\"summary\":\"A stateless expiry-verifier contract at the fixed address EXPIRY_VERIFIER, which the protocol references and clients may short-circuit.\"},{\"source\":\"eip.md\",\"locator\":\"Deployment\",\"summary\":\"Deployed by an ordinary keyless transaction, not installed at activation.\"}],\"rationale\":\"Exactly one protocol-designated, stateless contract with no system action, which is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"It could be treated as an ordinary contract because it is deployed normally, which would give 0.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Examples — Example 1b\",\"summary\":\"The EIP-7997 factory is used unchanged.\"}],\"rationale\":\"No existing system contract changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"APPROVE Instruction (0xaa)\",\"summary\":\"APPROVE has memory-expansion gas and transaction-context side effects.\"},{\"source\":\"eip.md\",\"locator\":\"Introspection\",\"summary\":\"Adds TXPARAM, FRAMEDATALOAD, FRAMEDATACOPY, FRAMEPARAM, SIGPARAM and SIGDATACOPY; the copy opcodes have dynamic gas.\"}],\"rationale\":\"Several instructions are added and several are complex (dynamic gas, side effects), which is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Behavior — \\\"The ORIGIN opcode returns frame's caller throughout all call depths\\\"\",\"summary\":\"Inside frame transactions, ORIGIN returns ENTRY_POINT or the sender depending on frame mode.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"States that ORIGIN behavior changes for frame transactions.\"}],\"rationale\":\"ORIGIN's semantics change, which is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new precompile address is defined.\"}],\"rationale\":\"No precompile is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Signature Validation — \\\"since the signature validation does not happen in EVM execution\\\"\",\"summary\":\"ecrecover and P256VERIFY logic is reused outside the EVM; the precompiles themselves are unchanged.\"}],\"rationale\":\"No precompile's semantics or gas changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Payload Encoding\",\"summary\":\"New RLP transaction payload.\"},{\"source\":\"eip.md\",\"locator\":\"Receipt Encoding\",\"summary\":\"New ReceiptPayload: [cumulative_gas_used, payer, frame receipts].\"},{\"source\":\"eip.md\",\"locator\":\"Networking\",\"summary\":\"New Receipts message encoding and an EIP-7594 wrapper for blob-carrying frame transactions.\"}],\"rationale\":\"The transaction, receipt and peer-message schemas all change, which is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Frame Transaction\",\"summary\":\"A new EIP-2718 type, FRAME_TX_TYPE = 0x06.\"}],\"rationale\":\"A new transaction envelope is introduced, which is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Behavior — \\\"If the frame fails by reverting or halting exceptionally, the transaction is invalid\\\"\",\"summary\":\"Validity depends on EVM execution of VERIFY frames, on the payer being set after all frames, and on sender_approved being set before any SENDER frame.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction origination\",\"summary\":\"The EIP-3607 restriction is not applied to frame transactions.\"}],\"rationale\":\"Validity is decided during and after execution, not before it. This requires restructuring validation sequencing and coordinated state scenarios (signatures, nonce, execution-time approval, block reservation), which is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting — \\\"The block header gas_used ... follow EIP-8037 unchanged\\\"\",\"summary\":\"No header member is added.\"}],\"rationale\":\"No header or block field is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Expiry Verifier Frame — \\\"it is not installed by the protocol at activation\\\"\",\"summary\":\"There is no activation-time state installation.\"}],\"rationale\":\"No activation-specific state transition is required.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Replacement and Eviction — \\\"A frame transaction is charged nothing until one of its frames approves payment\\\"\",\"summary\":\"Block builders do unpaid validation work on prefixes that fail to approve.\"},{\"source\":\"eip.md\",\"locator\":\"Explicit Sender State-Read Amplification\",\"summary\":\"Invalid transactions with arbitrary senders force state reads.\"},{\"source\":\"eip.md\",\"locator\":\"Intrinsic cost decomposition\",\"summary\":\"Signature and per-frame costs are provisional benchmark targets.\"}],\"rationale\":\"New adversarial workloads couple signature verification (P256), unpaid EVM validation, mempool simulation and revalidation, and per-frame journaling and receipts. Validating these needs integrated stress testing across subsystems, which is level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Some of the workload is mempool-only, which could argue for level 2.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Approval Authorizes All Subsequent Sender Frames\",\"summary\":\"Transaction authorization moves into EVM code. Unchecked fields and approval-reuse risks follow.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction origination\",\"summary\":\"Contract senders are allowed, removing the EIP-3607 protection for this type.\"},{\"source\":\"eip.md\",\"locator\":\"Arbitrary Signature Malleability\",\"summary\":\"Transaction-hash malleability through elided ARBITRARY signatures.\"}],\"rationale\":\"The shared authorization and trust invariants change across signature validation, the EVM, payment and the mempool, which needs coordinated adversarial scenarios. That is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Behavior — \\\"If a frame's execution reverts, its state changes and approval context ... are discarded\\\"\",\"summary\":\"Approval context is discarded only when a whole frame reverts. If APPROVE runs in a nested self-call whose parent call frame later reverts, it is unspecified whether payer and sender_approved are rolled back with the nonce and balance changes.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction settlement\",\"summary\":\"No explicit check that max_fee_per_gas >= base fee or that the priority fee is <= max fee, and no explicit coinbase payment rule for frame transactions.\"}],\"rationale\":\"These are localized gaps with competing outcomes (journaling of approval context inside nested calls, fee validity conditions) that need agreement before expected results can be fixed. That is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The EIP-1559 prerequisite may be intended to cover the fee checks. EIP-7928 and EIP-7562 are not supplied.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Gas Accounting / Block-level gas accounting\",\"summary\":\"Couples EIP-8037 state gas, EIP-7778 pre-refund block accounting, the EIP-7976 floor, the EIP-3529 refund cap, the EIP-7825 cap and EIP-2780 costs.\"},{\"source\":\"eip.md\",\"locator\":\"Behavior / Cross-frame interactions\",\"summary\":\"Interactions with EIP-2929 warm/cold, EIP-7702 delegation, EIP-7708 logs, EIP-4844 blobs and the EIP-3607 exemption.\"}],\"rationale\":\"Frame settlement and execution couple the rules of many EIPs and need coordinated multi-EIP scenarios, which is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":8037,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Per-frame state-gas pools replacing the reservoir; SSTORE refills across frames attributed to the owner frame; account creation by CALL/CREATE and code deposit inside frames; state-gas rollback on frame revert, halt and atomic-batch unroll.\"},{\"eip\":7778,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Block execution gas counted before refunds while the payer is charged after refunds, for frame transactions with SSTORE clears.\"},{\"eip\":7976,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Calldata floor over frame data and signature bytes, compared against the execution component; gas_used = floor + state gas when the floor binds.\"},{\"eip\":3529,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"refund_counter accumulated across frames, discarded for reverted or unrolled frames, and capped at gas_used_before_refund // 5.\"},{\"eip\":7825,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Intrinsic gas plus the sum of execution limits (or the calldata floor) <= TX_MAX_GAS_LIMIT, with state gas excluded.\"},{\"eip\":2780,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"TX_VALUE_COST per value-bearing frame, excluded for self-targets; runtime account-creation charge at frame entry and at APPROVE.\"},{\"eip\":2929,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Frame-entry warm/cold charge; frame targets not pre-warmed; warm/cold journal shared across frames and reverted per frame.\"},{\"eip\":7702,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Delegated targets in each frame mode; delegated sender running VERIFY; default code vs. delegation dispatch.\"},{\"eip\":7708,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Transfer log for value frames to non-sender targets; logs dropped on batch rollback; log order across frame receipts.\"},{\"eip\":4844,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Blob-carrying frame transaction with payer-paid blob fee, BLOBHASH in every frame, max_fee_per_blob_gas inclusion check, and blob gas toward block limits.\"},{\"eip\":3607,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Frame transactions with a contract sender are valid while other transaction types from the same sender are still rejected.\"},{\"eip\":1559,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Effective gas price settlement through the payer, priority fee, and max_cost collection at APPROVE.\"},{\"eip\":6780,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Contract created in one frame and selfdestructed in a later frame (same transaction), with no state-gas refill.\"},{\"eip\":7594,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Per-transaction blob limit and cell-proof network wrapper for frame transactions.\"},{\"eip\":2718,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Type byte 0x06 envelope, matching receipt type.\"},{\"eip\":3651,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Coinbase warm at the start of a frame transaction.\"},{\"eip\":8038,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"COLD_ACCOUNT_ACCESS and WARM_ACCESS values used in the frame-entry charge.\"},{\"eip\":2,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Low-s rule applied to SECP256K1 signature entries.\"},{\"eip\":7997,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Deploy frame through the factory before VERIFY.\"},{\"eip\":7819,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"SETDELEGATE in a deploy frame (mempool rule only).\"},{\"eip\":7843,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"SLOTNUM banned in the validation prefix (mempool only).\"}],\"unidentified_interactions\":[\"The P256VERIFY precompile is referenced for P256 signature validation, but its defining EIP is not named or supplied.\",\"The block-level access list must exclude ecrecover and P256VERIFY when they are used for signature validation (the defining EIP, 7928, is not named in the target and not supplied).\"]},\"under_specification\":{\"present\":true,\"summary\":\"Approval-context journaling for APPROVE inside nested calls is only partly specified. Frame-transaction fee validity conditions and coinbase payment are not stated explicitly. The P256VERIFY and block-level access list definitions are not supplied.\",\"affected_criteria\":[{\"criterion\":\"state_access_ordering_within_opcode_execution\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":3,\"maximum_score\":3},{\"criterion\":\"cryptography\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"evm_gas_rule_changes\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_evm_gas_refund\",\"minimum_score\":0,\"maximum_score\":2}],\"unresolved_questions\":[\"Are payer and sender_approved rolled back when a nested call frame that executed APPROVE reverts while the top-level frame succeeds?\",\"Must max_fee_per_gas be >= base fee, and max_priority_fee_per_gas <= max_fee_per_gas, for frame transactions?\",\"How is the priority fee paid to the coinbase in frame settlement?\",\"Is the approval context discarded when a non-VERIFY frame halts exceptionally (the text says only 'reverts')?\",\"Which addresses (frame targets, payer, expiry verifier) enter the block-level access list?\",\"Is a sender nonce at 2^64-1 handled on APPROVE's nonce increment?\"]},\"notable_ambiguities\":[\"The mempool rule says the number of pending transactions using a non-canonical paymaster must be 'less than' MAX_PENDING_TXS_USING_NON_CANONICAL_PAYMASTER = 1, which would allow zero. This is policy only, not consensus.\",\"The statement that 'ORIGIN is cold' in DEFAULT and VERIFY frames has no clear gas effect, because ORIGIN does not charge for account access.\",\"In an unrolled atomic batch, executed frames keep status 1 even though their state is rolled back; tests must follow this deliberately.\",\"The P256 low-s requirement differs from P256VERIFY, which accepts high-s signatures.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8141 adds a new EIP-2718 transaction type, 0x06 (the frame transaction). It carries an explicit sender, a list of up to 64 frames (DEFAULT, VERIFY or SENDER mode, each with its own execution and state-gas limits, value and data), a list of signatures (ARBITRARY, SECP256K1 or P256), fees and optional blobs. Validity and gas payment are decided by EVM execution: VERIFY frames call the new APPROVE opcode (0xaa) to set sender approval and a payer. Accounts without code get a protocol-defined \"default code\" path. The EIP also adds introspection opcodes (TXPARAM, FRAMEDATALOAD, FRAMEDATACOPY, FRAMEPARAM, SIGPARAM, SIGDATACOPY), atomic batches, per-frame receipts carrying a payer field, and an expiry-verifier contract at a fixed address. It defines a two-dimensional settlement and block-reservation model built on EIP-8037, EIP-7778 and EIP-7976, plus mempool and networking rules.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas Accounting",
+       "summary": "Defines a new intrinsic-gas formula (FRAME_TX_INTRINSIC_COST, per-frame cost, signature verification cost, value_transfer_cost), max_gas, and settlement in which the calldata floor is compared against the execution component."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Behavior — \"Charge the resolved target's warm or cold account access\"",
+       "summary": "Adds a new warm/cold access charge at frame entry, drawn from each frame's own execution pool."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting",
+       "summary": "Defines per-dimension execution and state reservations for including a frame transaction in a block."
+      }
+     ],
+     "rationale": "These are new execution-gas mechanisms (per-frame pools, frame-entry access charge, frame intrinsic gas, a frame-specific settlement and floor rule, block reservation), and they apply only to the new transaction type. Expected gas results for baseline transactions and operations do not change, which fits level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Some would read the frame-specific rules as changing existing rules: the accessed_addresses initialization (frame target not pre-warmed) and the departure from the EIP-8037 payment rule. That reading would give level 3.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Behavior — \"before the balance check and before dispatch\"",
+       "summary": "Fixes the order at frame entry: access charge, then balance check, then new-account state charge, then dispatch."
+      },
+      {
+       "source": "eip.md",
+       "locator": "APPROVE Instruction — Behavior",
+       "summary": "APPROVE checks payer balance, then sender existence (state-gas charge), then the nonce increment, then max_cost collection, in a fixed order."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Signature Validation — \"must not be added to the block-level access list\"",
+       "summary": "Signature validation using ecrecover or P256VERIFY must not add those precompiles to the block-level access list."
+      }
+     ],
+     "rationale": "New state-accessing operations (frame entry, APPROVE) need their own ordering rules, and there is a specific access-list exclusion. No existing opcode class has its ordering rule changed, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "EIP-7928 (block-level access lists) is not supplied, so how the frame target, payer and expiry verifier are recorded in the access list cannot be verified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Blob handling",
+       "summary": "The payer pays the blob fee as blob_gas * blob_base_fee. max_fee_per_blob_gas is used only for the inclusion check, and blobs are optional for this type."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction settlement — max_cost",
+       "summary": "max_cost includes blob_gas * blob_base_fee and is collected at APPROVE by the payer, who may differ from the sender."
+      }
+     ],
+     "rationale": "Blob fees are collected and settled through a new path: the payer, at APPROVE time, using blob_base_fee in max_cost. Blob accounting for type-3 transactions and the block blob limits are unchanged, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "This could be read as merely carrying existing blobs with the same fee, which would be level 1.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Frame gas pools",
+       "summary": "Each frame has its own state_gas_left pool shared across call depths. The EIP-8037 reservoir model does not apply."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State-gas attribution and refills",
+       "summary": "State-gas charges are attributed to frame receipts and the owning frame is journaled. A cross-frame refill reduces the owner frame's gas_used.state instead of crediting the current frame."
+      },
+      {
+       "source": "eip.md",
+       "locator": "APPROVE Instruction — Behavior",
+       "summary": "APPROVE charges STATE_BYTES_PER_NEW_ACCOUNT*CPSB state gas if the sender does not exist. Value-carrying frames get a frame-level account-creation charge."
+      }
+     ],
+     "rationale": "Per-frame state-gas budgets, owner attribution and cross-frame refills that are journaled and reversed on batch rollback form a new state-gas charging mechanism, which is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "State-gas attribution and refills — \"owner != current_frame_index\"",
+       "summary": "A refill for a charge paid by an earlier frame reduces that frame's receipt state usage and is returned to the payer at settlement. Eligibility depends on journaled ownership history."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction settlement",
+       "summary": "The refund_counter is shared across frames, and changes by reverted or unrolled frames are discarded. Skipped-frame budgets are refunded."
+      }
+     ],
+     "rationale": "Returning cross-frame refills to the payer is a history-dependent (complex) return mechanism that exists only in frame transactions. Refund behavior for baseline transactions does not change, so this is level 2.",
+     "confidence": "low",
+     "uncertainty_note": "The refill itself is an EIP-8037 concept and the EIP explicitly says refills are not refunds. Under that reading the score would be 0.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Introspection — \"Executing any of them in the context of any other transaction type results in an exceptional halt\"",
+       "summary": "Opcodes 0xaa and 0xb0–0xb5 become defined, but outside frame transactions they halt exceptionally."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Frame Transaction — FRAME_TX_TYPE 0x06",
+       "summary": "Type 0x06 becomes a valid transaction type."
+      }
+     ],
+     "rationale": "Behavior of baseline transactions is otherwise unchanged. Rework is limited to boundary cases such as tests that treat 0x06 as an unknown type or these byte values as undefined opcodes, which is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Receipt Encoding",
+       "summary": "The new receipt fields (payer, per-frame receipts) exist only for frame transactions."
+      }
+     ],
+     "rationale": "No new output appears in baseline transactions or blocks, so baseline tests need no new assertion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Payload Encoding",
+       "summary": "Transaction input needs a sender field, frames, a signatures list (with schemes, signer and msg) and a fees list."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Receipt Encoding",
+       "summary": "Receipt output needs payer and per-frame [status, [execution, state], logs], with no transaction-level status."
+      }
+     ],
+     "rationale": "Several semantic fields change in transaction input and receipt output, which is at least level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "No t8n evidence was supplied. If producing multi-scheme signatures (including P256) over the elided signature hash counts as a new signing mechanism, the score would be 3.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Frame Transaction / Field Definitions",
+       "summary": "Tests need a frame-transaction model: frames, modes, flags, two-dimensional limits and signature entries."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Receipt Encoding",
+       "summary": "Expectations must cover per-frame receipts, including state-gas values that later frames can change."
+      }
+     ],
+     "rationale": "The target's suite needs new construction abstractions (frame transaction builder, P256 signer, signature-hash elision) and new expectations (frame receipts, payer). That is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Running existing opcode families inside frame contexts (ORIGIN, BLOBHASH, state gas) could make this a shared execution facility, which would be level 3.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Signature Validation",
+       "summary": "New transaction-signature validation for SECP256K1 (explicit msg, arbitrary signer, low-s) and for P256 (low-s, signer = keccak256(qx||qy)[12:], P256VERIFY)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Signature Hash",
+       "summary": "A new canonical signature hash that elides the raw bytes of signatures with empty msg."
+      }
+     ],
+     "rationale": "Several cryptographic validation rules are added or changed. P256 as a transaction-signature scheme, with mandatory low-s and keccak-derived addresses, needs validation that the supplied packet does not show is covered by established resources. That is level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "The P256VERIFY definition and its test resources are not supplied. If P256 is treated as established, the score would be 2.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Constraints",
+       "summary": "Sets bounds: MAX_FRAMES, flags < 8, total_frame_gas < 2^64, msg length 0 or 32 with a nonzero digest, signer length, and the TX_MAX_GAS_LIMIT check using max(intrinsic + execution, floor)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting",
+       "summary": "A transaction is included only if both the execution and state reservations fit the remaining capacity."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Expiry Verifier Frame",
+       "summary": "Requires block.timestamp <= expiry and exactly 8 bytes of data."
+      }
+     ],
+     "rationale": "There are many boundary-sensitive mechanisms. Settlement and block reservation form an elevated matrix: execution vs. state dimensions × refund cap × calldata floor × revert, halt and batch rollback. That is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Payload Encoding / Constraints",
+       "summary": "Blocks must decode and structurally validate a new transaction type."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting — \"assert execution_reservation <= ...\"",
+       "summary": "The inclusion check depends on the cumulative counters of earlier transactions in the block."
+      }
+     ],
+     "rationale": "Decoding the new type and its static constraints is one rule change; the per-dimension reservation check, which depends on earlier transactions, is another and is complex. Multiple rules with at least one complex is level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "If transaction-level checks are treated as ordinary execution rules rather than block structural validation, the score would be 2.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Networking",
+       "summary": "Specifies only devp2p Receipts and PooledTransactions changes. No Engine API change is stated."
+      }
+     ],
+     "rationale": "No Engine API fields or endpoints change.",
+     "confidence": "medium",
+     "uncertainty_note": "Blob bundles in payloads for blob-carrying frame transactions are not discussed.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Expiry Verifier Frame",
+       "summary": "A stateless expiry-verifier contract at the fixed address EXPIRY_VERIFIER, which the protocol references and clients may short-circuit."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Deployment",
+       "summary": "Deployed by an ordinary keyless transaction, not installed at activation."
+      }
+     ],
+     "rationale": "Exactly one protocol-designated, stateless contract with no system action, which is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "It could be treated as an ordinary contract because it is deployed normally, which would give 0.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Examples — Example 1b",
+       "summary": "The EIP-7997 factory is used unchanged."
+      }
+     ],
+     "rationale": "No existing system contract changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "APPROVE Instruction (0xaa)",
+       "summary": "APPROVE has memory-expansion gas and transaction-context side effects."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Introspection",
+       "summary": "Adds TXPARAM, FRAMEDATALOAD, FRAMEDATACOPY, FRAMEPARAM, SIGPARAM and SIGDATACOPY; the copy opcodes have dynamic gas."
+      }
+     ],
+     "rationale": "Several instructions are added and several are complex (dynamic gas, side effects), which is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Behavior — \"The ORIGIN opcode returns frame's caller throughout all call depths\"",
+       "summary": "Inside frame transactions, ORIGIN returns ENTRY_POINT or the sender depending on frame mode."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "States that ORIGIN behavior changes for frame transactions."
+      }
+     ],
+     "rationale": "ORIGIN's semantics change, which is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new precompile address is defined."
+      }
+     ],
+     "rationale": "No precompile is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Signature Validation — \"since the signature validation does not happen in EVM execution\"",
+       "summary": "ecrecover and P256VERIFY logic is reused outside the EVM; the precompiles themselves are unchanged."
+      }
+     ],
+     "rationale": "No precompile's semantics or gas changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Payload Encoding",
+       "summary": "New RLP transaction payload."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Receipt Encoding",
+       "summary": "New ReceiptPayload: [cumulative_gas_used, payer, frame receipts]."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Networking",
+       "summary": "New Receipts message encoding and an EIP-7594 wrapper for blob-carrying frame transactions."
+      }
+     ],
+     "rationale": "The transaction, receipt and peer-message schemas all change, which is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Frame Transaction",
+       "summary": "A new EIP-2718 type, FRAME_TX_TYPE = 0x06."
+      }
+     ],
+     "rationale": "A new transaction envelope is introduced, which is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Behavior — \"If the frame fails by reverting or halting exceptionally, the transaction is invalid\"",
+       "summary": "Validity depends on EVM execution of VERIFY frames, on the payer being set after all frames, and on sender_approved being set before any SENDER frame."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction origination",
+       "summary": "The EIP-3607 restriction is not applied to frame transactions."
+      }
+     ],
+     "rationale": "Validity is decided during and after execution, not before it. This requires restructuring validation sequencing and coordinated state scenarios (signatures, nonce, execution-time approval, block reservation), which is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting — \"The block header gas_used ... follow EIP-8037 unchanged\"",
+       "summary": "No header member is added."
+      }
+     ],
+     "rationale": "No header or block field is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Expiry Verifier Frame — \"it is not installed by the protocol at activation\"",
+       "summary": "There is no activation-time state installation."
+      }
+     ],
+     "rationale": "No activation-specific state transition is required.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Replacement and Eviction — \"A frame transaction is charged nothing until one of its frames approves payment\"",
+       "summary": "Block builders do unpaid validation work on prefixes that fail to approve."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Explicit Sender State-Read Amplification",
+       "summary": "Invalid transactions with arbitrary senders force state reads."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Intrinsic cost decomposition",
+       "summary": "Signature and per-frame costs are provisional benchmark targets."
+      }
+     ],
+     "rationale": "New adversarial workloads couple signature verification (P256), unpaid EVM validation, mempool simulation and revalidation, and per-frame journaling and receipts. Validating these needs integrated stress testing across subsystems, which is level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "Some of the workload is mempool-only, which could argue for level 2.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Approval Authorizes All Subsequent Sender Frames",
+       "summary": "Transaction authorization moves into EVM code. Unchecked fields and approval-reuse risks follow."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction origination",
+       "summary": "Contract senders are allowed, removing the EIP-3607 protection for this type."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Arbitrary Signature Malleability",
+       "summary": "Transaction-hash malleability through elided ARBITRARY signatures."
+      }
+     ],
+     "rationale": "The shared authorization and trust invariants change across signature validation, the EVM, payment and the mempool, which needs coordinated adversarial scenarios. That is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Behavior — \"If a frame's execution reverts, its state changes and approval context ... are discarded\"",
+       "summary": "Approval context is discarded only when a whole frame reverts. If APPROVE runs in a nested self-call whose parent call frame later reverts, it is unspecified whether payer and sender_approved are rolled back with the nonce and balance changes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction settlement",
+       "summary": "No explicit check that max_fee_per_gas >= base fee or that the priority fee is <= max fee, and no explicit coinbase payment rule for frame transactions."
+      }
+     ],
+     "rationale": "These are localized gaps with competing outcomes (journaling of approval context inside nested calls, fee validity conditions) that need agreement before expected results can be fixed. That is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "The EIP-1559 prerequisite may be intended to cover the fee checks. EIP-7928 and EIP-7562 are not supplied.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Gas Accounting / Block-level gas accounting",
+       "summary": "Couples EIP-8037 state gas, EIP-7778 pre-refund block accounting, the EIP-7976 floor, the EIP-3529 refund cap, the EIP-7825 cap and EIP-2780 costs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Behavior / Cross-frame interactions",
+       "summary": "Interactions with EIP-2929 warm/cold, EIP-7702 delegation, EIP-7708 logs, EIP-4844 blobs and the EIP-3607 exemption."
+      }
+     ],
+     "rationale": "Frame settlement and execution couple the rules of many EIPs and need coordinated multi-EIP scenarios, which is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 8037,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Per-frame state-gas pools replacing the reservoir; SSTORE refills across frames attributed to the owner frame; account creation by CALL/CREATE and code deposit inside frames; state-gas rollback on frame revert, halt and atomic-batch unroll."
+     },
+     {
+      "eip": 7778,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Block execution gas counted before refunds while the payer is charged after refunds, for frame transactions with SSTORE clears."
+     },
+     {
+      "eip": 7976,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Calldata floor over frame data and signature bytes, compared against the execution component; gas_used = floor + state gas when the floor binds."
+     },
+     {
+      "eip": 3529,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "refund_counter accumulated across frames, discarded for reverted or unrolled frames, and capped at gas_used_before_refund // 5."
+     },
+     {
+      "eip": 7825,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Intrinsic gas plus the sum of execution limits (or the calldata floor) <= TX_MAX_GAS_LIMIT, with state gas excluded."
+     },
+     {
+      "eip": 2780,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "TX_VALUE_COST per value-bearing frame, excluded for self-targets; runtime account-creation charge at frame entry and at APPROVE."
+     },
+     {
+      "eip": 2929,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Frame-entry warm/cold charge; frame targets not pre-warmed; warm/cold journal shared across frames and reverted per frame."
+     },
+     {
+      "eip": 7702,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Delegated targets in each frame mode; delegated sender running VERIFY; default code vs. delegation dispatch."
+     },
+     {
+      "eip": 7708,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Transfer log for value frames to non-sender targets; logs dropped on batch rollback; log order across frame receipts."
+     },
+     {
+      "eip": 4844,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Blob-carrying frame transaction with payer-paid blob fee, BLOBHASH in every frame, max_fee_per_blob_gas inclusion check, and blob gas toward block limits."
+     },
+     {
+      "eip": 3607,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Frame transactions with a contract sender are valid while other transaction types from the same sender are still rejected."
+     },
+     {
+      "eip": 1559,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Effective gas price settlement through the payer, priority fee, and max_cost collection at APPROVE."
+     },
+     {
+      "eip": 6780,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Contract created in one frame and selfdestructed in a later frame (same transaction), with no state-gas refill."
+     },
+     {
+      "eip": 7594,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Per-transaction blob limit and cell-proof network wrapper for frame transactions."
+     },
+     {
+      "eip": 2718,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Type byte 0x06 envelope, matching receipt type."
+     },
+     {
+      "eip": 3651,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Coinbase warm at the start of a frame transaction."
+     },
+     {
+      "eip": 8038,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "COLD_ACCOUNT_ACCESS and WARM_ACCESS values used in the frame-entry charge."
+     },
+     {
+      "eip": 2,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Low-s rule applied to SECP256K1 signature entries."
+     },
+     {
+      "eip": 7997,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Deploy frame through the factory before VERIFY."
+     },
+     {
+      "eip": 7819,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "SETDELEGATE in a deploy frame (mempool rule only)."
+     },
+     {
+      "eip": 7843,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "SLOTNUM banned in the validation prefix (mempool only)."
+     }
+    ],
+    "unidentified_interactions": [
+     "The P256VERIFY precompile is referenced for P256 signature validation, but its defining EIP is not named or supplied.",
+     "The block-level access list must exclude ecrecover and P256VERIFY when they are used for signature validation (the defining EIP, 7928, is not named in the target and not supplied)."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "Approval-context journaling for APPROVE inside nested calls is only partly specified. Frame-transaction fee validity conditions and coinbase payment are not stated explicitly. The P256VERIFY and block-level access list definitions are not supplied.",
+    "affected_criteria": [
+     {
+      "criterion": "state_access_ordering_within_opcode_execution",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 3,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "cryptography",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "evm_gas_rule_changes",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_evm_gas_refund",
+      "minimum_score": 0,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Are payer and sender_approved rolled back when a nested call frame that executed APPROVE reverts while the top-level frame succeeds?",
+     "Must max_fee_per_gas be >= base fee, and max_priority_fee_per_gas <= max_fee_per_gas, for frame transactions?",
+     "How is the priority fee paid to the coinbase in frame settlement?",
+     "Is the approval context discarded when a non-VERIFY frame halts exceptionally (the text says only 'reverts')?",
+     "Which addresses (frame targets, payer, expiry verifier) enter the block-level access list?",
+     "Is a sender nonce at 2^64-1 handled on APPROVE's nonce increment?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The mempool rule says the number of pending transactions using a non-canonical paymaster must be 'less than' MAX_PENDING_TXS_USING_NON_CANONICAL_PAYMASTER = 1, which would allow zero. This is policy only, not consensus.",
+    "The statement that 'ORIGIN is cold' in DEFAULT and VERIFY frames has no clear gas effect, because ORIGIN does not charge for account access.",
+    "In an unrolled atomic batch, executed frames keep status 1 even though their state is rolled back; tests must follow this deliberately.",
+    "The P256 low-s requirement differs from P256VERIFY, which accepts high-s signatures."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 102163,
+  "type": "result",
+  "duration_ms": 182691,
+  "uuid": "474bca7e-8f3d-4577-adc8-6f331e5a7917",
+  "ttft_stream_ms": 1474,
+  "time_to_request_ms": 485,
+  "first_content_frame_ms": 1474,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}
