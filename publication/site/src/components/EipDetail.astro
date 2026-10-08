@@ -23,7 +23,7 @@ const { data, eip } = Astro.props as Props;
 const definitions = new Map(data.criteria.map((item) => [item.id, item]));
 const panels = eip.occurrences.map((occurrence) => {
   const assessments = assessmentsFor(data, occurrence);
-  const llm = assessments.filter((item) => item.source === 'llm').sort((a, b) => b.rubric_revision - a.rubric_revision);
+  const llm = assessments.filter((item) => item.source === 'llm').sort((a, b) => occurrence.mode === 'prospective' ? (b.evaluation_date ?? '').localeCompare(a.evaluation_date ?? '') || a.id.localeCompare(b.id) : b.rubric_revision - a.rubric_revision);
   const human = humanAssessment(data, occurrence);
   const comparisons = comparisonsFor(data, occurrence);
   return { occurrence, llm, human, comparisons, views: viewModes(occurrence), defaultView: defaultView(occurrence) };
@@ -113,7 +113,7 @@ const contextLine = (panel) => {
 
         {occurrence.llm.status === 'not_applicable' && (
           <div class="notice">
-            <strong>{statusLabel('not_applicable')}.</strong> {occurrence.llm.rationale} This is a disposition, not an execution-layer score of zero.
+            <strong>{statusLabel('not_applicable')} at the original snapshot.</strong> {occurrence.llm.rationale} This is a disposition, not an execution-layer score of zero.
           </div>
         )}
 
@@ -122,15 +122,15 @@ const contextLine = (panel) => {
             {panel.llm.map((assessment) => (
               <a
                 role="tab"
-                id={`tab-${occurrence.fork}-llm-r${assessment.rubric_revision}`}
-                href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'llm', rubric: panel.llm.length > 1 ? assessment.rubric_revision : null }, `#${domId(assessment.id)}`)}
+                id={`tab-${domId(assessment.id)}`}
+                href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'llm', assessment: assessment.id }, `#${domId(assessment.id)}`)}
                 aria-controls={domId(assessment.id)}
                 aria-selected={panel.defaultView === 'llm' && assessment === panel.llm[0] ? 'true' : 'false'}
                 data-view-tab="llm"
-                data-rubric-tab={panel.llm.length > 1 ? String(assessment.rubric_revision) : undefined}
+                data-assessment-tab={assessment.id}
               >
                 <span class="tab-title">{EVALUATOR_LABELS.llm} · {rubricLabel(assessment.rubric_revision)}</span>
-                <span class="tab-meta">{llmRoleLabel(assessment.role, assessment.provenance.assessor?.model)} · {assessment.score}</span>
+                <span class="tab-meta">{assessment.evaluation_date ?? 'Date not recorded'} · {llmRoleLabel(assessment.role, assessment.provenance.assessor?.model, occurrence.mode)} · {assessment.score}</span>
               </a>
             ))}
             {panel.human && (
@@ -149,10 +149,10 @@ const contextLine = (panel) => {
         )}
 
         {panel.llm.length > 0 && (
-          <div class="view-panel" id={`panel-${occurrence.fork}-llm`} role={panel.views.length > 1 ? 'tabpanel' : undefined} aria-labelledby={panel.views.length > 1 ? `tab-${occurrence.fork}-llm` : undefined} data-view-panel="llm">
+          <div class="view-panel" id={`panel-${occurrence.fork}-llm`} role={panel.views.length > 1 ? 'tabpanel' : undefined} aria-labelledby={panel.views.length > 1 ? `tab-${domId(panel.llm[0].id)}` : undefined} data-view-panel="llm">
             {panel.views.length === 1 && panel.llm.length === 1 && <h2>{EVALUATOR_LABELS.llm} assessment</h2>}
             {panel.llm.map((assessment) => (
-              <div id={domId(assessment.id)} class="rubric-panel" data-rubric-panel={String(assessment.rubric_revision)} role={panel.llm.length > 1 ? 'tabpanel' : undefined}>
+              <div id={domId(assessment.id)} class="rubric-panel" data-rubric-panel={String(assessment.rubric_revision)} data-assessment-panel={assessment.id} role={panel.llm.length > 1 ? 'tabpanel' : undefined}>
                 <AssessmentView assessment={assessment} occurrence={occurrence} rubric={rubricFor(data, assessment.rubric_revision)} definitions={definitions} />
               </div>
             ))}
@@ -194,7 +194,7 @@ const contextLine = (panel) => {
   if (root) {
     const forkPanels = Array.from(root.querySelectorAll<HTMLElement>('[data-fork-panel]'));
     const forkTabs = Array.from(root.querySelectorAll<HTMLAnchorElement>('[data-fork-tab]'));
-    const state = { fork: '', view: '', rubric: '' };
+    const state = { fork: '', view: '', rubric: '', assessment: '' };
 
     const select = (tabs: HTMLElement[], panels: HTMLElement[], attribute: string, value: string) => {
       for (const tab of tabs) tab.setAttribute('aria-selected', tab.dataset[attribute] === value ? 'true' : 'false');
@@ -221,20 +221,18 @@ const contextLine = (panel) => {
 
     const markTabs = (panel: HTMLElement) => {
       for (const tab of Array.from(panel.querySelectorAll<HTMLElement>('[data-view-tab]'))) {
-        const selected = tab.dataset.viewTab === state.view && (!tab.dataset.rubricTab || tab.dataset.rubricTab === state.rubric);
+        const selected = tab.dataset.viewTab === state.view && (!tab.dataset.assessmentTab || tab.dataset.assessmentTab === state.assessment);
         tab.setAttribute('aria-selected', selected ? 'true' : 'false');
       }
     };
 
-    const applyRubric = (panel: HTMLElement, rubric: string) => {
-      const rubricPanels = Array.from(panel.querySelectorAll<HTMLElement>('[data-rubric-panel]'));
-      if (rubricPanels.length < 2) {
-        state.rubric = '';
-        return;
-      }
-      const available = rubricPanels.map((item) => item.dataset.rubricPanel!);
-      state.rubric = available.includes(rubric) ? rubric : available[0];
-      for (const item of rubricPanels) item.hidden = item.dataset.rubricPanel !== state.rubric;
+    const applyAssessment = (panel: HTMLElement, rubric: string, assessment: string) => {
+      const items = Array.from(panel.querySelectorAll<HTMLElement>('[data-assessment-panel]'));
+      const selected = items.find((item) => item.dataset.assessmentPanel === assessment)
+        ?? items.find((item) => item.dataset.rubricPanel === rubric) ?? items[0];
+      state.assessment = selected?.dataset.assessmentPanel ?? '';
+      state.rubric = selected?.dataset.rubricPanel ?? '';
+      for (const item of items) item.hidden = item !== selected;
       markTabs(panel);
     };
 
@@ -244,14 +242,14 @@ const contextLine = (panel) => {
       replaceQuery({
         fork: forkPanels.length > 1 && state.fork !== defaultFork ? state.fork : null,
         view: state.view && state.view !== panel.dataset.defaultView ? state.view : null,
-        rubric: state.rubric && state.rubric !== (panel.querySelector<HTMLElement>('[data-rubric-panel]')?.dataset.rubricPanel ?? '') ? state.rubric : null,
+        assessment: state.view === 'llm' ? state.assessment : null,
       });
     };
 
-    const apply = (fork: string, view: string, rubric: string) => {
+    const apply = (fork: string, view: string, rubric: string, assessment = '') => {
       const panel = applyFork(fork);
       applyView(panel, view);
-      applyRubric(panel, rubric);
+      applyAssessment(panel, rubric, assessment);
       sync();
     };
 
@@ -264,12 +262,12 @@ const contextLine = (panel) => {
       const forkPanel = target.closest<HTMLElement>('[data-fork-panel]');
       const viewPanel = target.closest<HTMLElement>('[data-view-panel]');
       const rubricPanel = target.closest<HTMLElement>('[data-rubric-panel]');
-      if (forkPanel) apply(forkPanel.dataset.forkPanel!, viewPanel?.dataset.viewPanel ?? state.view, rubricPanel?.dataset.rubricPanel ?? state.rubric);
+      if (forkPanel) apply(forkPanel.dataset.forkPanel!, viewPanel?.dataset.viewPanel ?? state.view, rubricPanel?.dataset.rubricPanel ?? state.rubric, rubricPanel?.dataset.assessmentPanel ?? '');
       target.scrollIntoView({ block: 'start' });
     };
 
     const initial = parseEipViewState(window.location.search);
-    apply(initial.fork ?? root.dataset.defaultFork ?? '', initial.view ?? '', initial.rubric ? String(initial.rubric) : '');
+    apply(initial.fork ?? root.dataset.defaultFork ?? '', initial.view ?? '', initial.rubric ? String(initial.rubric) : '', initial.assessment ?? '');
     revealHash();
     window.addEventListener('hashchange', revealHash);
 
@@ -278,7 +276,7 @@ const contextLine = (panel) => {
       if (!tab) return;
       event.preventDefault();
       if (tab.dataset.forkTab) apply(tab.dataset.forkTab, '', '');
-      else if (tab.dataset.viewTab) apply(state.fork, tab.dataset.viewTab, tab.dataset.rubricTab ?? '');
+      else if (tab.dataset.viewTab) apply(state.fork, tab.dataset.viewTab, '', tab.dataset.assessmentTab ?? state.assessment);
       const selected = root.querySelector<HTMLElement>(`[data-fork-panel="${state.fork}"]`);
       selected?.querySelector<HTMLElement>('[aria-selected="true"]')?.focus();
     });

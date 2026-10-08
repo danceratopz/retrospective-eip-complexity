@@ -13,6 +13,7 @@ export interface EipViewState {
   fork?: string | null;
   view?: ViewMode | null;
   rubric?: number | null;
+  assessment?: string | null;
 }
 
 function query(params: Record<string, string | number | null | undefined>): string {
@@ -25,7 +26,7 @@ function query(params: Record<string, string | number | null | undefined>): stri
 }
 
 export function eipRoute(eip: number, state: EipViewState = {}, hash = ''): string {
-  return basePath(`eips/${eip}/${query({ fork: state.fork, view: state.view, rubric: state.rubric })}${hash}`);
+  return basePath(`eips/${eip}/${query({ fork: state.fork, view: state.view, rubric: state.rubric, assessment: state.assessment })}${hash}`);
 }
 
 export function forkRoute(fork: string): string {
@@ -58,7 +59,7 @@ export function parseCompareState(search: string): CompareState {
   const assessments = (params.get('a') ?? '')
     .split(',')
     .map((value) => value.trim())
-    .filter((value) => /^[a-z]+:\d+:(llm|human):r\d$/.test(value));
+    .filter((value) => /^[a-z]+:\d+:(llm|human):r\d+(?::[a-z0-9]+(?:-[a-z0-9]+)*)?$/.test(value));
   const eips = (params.get('eips') ?? '')
     .split(',')
     .map((value) => Number.parseInt(value, 10))
@@ -82,6 +83,7 @@ export function parseEipViewState(search: string): EipViewState {
     fork: params.get('fork'),
     view: view === 'llm' || view === 'human' || view === 'compare' ? view : null,
     rubric: Number.isFinite(rubric) ? rubric : null,
+    assessment: params.get('assessment'),
   };
 }
 
