@@ -1,15 +1,13 @@
-"""Same-rubric Human-versus-LLM comparisons."""
+"""Human-versus-LLM comparisons against the primary Opus 5.5 · v3 assessment."""
 
 from __future__ import annotations
 
 from typing import Any
 
-import re
 import statistics
-from pathlib import Path
 
-from .common import SOURCE_HUMAN, SOURCE_LLM, TASK05C, BuildError, source
-from .rubric import RUBRIC_ORDER
+from .common import SOURCE_HUMAN, SOURCE_LLM, BuildError
+from .rubric import REGISTRY_ORDER, RUBRIC_ORDER
 
 
 def agreement_class(delta: int) -> str:
@@ -24,51 +22,54 @@ def agreement_class(delta: int) -> str:
 def build_comparisons(
     assessments: dict[str, dict[str, Any]], task05c: dict[int, dict[str, Any]]
 ) -> dict[str, dict[str, Any]]:
-    """Pair same-rubric assessments, selecting the latest dated prospective LLM evaluation."""
-    by_key: dict[tuple[str, int, int], dict[str, dict[str, Any]]] = {}
+    """Pair each published human checklist with the primary LLM assessment (Opus 5.5 · v3) of the same occurrence.
+
+    The two may apply different checklist revisions. Revision 3 rephrases the criteria of revisions 1 and 2
+    more precisely, so per-criterion differences are computed for criteria present in both revisions;
+    a criterion that exists in only one revision is shown without a difference.
+    """
+    pairs: dict[tuple[str, int], dict[str, dict[str, Any]]] = {}
     for assessment in assessments.values():
         if not assessment["scored"]:
             continue
-        if assessment["fork"] != "hegota" and assessment.get("role") == "reevaluation":
-            continue
-        key = (assessment["fork"], assessment["eip"], assessment["rubric_revision"])
-        pair = by_key.setdefault(key, {})
-        source_kind = assessment["source"]
-        previous = pair.get(source_kind)
-        if assessment["fork"] == "hegota" and source_kind == SOURCE_LLM and previous:
-            # Unknown dates sort before recorded dates; IDs break same-day ties deterministically.
-            order = lambda item: (item.get("evaluation_date") or "", item["id"])
-            if order(assessment) <= order(previous):
-                continue
-        pair[source_kind] = assessment
+        if assessment["source"] == SOURCE_HUMAN or assessment.get("role") == "primary":
+            pairs.setdefault((assessment["fork"], assessment["eip"]), {})[assessment["source"]] = assessment
     comparisons: dict[str, dict[str, Any]] = {}
-    for (fork, eip, revision), pair in sorted(by_key.items()):
+    for (fork, eip), pair in sorted(pairs.items()):
         if SOURCE_HUMAN not in pair or SOURCE_LLM not in pair:
             continue
         human = pair[SOURCE_HUMAN]
         llm = pair[SOURCE_LLM]
+        human_revision, llm_revision = human["rubric_revision"], llm["rubric_revision"]
         human_scores = {item["id"]: item["score"] for item in human["criteria"]}
         llm_scores = {item["id"]: item["score"] for item in llm["criteria"]}
+        criterion_ids = [item for item in REGISTRY_ORDER if item in human_scores or item in llm_scores]
         rows = []
         counts = {"exact": 0, "minor": 0, "major": 0}
-        for criterion_id in RUBRIC_ORDER[revision]:
-            delta = llm_scores[criterion_id] - human_scores[criterion_id]
-            klass = agreement_class(delta)
-            counts[klass] += 1
+        for criterion_id in criterion_ids:
+            shared = criterion_id in human_scores and criterion_id in llm_scores
+            delta = llm_scores[criterion_id] - human_scores[criterion_id] if shared else None
+            klass = agreement_class(delta) if shared else None
+            if klass:
+                counts[klass] += 1
             rows.append(
                 {
                     "id": criterion_id,
-                    "human": human_scores[criterion_id],
-                    "llm": llm_scores[criterion_id],
+                    "human": human_scores.get(criterion_id),
+                    "llm": llm_scores.get(criterion_id),
                     "delta": delta,
                     "agreement": klass,
+                    "shared": shared,
                 }
             )
         comparison = {
-            "id": f"{fork}:{eip}:r{revision}",
+            "id": f"{fork}:{eip}:human-r{human_revision}:llm-r{llm_revision}",
             "eip": eip,
             "fork": fork,
-            "rubric_revision": revision,
+            "rubric_revision": llm_revision,
+            "human_rubric_revision": human_revision,
+            "llm_rubric_revision": llm_revision,
+            "same_revision": human_revision == llm_revision,
             "human_assessment_id": human["id"],
             "llm_assessment_id": llm["id"],
             "human_total": human["score"],
@@ -82,113 +83,66 @@ def build_comparisons(
             "agreement_counts": counts,
             "largest_disagreements": [
                 row["id"]
-                for row in sorted(rows, key=lambda row: (-abs(row["delta"]), RUBRIC_ORDER[revision].index(row["id"])))
+                for row in sorted(
+                    (row for row in rows if row["shared"]),
+                    key=lambda row: (-abs(row["delta"]), REGISTRY_ORDER.index(row["id"])),
+                )
                 if row["delta"] != 0
             ][:5],
             "confounds": None,
         }
         if fork == "amsterdam" and eip in task05c:
-            record = task05c[eip]
-            expected = {row["id"]: row["b_minus_c"] for row in record["historical_anchor_comparison"]}
-            observed = {row["id"]: row["delta"] for row in rows}
-            if observed != expected or record["totals"]["b_minus_c"] != comparison["delta"]:
-                raise BuildError(f"Amsterdam EIP-{eip} comparison deltas differ from the Task 05c record")
-            confounds = record["confounds"]
+            # Task 05c's input and timing findings concern the human checklist against the historical EIP revision,
+            # which Task 10 assesses unchanged, so they still apply; the template now differs by construction.
+            confounds = task05c[eip]["confounds"]
             comparison["confounds"] = {
-                "clean_comparison": bool(record["clean_comparison"]["eligible"]),
-                "failed_conditions": list(record["clean_comparison"].get("failed_conditions") or []),
+                "clean_comparison": False,
+                "failed_conditions": ["checklist_revision_differs"],
                 "input_alignment": confounds["input_alignment"]["classification"],
                 "input_alignment_summary": confounds["input_alignment"].get("summary"),
-                "template_match": confounds["template_match"]["classification"],
+                "template_match": "different_revision",
                 "human_timing_exposure": confounds["human_timing_exposure"]["classification"],
                 "human_timing_exposure_rationale": confounds["human_timing_exposure"].get("rationale"),
-                "primary_llm_total": record["observations"]["A_current_rubric_automated"]["total"],
-                "cross_rubric_warning": record["totals"].get("cross_rubric_warning"),
             }
         comparisons[comparison["id"]] = comparison
     return comparisons
 
 
-ALIGNMENT_SUMMARY = TASK05C / "outputs/alignment-summary.md"
-REVISION_1_LABELS = {
-    "EVM Gas rule changes": "evm_gas_rule_changes",
-    "Blob gas accounting changes": "blob_gas_accounting_changes",
-    "New EVM gas refund": "new_evm_gas_refund",
-    "Patterns affecting pre-existing tests": "patterns_affecting_pre_existing_tests",
-    "Transition-tool interface changes": "transition_tool_interface_changes",
-    "Cryptography-related testing": "cryptography",
-    "Edge/boundary conditions": "edge_boundary_conditions",
-    "Block syncing changes": "block_syncing_changes",
-    "Engine API changes": "engine_api_changes",
-    "Engine API encoding changes": "engine_api_encoding_changes",
-    "Added system contracts": "added_system_contracts",
-    "Modified system contracts": "modified_system_contracts",
-    "Added opcodes": "added_opcodes",
-    "Modified opcodes": "modified_opcodes",
-    "Added precompiles": "added_precompiles",
-    "Modified precompiles": "modified_precompiles",
-    "Encoding changes (RLP/SSZ)": "encoding_changes_rlp_ssz",
-    "New transaction types": "new_transaction_types",
-    "New or modified transaction validity mechanisms": "new_or_modified_transaction_validity_mechanisms",
-    "New block / header fields": "new_block_header_fields",
-    "New fork activation mechanism": "new_fork_activation_mechanism",
-    "Performance risks": "performance_risks",
-    "Security risks": "security_risks",
-    "Cross-EIP interactions": "cross_eip_interactions",
-}
-
-
-def _published_criterion_means(path: Path) -> dict[str, tuple[float, float]]:
-    """Read the per-anchor mean signed and absolute differences from the Task 05c summary."""
-    means: dict[str, tuple[float, float]] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        match = re.match(r"^\| (.+?) \| 12 \| (-?[0-9.]+) \| (-?[0-9.]+) \|$", line)
-        if match and match.group(1) in REVISION_1_LABELS:
-            means[REVISION_1_LABELS[match.group(1)]] = (float(match.group(2)), float(match.group(3)))
-    if len(means) != 24:
-        raise BuildError("Task 05c alignment summary does not list all 24 historical anchors")
-    return means
-
-
 def amsterdam_alignment(
     comparisons: dict[str, dict[str, Any]], assessments: dict[str, dict[str, Any]]
 ) -> tuple[dict[str, Any], list[dict[str, str]]]:
-    """Aggregate the Amsterdam same-rubric comparisons and cross-check them against the Task 05c summary."""
+    """Aggregate the twelve Amsterdam comparisons of revision-1 human checklists with Opus 5.5 · v3."""
     pairs = sorted(
-        (item for item in comparisons.values() if item["fork"] == "amsterdam" and item["rubric_revision"] == 1),
+        (item for item in comparisons.values() if item["fork"] == "amsterdam"),
         key=lambda item: (-item["human_total"], item["eip"]),
     )
     if len(pairs) != 12:
-        raise BuildError("Amsterdam alignment requires twelve revision-1 comparisons")
+        raise BuildError("Amsterdam alignment requires twelve comparisons")
     rows = []
     for comparison in pairs:
         human = assessments[comparison["human_assessment_id"]]
-        llm = assessments[comparison["llm_assessment_id"]]
-        primary = assessments.get(f"amsterdam:{comparison['eip']}:llm:r2")
         confounds = comparison["confounds"] or {}
         rows.append(
             {
-                "clean": bool(confounds.get("clean_comparison")),
                 "comparison_id": comparison["id"],
                 "delta": comparison["delta"],
                 "eip": comparison["eip"],
                 "human_assessment_id": human["id"],
+                "human_rubric_revision": comparison["human_rubric_revision"],
                 "human_tier": comparison["human_tier"],
                 "human_timing_exposure": confounds.get("human_timing_exposure"),
                 "human_total": comparison["human_total"],
                 "input_alignment": confounds.get("input_alignment"),
-                "llm_assessment_id": llm["id"],
+                "llm_assessment_id": comparison["llm_assessment_id"],
+                "llm_rubric_revision": comparison["llm_rubric_revision"],
                 "llm_tier": comparison["llm_tier"],
                 "llm_total": comparison["llm_total"],
-                "primary_llm_assessment_id": primary["id"] if primary else None,
-                "primary_llm_total": primary["score"] if primary else None,
                 "tier_agreement": comparison["tier_agreement"],
                 "title": human["title"],
             }
         )
     deltas = [row["delta"] for row in rows]
     summary = {
-        "clean_count": sum(1 for row in rows if row["clean"]),
         "comparison_count": len(rows),
         "equal_total_count": sum(1 for value in deltas if value == 0),
         "human_higher_count": sum(1 for value in deltas if value < 0),
@@ -198,32 +152,28 @@ def amsterdam_alignment(
         "median_absolute_delta": statistics.median(abs(value) for value in deltas),
         "tier_agreement_count": sum(1 for row in rows if row["tier_agreement"]),
     }
+    shared = [item for item in RUBRIC_ORDER[1] if item in RUBRIC_ORDER[3]]
     criteria = []
-    published = _published_criterion_means(ALIGNMENT_SUMMARY)
-    for criterion_id in RUBRIC_ORDER[1]:
+    for criterion_id in shared:
         cells = [next(cell for cell in comparison["rows"] if cell["id"] == criterion_id) for comparison in pairs]
-        mean_delta = round(statistics.mean(cell["delta"] for cell in cells), 4)
-        mean_absolute = round(statistics.mean(abs(cell["delta"]) for cell in cells), 4)
-        expected_signed, expected_absolute = published[criterion_id]
-        if abs(mean_delta - expected_signed) > 0.0001 or abs(mean_absolute - expected_absolute) > 0.0001:
-            raise BuildError(f"Amsterdam per-criterion means for {criterion_id} differ from the Task 05c summary")
         criteria.append(
             {
                 "exact_count": sum(1 for cell in cells if cell["delta"] == 0),
                 "human_higher_count": sum(1 for cell in cells if cell["delta"] < 0),
                 "id": criterion_id,
                 "llm_higher_count": sum(1 for cell in cells if cell["delta"] > 0),
-                "mean_absolute_delta": mean_absolute,
-                "mean_delta": mean_delta,
+                "mean_absolute_delta": round(statistics.mean(abs(cell["delta"]) for cell in cells), 4),
+                "mean_delta": round(statistics.mean(cell["delta"] for cell in cells), 4),
                 "nonzero_count": sum(1 for cell in cells if cell["human"] or cell["llm"]),
             }
         )
-    if summary["mean_absolute_delta"] != 5.3333 or summary["mean_signed_delta"] != 2.8333 or summary["tier_agreement_count"] != 2:
-        raise BuildError("Amsterdam alignment summary statistics differ from the Task 05c summary")
     return {
         "criteria": criteria,
         "fork": "amsterdam",
+        "human_rubric_revision": 1,
+        "llm_rubric_revision": 3,
         "rows": rows,
-        "rubric_revision": 1,
+        "rubric_revision": 3,
+        "shared_criteria": len(shared),
         "summary": summary,
-    }, [source(ALIGNMENT_SUMMARY)]
+    }, []

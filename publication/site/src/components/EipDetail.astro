@@ -113,7 +113,7 @@ const contextLine = (panel) => {
 
         {occurrence.llm.status === 'not_applicable' && (
           <div class="notice">
-            <strong>{statusLabel('not_applicable')} at the original snapshot.</strong> {occurrence.llm.rationale} This is a disposition, not an execution-layer score of zero.
+            <strong>{statusLabel('not_applicable')} at the Hegotá snapshot.</strong> {occurrence.llm.rationale} This is a disposition, not an execution-layer score of zero.
           </div>
         )}
 
@@ -142,7 +142,7 @@ const contextLine = (panel) => {
             {panel.comparisons.length > 0 && (
               <a role="tab" id={`tab-${occurrence.fork}-compare`} href={eipRoute(eip.eip, { fork: occurrence.fork, view: 'compare' }, `#panel-${occurrence.fork}-compare`)} aria-controls={`panel-${occurrence.fork}-compare`} aria-selected="false" data-view-tab="compare">
                 <span class="tab-title">{VIEW_LABELS.compare}</span>
-                <span class="tab-meta">Human vs LLM · same checklist revision</span>
+                <span class="tab-meta">Human vs LLM · shared criteria</span>
               </a>
             )}
           </div>
@@ -169,7 +169,7 @@ const contextLine = (panel) => {
         {panel.comparisons.length > 0 && (
           <div class="view-panel" id={`panel-${occurrence.fork}-compare`} role="tabpanel" aria-labelledby={`tab-${occurrence.fork}-compare`} data-view-panel="compare">
             {panel.comparisons.map((comparison) => (
-              <AssessmentCompare comparison={comparison} human={data.assessments[comparison.human_assessment_id]} llm={data.assessments[comparison.llm_assessment_id]} occurrence={occurrence} rubric={rubricFor(data, comparison.rubric_revision)} definitions={definitions} />
+              <AssessmentCompare comparison={comparison} human={data.assessments[comparison.human_assessment_id]} llm={data.assessments[comparison.llm_assessment_id]} occurrence={occurrence} rubric={rubricFor(data, comparison.rubric_revision)} humanRubric={rubricFor(data, comparison.human_rubric_revision)} definitions={definitions} />
             ))}
           </div>
         )}

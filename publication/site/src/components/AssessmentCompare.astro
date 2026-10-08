@@ -1,6 +1,7 @@
 ---
 /**
- * Difference-oriented Human-versus-LLM comparison of two same-rubric assessments.
+ * Difference-oriented Human-versus-LLM comparison. The two assessments may use different checklist revisions;
+ * differences are shown for the criteria both share.
  */
 import type { Assessment, Comparison, CriterionDefinition, Occurrence, Rubric } from '../lib/domain';
 import { DISPLAY_INDEX, criterionAbbreviation } from '../lib/criteria';
@@ -17,32 +18,33 @@ interface Props {
   llm: Assessment;
   occurrence: Occurrence;
   rubric: Rubric;
+  humanRubric: Rubric;
   definitions: Map<string, CriterionDefinition>;
 }
 
-const { comparison, human, llm, occurrence, rubric, definitions } = Astro.props as Props;
+const { comparison, human, llm, occurrence, rubric, humanRubric, definitions } = Astro.props as Props;
 const prefix = domId(comparison.id);
-const rows = [...comparison.rows].sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || (DISPLAY_INDEX.get(a.id) ?? 99) - (DISPLAY_INDEX.get(b.id) ?? 99));
+const rows = [...comparison.rows].sort((a, b) => Number(b.shared) - Number(a.shared) || Math.abs(b.delta ?? 0) - Math.abs(a.delta ?? 0) || (DISPLAY_INDEX.get(a.id) ?? 99) - (DISPLAY_INDEX.get(b.id) ?? 99));
 const rationale = (assessment: Assessment, id: string) => assessment.criteria.find((item) => item.id === id)?.rationale ?? null;
 const segmentsFor = (assessment: Assessment) => assessment.criteria.filter((item) => (item.score ?? 0) > 0).map((item) => ({ id: item.id, score: item.score, detail: truncate(item.rationale, 160) }));
 const scale = Math.max(comparison.human_total, comparison.llm_total);
 const differing = rows.filter((row) => row.delta !== 0).length;
+const sharedCount = rows.filter((row) => row.shared).length;
 const confounds = comparison.confounds;
 ---
 <section class="compare" data-compare={comparison.id}>
-  <p class="muted">Both assessments applied {rubricLabel(comparison.rubric_revision)} ({rubric.criterion_count} criteria) to EIP-{comparison.eip} in {occurrence.fork_name}. Δ is LLM minus Human.</p>
+  <p class="muted">The LLM applied checklist revision {comparison.llm_rubric_revision} and the human reviewers revision {comparison.human_rubric_revision} to EIP-{comparison.eip} in {occurrence.fork_name}.{comparison.same_revision ? '' : ` Revision 3 phrases the same criteria more precisely; differences cover the ${sharedCount} criteria both revisions share, and each total keeps its own revision.`} Δ is LLM minus Human.</p>
   {occurrence.mode === 'prospective' && <p class="source-note">Using the latest scored LLM evaluation for this checklist: <a href={eipRoute(llm.eip, { fork: llm.fork, view: 'llm', assessment: llm.id })}>{llm.evaluation_date ?? 'Date not recorded'}</a>{llm.provenance.assessed_revision && <> · spec <a href={llm.provenance.assessed_revision.immutable_url}>{isoDate(llm.provenance.assessed_revision.committed_at)} · <code>{shortCommit(llm.provenance.assessed_revision.commit)}</code></a></>}. The Human and LLM assessments may use different spec revisions.</p>}
   <div class="compare-totals">
     <div class="compare-total compare-llm"><EvaluatorBadge source="llm" /><span class="stat">{comparison.llm_total}</span><TierBadge tier={comparison.llm_tier} thresholds={rubric.tier_thresholds} /></div>
-    <div class="compare-total compare-human"><EvaluatorBadge source="human" /><span class="stat">{comparison.human_total}</span><TierBadge tier={comparison.human_tier} thresholds={rubric.tier_thresholds} /></div>
+    <div class="compare-total compare-human"><EvaluatorBadge source="human" /><span class="stat">{comparison.human_total}</span><TierBadge tier={comparison.human_tier} thresholds={humanRubric.tier_thresholds} /></div>
     <div class="compare-total compare-delta"><span class="muted">Δ total</span><span class:list={['stat', comparison.delta > 0 && 'delta-pos', comparison.delta < 0 && 'delta-neg']}>{signed(comparison.delta)}</span><span class="muted">{comparison.tier_agreement ? 'Same tier' : `Tiers differ: ${TIER_LABELS[comparison.llm_tier]} vs ${TIER_LABELS[comparison.human_tier]}`}</span></div>
-    <div class="compare-total compare-agreement"><span class="muted">Criteria</span><span class="stat">{comparison.agreement_counts.exact}<span class="stat-unit">/{rows.length}</span></span><span class="muted">agree exactly · {comparison.agreement_counts.minor} differ by 1 · {comparison.agreement_counts.major} differ by 2+</span></div>
+    <div class="compare-total compare-agreement"><span class="muted">Criteria</span><span class="stat">{comparison.agreement_counts.exact}<span class="stat-unit">/{sharedCount}</span></span><span class="muted">agree exactly · {comparison.agreement_counts.minor} differ by 1 · {comparison.agreement_counts.major} differ by 2+</span></div>
   </div>
   {confounds && (
     <div class:list={['notice', confounds.clean_comparison ? 'notice-clean' : 'notice-confounded']}>
-      <strong>{confounds.clean_comparison ? 'Clean same-rubric comparison.' : 'Confounded comparison.'}</strong>
+      <strong>Confounded comparison.</strong>
       {' '}The human checklist evaluated the EIP as it stood when the checklist was written; the LLM evaluated the sealed historical revision. Input alignment: <em>{confounds.input_alignment.replaceAll('_', ' ')}</em>; human hindsight exposure: <em>{confounds.human_timing_exposure.replaceAll('_', ' ')}</em>.
-      {confounds.primary_llm_total !== undefined && <> The study's primary LLM score under checklist revision 2 is <strong>{confounds.primary_llm_total}</strong>; it uses a different criterion inventory and thresholds and is not directly comparable to either total here.</>}
       {confounds.human_timing_exposure_rationale && <details><summary>Exposure evidence</summary><p>{confounds.human_timing_exposure_rationale}</p>{confounds.input_alignment_summary && <p class="muted">{truncate(confounds.input_alignment_summary, 600)}</p>}</details>}
     </div>
   )}
@@ -67,10 +69,10 @@ const confounds = comparison.confounds;
         {rows.map((row) => (
           <tr id={`${prefix}-${row.id}`} class:list={['compare-row', `agreement-${row.agreement}`]} data-diff={row.delta === 0 ? '0' : '1'}>
             <th scope="row"><span class="swatch" style={`--fill:var(--criterion-${row.id});--ink:var(--criterion-ink-${row.id})`} aria-hidden="true">{criterionAbbreviation(row.id)}</span> <span class="criterion-name">{definitions.get(row.id).label}</span></th>
-            <td class="number">{row.llm}</td>
-            <td class="number">{row.human}</td>
-            <td class:list={['number', 'delta', row.delta > 0 && 'delta-pos', row.delta < 0 && 'delta-neg']}>{signed(row.delta)}</td>
-            <td><span class:list={['agreement', `agreement-${row.agreement}`]}>{AGREEMENT_LABELS[row.agreement]}</span></td>
+            <td class="number">{row.llm ?? <span class="muted" title="Not in this checklist revision">n/a</span>}</td>
+            <td class="number">{row.human ?? <span class="muted" title="Not in this checklist revision">n/a</span>}</td>
+            <td class:list={['number', 'delta', (row.delta ?? 0) > 0 && 'delta-pos', (row.delta ?? 0) < 0 && 'delta-neg']}>{row.shared ? signed(row.delta) : '—'}</td>
+            <td>{row.shared ? <span class:list={['agreement', `agreement-${row.agreement}`]}>{AGREEMENT_LABELS[row.agreement]}</span> : <span class="muted">Only in revision {row.llm === null ? comparison.human_rubric_revision : comparison.llm_rubric_revision}</span>}</td>
             <td class="compare-rationale">
               {(rationale(llm, row.id) || rationale(human, row.id)) ? (
                 <details>

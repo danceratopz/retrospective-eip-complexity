@@ -336,6 +336,87 @@ def load_task10_hegota() -> tuple[dict[str, Any], list[dict[str, str]]]:
     return builder, sources
 
 
+TASK10_HEGOTA_GATE = {"snapshot": "hegota-2026-10-08-6dac5e7", "population": 35, "scored": 27, "not_applicable": 8, "total": 543}
+
+
+def load_task10_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any], list[dict[str, str]]]:
+    """Return (occurrences, Opus 5.5 · v3 assessments, public summary, sources) for the Task 10 Hegotá snapshot."""
+    summary, sources = _frozen_task10(TASK10_PROSPECTIVE, 27)
+    observed = {
+        "snapshot": summary["snapshot_id"],
+        "population": summary["population"]["entries"],
+        "scored": summary["population"]["scored"],
+        "not_applicable": summary["population"]["not_applicable"],
+        "total": summary["scenarios"]["SFI+CFI+PFI"]["score_sum"],
+    }
+    if observed != TASK10_HEGOTA_GATE:
+        raise BuildError(f"Task 10 Hegotá publication gate mismatch: {observed!r}")
+    occurrences: list[dict[str, Any]] = []
+    assessments: list[dict[str, Any]] = []
+    for row in summary["scored_eips"]:
+        path = TASK10_PROSPECTIVE / "assessments" / "hegota-2026-10-08" / f"eip-{row['eip']}.yaml"
+        record = load_yaml(path)
+        assessment = llm_assessment(
+            record,
+            path=path,
+            fork=PROSPECTIVE_FORK,
+            mode="prospective",
+            revision=3,
+            role="primary",
+            summary_key="snapshot_scope_summary",
+            eip_key="snapshot_eip",
+            rubric_key="rubric_source",
+            assessor_key="assessor",
+        )
+        if assessment["score"] != row["score"]:
+            raise BuildError(f"Task 10 Hegotá summary score mismatch for EIP-{row['eip']}")
+        assessment.update(snapshot_id=summary["snapshot_id"], snapshot_status=row["eip_8081_list"])
+        assessments.append(assessment)
+        sources.append(source(path))
+        occurrence = _base_occurrence(fork=PROSPECTIVE_FORK, eip=row["eip"], title=row["title"], layers=row["affected_layers"], mode="prospective")
+        occurrence["snapshot_status"] = row["eip_8081_list"]
+        occurrence["llm"] = _llm_summary(assessment)
+        occurrences.append(occurrence)
+    for row in summary["not_applicable_eips"]:
+        occurrence = _base_occurrence(fork=PROSPECTIVE_FORK, eip=row["eip"], title=row["title"], layers=row["affected_layers"], mode="prospective")
+        occurrence["snapshot_status"] = row["eip_8081_list"]
+        occurrence["llm"] = {
+            "status": STATUS_NOT_APPLICABLE,
+            "assessment_id": None,
+            "score": None,
+            "tier": None,
+            "confidence": None,
+            "under_specified": None,
+            "exclusion_kind": "consensus_only" if row["affected_layers"] == ["consensus"] else "no_el_client_behavior",
+            "rationale": row["rationale"],
+            "information_cutoff_at": summary["information_cutoff_at"],
+            "assessed_revision_at": None,
+        }
+        occurrences.append(occurrence)
+    scored = summary["scored_eips"]
+    distribution = lambda key: {value: sum(1 for item in scored if item[key] == value) for value in sorted({item[key] for item in scored})}
+    public_summary = {
+        # Task-internal wording is rephrased for readers; the research summary stays unchanged.
+        "caveats": [
+            "Layer dispositions for the seven candidates added since the previous snapshot are provisional." if "Task 08" in item else item
+            for item in summary["caveats"]
+        ],
+        "captured_on": TASK10_HEGOTA_GATE["snapshot"].split("-", 1)[1][:10],
+        "confidence_distribution": distribution("overall_confidence"),
+        "information_cutoff_at": summary["information_cutoff_at"],
+        "not_applicable": TASK10_HEGOTA_GATE["not_applicable"],
+        "scenarios": summary["scenarios"],
+        "score_sum": TASK10_HEGOTA_GATE["total"],
+        "scored": TASK10_HEGOTA_GATE["scored"],
+        "snapshot_id": TASK10_HEGOTA_GATE["snapshot"],
+        "source_commit": summary["eips_commit"],
+        "tier_distribution": distribution("tier"),
+        "total_entries": TASK10_HEGOTA_GATE["population"],
+        "under_specification_distribution": {"present": sum(1 for item in scored if item["under_specified"]), "absent": sum(1 for item in scored if not item["under_specified"])},
+    }
+    return occurrences, assessments, public_summary, sources
+
+
 def load_amsterdam_human() -> tuple[list[dict[str, Any]], dict[int, dict[str, Any]], list[dict[str, str]]]:
     """Return (assessments, 05c comparison records by EIP, sources) for the Amsterdam human study."""
     assessments: list[dict[str, Any]] = []
@@ -348,30 +429,14 @@ def load_amsterdam_human() -> tuple[list[dict[str, Any]], dict[int, dict[str, An
         record = load_yaml(path)
         assessments.append(human_assessment_from_05c(record, path=path, fork="amsterdam"))
         sources.append(source(path))
-    for path in sorted(automated_root.glob("eip-*.yaml")):
-        record = load_yaml(path)
-        assessments.append(
-            llm_assessment(
-                record,
-                path=path,
-                fork="amsterdam",
-                mode="retrospective",
-                revision=1,
-                role="historical_rubric_rerun",
-                summary_key="historical_scope_summary",
-                eip_key="historical_eip",
-                rubric_key="historical_rubric",
-                assessor_key="assessor_environment",
-            )
-        )
-        sources.append(source(path))
+    # The Task 05c GPT-5.6 revision-1 re-run stays in the repository; only Opus 5.5 · v3 LLM scores are published.
+    automated_eips = {int(path.stem.removeprefix("eip-")) for path in automated_root.glob("eip-*.yaml")}
     for path in sorted(comparison_root.glob("eip-*.yaml")):
         record = load_yaml(path)
         comparisons[record["eip"]["number"]] = record
         sources.append(source(path))
     human_eips = {item["eip"] for item in assessments if item["source"] == SOURCE_HUMAN}
-    rerun_eips = {item["eip"] for item in assessments if item["source"] != SOURCE_HUMAN}
-    if not (human_eips == rerun_eips == set(comparisons)) or len(human_eips) != 12:
+    if not (human_eips == automated_eips == set(comparisons)) or len(human_eips) != 12:
         raise BuildError("Task 05c human, automated, and comparison populations differ")
     return assessments, comparisons, sources
 
@@ -388,6 +453,8 @@ def load_hegota_human(
     status_map = {"not_yet_available": STATUS_NOT_AVAILABLE}
     for entry in snapshot["entries"]:
         eip = entry["eip"]
+        if eip not in titles:
+            continue  # no longer an EIP-8081 SFI/CFI/PFI candidate at the Task 10 snapshot
         status = status_map.get(entry["human_assessment_status"], entry["human_assessment_status"])
         summary: dict[str, Any] = {
             "status": status,
@@ -440,6 +507,12 @@ def load_hegota_human(
         else:
             summary["note"] = "No STEEL checklist existed on the ethspecs/pm default branch or in any open pull request at the snapshot."
         statuses[eip] = summary
+    for eip in sorted(set(titles) - set(statuses)):
+        statuses[eip] = {
+            "status": STATUS_NOT_AVAILABLE, "assessment_id": None, "score": None, "tier": None, "rubric_revision": None,
+            "source_record": None, "other_candidates": [],
+            "note": "This EIP joined the Hegotá candidate lists after the human-checklist snapshot was captured.",
+        }
     counts = {status_map.get(key, key): value for key, value in snapshot["status_counts"].items()}
     public_snapshot = {
         "snapshot_id": snapshot["snapshot_id"],

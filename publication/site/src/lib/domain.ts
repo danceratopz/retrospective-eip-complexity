@@ -188,10 +188,12 @@ export interface Eip {
 
 export interface ComparisonRow {
   id: string;
-  human: number;
-  llm: number;
-  delta: number;
-  agreement: 'exact' | 'minor' | 'major';
+  human: number | null;
+  llm: number | null;
+  /** Null when the criterion exists in only one of the two checklist revisions. */
+  delta: number | null;
+  agreement: 'exact' | 'minor' | 'major' | null;
+  shared: boolean;
 }
 
 export interface Comparison {
@@ -199,6 +201,9 @@ export interface Comparison {
   eip: number;
   fork: string;
   rubric_revision: RubricRevision;
+  human_rubric_revision: RubricRevision;
+  llm_rubric_revision: RubricRevision;
+  same_revision: boolean;
   human_assessment_id: string;
   llm_assessment_id: string;
   human_total: number;
@@ -219,8 +224,6 @@ export interface Comparison {
     template_match: string;
     human_timing_exposure: string;
     human_timing_exposure_rationale: string | null;
-    primary_llm_total: number;
-    cross_rubric_warning: string | null;
   } | null;
 }
 
@@ -293,6 +296,9 @@ export interface Publication {
   human_llm: {
     fork: string;
     rubric_revision: RubricRevision;
+    human_rubric_revision: RubricRevision;
+    llm_rubric_revision: RubricRevision;
+    shared_criteria: number;
     rows: Array<{
       eip: number;
       title: string;
@@ -305,15 +311,13 @@ export interface Publication {
       human_tier: Tier;
       llm_tier: Tier;
       tier_agreement: boolean;
-      clean: boolean;
-      primary_llm_assessment_id: string | null;
-      primary_llm_total: number | null;
+      human_rubric_revision: RubricRevision;
+      llm_rubric_revision: RubricRevision;
       input_alignment: string | null;
       human_timing_exposure: string | null;
     }>;
     summary: {
       comparison_count: number;
-      clean_count: number;
       mean_signed_delta: number;
       mean_absolute_delta: number;
       median_absolute_delta: number;

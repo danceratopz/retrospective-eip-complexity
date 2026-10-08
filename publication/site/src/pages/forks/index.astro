@@ -28,7 +28,7 @@ const blocks = data.forks.map((fork) => ({ fork, composition: fork.mode === 'pro
             <StackedBar segments={composition.criteria.filter((item) => item.score_sum > 0).map((item) => ({ id: item.id, score: item.score_sum, detail: `${Math.round((item.score_sum / composition.score_sum) * 100)}% of fork complexity\nContributed by ${plural(item.eip_count, 'EIP')}` }))} definitions={definitions} total={composition.score_sum} normalized={true} size="regular" showTotal={true} label={`${fork.name} at-cutoff complexity`} />
           </>
         ) : (
-          <p><strong>{fork.eip_count}</strong> candidates at the {data.hegota.captured_on} snapshot · score <strong>TBD</strong><br /><span class="muted">Fork scope and assessments are still in progress; totals are not final.</span></p>
+          <p><strong>{fork.eip_count}</strong> candidates at EIPs <code>{data.hegota.source_commit.slice(0, 7)}</code> · EL-rubric total <strong>{data.hegota.score_sum}</strong> across {data.hegota.scored} scored<br /><span class="muted">Fork scope is still changing; the total covers the current SFI, CFI and PFI lists.</span></p>
         )}
         <p class="fork-card-human">
           {fork.mode === 'prospective'

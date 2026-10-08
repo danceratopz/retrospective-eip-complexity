@@ -41,8 +41,8 @@ from publication_adapter.model import evaluation_date, human_assessment_from_tas
 from publication_adapter.rubric import REGISTRY_ORDER, REVISION_1_ORDER, REVISION_2_ORDER, tier_for  # noqa: E402
 
 
-def _assessment(fork: str, eip: int, source: str, revision: int, scores: dict[str, int]) -> dict:
-    order = REVISION_2_ORDER if revision == 2 else REVISION_1_ORDER
+def _assessment(fork: str, eip: int, source: str, revision: int, scores: dict[str, int], role: str | None = None) -> dict:
+    order = REVISION_1_ORDER if revision == 1 else REVISION_2_ORDER
     criteria = [{"id": item, "score": scores.get(item, 0)} for item in order]
     total = sum(item["score"] for item in criteria)
     return {
@@ -51,6 +51,7 @@ def _assessment(fork: str, eip: int, source: str, revision: int, scores: dict[st
         "fork": fork,
         "source": source,
         "rubric_revision": revision,
+        "role": role or ("primary" if source == SOURCE_LLM else "published_checklist"),
         "scored": True,
         "score": total,
         "tier": tier_for(total, revision),
@@ -113,10 +114,6 @@ class EvaluationHistoryTests(unittest.TestCase):
                     occurrence["human"] = {"status": "not_available", "assessment_id": None}
                 totals = fork_summaries(occurrences, assessment_map)
                 self.assertEqual(next(item for item in totals if item["fork"] == "hegota")["score_sum"], 856)
-                # Prospective comparisons select the newest evaluation; totals above stay frozen.
-                human = _assessment("hegota", entry["eip"], "human", 2, {})
-                pairs = build_comparisons({**assessment_map, human["id"]: human}, {})
-                self.assertEqual(next(iter(pairs.values()))["llm_assessment_id"], entry["id"])
                 for mutate in (
                     lambda r: r["evaluations"].append(copy.deepcopy(entry)),
                     lambda r: r["evaluations"].pop(0),
@@ -173,34 +170,28 @@ class ComparisonTests(unittest.TestCase):
     def test_agreement_classes(self) -> None:
         self.assertEqual([agreement_class(value) for value in (0, 1, -1, 2, -3)], ["exact", "minor", "minor", "major", "major"])
 
-    def test_same_rubric_pairs_only(self) -> None:
-        human = _assessment("amsterdam", 1, SOURCE_HUMAN, 1, {"security_risks": 3, "cross_eip_interactions": 1})
-        llm_r1 = _assessment("amsterdam", 1, SOURCE_LLM, 1, {"security_risks": 3, "cross_eip_interactions": 3})
-        llm_r2 = _assessment("amsterdam", 1, SOURCE_LLM, 2, {"security_risks": 3})
-        comparisons = build_comparisons({item["id"]: item for item in (human, llm_r1, llm_r2)}, {})
-        self.assertEqual(list(comparisons), ["amsterdam:1:r1"])
-        comparison = comparisons["amsterdam:1:r1"]
-        self.assertEqual(comparison["delta"], 2)
+    def test_human_pairs_with_primary_llm_across_revisions(self) -> None:
+        human = _assessment("amsterdam", 1, SOURCE_HUMAN, 1, {"security_risks": 3, "cross_eip_interactions": 1, "engine_api_encoding_changes": 2})
+        primary = _assessment("amsterdam", 1, SOURCE_LLM, 3, {"security_risks": 3, "cross_eip_interactions": 3, "new_invariant_on_pre_existing_tests": 2})
+        rerun = _assessment("amsterdam", 1, SOURCE_LLM, 1, {"security_risks": 1}, role="historical_rubric_rerun")
+        comparisons = build_comparisons({item["id"]: item for item in (human, primary, rerun)}, {})
+        self.assertEqual(list(comparisons), ["amsterdam:1:human-r1:llm-r3"])
+        comparison = comparisons["amsterdam:1:human-r1:llm-r3"]
+        self.assertEqual(comparison["llm_assessment_id"], primary["id"])
+        self.assertEqual((comparison["human_rubric_revision"], comparison["llm_rubric_revision"], comparison["same_revision"]), (1, 3, False))
+        self.assertEqual(comparison["delta"], primary["score"] - human["score"])
         self.assertEqual(comparison["largest_disagreements"], ["cross_eip_interactions"])
-        row = next(item for item in comparison["rows"] if item["id"] == "cross_eip_interactions")
-        self.assertEqual((row["human"], row["llm"], row["delta"], row["agreement"]), (1, 3, 2, "major"))
-        self.assertEqual(comparison["agreement_counts"], {"exact": 23, "minor": 0, "major": 1})
+        rows = {row["id"]: row for row in comparison["rows"]}
+        self.assertEqual((rows["cross_eip_interactions"]["delta"], rows["cross_eip_interactions"]["agreement"]), (2, "major"))
+        # Criteria in only one revision carry scores but no difference.
+        self.assertEqual((rows["engine_api_encoding_changes"]["human"], rows["engine_api_encoding_changes"]["delta"]), (2, None))
+        self.assertEqual((rows["new_invariant_on_pre_existing_tests"]["llm"], rows["new_invariant_on_pre_existing_tests"]["shared"]), (2, False))
+        self.assertEqual(sum(comparison["agreement_counts"].values()), 23)
 
-    def test_prospective_comparison_uses_latest_matching_rubric_in_any_order(self):
+    def test_only_the_primary_llm_assessment_is_compared(self):
         human = _assessment("hegota", 8272, SOURCE_HUMAN, 2, {})
-        original = _assessment("hegota", 8272, SOURCE_LLM, 2, {"security_risks": 3})
-        original["evaluation_date"] = "2026-08-26"
-        latest = copy.deepcopy(original)
-        latest.update(id=original["id"] + ":september", role="reevaluation", evaluation_date="2026-09-16")
-        incompatible = _assessment("hegota", 8272, SOURCE_LLM, 1, {})
-        incompatible["evaluation_date"] = "2026-09-17"
-        for candidates in ((original, latest), (latest, original)):
-            pairs = build_comparisons({a["id"]: a for a in (*candidates, incompatible, human)}, {})
-            self.assertEqual(list(pairs), ["hegota:8272:r2"])
-            self.assertEqual(pairs["hegota:8272:r2"]["llm_assessment_id"], latest["id"])
-        latest["scored"] = False
-        pairs = build_comparisons({a["id"]: a for a in (original, latest, human)}, {})
-        self.assertEqual(pairs["hegota:8272:r2"]["llm_assessment_id"], original["id"])
+        reevaluation = _assessment("hegota", 8272, SOURCE_LLM, 2, {"security_risks": 3}, role="reevaluation")
+        self.assertEqual(build_comparisons({a["id"]: a for a in (reevaluation, human)}, {}), {})
 
     def test_unscored_assessments_are_never_compared(self) -> None:
         human = _assessment("hegota", 1, SOURCE_HUMAN, 2, {})
@@ -307,23 +298,23 @@ class GeneratedPayloadTests(unittest.TestCase):
         cls.occurrences = [occurrence for eip in cls.data["eips"] for occurrence in eip["occurrences"]]
 
     def test_population_counts(self) -> None:
-        self.assertEqual(len(self.occurrences), 95)
-        self.assertEqual(len(self.data["eips"]), 94)
+        self.assertEqual(len(self.occurrences), 84)
+        self.assertEqual(len(self.data["eips"]), 83)
         retrospective = [item for item in self.occurrences if item["mode"] == "retrospective"]
         prospective = [item for item in self.occurrences if item["mode"] == "prospective"]
-        self.assertEqual((len(retrospective), len(prospective)), (49, 46))
-        self.assertEqual(sum(1 for item in prospective if item["llm"]["status"] == STATUS_NOT_APPLICABLE), 7)
+        self.assertEqual((len(retrospective), len(prospective)), (49, 35))
+        self.assertEqual(sum(1 for item in prospective if item["llm"]["status"] == STATUS_NOT_APPLICABLE), 8)
+        llm = [item for item in self.data["assessments"].values() if item["source"] == "llm"]
+        self.assertTrue(all(item["provenance"]["assessor"]["model"] == "claude-opus-5-5" and item["rubric_revision"] == 3 for item in llm))
 
     def test_totals_match_source_gates(self) -> None:
         forks = {item["fork"]: item for item in self.data["forks"]}
         self.assertEqual({fork: forks[fork]["at_cutoff_score_sum"] for fork in ("shanghai", "cancun", "prague", "osaka", "amsterdam")}, {"shanghai": 58, "cancun": 109, "prague": 159, "osaka": 72, "amsterdam": 238})
-        previous = {row["fork"]: row["total_score"] for row in self.data["fork_shipping"]["evaluations"]["gpt-v2"]["rows"]}
-        self.assertEqual(previous, {"shanghai": 65, "cancun": 126, "prague": 216, "osaka": 105, "amsterdam": 243})
+        self.assertEqual(list(self.data["fork_shipping"]["evaluations"]), ["opus-v3"])
         builder = self.data["hegota_builder"]
         self.assertEqual({name: item["score_sum"] for name, item in builder["scenarios"].items()}, {"SFI": 77, "SFI+CFI": 273, "SFI+CFI+PFI": 543})
         self.assertTrue(all(item["score"] is None for item in builder["entries"] if item["status"] == STATUS_NOT_APPLICABLE))
-        self.assertEqual(forks["hegota"]["score_sum"], 856)
-        self.assertEqual(forks["hegota"]["composition"]["pfi_only"]["score_sum"], 776)
+        self.assertEqual(forks["hegota"]["score_sum"], 543)
         for fork in forks.values():
             for name, block in fork["composition"].items():
                 self.assertEqual(sum(item["score_sum"] for item in block["criteria"]), block["score_sum"], f"{fork['fork']} {name}")
@@ -357,34 +348,37 @@ class GeneratedPayloadTests(unittest.TestCase):
         hegota = [item["human"]["status"] for item in self.occurrences if item["fork"] == "hegota"]
         self.assertEqual(
             {status: hegota.count(status) for status in set(hegota)},
-            {STATUS_COMPLETE: 2, STATUS_AVAILABLE_IN_OPEN_PR: 15, STATUS_IN_PROGRESS: 8, STATUS_NOT_AVAILABLE: 21},
+            {STATUS_COMPLETE: 2, STATUS_AVAILABLE_IN_OPEN_PR: 8, STATUS_IN_PROGRESS: 5, STATUS_NOT_AVAILABLE: 20},
         )
         self.assertEqual(sum(1 for item in self.occurrences if item["fork"] == "amsterdam" and item["human"]["status"] == STATUS_COMPLETE), 12)
         cell_sum_rule = self.data["assessments"]["hegota:8250:human:r2"]
         self.assertTrue(cell_sum_rule["scored"])
         self.assertEqual((cell_sum_rule["score"], cell_sum_rule["checklist"]["published_total"]), (22, 20))
 
-    def test_comparisons_are_same_rubric_and_reproducible(self) -> None:
+    def test_comparisons_pair_humans_with_opus_and_are_reproducible(self) -> None:
         for comparison in self.data["comparisons"].values():
             human = self.data["assessments"][comparison["human_assessment_id"]]
             llm = self.data["assessments"][comparison["llm_assessment_id"]]
-            self.assertEqual(human["rubric_revision"], llm["rubric_revision"])
+            self.assertEqual((llm["role"], llm["rubric_revision"]), ("primary", 3))
+            self.assertEqual(human["rubric_revision"], comparison["human_rubric_revision"])
             self.assertEqual(comparison["delta"], llm["score"] - human["score"])
-            self.assertEqual(sum(row["delta"] for row in comparison["rows"]), comparison["delta"])
+            for row in comparison["rows"]:
+                if row["shared"]:
+                    self.assertEqual(row["delta"], row["llm"] - row["human"])
         amsterdam = [item for item in self.data["comparisons"].values() if item["fork"] == "amsterdam"]
         self.assertEqual(len(amsterdam), 12)
         by_eip = {item["eip"]: item for item in amsterdam}
-        self.assertEqual((by_eip[7928]["human_total"], by_eip[7928]["llm_total"], by_eip[7928]["confounds"]["primary_llm_total"]), (29, 26, 40))
+        self.assertEqual((by_eip[7928]["human_total"], by_eip[7928]["llm_total"]), (29, 41))
 
-    def test_human_llm_alignment_matches_task05c(self) -> None:
+    def test_human_llm_alignment_summary(self) -> None:
         alignment = self.data["human_llm"]
-        self.assertEqual(alignment["summary"]["comparison_count"], 12)
+        self.assertEqual((alignment["summary"]["comparison_count"], alignment["shared_criteria"]), (12, 23))
         self.assertEqual([row["eip"] for row in alignment["rows"][:3]], [7928, 8037, 8038])
-        self.assertEqual((alignment["summary"]["mean_absolute_delta"], alignment["summary"]["mean_signed_delta"]), (5.3333, 2.8333))
+        self.assertEqual((alignment["summary"]["mean_absolute_delta"], alignment["summary"]["mean_signed_delta"]), (7.5833, 6.5833))
         by_id = {item["id"]: item for item in alignment["criteria"]}
-        self.assertEqual(by_id["security_risks"]["mean_delta"], 1.5)
-        self.assertEqual(by_id["evm_gas_rule_changes"]["mean_delta"], -0.9167)
-        self.assertEqual(sum(1 for row in alignment["rows"] if row["clean"]), 2)
+        self.assertEqual(by_id["security_risks"]["mean_delta"], 0.6667)
+        self.assertEqual(by_id["evm_gas_rule_changes"]["mean_delta"], -1.0833)
+        self.assertEqual(alignment["summary"]["tier_agreement_count"], 7)
 
     def test_compare_index_mirrors_assessments(self) -> None:
         self.assertEqual([item["id"] for item in self.index["criteria"]], REGISTRY_ORDER)

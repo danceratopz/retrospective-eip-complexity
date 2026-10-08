@@ -38,9 +38,9 @@ from publication_adapter.rubric import build_rubrics  # noqa: E402
 from publication_adapter.sources import (  # noqa: E402
     load_amsterdam_human,
     load_hegota_human,
-    load_prospective,
     load_retrospective,
     load_task10_hegota,
+    load_task10_prospective,
     load_task10_retrospective,
 )
 
@@ -77,10 +77,12 @@ def build() -> dict[str, Any]:
     criteria, rubrics, rubric_sources = build_rubrics()
     rubric_provenance = {int(key): value["source"] for key, value in rubrics.items()}
 
-    retro_occurrences, retro_assessments, retro_sources = load_retrospective()
+    retro_occurrences, _gpt_assessments, retro_sources = load_retrospective()
+    # Keep the Task 04b scope sources; the Task 05 GPT-5.6 records are not published.
+    retro_sources = [item for item in retro_sources if "05-retrospective-complexity-assignment" not in item["path"]]
     task10_assessments, task10_sources = load_task10_retrospective(retro_occurrences)
     hegota_builder, hegota_builder_sources = load_task10_hegota()
-    pro_occurrences, pro_assessments, hegota_summary, pro_sources = load_prospective()
+    pro_occurrences, pro_assessments, hegota_summary, pro_sources = load_task10_prospective()
     amsterdam_assessments, task05c_comparisons, amsterdam_sources = load_amsterdam_human()
     titles = {item["eip"]: item["title"] for item in pro_occurrences}
     hegota_human, hegota_human_assessments, hegota_human_snapshot, hegota_human_sources = load_hegota_human(
@@ -89,11 +91,12 @@ def build() -> dict[str, Any]:
 
     occurrences = retro_occurrences + pro_occurrences
     occurrences.sort(key=lambda item: (FORK_ORDER.index(item["fork"]), item["eip"]))
-    if len(occurrences) != 95 or len(retro_occurrences) != 49 or len(pro_occurrences) != 46:
+    if len(occurrences) != 84 or len(retro_occurrences) != 49 or len(pro_occurrences) != 35:
         raise BuildError("occurrence population mismatch")
 
     assessments: dict[str, dict[str, Any]] = {}
-    for assessment in [*task10_assessments, *retro_assessments, *pro_assessments, *amsterdam_assessments, *hegota_human_assessments]:
+    # Only Opus 5.5 · v3 LLM assessments are published; the GPT-5.6 records stay in Tasks 05, 05c and 08.
+    for assessment in [*task10_assessments, *pro_assessments, *amsterdam_assessments, *hegota_human_assessments]:
         if assessment["id"] in assessments:
             raise BuildError(f"duplicate assessment id {assessment['id']}")
         assessments[assessment["id"]] = assessment
@@ -128,7 +131,7 @@ def build() -> dict[str, Any]:
         occurrence["comparison_ids"].append(comparison["id"])
     amsterdam_pairs = [item for item in comparisons.values() if item["fork"] == "amsterdam"]
     if len(amsterdam_pairs) != 12:
-        raise BuildError("Amsterdam must yield twelve same-rubric comparisons")
+        raise BuildError("Amsterdam must yield twelve Human-versus-LLM comparisons")
 
     forks = fork_summaries(occurrences, assessments)
     eips = eip_index(occurrences)
@@ -149,23 +152,7 @@ def build() -> dict[str, Any]:
         }
         for item in occurrences
     ]
-    scope_by_occurrence = {item["id"]: item["scope_timing"] for item in retro_occurrences}
-    previous_rows = [
-        {
-            "fork": item["fork"],
-            "eip": item["eip"],
-            "title": item["title"],
-            "mode": "retrospective",
-            "status": "scored",
-            "score": item["score"],
-            "tier": item["tier"],
-            "under_specification": item["under_specification"]["present"],
-            "scope_timing": scope_by_occurrence[f"{item['fork']}:{item['eip']}"],
-            "snapshot_status": None,
-        }
-        for item in retro_assessments
-    ]
-    evaluation_rows = {PRIMARY_EVALUATION: chart_rows, "gpt-v2": previous_rows}
+    evaluation_rows = {PRIMARY_EVALUATION: chart_rows}
     hegota_extent = sum(item["score"] for item in hegota_builder["entries"] if item["score"] is not None)
     chart_paths, shipping_analysis, chart_sources = charts(chart_rows, evaluation_rows, PRIMARY_EVALUATION, hegota_extent)
     human_llm, alignment_sources = amsterdam_alignment(comparisons, assessments)

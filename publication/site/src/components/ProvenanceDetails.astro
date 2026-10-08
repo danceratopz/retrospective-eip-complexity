@@ -3,7 +3,7 @@
  * Collapsed technical provenance. The assessment source itself is shown prominently elsewhere.
  */
 import type { Assessment } from '../lib/domain';
-import { rubricLabel } from '../lib/labels';
+import { modelLabel, rubricLabel } from '../lib/labels';
 import { isoDate, shortCommit } from '../lib/format';
 
 interface Props {
@@ -33,7 +33,7 @@ const pull = record.pull_request;
     <dt>Evaluator</dt>
     <dd>
       {assessor.kind === 'llm'
-        ? <>{assessor.model} at {assessor.reasoning_effort} reasoning effort{assessor.isolation_method && <> · isolation <code>{assessor.isolation_method}</code></>}</>
+        ? <>{modelLabel(assessor.model)} (<code>{assessor.model}</code>) at {assessor.reasoning_effort} effort, one tool-less call per EIP{assessor.isolation_method && <> · isolation <code>{assessor.isolation_method}</code></>}</>
         : <>{assessor.organization} · {assessor.publication}</>}
     </dd>
     <dt>Source record</dt>
@@ -53,7 +53,7 @@ const pull = record.pull_request;
     )}
     {supporting.length > 0 && (
       <>
-        <dt>Supporting documents in the sealed package</dt>
+        <dt>Supporting documents supplied with the EIP</dt>
         <dd>{supporting.map((item) => <code>{item}</code>).reduce((acc, item, index) => (index ? [...acc, ', ', item] : [item]), [])}</dd>
       </>
     )}

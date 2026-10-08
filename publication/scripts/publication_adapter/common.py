@@ -21,7 +21,7 @@ TASK05 = ROOT / "research/tasks/05-retrospective-complexity-assignment"
 TASK05_OUTPUTS = TASK05 / "outputs/fork-eips"
 TASK05_RUBRIC = TASK05 / "inputs/rubric"
 TASK05C = ROOT / "research/tasks/05c-amsterdam-human-assessment-alignment"
-TASK07_JOIN = ROOT / "research/tasks/07-observed-effort-metrics/outputs/join"
+TASK07_JOIN = ROOT / "research/tasks/07-observed-effort-metrics/outputs/join-opus-v3"
 TASK08 = ROOT / "research/tasks/08-hegota-prospective-complexity-assessment"
 TASK08_OUTPUTS = TASK08 / "outputs"
 TASK08_EXTENSION = TASK08 / "extensions/sfi-cfi-2026-08-26/outputs"
@@ -50,7 +50,6 @@ MULTI_EL_FIRST_DEVNET = {"cancun": "dencun-devnet-4"}
 # Evaluations are (model, checklist revision) pairs. The primary evaluation drives fork totals and charts.
 EVALUATIONS = {
     "opus-v3": {"label": "Opus 5.5 · v3", "model": "claude-opus-5-5", "revision": 3, "task": "10-opus-v3-reassessment"},
-    "gpt-v2": {"label": "GPT-5.6 · v2", "model": "gpt-5.6-sol", "revision": 2, "task": "05-retrospective-complexity-assignment"},
 }
 PRIMARY_EVALUATION = "opus-v3"
 SOURCE_LLM = "llm"

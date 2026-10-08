@@ -120,8 +120,12 @@ def occurrence_rows(data: dict) -> list[dict]:
 def validate_domain_model(data: dict, rows: list[dict]) -> None:
     """Invariants of the schema 2.1.0 domain model that the pages depend on."""
     assessments = data["assessments"]
-    require(len([a for a in assessments.values() if a["role"] != "reevaluation"]) == 186, f"expected 186 assessments besides re-evaluations, found {len(assessments)}")
-    require(len(data["comparisons"]) == 34, "expected 34 same-rubric Human/LLM comparisons")
+    require(len(assessments) == 103, f"expected 103 assessments, found {len(assessments)}")
+    require(
+        all(item["provenance"]["assessor"]["model"] == "claude-opus-5-5" and item["rubric_revision"] == 3 for item in assessments.values() if item["source"] == "llm"),
+        "only Opus 5.5 · checklist revision 3 LLM assessments may be published",
+    )
+    require(len(data["comparisons"]) == 27, "expected 27 Human/LLM comparisons")
     require(len(data["criteria"]) == 29, "criterion registry must contain 29 criteria")
     require(set(data["rubrics"]) == {"1", "2", "3"}, "all three rubric revisions must be published")
     for assessment in assessments.values():
@@ -134,7 +138,7 @@ def validate_domain_model(data: dict, rows: list[dict]) -> None:
     hegota_human = [row["human_status"] for row in rows if row["fork"] == "hegota"]
     require(
         {status: hegota_human.count(status) for status in set(hegota_human)}
-        == {"complete": 2, "available_in_open_pr": 15, "in_progress": 8, "not_available": 21},
+        == {"complete": 2, "available_in_open_pr": 8, "in_progress": 5, "not_available": 20},
         "Hegotá human-assessment status distribution changed",
     )
     for row in rows:
@@ -143,7 +147,11 @@ def validate_domain_model(data: dict, rows: list[dict]) -> None:
     for comparison in data["comparisons"].values():
         human = assessments[comparison["human_assessment_id"]]
         llm = assessments[comparison["llm_assessment_id"]]
-        require(human["rubric_revision"] == llm["rubric_revision"], f"{comparison['id']}: cross-rubric comparison")
+        require(
+            (human["rubric_revision"], llm["rubric_revision"]) == (comparison["human_rubric_revision"], comparison["llm_rubric_revision"])
+            and llm["role"] == "primary",
+            f"{comparison['id']}: comparison must pair the human checklist with the primary LLM assessment",
+        )
         require(comparison["delta"] == llm["score"] - human["score"], f"{comparison['id']}: delta")
 
 
@@ -208,25 +216,23 @@ def validate() -> dict[str, int]:
     prospective = [row for row in rows if row["mode"] == "prospective"]
     scored_hegota = [row for row in prospective if row["status"] == "scored"]
     not_applicable = [row for row in prospective if row["status"] == "not_applicable"]
-    require(len(rows) == 95, "all-forks table must contain 95 relationships")
+    require(len(rows) == 84, "all-forks table must contain 84 relationships")
     require(len(historical) == 49, "retrospective-only table must contain 49 relationships")
-    require(len(prospective) == 46, "Hegotá table must contain 46 entries")
-    require(len(scored_hegota) == 39 and sum(row["score"] for row in scored_hegota) == 856, "Hegotá score gate mismatch")
-    require(len(not_applicable) == 7, "Hegotá N/A population mismatch")
+    require(len(prospective) == 35, "Hegotá table must contain 35 entries")
+    require(len(scored_hegota) == 27 and sum(row["score"] for row in scored_hegota) == 543, "Hegotá score gate mismatch")
+    require(len(not_applicable) == 8, "Hegotá N/A population mismatch")
     require(all(row["score"] is None and row["tier"] is None for row in not_applicable), "N/A rows must not have score or tier")
     require(
         {row["snapshot_status"] for row in prospective} == {"PFI", "SFI", "CFI"},
         "Hegotá snapshot statuses are incomplete",
     )
     require(
-        {row["eip"]: row["snapshot_status"] for row in prospective if row["snapshot_status"] != "PFI"}
-        == {7805: "SFI", 8141: "CFI"},
-        "Hegotá SFI/CFI snapshot membership mismatch",
+        {row["eip"]: row["snapshot_status"] for row in prospective if row["snapshot_status"] == "SFI"} == {7805: "SFI", 8141: "SFI"},
+        "Hegotá SFI membership mismatch",
     )
-    pfi_scored = [row for row in scored_hegota if row["snapshot_status"] == "PFI"]
     require(
-        len(pfi_scored) == 37 and sum(row["score"] for row in pfi_scored) == 776,
-        "Hegotá original PFI subtotal changed",
+        sum(row["score"] for row in scored_hegota if row["snapshot_status"] in {"SFI", "CFI"}) == 273,
+        "Hegotá SFI+CFI subtotal changed",
     )
     expected_scope_totals = {
         "shanghai": {"included_at_cutoff": (4, 58), "added_after_cutoff": (1, 3)},
@@ -328,12 +334,11 @@ def validate() -> dict[str, int]:
     human_llm = data["human_llm"]["rows"]
     require(len(human_llm) == 12, "human–LLM comparison must contain 12 Amsterdam EIPs")
     require(
-        [(row["eip"], row["human_total"], row["llm_total"], row["primary_llm_total"]) for row in human_llm[:3]]
-        == [(7928, 29, 26, 40), (8037, 28, 21, 35), (8038, 20, 17, 17)],
+        [(row["eip"], row["human_total"], row["llm_total"]) for row in human_llm[:3]]
+        == [(7928, 29, 41), (8037, 28, 43), (8038, 20, 14)],
         "human–LLM score ordering changed",
     )
-    require(sum(row["clean"] for row in human_llm) == 2, "human–LLM clean comparison count changed")
-    require(len(data["human_llm"]["criteria"]) == 24, "human–LLM per-criterion aggregate must cover the revision-1 checklist")
+    require(len(data["human_llm"]["criteria"]) == 23, "human–LLM per-criterion aggregate must cover the 23 criteria revisions 1 and 3 share")
 
     forbidden = ["/home/", "/tmp/", "file://", "session_id", "prompt_path", "assessor_raw_output", "access_token", "api_key", "assessment-run-"]
     for generated in [data_path, DIST / "generated/compare-index.json", *sorted((DIST / "generated/downloads").glob("*.csv"))]:
@@ -351,7 +356,7 @@ def validate() -> dict[str, int]:
     require(manifest["source_records"] == sorted(manifest["source_records"], key=lambda item: item["path"]), "source records are not stable-sorted")
 
     html_files = sorted(DIST.rglob("*.html"))
-    require(len(html_files) == 156, f"expected 156 static pages, found {len(html_files)}")
+    require(len(html_files) == 145, f"expected 145 static pages, found {len(html_files)}")
     broken: list[str] = []
     chart_pages = 0
     for html_path in html_files:
@@ -462,23 +467,23 @@ def validate() -> dict[str, int]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
     shown = [item for item in data["assessments"].values() if item["role"] != "previous_evaluation"]
     require(eip_index_html.count('data-mode="') == len(shown), "EIP index must show one row per displayed assessment, excluding N/A dispositions and the previous evaluation")
-    for control in ["q", "fork", "band", "status", "evaluator", "under", "mode", "reruns"]:
+    for control in ["q", "fork", "band", "status", "evaluator", "under", "mode"]:
         require(f'data-filter="{control}"' in eip_index_html, f"EIP index filter {control} is missing")
     require(eip_index_html.count('data-sort-key="') == 8, "EIP index sortable columns changed")
     require(eip_index_html.count('class="stack stack-compact') == scored_rows, "EIP index must show one compact stacked bar per scored assessment")
     require(eip_index_html.count('data-select-assessment="') == scored_rows, "EIP index must offer comparison selection for every scored assessment")
     require(eip_index_html.count('data-evaluator="human"') == sum(1 for item in data["assessments"].values() if item["source"] == "human"), "EIP index must show one row per Human assessment")
-    require(eip_index_html.count('data-rerun="1"') == 12, "EIP index must carry the twelve Amsterdam re-runs as hidden-by-default rows")
+    require(eip_index_html.count('data-rerun="1"') == 0, "EIP index must not carry GPT re-run rows")
     require(eip_index_html.count("data-compare-selection") == 2, "EIP index must show the comparison selection bar above and below the table")
     require(eip_index_html.count('status status-not_applicable') == 0, "EIP index must omit N/A rows")
     require("pending human checklist" in eip_index_html, "EIP index must report pending Hegotá human checklists")
     require('href="https://github.com/ethspecs/pm/pull/118"' in eip_index_html, "Human status badges must link to their pull request")
     require("fork relationships" not in eip_index_html.lower(), "obsolete EIP index column remains")
     require("unique proposal" not in eip_index_html.lower(), "obsolete unique-proposal wording remains")
-    require(hegota_html.count('data-mode="prospective"') == 39 + 25 + sum(a['role'] == 'reevaluation' for a in data['assessments'].values()), "Hegotá HTML table must show 39 applicable LLM rows plus re-evaluations and 25 Human rows")
+    require(hegota_html.count('data-mode="prospective"') == 27 + 15, "Hegotá HTML table must show 27 applicable LLM rows and 15 Human rows")
     require('data-sortable-table' in hegota_html, "Hegotá assessment table is not sortable")
     require(hegota_html.count('data-sort-key="') == 8, "Hegotá assessment columns must all be sortable")
-    require(hegota_html.count('data-evaluator="human"') == 25, "Hegotá page must list every human checklist as its own row")
+    require(hegota_html.count('data-evaluator="human"') == 15, "Hegotá page must list every human checklist as its own row")
     require(hegota_html.count('status status-not_applicable') == 0, "Hegotá assessment table must omit N/A rows")
     require("Human checklists" in hegota_html and hegota_html.count("data-compare-selection") == 2, "Hegotá page must show human coverage and comparison selection above and below the table")
     require("Open the comparison view" not in hegota_html, "misleading comparison link must not remain on fork pages")
@@ -486,15 +491,15 @@ def validate() -> dict[str, int]:
         require(status in hegota_html, f"Hegotá page omits the {status} state")
     require("Pending" in hegota_html and "Not yet available" not in hegota_html, "Hegotá missing human checklists must read as pending")
     require("Draft PR" in hegota_html and "In progress" not in hegota_html, "draft pull-request checklists must be flagged as Draft PR")
-    require(hegota_html.count('data-status="in_progress"') == 8, "Hegotá page must list the eight draft-PR checklists as rows")
+    require(hegota_html.count('data-status="in_progress"') == 5, "Hegotá page must list the five draft-PR checklists as rows")
     require("published 20" in hegota_html, "a checklist scored from its cells must still show its differing published total")
     require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
     require("Inclusion status at snapshot" in hegota_html and "Evaluated on" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
-        "EIP-7805 was SFI and EIP-8141 was CFI, rather than PFI, at the frozen 2026-08-26 snapshot." in hegota_html
+        "EL-rubric total by EIP-8081 list: Scheduled 77" in hegota_html
         and hegota_html.count(">SFI</span>") >= 1
         and hegota_html.count(">CFI</span>") >= 1,
-        "Hegotá SFI/CFI snapshot disclosure is missing",
+        "Hegotá per-list totals or list badges are missing",
     )
     require(
         "independently of the STEEL team’s ongoing manual assessment work" in hegota_html,
@@ -507,7 +512,7 @@ def validate() -> dict[str, int]:
     )
     require("generated/charts/hegota-scores.json" not in hegota_html, "superseded Hegotá bar chart remains")
     require('data-ranked-view="llm"' in hegota_html and 'data-ranked-view="human"' in hegota_html and 'data-ranked-view="both"' in hegota_html, "Hegotá ranked stacked bars are missing")
-    require(hegota_html.count('class="stack stack-large') >= 39 + 23, "Hegotá ranked bars must cover every scored LLM and Human assessment")
+    require(hegota_html.count('class="stack stack-large') >= 27 + 15, "Hegotá ranked bars must cover every scored LLM and Human assessment")
     require("data-ranked-search" in hegota_html and 'data-filter="q"' in hegota_html, "Hegotá page must offer search on the ranked bars and the table")
     require('data-filter="q"' in osaka_html, "fork pages must offer table search")
     require(
@@ -555,25 +560,24 @@ def validate() -> dict[str, int]:
     require(human_llm_html.count('data-comparison-eip="') == 12, "human–LLM paired bars must cover twelve EIPs")
     require(human_llm_html.count('class="stack stack-regular') == 24, "human–LLM page must show one Human and one LLM bar per EIP")
     require(human_llm_html.count('data-human-llm-eip="') == 12, "human–LLM table row count mismatch")
-    require(human_llm_html.count('data-sort-key="') == 14, "human–LLM columns must all be sortable")
+    require(human_llm_html.count('data-sort-key="') == 12, "human–LLM columns must all be sortable")
     require("Where the Evaluators Differ by Criterion" in human_llm_html and human_llm_html.count("aggregate-notable") >= 4, "human–LLM per-criterion aggregate is missing")
     require(">Block-Level Access Lists</td>" in human_llm_html, "human–LLM proposal titles are missing")
-    require("The LLM applied a “risk-review tax.”" in human_llm_html, "human–LLM systematic difference is missing")
+    require("Cross-EIP interactions and security drove the shared-criterion excess." in human_llm_html, "human–LLM systematic difference is missing")
     require("currently the only fork with a completed human complexity evaluation" in human_llm_html, "Amsterdam comparison rationale is missing")
     require("manual evaluation for Hegotá is still underway" in human_llm_html, "Hegotá manual-evaluation status is missing")
-    require("structured sanity check" in human_llm_html, "human–LLM sanity-check framing is missing")
-    require("The two LLM evaluations differ only in the template." in human_llm_html, "controlled template comparison is not prominent")
+    require("Different checklist revisions, same substance." in human_llm_html, "cross-revision comparison is not explained")
     require(
         "https://github.com/ethspecs/pm/blob/d936bcb34963cb5eec015dada2e4188e49fc14d5/Templates/EIP-Complexity-Assessment.md"
         in human_llm_html,
         "complexity-assessment template v1 permalink is missing",
     )
     require(
-        "https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md"
+        "https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md"
         in human_llm_html,
-        "complexity-assessment template v2 permalink is missing",
+        "complexity-assessment template v3 permalink is missing",
     )
-    require("No proposal revision or implementation evidence changed between them." in human_llm_html, "controlled LLM inputs are unclear")
+    require("GPT" not in human_llm_html, "the Human vs LLM page must not mention a previous LLM evaluation")
     require("Only two EIPs meet" not in human_llm_html, "secondary clean-subset warning remains prominent")
     require(osaka_html.count(">Current master</a>") == 12, "Osaka current-revision links are incomplete")
     require(osaka_html.count(">File history</a>") == 12, "Osaka file-history links are incomplete")
@@ -593,11 +597,11 @@ def validate() -> dict[str, int]:
     require(osaka_html.count('class="stack stack-compact') == 12, "Osaka table must show one stacked profile per EIP")
     require('data-composition-view="absolute"' in osaka_html and 'data-composition-view="normalized"' in osaka_html, "Osaka fork composition views are missing")
     require(osaka_html.count("Contributed by ") >= 12, "fork composition tooltips must name contributing EIP counts")
-    require("GPT-5.6 Sol LLM at xhigh reasoning effort" in osaka_html, "fork assessment method is missing")
+    require("Claude Opus 5.5 at high effort" in osaka_html and "GPT" not in osaka_html, "fork assessment method is missing or names the previous model")
     require(
-        "https://github.com/ethspecs/pm/blob/3d8c0128c5543dd3146341ef395aa344e4abea30/Templates/EIP-Complexity-Assessment.md"
+        "https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md"
         in osaka_html,
-        "STEEL template permalink is missing",
+        "STEEL template revision 3 permalink is missing",
     )
     require("Current master” and “File history”" not in osaka_html, "obsolete GitHub-link prose remains")
     require("timeline-guide" not in osaka_html, "timeline key must use a simple list")
@@ -605,7 +609,7 @@ def validate() -> dict[str, int]:
 
     forks_index_html = (DIST / "forks/index.html").read_text(encoding="utf-8")
     require(forks_index_html.count('class="stack stack-regular') == 5, "forks index must show one composition bar per retrospective fork only")
-    require("score <strong>TBD</strong>" in forks_index_html and "856" not in forks_index_html, "forks index must not present a Hegotá total")
+    require("EL-rubric total <strong>543</strong>" in forks_index_html and "856" not in forks_index_html, "forks index must present the current Hegotá EL-rubric total")
     require(">In progress</span>" in forks_index_html, "forks index must mark Hegotá human checklists as in progress")
     require(
         'href="https://github.com/ethspecs/pm/pulls?q=is%3Apr+state%3Aopen+complexity+assessment"' in forks_index_html,

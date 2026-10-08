@@ -107,7 +107,7 @@ export function render(root: HTMLElement, index: CompareIndex, state: CompareSta
   // Notices ----------------------------------------------------------------------------------------
   if (revisions.size > 1) {
     const notice = el('div', { class: 'caveat' });
-    notice.append(el('strong', {}, 'Mixed checklist revisions. '), document.createTextNode('Revision 1 has 24 criteria with tiers <10 / 10–19 / ≥20; revision 2 has 28 criteria with tiers <12 / 12–22 / ≥23. Totals are not like-for-like, and criteria that exist in only one revision are marked in the matrix.'));
+    notice.append(el('strong', {}, 'Mixed checklist revisions. '), document.createTextNode('Revision 1 has 24 criteria with tiers <10 / 10–19 / ≥20; revisions 2 and 3 have 28 criteria with tiers <12 / 12–22 / ≥23, and revision 3 phrases them more precisely. Totals are not like-for-like, and criteria that exist in only one revision are marked in the matrix.'));
     for (const column of columns) {
       const counterpart = index.assessments.find((item) => item.eip === column.eip && item.fork === column.fork && item.source === column.source && item.scored && item.rubric_revision !== column.rubric_revision && !columns.includes(item));
       if (!counterpart) continue;

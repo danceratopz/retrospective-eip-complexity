@@ -1,6 +1,6 @@
 ---
 /**
- * Paired Human and LLM stacked bars for same-rubric comparisons, ranked by the Human total.
+ * Paired Human and LLM stacked bars, ranked by the Human total. Each bar keeps its own checklist revision.
  */
 import type { Assessment, Publication } from '../lib/domain';
 import { EVALUATOR_LABELS, rubricLabel } from '../lib/labels';
@@ -17,8 +17,6 @@ interface Row {
   human_total: number;
   llm_total: number;
   delta: number;
-  clean: boolean;
-  primary_llm_total: number | null;
   input_alignment: string | null;
   human_timing_exposure: string | null;
 }
@@ -44,8 +42,8 @@ const humanize = (value: string | null) => (value ?? '').replaceAll('_', ' ');
         <div class="ranked-label">
           <a href={eipRoute(row.eip, { fork, view: 'compare' })}><strong>EIP-{row.eip}</strong> <span class="ranked-title">{truncate(row.title, 48)}</span></a>
           <span class="ranked-meta">
-            <span class:list={['pill', 'pill-small', row.delta > 0 ? 'delta-pos' : row.delta < 0 ? 'delta-neg' : '']} title="LLM total minus Human total under the same checklist revision">Δ {signed(row.delta)}</span>
-            {row.clean ? <span class="pill pill-small low" title="Same EIP text, same template, unambiguous totals">Clean</span> : <span class="muted" title={`Input alignment: ${humanize(row.input_alignment)} · human hindsight exposure: ${humanize(row.human_timing_exposure)}`}>confounded</span>}
+            <span class:list={['pill', 'pill-small', row.delta > 0 ? 'delta-pos' : row.delta < 0 ? 'delta-neg' : '']} title="LLM total minus Human total, each under its own checklist revision">Δ {signed(row.delta)}</span>
+            {row.input_alignment && <span class="muted" title={`Input alignment: ${humanize(row.input_alignment)} · human hindsight exposure: ${humanize(row.human_timing_exposure)}`}>{humanize(row.input_alignment)}</span>}
           </span>
         </div>
         <div class="ranked-bars">

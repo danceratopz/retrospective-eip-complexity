@@ -7,7 +7,7 @@ export const SITE_TITLE = 'Retrospective LLM-Based Complexity Evaluations';
 
 export const EVALUATOR_LABELS: Record<Source, string> = { llm: 'LLM', human: 'Human' };
 export const EVALUATOR_DESCRIPTIONS: Record<Source, string> = {
-  llm: 'Automated assessment by an LLM working from a sealed EIP revision and the pinned rubric.',
+  llm: 'Automated assessment by Claude Opus 5.5 of a sealed EIP revision against checklist revision 3, with the documents supplied in the prompt and no tools.',
   human: 'Checklist published by STEEL team reviewers in the ethspecs/pm repository.',
 };
 
@@ -90,7 +90,7 @@ export function modelLabel(model: string | null | undefined): string {
 /** Tab and badge detail for one LLM assessment: model, role, and score. */
 export function llmRoleLabel(role: string, model: string | null | undefined, mode: Mode = 'retrospective'): string {
   const name = modelLabel(model);
-  if (role === 'primary') return mode === 'prospective' ? `${name} · original snapshot` : `${name} · primary`;
+  if (role === 'primary') return mode === 'prospective' ? `${name} · snapshot` : `${name} · primary`;
   if (role === 'previous_evaluation') return `${name} · previous primary`;
   if (role === 'reevaluation') return `${name} · re-evaluation`;
   return `${name} · re-run for the human comparison`;
