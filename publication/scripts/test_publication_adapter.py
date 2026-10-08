@@ -79,12 +79,13 @@ class FitTests(unittest.TestCase):
         rows = [{"total_score": x, "shipping_days": 100 + 2 * x} for x in (10, 20, 30, 40, 50)]
         fit = least_squares(rows, 100)
         self.assertEqual((fit["slope_days_per_point"], fit["intercept_days"], fit["r_squared"]), (2.0, 100.0, 1.0))
-        self.assertTrue(all(point["lower"] == point["fit"] == point["upper"] for point in fit["band"]))
+        self.assertTrue(all(point[f"lower_{level}"] == point["fit"] == point[f"upper_{level}"] for point in fit["band"] for level in (50, 80, 95)))
 
     def test_band_widens_away_from_the_mean(self) -> None:
         rows = [{"total_score": x, "shipping_days": y} for x, y in ((65, 124), (126, 415), (216, 355), (105, 191), (243, 405))]
         band = least_squares(rows, 600)["band"]
-        width = [point["upper"] - point["lower"] for point in band]
+        width = [point["upper_95"] - point["lower_95"] for point in band]
+        self.assertTrue(all(p["lower_95"] <= p["lower_80"] <= p["lower_50"] <= p["fit"] <= p["upper_50"] <= p["upper_80"] <= p["upper_95"] for p in band))
         middle = min(range(len(width)), key=width.__getitem__)
         self.assertTrue(0 < middle < len(width) - 1)
         self.assertGreater(width[-1], width[middle])

@@ -44,17 +44,18 @@ def parse_datetime(value: str) -> datetime:
     return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed.astimezone(timezone.utc)
 
 
-# Two-sided 95% Student t quantile for n - 2 = 3 degrees of freedom (five forks).
-T_975 = {3: 3.182446305284263}
+# Two-sided Student t quantiles for n - 2 = 3 degrees of freedom (five forks), keyed by central coverage.
+T_QUANTILES = {3: {50: 0.7648923284043444, 80: 1.637744353696209, 95: 3.1824463052837078}}
+BAND_LEVELS = (50, 80, 95)
 BAND_STEPS = 60
 
 
 def least_squares(rows: list[dict[str, Any]], x_max: float) -> dict[str, Any]:
-    """Ordinary least squares of shipping days on at-cutoff score, with a 95% prediction band."""
+    """Ordinary least squares of shipping days on at-cutoff score, with nested 50/80/95% prediction bands."""
     xs = [row["total_score"] for row in rows]
     ys = [row["shipping_days"] for row in rows]
     n = len(xs)
-    if n - 2 not in T_975:
+    if n - 2 not in T_QUANTILES:
         raise ValueError(f"no t quantile for {n} points")
     x_mean, y_mean = sum(xs) / n, sum(ys) / n
     sxx = sum((x - x_mean) ** 2 for x in xs)
@@ -63,15 +64,20 @@ def least_squares(rows: list[dict[str, Any]], x_max: float) -> dict[str, Any]:
     residuals = [y - (intercept + slope * x) for x, y in zip(xs, ys)]
     se = math.sqrt(sum(item**2 for item in residuals) / (n - 2))
     ss_total = sum((y - y_mean) ** 2 for y in ys)
-    t = T_975[n - 2]
+    quantiles = T_QUANTILES[n - 2]
     band = []
     for step in range(BAND_STEPS + 1):
         x = x_max * step / BAND_STEPS
         fitted = intercept + slope * x
-        half = t * se * math.sqrt(1 + 1 / n + (x - x_mean) ** 2 / sxx)
-        band.append({"x": round(x, 2), "fit": round(fitted, 2), "lower": round(fitted - half, 2), "upper": round(fitted + half, 2)})
+        spread = se * math.sqrt(1 + 1 / n + (x - x_mean) ** 2 / sxx)
+        point = {"x": round(x, 2), "fit": round(fitted, 2)}
+        for level in BAND_LEVELS:
+            point[f"lower_{level}"] = round(fitted - quantiles[level] * spread, 2)
+            point[f"upper_{level}"] = round(fitted + quantiles[level] * spread, 2)
+        band.append(point)
     return {
-        "method": "Ordinary least squares over the five forks; band is the 95% prediction interval for one new fork (t, 3 degrees of freedom).",
+        "method": "Ordinary least squares over the five forks; bands are the central 50%, 80% and 95% prediction intervals for one new fork (Student t, 3 degrees of freedom), assuming the linear model with normal errors.",
+        "band_levels": list(BAND_LEVELS),
         "n": n,
         "slope_days_per_point": round(slope, 4),
         "intercept_days": round(intercept, 2),
@@ -188,10 +194,13 @@ def fork_shipping_specs(analysis: dict[str, Any]) -> list[dict[str, Any]]:
             band_layers = [
                 {
                     "data": {"values": analysis["fit"]["band"]},
-                    "transform": [{"calculate": "max(0, datum.lower)", "as": "lower"}],
-                    "encoding": {"x": band_x, "y": band_y, "y2": {"field": "upper"}},
-                    "mark": {"type": "area", "color": "#94a3b8", "opacity": 0.22},
-                },
+                    "transform": [{"calculate": f"max(0, datum.lower_{level})", "as": "lower"}],
+                    "encoding": {"x": band_x, "y": band_y, "y2": {"field": f"upper_{level}"}},
+                    "mark": {"type": "area", "color": "#94a3b8", "opacity": opacity},
+                }
+                for level, opacity in ((95, 0.16), (80, 0.24), (50, 0.34))
+            ] + [
+
                 {
                     "data": {"values": analysis["fit"]["band"]},
                     "encoding": {"x": band_x, "y": {**band_y, "field": "fit"}},
