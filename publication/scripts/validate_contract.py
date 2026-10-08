@@ -92,6 +92,7 @@ TASK_FAMILIES = {
     "08-hegota-prospective-complexity-assessment",
     "09-hegota-human-assessment-snapshot",
     "10-opus-v3-reassessment",
+    "11-ai-capability-context",
 }
 EXPECTED_JSON_FILES = {
     "contract/adapter-boundary.json",

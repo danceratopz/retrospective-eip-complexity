@@ -5,7 +5,7 @@
  *
  * Only the primary evaluation is shown; other evaluations use different checklist revisions and are not comparable.
  * All view state is in the URL: `lists` (EIP-8081 lists),
- * `add` and `drop` (per-EIP overrides). Without JavaScript the semantic tables below carry the same values.
+ * `add` and `drop` (per-EIP overrides), and `ai` (the exploratory AI-capability scaling α; absent means off). Without JavaScript the semantic tables below carry the same values.
  */
 import type { Publication } from '../lib/domain';
 import { stackedBarHtml } from '../lib/stacked-bar';
@@ -37,7 +37,10 @@ const payload = {
   evaluation: { label: evaluation.label, rows: evaluation.rows, fit: evaluation.fit },
   builder: { lists: builder.lists, list_labels: builder.list_labels, entries: builder.entries, default_lists: DEFAULT_LISTS },
   labels,
+  ai: shipping.ai_capability,
 };
+const ai = shipping.ai_capability;
+const primaryRows = shipping.rows as any[];
 const scenarios = Object.entries(builder.scenarios) as [string, any][];
 const listCount = (list: string) => builder.entries.filter((item: any) => item.list === list).length;
 const listScored = (list: string) => scored.filter((item: any) => item.list === list);
@@ -76,6 +79,13 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       </details>
       <p><button type="button" class="button-secondary" data-copy-scenario>Copy link to this view</button> <span class="muted" data-copy-status aria-live="polite"></span></p>
     </fieldset>
+
+    <fieldset class="ai-scaling">
+      <legend>Exploratory: scale complexity by frontier AI capability</legend>
+      <label><input type="checkbox" data-ai-toggle /> Divide each fork’s complexity by 1 + α · log₂(H ÷ H₀)</label>
+      <label class="ai-alpha">α, share of effort saved per doubling of AI capability <input type="range" min="0.01" max="0.3" step="0.01" value="0.1" data-ai-alpha disabled /> <output data-ai-alpha-value>0.10</output></label>
+      <p class="muted">H is METR’s 50% time horizon of the best model released by the fork’s first ≥2-client devnet; H₀ is the earliest fork’s ({ai.reference_horizon_minutes} min). Off by default and display-only: α is chosen, not estimated, and the line is refitted on the scaled values. Hegotá uses the latest measured model, a lower bound for its eventual devnet, so its scaled total is an upper bound.</p>
+    </fieldset>
   </div>
 
   <figure class="chart-figure">
@@ -83,7 +93,7 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       <p class="chart-status">Loading interactive chart…</p>
     </div>
     <p class="band-legend" aria-hidden="true"><span class="band-swatch band-50"></span>50% <span class="band-swatch band-80"></span>80% <span class="band-swatch band-95"></span>95% prediction interval <span class="fit-swatch"></span>least-squares fit <span class="hegota-swatch"></span>Hegotá scenario</p>
-    <figcaption class="muted" data-shipping-caption>Calendar days from each fork’s first devnet with at least two independent EL clients to mainnet, against the complexity score sum of its initial scope: the EIPs in scope at the fork’s last initial scope-setting decision before its main implementation cycle (Task 04b, provisional). EIPs added later are excluded. Open point: Amsterdam, projected mainnet 15 December 2026. Shaded bands: central 50% (strongest shading), 80% and 95% prediction intervals around the dashed least-squares line.</figcaption>
+    <figcaption class="muted" data-shipping-caption>Calendar days from each fork’s first devnet with at least two independent EL clients to mainnet, against the complexity score sum of its initial scope: the EIPs in scope at the fork’s last initial scope-setting decision before its main implementation cycle (Task 04b, provisional). EIPs added later are excluded. Open point: Amsterdam, projected mainnet 15 December 2026. Shaded bands: central 50% (strongest shading), 80% and 95% prediction intervals around the dashed least-squares line. With the exploratory AI-capability scaling on, each fork’s complexity is divided by its scaling factor and the line and bands are refitted on the scaled values.</figcaption>
   </figure>
 
   <div class="table-region" role="region" aria-label="Fit summary" tabindex="0">
@@ -100,6 +110,16 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       <tbody>{scenarios.map(([name, item]) => <tr><td>{name}</td><td class="number">{item.scored_eips}</td><td class="number">{item.not_applicable_eips}</td><td class="number">{item.score_sum}</td></tr>)}</tbody>
     </table>
   </div>
+  <div class="table-region" role="region" aria-label="AI capability by fork" tabindex="0">
+    <table>
+      <caption>Frontier AI capability at each fork’s first ≥2-client devnet (METR 50% time horizon; <a href={ai.source_url}>source</a>, retrieved {ai.retrieved_at.slice(0, 10)})</caption>
+      <thead><tr><th scope="col">Fork</th><th scope="col">First ≥2-EL devnet</th><th scope="col">Frontier model then</th><th scope="col" class="number">50% horizon (min)</th></tr></thead>
+      <tbody>
+        {primaryRows.map((row) => <tr><td>{row.fork_name}</td><td>{row.first_multi_el_devnet_at}</td><td>{row.ai_model} <span class="muted">({row.ai_model_released})</span></td><td class="number">{row.ai_horizon_minutes}</td></tr>)}
+        <tr><td>Hegotá</td><td><span class="muted">not yet</span></td><td>{ai.hegota.model} <span class="muted">({ai.hegota.released}; latest measured, lower bound)</span></td><td class="number">≥ {ai.hegota.horizon_minutes}</td></tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <style>
@@ -113,6 +133,8 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
   .hegota-eip-group { border: 0; padding: 0; margin: 0.75rem 0 0; }
   .hegota-eip { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: baseline; padding: 0.15rem 0; }
   .hegota-eip.is-na { opacity: 0.7; }
+  .ai-scaling label { display: block; margin-block: .35rem; }
+  .ai-alpha input { vertical-align: middle; width: min(14rem, 60vw); }
   .band-legend { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: .85rem; gap: .35rem .5rem; margin: .5rem 0 0; }
   .band-swatch { background: var(--chart-band); border-radius: 2px; display: inline-block; height: .8rem; width: 1.4rem; }
   .band-50 { opacity: .62; }
@@ -143,13 +165,40 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       lists: new Set(params.has('lists') ? (params.get('lists') ?? '').split(',').filter((item) => payload.builder.lists.includes(item)) : payload.builder.default_lists),
       add: numbers(params.get('add')),
       drop: numbers(params.get('drop')),
+      ai: (() => { const value = Number(params.get('ai')); return Number.isFinite(value) && value > 0 && value <= 0.3 ? Math.round(value * 100) / 100 : null; })(),
     };
+    const aiToggle = root.querySelector<HTMLInputElement>('[data-ai-toggle]')!;
+    const aiAlpha = root.querySelector<HTMLInputElement>('[data-ai-alpha]')!;
+    const aiAlphaValue = root.querySelector<HTMLOutputElement>('[data-ai-alpha-value]')!;
+    const scale = (horizon: number) => (state.ai ? 1 + state.ai * Math.log2(horizon / payload.ai.reference_horizon_minutes) : 1);
+
+    /** Ordinary least squares with nested central prediction bands, as in the adapter. */
+    function fitBands(points: { x: number; y: number }[], xMax: number, quantiles: Record<string, number>) {
+      const n = points.length;
+      const xMean = points.reduce((sum, p) => sum + p.x, 0) / n;
+      const yMean = points.reduce((sum, p) => sum + p.y, 0) / n;
+      const sxx = points.reduce((sum, p) => sum + (p.x - xMean) ** 2, 0);
+      const slope = points.reduce((sum, p) => sum + (p.x - xMean) * (p.y - yMean), 0) / sxx;
+      const intercept = yMean - slope * xMean;
+      const se = Math.sqrt(points.reduce((sum, p) => sum + (p.y - intercept - slope * p.x) ** 2, 0) / (n - 2));
+      return Array.from({ length: 61 }, (_, step) => {
+        const x = (xMax * step) / 60;
+        const fit = intercept + slope * x;
+        const spread = se * Math.sqrt(1 + 1 / n + (x - xMean) ** 2 / sxx);
+        const point: Record<string, number> = { x, fit };
+        for (const [level, t] of Object.entries(quantiles)) {
+          point[`lower_${level}`] = fit - t * spread;
+          point[`upper_${level}`] = fit + t * spread;
+        }
+        return point;
+      });
+    }
 
     const selected = () => scored.filter((item) => (state.lists.has(item.list) && !state.drop.has(item.eip)) || state.add.has(item.eip));
 
     function writeUrl() {
       const next = new URLSearchParams(location.search);
-      for (const key of ['eval', 'lists', 'add', 'drop']) next.delete(key);
+      for (const key of ['eval', 'lists', 'add', 'drop', 'ai']) next.delete(key);
       const lists = payload.builder.lists.filter((item: string) => state.lists.has(item));
       if (lists.join(',') !== payload.builder.default_lists.join(',')) next.set('lists', lists.join(','));
       const add = [...state.add].filter((eip) => !state.lists.has(scored.find((item) => item.eip === eip)?.list)).sort((a, b) => a - b);
@@ -158,6 +207,7 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       state.drop = new Set(drop);
       if (add.length) next.set('add', add.join(','));
       if (drop.length) next.set('drop', drop.join(','));
+      if (state.ai) next.set('ai', state.ai.toFixed(2));
       const query = next.toString();
       history.replaceState(null, '', `${location.pathname}${query ? `?${query}` : ''}${location.hash}`);
     }
@@ -166,21 +216,24 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       const evaluation = payload.evaluation;
       const showHegota = count > 0;
       const c = chartColors();
-      const forkMax = Math.max(...evaluation.rows.map((row: any) => row.total_score));
-      const domainMax = Math.ceil((Math.max(forkMax, showHegota ? total : 0) * 1.15) / 50) * 50;
-      const band = evaluation.fit.band
+      const points = evaluation.rows.map((row: any) => ({ ...row, x: Math.round((row.total_score / scale(row.ai_horizon_minutes)) * 10) / 10 }));
+      const marker = state.ai ? Math.round((total / scale(payload.ai.hegota.horizon_minutes)) * 10) / 10 : total;
+      const forkMax = Math.max(...points.map((row: any) => row.x));
+      const domainMax = Math.ceil((Math.max(forkMax, showHegota ? marker : 0) * 1.15) / 50) * 50;
+      const source = state.ai ? fitBands(points.map((row: any) => ({ x: row.x, y: row.shipping_days })), domainMax, evaluation.fit.t_quantiles) : evaluation.fit.band;
+      const band = source
         .filter((point: any) => point.x <= domainMax + 1e-9)
         .map((point: any) => ({ ...point, lower_50: Math.max(0, point.lower_50), lower_80: Math.max(0, point.lower_80), lower_95: Math.max(0, point.lower_95) }));
       const narrow = chart.clientWidth < 480;
       const subject = narrow ? 'initial-scope complexity' : 'complexity score sum of the initial fork scope';
-      const title = `${subject[0].toUpperCase()}${subject.slice(1)} (${evaluation.label})`;
+      const title = state.ai ? `AI-scaled ${subject} (α = ${state.ai.toFixed(2)})` : `${subject[0].toUpperCase()}${subject.slice(1)} (${evaluation.label})`;
       const x = { field: 'x', type: 'quantitative', title, scale: { zero: true, domain: [0, domainMax], nice: false } };
       const y = { type: 'quantitative', title: 'Days: first ≥2-EL devnet → mainnet', scale: { zero: true } };
       const width = Math.max(180, Math.min(620, chart.clientWidth - 110));
-      const points = evaluation.rows.map((row: any) => ({ ...row, x: row.total_score }));
       const tooltip = [
         { field: 'fork_name', title: 'Fork', type: 'nominal' },
         { field: 'total_score', title: 'Initial-scope score', type: 'quantitative' },
+        ...(state.ai ? [{ field: 'x', title: 'AI-scaled score', type: 'quantitative' }, { field: 'ai_model', title: 'Frontier model at devnet', type: 'nominal' }, { field: 'ai_horizon_minutes', title: '50% horizon (min)', type: 'quantitative' }] : []),
         { field: 'shipping_days', title: 'Shipping span (days)', type: 'quantitative' },
         { field: 'mainnet_at', title: 'Mainnet', type: 'nominal' },
         { field: 'projected', title: 'Projected', type: 'nominal' },
@@ -201,8 +254,8 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
           { data: { values: points }, mark: { type: 'text', align: 'left', dx: 8, fontSize: 11, color: c.ink }, encoding: { x, y: { ...y, field: 'shipping_days' }, text: { field: 'fork_short' } } },
           ...(showHegota
             ? [
-                { data: { values: [{ x: total }] }, mark: { type: 'rule', color: c.hegota, strokeWidth: 2.5, strokeDash: [2, 3] }, encoding: { x, tooltip: [{ field: 'x', title: 'Hegotá scenario total', type: 'quantitative' }] } },
-                { data: { values: [{ x: total, label: `Hegotá scenario: ${total}` }] }, mark: { type: 'text', color: c.hegota, align: total > domainMax * 0.7 ? 'right' : 'left', dx: total > domainMax * 0.7 ? -6 : 6, dy: 8, baseline: 'top', fontWeight: 'bold', fontSize: 12 }, encoding: { x, y: { value: 0 }, text: { field: 'label' } } },
+                { data: { values: [{ x: marker }] }, mark: { type: 'rule', color: c.hegota, strokeWidth: 2.5, strokeDash: [2, 3] }, encoding: { x, tooltip: [{ field: 'x', title: 'Hegotá scenario total', type: 'quantitative' }] } },
+                { data: { values: [{ x: marker, label: state.ai ? `Hegotá scenario: ${total} → ≤ ${marker} AI-scaled` : `Hegotá scenario: ${total}` }] }, mark: { type: 'text', color: c.hegota, align: marker > domainMax * 0.7 ? 'right' : 'left', dx: marker > domainMax * 0.7 ? -6 : 6, dy: 8, baseline: 'top', fontWeight: 'bold', fontSize: 12 }, encoding: { x, y: { value: 0 }, text: { field: 'label' } } },
               ]
             : []),
         ],
@@ -215,7 +268,8 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       const chosen = selected();
       const total = chosen.reduce((sum, item) => sum + item.score, 0);
       const na = entries.filter((item) => item.status !== 'scored' && state.lists.has(item.list)).length;
-      readout.textContent = `EL-rubric total ${total} across ${chosen.length} scored EIP${chosen.length === 1 ? '' : 's'}` + (na ? `; ${na} not applicable to the EL rubric` : '');
+      readout.textContent = `EL-rubric total ${total} across ${chosen.length} scored EIP${chosen.length === 1 ? '' : 's'}` + (na ? `; ${na} not applicable to the EL rubric` : '')
+        + (state.ai && chosen.length ? `; AI-scaled at most ${Math.round((total / scale(payload.ai.hegota.horizon_minutes)) * 10) / 10}` : '');
       const sums = new Map<string, number>();
       for (const item of chosen) for (const criterion of item.criteria) sums.set(criterion.id, (sums.get(criterion.id) ?? 0) + criterion.score);
       profileHost.innerHTML = stackedBarHtml({ segments: [...sums].map(([id, score]) => ({ id, score })), labels: payload.labels, total, size: 'large', label: 'Hegotá scenario EL-rubric complexity', showTotal: true });
@@ -224,6 +278,10 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
         if (box.disabled) continue;
         box.checked = chosen.some((item) => item.eip === Number(box.dataset.hegotaEip));
       }
+      aiToggle.checked = state.ai !== null;
+      aiAlpha.disabled = state.ai === null;
+      if (state.ai !== null) aiAlpha.value = String(state.ai);
+      aiAlphaValue.textContent = Number(aiAlpha.value).toFixed(2);
       const ticket = ++pending;
       embed(chart, spec(total, chosen.length) as any, { actions: false, renderer: 'svg' })
         .then(() => { if (ticket === pending) chart.querySelector('.chart-status')?.remove(); })
@@ -250,12 +308,19 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
     });
     root.addEventListener('change', (event) => {
       const target = event.target as HTMLInputElement;
+      if (target === aiToggle) state.ai = aiToggle.checked ? Number(aiAlpha.value) : null;
       if (target.dataset.hegotaEip) {
         const eip = Number(target.dataset.hegotaEip);
         const listed = state.lists.has(target.dataset.list!);
         if (target.checked) { state.drop.delete(eip); if (!listed) state.add.add(eip); }
         else { state.add.delete(eip); if (listed) state.drop.add(eip); }
       }
+      writeUrl();
+      render();
+    });
+    aiAlpha.addEventListener('input', () => {
+      if (state.ai === null) return;
+      state.ai = Number(aiAlpha.value);
       writeUrl();
       render();
     });

@@ -30,6 +30,7 @@ TASK10 = ROOT / "research/tasks/10-opus-v3-reassessment"
 TASK10_RUBRIC = TASK10 / "inputs/rubric"
 TASK10_RETROSPECTIVE = TASK10 / "retrospective/outputs"
 TASK10_PROSPECTIVE = TASK10 / "prospective/outputs"
+TASK11_FRONTIER = ROOT / "research/tasks/11-ai-capability-context/outputs/metr-frontier-horizon.yaml"
 
 VERSION = "2.1.0"
 FORK_ORDER = ["shanghai", "cancun", "prague", "osaka", "amsterdam", "hegota"]

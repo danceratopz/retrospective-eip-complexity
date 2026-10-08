@@ -19,6 +19,7 @@ from .common import (
     TASK03_INPUTS as TIMELINE_INPUTS,
     TASK04B_TIMELINES as TIMELINES,
     TASK07_JOIN as TASK07,
+    TASK11_FRONTIER,
     load_yaml,
     source,
     write_json,
@@ -78,6 +79,7 @@ def least_squares(rows: list[dict[str, Any]], x_max: float) -> dict[str, Any]:
     return {
         "method": "Ordinary least squares over the five forks; bands are the central 50%, 80% and 95% prediction intervals for one new fork (Student t, 3 degrees of freedom), assuming the linear model with normal errors.",
         "band_levels": list(BAND_LEVELS),
+        "t_quantiles": {str(level): quantiles[level] for level in BAND_LEVELS},
         "n": n,
         "slope_days_per_point": round(slope, 4),
         "intercept_days": round(intercept, 2),
@@ -85,6 +87,44 @@ def least_squares(rows: list[dict[str, Any]], x_max: float) -> dict[str, Any]:
         "r_squared": round(1 - sum(item**2 for item in residuals) / ss_total, 3),
         "band": band,
     }
+
+
+def ai_capability(rows: list[dict[str, Any]]) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Attach the frontier METR horizon at each fork's first ≥2-EL devnet; Hegotá gets the latest value."""
+    names = {
+        "gpt_3_5_turbo_instruct": "gpt-3.5-turbo-instruct",
+        "gpt_4": "GPT-4",
+        "gpt_4o_inspect": "GPT-4o",
+        "o3_inspect": "o3",
+        "gpt_5_2025_08_07_inspect": "GPT-5",
+        "claude_mythos_preview_early_inspect": "Claude Mythos Preview (early)",
+    }
+    label = lambda key: names.get(key, key.removesuffix("_inspect").replace("_", "-"))
+    record = load_yaml(TASK11_FRONTIER)
+    frontier = record["frontier"]
+
+    def at(date: str) -> dict[str, Any]:
+        released = [item for item in frontier if item["release_date"] <= date]
+        if not released:
+            raise ValueError(f"no frontier model released by {date}")
+        return released[-1]
+
+    for row in rows:
+        item = at(row["first_multi_el_devnet_at"])
+        row["ai_model"] = label(item["model"])
+        row["ai_model_released"] = item["release_date"]
+        row["ai_horizon_minutes"] = item["p50_minutes"]
+    latest = frontier[-1]
+    return {
+        "metric": record["metric"],
+        "frontier_rule": record["frontier_rule"],
+        "fork_date": "first devnet with at least two independent EL clients",
+        "source_url": record["source"]["url"],
+        "retrieved_at": record["source"]["retrieved_at"],
+        "source_sha256": record["source"]["content_sha256"],
+        "reference_horizon_minutes": min(row["ai_horizon_minutes"] for row in rows),
+        "hegota": {"model": label(latest["model"]), "released": latest["release_date"], "horizon_minutes": latest["p50_minutes"], "lower_bound": True},
+    }, [source(TASK11_FRONTIER)]
 
 
 def fork_shipping(
@@ -372,7 +412,11 @@ def charts(
         analysis["evaluation"] = key
         analysis["label"] = EVALUATIONS[key]["label"]
         analysis["rubric_revision"] = EVALUATIONS[key]["revision"]
-    shipping_analysis = {**by_evaluation[primary], "x_max": x_max, "primary_evaluation": primary, "evaluations": by_evaluation}
+    capability = {}
+    for analysis in by_evaluation.values():
+        capability, capability_sources = ai_capability(analysis["rows"])
+    shipping_sources.extend(capability_sources)
+    shipping_analysis = {**by_evaluation[primary], "x_max": x_max, "primary_evaluation": primary, "evaluations": by_evaluation, "ai_capability": capability}
     shipping_specs = fork_shipping_specs(shipping_analysis)
     specs["fork-shipping"] = shipping_specs[0]
     specs["fork-shipping-high-tier"] = shipping_specs[1]
