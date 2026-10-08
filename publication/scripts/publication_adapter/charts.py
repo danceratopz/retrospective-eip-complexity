@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from .common import (
+    EVALUATIONS,
     FORK_NAMES,
     FORK_ORDER,
     MULTI_EL_FIRST_DEVNET,
@@ -40,6 +42,43 @@ def parse_datetime(value: str) -> datetime:
     normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
     parsed = datetime.fromisoformat(normalized)
     return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed.astimezone(timezone.utc)
+
+
+# Two-sided 95% Student t quantile for n - 2 = 3 degrees of freedom (five forks).
+T_975 = {3: 3.182446305284263}
+BAND_STEPS = 60
+
+
+def least_squares(rows: list[dict[str, Any]], x_max: float) -> dict[str, Any]:
+    """Ordinary least squares of shipping days on at-cutoff score, with a 95% prediction band."""
+    xs = [row["total_score"] for row in rows]
+    ys = [row["shipping_days"] for row in rows]
+    n = len(xs)
+    if n - 2 not in T_975:
+        raise ValueError(f"no t quantile for {n} points")
+    x_mean, y_mean = sum(xs) / n, sum(ys) / n
+    sxx = sum((x - x_mean) ** 2 for x in xs)
+    slope = sum((x - x_mean) * (y - y_mean) for x, y in zip(xs, ys)) / sxx
+    intercept = y_mean - slope * x_mean
+    residuals = [y - (intercept + slope * x) for x, y in zip(xs, ys)]
+    se = math.sqrt(sum(item**2 for item in residuals) / (n - 2))
+    ss_total = sum((y - y_mean) ** 2 for y in ys)
+    t = T_975[n - 2]
+    band = []
+    for step in range(BAND_STEPS + 1):
+        x = x_max * step / BAND_STEPS
+        fitted = intercept + slope * x
+        half = t * se * math.sqrt(1 + 1 / n + (x - x_mean) ** 2 / sxx)
+        band.append({"x": round(x, 2), "fit": round(fitted, 2), "lower": round(fitted - half, 2), "upper": round(fitted + half, 2)})
+    return {
+        "method": "Ordinary least squares over the five forks; band is the 95% prediction interval for one new fork (t, 3 degrees of freedom).",
+        "n": n,
+        "slope_days_per_point": round(slope, 4),
+        "intercept_days": round(intercept, 2),
+        "residual_standard_error_days": round(se, 2),
+        "r_squared": round(1 - sum(item**2 for item in residuals) / ss_total, 3),
+        "band": band,
+    }
 
 
 def fork_shipping(
@@ -142,12 +181,30 @@ def fork_shipping_specs(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "type": "quantitative",
             },
         }
+        band_layers = []
+        if field == "total_score" and analysis.get("fit"):
+            band_x = {"field": "x", "type": "quantitative", "title": x_title, "scale": {"zero": True}}
+            band_y = {"field": "lower", "type": "quantitative", "title": "Days: first ≥2-EL devnet → mainnet", "scale": {"zero": True}}
+            band_layers = [
+                {
+                    "data": {"values": analysis["fit"]["band"]},
+                    "transform": [{"calculate": "max(0, datum.lower)", "as": "lower"}],
+                    "encoding": {"x": band_x, "y": band_y, "y2": {"field": "upper"}},
+                    "mark": {"type": "area", "color": "#94a3b8", "opacity": 0.22},
+                },
+                {
+                    "data": {"values": analysis["fit"]["band"]},
+                    "encoding": {"x": band_x, "y": {**band_y, "field": "fit"}},
+                    "mark": {"type": "line", "color": "#64748b", "strokeDash": [6, 4], "strokeWidth": 1.5},
+                },
+            ]
         specs.append(
             {
                 "data": {"values": analysis["rows"]},
                 "description": f"Fork-level shipping span plotted against {x_title.lower()}.",
                 "height": 500,
                 "layer": [
+                    *band_layers,
                     {
                         "encoding": shared_encoding,
                         "mark": {"filled": True, "size": 130, "stroke": "white", "strokeWidth": 1, "type": "point"},
@@ -227,6 +284,9 @@ def publication_timelines(
 
 def charts(
     assessment_rows: list[dict[str, Any]],
+    evaluation_rows: dict[str, list[dict[str, Any]]],
+    primary: str,
+    x_extent: float,
 ) -> tuple[dict[str, str], dict[str, Any], list[dict[str, str]]]:
     chart_dir = PUBLIC / "charts"
     chart_dir.mkdir(parents=True, exist_ok=True)
@@ -291,7 +351,19 @@ def charts(
             "width": 500,
         }
 
-    shipping_analysis, shipping_sources = fork_shipping(assessment_rows)
+    by_evaluation = {}
+    shipping_sources: list[dict[str, str]] = []
+    for key, rows in evaluation_rows.items():
+        analysis, shipping_sources = fork_shipping(rows)
+        by_evaluation[key] = analysis
+    x_max = max(x_extent, *[row["total_score"] for item in by_evaluation.values() for row in item["rows"]]) * 1.1
+    x_max = math.ceil(x_max / 50) * 50
+    for key, analysis in by_evaluation.items():
+        analysis["fit"] = least_squares(analysis["rows"], x_max)
+        analysis["evaluation"] = key
+        analysis["label"] = EVALUATIONS[key]["label"]
+        analysis["rubric_revision"] = EVALUATIONS[key]["revision"]
+    shipping_analysis = {**by_evaluation[primary], "x_max": x_max, "primary_evaluation": primary, "evaluations": by_evaluation}
     shipping_specs = fork_shipping_specs(shipping_analysis)
     specs["fork-shipping"] = shipping_specs[0]
     specs["fork-shipping-high-tier"] = shipping_specs[1]

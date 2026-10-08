@@ -26,6 +26,10 @@ TASK08 = ROOT / "research/tasks/08-hegota-prospective-complexity-assessment"
 TASK08_OUTPUTS = TASK08 / "outputs"
 TASK08_EXTENSION = TASK08 / "extensions/sfi-cfi-2026-08-26/outputs"
 TASK09 = ROOT / "research/tasks/09-hegota-human-assessment-snapshot/outputs"
+TASK10 = ROOT / "research/tasks/10-opus-v3-reassessment"
+TASK10_RUBRIC = TASK10 / "inputs/rubric"
+TASK10_RETROSPECTIVE = TASK10 / "retrospective/outputs"
+TASK10_PROSPECTIVE = TASK10 / "prospective/outputs"
 
 VERSION = "2.0.0"
 FORK_ORDER = ["shanghai", "cancun", "prague", "osaka", "amsterdam", "hegota"]
@@ -43,6 +47,12 @@ FORK_SHORT_NAMES = {fork: name.split(" / ")[0] for fork, name in FORK_NAMES.item
 PROJECTED_MAINNET = {"amsterdam": "2026-12-15"}
 MULTI_EL_FIRST_DEVNET = {"cancun": "dencun-devnet-4"}
 
+# Evaluations are (model, checklist revision) pairs. The primary evaluation drives fork totals and charts.
+EVALUATIONS = {
+    "opus-v3": {"label": "Opus 5.5 · v3", "model": "claude-opus-5-5", "revision": 3, "task": "10-opus-v3-reassessment"},
+    "gpt-v2": {"label": "GPT-5.6 · v2", "model": "gpt-5.6-sol", "revision": 2, "task": "05-retrospective-complexity-assignment"},
+}
+PRIMARY_EVALUATION = "opus-v3"
 SOURCE_LLM = "llm"
 SOURCE_HUMAN = "human"
 # Assessment and human-source statuses share one vocabulary so the site can render one badge component.

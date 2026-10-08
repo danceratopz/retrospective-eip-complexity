@@ -12,7 +12,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .common import TASK05_RUBRIC, TASK05C, BuildError, load_yaml, source
+from .common import TASK05_RUBRIC, TASK05C, TASK10_RUBRIC, BuildError, load_yaml, source
 
 
 REVISION_2_ORDER = [
@@ -82,9 +82,11 @@ LABEL_OVERRIDES = {"cryptography": "Cryptography"}
 TIER_THRESHOLDS = {
     1: {"low": {"minimum": 0, "maximum": 9}, "medium": {"minimum": 10, "maximum": 19}, "high": {"minimum": 20, "maximum": None}},
     2: {"low": {"minimum": 0, "maximum": 11}, "medium": {"minimum": 12, "maximum": 22}, "high": {"minimum": 23, "maximum": None}},
+    3: {"low": {"minimum": 0, "maximum": 11}, "medium": {"minimum": 12, "maximum": 22}, "high": {"minimum": 23, "maximum": None}},
 }
-NOMINAL_MAXIMUM = {1: 72, 2: 84}
-RUBRIC_ORDER = {1: REVISION_1_ORDER, 2: REVISION_2_ORDER}
+NOMINAL_MAXIMUM = {1: 72, 2: 84, 3: 84}
+# Revision 3 keeps revision 2's criteria, order, and tier thresholds; it rewrites the level definitions.
+RUBRIC_ORDER = {1: REVISION_1_ORDER, 2: REVISION_2_ORDER, 3: REVISION_2_ORDER}
 TIERS = ["low", "medium", "high"]
 
 
@@ -224,10 +226,45 @@ def _revision_1_definitions() -> tuple[dict[str, dict[str, Any]], dict[str, Any]
     )
 
 
+def _revision_3_definitions() -> tuple[dict[str, dict[str, Any]], dict[str, Any], list[dict[str, str]]]:
+    manifest_path = TASK10_RUBRIC / "manifest.yaml"
+    view_path = TASK10_RUBRIC / "assessor-view.md"
+    manifest = load_yaml(manifest_path)
+    parsed = manifest["parsed"]
+    if [item["id"] for item in parsed["criteria"]] != REVISION_2_ORDER:
+        raise BuildError("revision-3 rubric order differs from revision 2")
+    if parsed["tiers"] != {"medium_from": 12, "high_from": 23}:
+        raise BuildError("revision-3 tier thresholds differ from the registry")
+    text = view_path.read_text(encoding="utf-8")
+    section = text[text.index("#### Criteria") : text.index("### Checklist")]
+    headings = list(re.finditer(r"^##### (\S+) — (.+?)\s*$", section, re.MULTILINE))
+    by_label = {item["label"]: item["id"] for item in parsed["criteria"]}
+    definitions: dict[str, dict[str, Any]] = {}
+    for index, match in enumerate(headings):
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(section)
+        lead, anchors, notes = _split_definition(section[match.end() : end])
+        definitions[by_label[match.group(2).strip()]] = {"label": match.group(2).strip(), "short_definition": lead, "anchors": anchors, "notes": notes}
+    if set(definitions) != set(REVISION_2_ORDER):
+        raise BuildError("revision-3 rubric definitions do not cover the checklist")
+    rubric_source = manifest["source"]
+    return (
+        definitions,
+        {
+            "repository": rubric_source["repository"],
+            "commit": rubric_source["repository_commit"],
+            "path": rubric_source["path"],
+            "immutable_url": rubric_source["immutable_url"],
+            "checklist_revision": rubric_source["checklist_revision"],
+        },
+        [source(manifest_path), source(view_path)],
+    )
+
+
 def build_rubrics() -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, str]]]:
     """Return (criteria registry, rubric revisions, consumed sources)."""
     definitions_2, source_2, sources_2 = _revision_2_definitions()
     definitions_1, source_1, sources_1 = _revision_1_definitions()
+    definitions_3, source_3, sources_3 = _revision_3_definitions()
     criteria: list[dict[str, Any]] = []
     for criterion_id in REGISTRY_ORDER:
         primary = definitions_2.get(criterion_id) or definitions_1[criterion_id]
@@ -245,6 +282,9 @@ def build_rubrics() -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str
         }
         if criterion_id in definitions_1 and criterion_id in definitions_2 and definitions_1[criterion_id]["anchors"] != definitions_2[criterion_id]["anchors"]:
             entry["revision_1_anchors"] = definitions_1[criterion_id]["anchors"]
+        if criterion_id in definitions_3:
+            entry["revision_3_short_definition"] = definitions_3[criterion_id]["short_definition"]
+            entry["revision_3_anchors"] = definitions_3[criterion_id]["anchors"]
         criteria.append(entry)
     rubrics = {
         str(revision): {
@@ -253,8 +293,8 @@ def build_rubrics() -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str
             "criterion_count": len(RUBRIC_ORDER[revision]),
             "nominal_maximum": NOMINAL_MAXIMUM[revision],
             "tier_thresholds": TIER_THRESHOLDS[revision],
-            "source": source_1 if revision == 1 else source_2,
+            "source": {1: source_1, 2: source_2, 3: source_3}[revision],
         }
-        for revision in (1, 2)
+        for revision in (1, 2, 3)
     }
-    return criteria, rubrics, sources_1 + sources_2
+    return criteria, rubrics, sources_1 + sources_2 + sources_3

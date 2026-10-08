@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from publication_adapter.aggregates import composition, eip_index  # noqa: E402
+from publication_adapter.charts import least_squares  # noqa: E402
 from publication_adapter.common import (  # noqa: E402
     PUBLIC,
     SOURCE_HUMAN,
@@ -71,6 +72,22 @@ class RubricTests(unittest.TestCase):
         with self.assertRaises(BuildError):
             validate_scores(criteria, 3, "medium", 2, "test")
         validate_scores(criteria, 3, "low", 2, "test")
+
+
+class FitTests(unittest.TestCase):
+    def test_exact_line_has_zero_residual_and_band(self) -> None:
+        rows = [{"total_score": x, "shipping_days": 100 + 2 * x} for x in (10, 20, 30, 40, 50)]
+        fit = least_squares(rows, 100)
+        self.assertEqual((fit["slope_days_per_point"], fit["intercept_days"], fit["r_squared"]), (2.0, 100.0, 1.0))
+        self.assertTrue(all(point["lower"] == point["fit"] == point["upper"] for point in fit["band"]))
+
+    def test_band_widens_away_from_the_mean(self) -> None:
+        rows = [{"total_score": x, "shipping_days": y} for x, y in ((65, 124), (126, 415), (216, 355), (105, 191), (243, 405))]
+        band = least_squares(rows, 600)["band"]
+        width = [point["upper"] - point["lower"] for point in band]
+        middle = min(range(len(width)), key=width.__getitem__)
+        self.assertTrue(0 < middle < len(width) - 1)
+        self.assertGreater(width[-1], width[middle])
 
 
 class ComparisonTests(unittest.TestCase):
@@ -204,7 +221,12 @@ class GeneratedPayloadTests(unittest.TestCase):
 
     def test_totals_match_source_gates(self) -> None:
         forks = {item["fork"]: item for item in self.data["forks"]}
-        self.assertEqual({fork: forks[fork]["at_cutoff_score_sum"] for fork in ("shanghai", "cancun", "prague", "osaka", "amsterdam")}, {"shanghai": 65, "cancun": 126, "prague": 216, "osaka": 105, "amsterdam": 243})
+        self.assertEqual({fork: forks[fork]["at_cutoff_score_sum"] for fork in ("shanghai", "cancun", "prague", "osaka", "amsterdam")}, {"shanghai": 58, "cancun": 109, "prague": 159, "osaka": 72, "amsterdam": 238})
+        previous = {row["fork"]: row["total_score"] for row in self.data["fork_shipping"]["evaluations"]["gpt-v2"]["rows"]}
+        self.assertEqual(previous, {"shanghai": 65, "cancun": 126, "prague": 216, "osaka": 105, "amsterdam": 243})
+        builder = self.data["hegota_builder"]
+        self.assertEqual({name: item["score_sum"] for name, item in builder["scenarios"].items()}, {"SFI": 77, "SFI+CFI": 273, "SFI+CFI+PFI": 543})
+        self.assertTrue(all(item["score"] is None for item in builder["entries"] if item["status"] == STATUS_NOT_APPLICABLE))
         self.assertEqual(forks["hegota"]["score_sum"], 856)
         self.assertEqual(forks["hegota"]["composition"]["pfi_only"]["score_sum"], 776)
         for fork in forks.values():

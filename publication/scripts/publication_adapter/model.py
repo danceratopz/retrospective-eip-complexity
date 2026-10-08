@@ -112,6 +112,9 @@ def llm_assessment(
         }
         if "interacting_eips" in item:
             projected["interacting_eips"] = list(item["interacting_eips"] or [])
+        if "base_score" in item:
+            projected["base_score"] = item["base_score"]
+            projected["bonus"] = item["bonus"]
         if "unidentified_interactions" in item:
             projected["unidentified_interactions"] = list(item["unidentified_interactions"] or [])
         criteria.append(projected)

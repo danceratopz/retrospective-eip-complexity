@@ -21,7 +21,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from publication_adapter.aggregates import compare_index, eip_index, fork_summaries, write_downloads  # noqa: E402
 from publication_adapter.charts import charts  # noqa: E402
 from publication_adapter.common import (  # noqa: E402
+    EVALUATIONS,
     FORK_ORDER,
+    PRIMARY_EVALUATION,
     PUBLIC,
     SOURCE_HUMAN,
     STATUS_NOT_AVAILABLE,
@@ -38,6 +40,8 @@ from publication_adapter.sources import (  # noqa: E402
     load_hegota_human,
     load_prospective,
     load_retrospective,
+    load_task10_hegota,
+    load_task10_retrospective,
 )
 
 
@@ -74,6 +78,8 @@ def build() -> dict[str, Any]:
     rubric_provenance = {int(key): value["source"] for key, value in rubrics.items()}
 
     retro_occurrences, retro_assessments, retro_sources = load_retrospective()
+    task10_assessments, task10_sources = load_task10_retrospective(retro_occurrences)
+    hegota_builder, hegota_builder_sources = load_task10_hegota()
     pro_occurrences, pro_assessments, hegota_summary, pro_sources = load_prospective()
     amsterdam_assessments, task05c_comparisons, amsterdam_sources = load_amsterdam_human()
     titles = {item["eip"]: item["title"] for item in pro_occurrences}
@@ -87,7 +93,7 @@ def build() -> dict[str, Any]:
         raise BuildError("occurrence population mismatch")
 
     assessments: dict[str, dict[str, Any]] = {}
-    for assessment in [*retro_assessments, *pro_assessments, *amsterdam_assessments, *hegota_human_assessments]:
+    for assessment in [*task10_assessments, *retro_assessments, *pro_assessments, *amsterdam_assessments, *hegota_human_assessments]:
         if assessment["id"] in assessments:
             raise BuildError(f"duplicate assessment id {assessment['id']}")
         assessments[assessment["id"]] = assessment
@@ -143,7 +149,25 @@ def build() -> dict[str, Any]:
         }
         for item in occurrences
     ]
-    chart_paths, shipping_analysis, chart_sources = charts(chart_rows)
+    scope_by_occurrence = {item["id"]: item["scope_timing"] for item in retro_occurrences}
+    previous_rows = [
+        {
+            "fork": item["fork"],
+            "eip": item["eip"],
+            "title": item["title"],
+            "mode": "retrospective",
+            "status": "scored",
+            "score": item["score"],
+            "tier": item["tier"],
+            "under_specification": item["under_specification"]["present"],
+            "scope_timing": scope_by_occurrence[f"{item['fork']}:{item['eip']}"],
+            "snapshot_status": None,
+        }
+        for item in retro_assessments
+    ]
+    evaluation_rows = {PRIMARY_EVALUATION: chart_rows, "gpt-v2": previous_rows}
+    hegota_extent = sum(item["score"] for item in hegota_builder["entries"] if item["score"] is not None)
+    chart_paths, shipping_analysis, chart_sources = charts(chart_rows, evaluation_rows, PRIMARY_EVALUATION, hegota_extent)
     human_llm, alignment_sources = amsterdam_alignment(comparisons, assessments)
     write_downloads(occurrences, assessments)
 
@@ -155,7 +179,10 @@ def build() -> dict[str, Any]:
         "eips": eips,
         "fork_shipping": shipping_analysis,
         "forks": forks,
+        "evaluations": EVALUATIONS,
         "hegota": hegota_summary,
+        "hegota_builder": hegota_builder,
+        "primary_evaluation": PRIMARY_EVALUATION,
         "human_llm": human_llm,
         "release_state": "public",
         "rubrics": rubrics,
@@ -168,7 +195,7 @@ def build() -> dict[str, Any]:
     write_json(PUBLIC / "publication.json", payload)
     write_json(PUBLIC / "compare-index.json", index)
 
-    all_sources = rubric_sources + retro_sources + pro_sources + amsterdam_sources + hegota_human_sources + chart_sources + alignment_sources
+    all_sources = rubric_sources + retro_sources + task10_sources + hegota_builder_sources + pro_sources + amsterdam_sources + hegota_human_sources + chart_sources + alignment_sources
     unique_sources = {item["path"]: item for item in all_sources}
     manifest = {
         "generated_files": [],

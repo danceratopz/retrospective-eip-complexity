@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .common import (
+    ROOT,
     FORK_NAMES,
     PROSPECTIVE_FORK,
     RETROSPECTIVE_FORKS,
@@ -18,7 +19,10 @@ from .common import (
     TASK08_EXTENSION,
     TASK08_OUTPUTS,
     TASK09,
+    TASK10_PROSPECTIVE,
+    TASK10_RETROSPECTIVE,
     BuildError,
+    digest,
     load_yaml,
     occurrence_id,
     source,
@@ -95,7 +99,7 @@ def load_retrospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]], li
                 fork=fork,
                 mode="retrospective",
                 revision=2,
-                role="primary",
+                role="previous_evaluation",
                 summary_key="historical_scope_summary",
                 eip_key="historical_eip",
                 rubric_key="rubric_source",
@@ -220,6 +224,111 @@ def load_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict
     if public_summary["pfi_score_sum"] != 776 or public_summary["pfi_scored"] != 37:
         raise BuildError("Task 08 original PFI subtotal changed")
     return occurrences, assessments, public_summary, sources
+
+
+def _frozen_task10(outputs: Path, expected: int) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Require the Task 10 summary and a hash freeze that matches every listed assessment."""
+    summary_path = outputs / "summary.yaml"
+    manifest_path = outputs / "assessment-manifest.yaml"
+    summary = load_yaml(summary_path)
+    manifest = load_yaml(manifest_path)
+    if manifest.get("assessment_count") != expected or len(manifest["assessments"]) != expected:
+        raise BuildError(f"Task 10 {outputs.parent.name} freeze must list {expected} assessments")
+    root = ROOT
+    for item in manifest["assessments"]:
+        if digest(root / item["assessment_path"]) != item["assessment_sha256"]:
+            raise BuildError(f"Task 10 assessment changed after freeze: {item['assessment_path']}")
+    return summary, [source(summary_path), source(manifest_path)]
+
+
+def load_task10_retrospective(
+    occurrences: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Attach the Opus 5.5 · checklist revision 3 assessments, the primary evaluation, to the 49 occurrences."""
+    summary, sources = _frozen_task10(TASK10_RETROSPECTIVE, 49)
+    totals = {(fork["fork"], item["eip"]): item["score"] for fork in summary["forks"] for item in fork["eips"]}
+    assessments = []
+    for occurrence in occurrences:
+        path = TASK10_RETROSPECTIVE / "assessments" / occurrence["fork"] / f"eip-{occurrence['eip']}.yaml"
+        record = load_yaml(path)
+        assessment = llm_assessment(
+            record,
+            path=path,
+            fork=occurrence["fork"],
+            mode="retrospective",
+            revision=3,
+            role="primary",
+            summary_key="historical_scope_summary",
+            eip_key="historical_eip",
+            rubric_key="rubric_source",
+            assessor_key="assessor",
+        )
+        if totals[(occurrence["fork"], occurrence["eip"])] != assessment["score"]:
+            raise BuildError(f"Task 10 summary score mismatch for {occurrence['id']}")
+        occurrence["llm"] = _llm_summary(assessment)
+        assessments.append(assessment)
+        sources.append(source(path))
+    return assessments, sources
+
+
+def load_task10_hegota() -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """The Hegotá builder snapshot: EIP-8081 SFI/CFI/PFI at one EIPs commit, Opus 5.5 · checklist revision 3."""
+    summary, sources = _frozen_task10(TASK10_PROSPECTIVE, 27)
+    entries = []
+    for row in summary["scored_eips"]:
+        path = TASK10_PROSPECTIVE / "assessments" / "hegota-2026-10-08" / f"eip-{row['eip']}.yaml"
+        record = load_yaml(path)
+        if record["totals"]["primary_score"] != row["score"] or record["eip_8081_list"] != row["eip_8081_list"]:
+            raise BuildError(f"Task 10 Hegotá summary mismatch for EIP-{row['eip']}")
+        snapshot = record["provenance"]["snapshot_eip"]
+        entries.append(
+            {
+                "eip": row["eip"],
+                "title": row["title"],
+                "list": row["eip_8081_list"],
+                "status": "scored",
+                "score": row["score"],
+                "tier": row["tier"],
+                "confidence": row["overall_confidence"],
+                "under_specified": row["under_specified"],
+                "layers": row["affected_layers"],
+                "disposition_review": row["review_status"],
+                "criteria": [{"id": item["id"], "score": item["score"]} for item in record["criteria"] if item["score"]],
+                "immutable_url": snapshot["immutable_url"],
+            }
+        )
+        sources.append(source(path))
+    for row in summary["not_applicable_eips"]:
+        entries.append(
+            {
+                "eip": row["eip"],
+                "title": row["title"],
+                "list": row["eip_8081_list"],
+                "status": STATUS_NOT_APPLICABLE,
+                "score": None,
+                "tier": None,
+                "layers": row["affected_layers"],
+                "disposition_review": row["review_status"],
+                "rationale": row["rationale"],
+                "criteria": [],
+                "immutable_url": f"https://github.com/ethereum/EIPs/blob/{summary['eips_commit']}/EIPS/eip-{row['eip']}.md",
+            }
+        )
+    order = {"SFI": 0, "CFI": 1, "PFI": 2}
+    entries.sort(key=lambda item: (order[item["list"]], item["eip"]))
+    builder = {
+        "snapshot_id": summary["snapshot_id"],
+        "eips_commit": summary["eips_commit"],
+        "information_cutoff_at": summary["information_cutoff_at"],
+        "evaluation": "opus-v3",
+        "lists": ["SFI", "CFI", "PFI"],
+        "list_labels": {"SFI": "Scheduled for Inclusion", "CFI": "Considered for Inclusion", "PFI": "Proposed for Inclusion"},
+        "scenarios": summary["scenarios"],
+        "population": summary["population"],
+        "caveats": summary["caveats"],
+        "entries": entries,
+    }
+    return builder, sources
 
 
 def load_amsterdam_human() -> tuple[list[dict[str, Any]], dict[int, dict[str, Any]], list[dict[str, str]]]:
