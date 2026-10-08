@@ -1,0 +1,724 @@
+{
+ "case": "hegota/8025",
+ "run_id": "assessment-run-7a28d8ae-696f-469f-be57-c73746b7066b",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:53:22.052684Z",
+ "finished_at": "2026-10-08T09:55:30.123224Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "c75d2cf83767a6073cea59da18d132b7ecfec28d112bc978c0f0ca51d1e258ca",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "9155422a7fa96856a48f5b18cd8d39db424b5613a1f90ea8b35837676939d9d2",
+ "output": {
+  "duration_api_ms": 125241,
+  "stop_reason": "tool_use",
+  "session_id": "2617708e-1391-4454-8210-741f952ac08f",
+  "total_cost_usd": 1.248032,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 120023,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 14392,
+   "output_tokens_details": {
+    "thinking_tokens": 5190
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 120023,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 14392,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 120023,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 120023
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 14392,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 120023,
+    "webSearchRequests": 0,
+    "costUSD": 1.248032,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 5190,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8025 adds opt-in execution proofs. Altruistic proving validators generate zk proofs that an execution payload is valid and gossip them on a new CL topic. Proof-verifying nodes check them as a supplementary signal while still re-executing, so consensus validity rules do not change. On the execution layer, the EIP defines a stateless guest program (`run_stateless_guest` / `verify_stateless_new_payload`) and a `WitnessState` backed by MPT trie nodes, code and ancestor headers. It also defines host-side witness construction from the block read/write tracker, and new SSZ schemas (`StatelessInput`, `ExecutionWitness`, an SSZ `NewPayloadRequest` built from progressive containers, `StatelessValidationResult`) with a 2-byte schema-ID prefix and a canonical-encoding requirement. Guest programs are expected to run the existing `blockchain_test_engine` fixtures.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Guest validation — \\\"uses the same `new_payload` path as the execution engine\\\"\",\"summary\":\"The guest reuses the unchanged payload execution path; no gas accounting is altered.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"does not change consensus validity rules\\\"\",\"summary\":\"The EIP explicitly leaves consensus rules, including gas, unchanged.\"}],\"rationale\":\"No execution-gas charging, metering or limit rule is introduced or changed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Host-side input construction — \\\"block-level read/write tracker\\\"\",\"summary\":\"Witness construction reuses the existing access tracker. It changes neither instruction access order nor BAL membership.\"}],\"rationale\":\"Witness recording observes accesses but does not change when any opcode accesses state or charges gas. BAL contents are unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"Witness completeness depends on accesses recorded in the baseline order. That is a witness-construction concern, not an ordering change.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Guest validation — `is_valid_versioned_hashes`\",\"summary\":\"Existing blob checks are only reused inside the guest.\"}],\"rationale\":\"No blob-gas pricing or limit rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"does not change consensus validity rules\\\"\",\"summary\":\"No state-gas mechanism is introduced.\"}],\"rationale\":\"No state-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"The EL changes are limited to a stateless guest, witness and serialization; no refund mechanism is added.\"}],\"rationale\":\"No new refund.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — \\\"Guest programs should run the `blockchain_test_engine` fixtures rather than `blockchain_test`\\\"\",\"summary\":\"Existing engine fixtures are reused as guest inputs. Each one then needs a witness and a `StatelessInput` wrapping.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"fully opt-in\\\"\",\"summary\":\"Expected results for normal client execution are unchanged.\"}],\"rationale\":\"Expected results of baseline tests do not change. Re-running existing engine fixtures through the guest mostly adds a consumption mode rather than reworking cases. Some localized rework is likely where fixtures need ancestor headers (BLOCKHASH depth) or a full pre-state to derive witnesses, so level 1 rather than 0.\",\"confidence\":\"low\",\"uncertainty_note\":\"It is unclear whether adapting existing fixtures for guest consumption counts as rework or as purely new feature tests. The plausible range is 0–2.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — engine fixtures run by guest programs\",\"summary\":\"Engine fixtures across all behavioral families are consumed by the guest. The guest must output a `StatelessValidationResult` whose `successful_validation` matches the fixture's validity.\"},{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — `StatelessValidationResult`\",\"summary\":\"This is a new public output (request root, success flag, chain_id, schema_id) that did not exist before.\"}],\"rationale\":\"Ordinary cases across many families gain a new checked output: the guest's validation result, request root and schema ID. The assertion covers Amsterdam engine fixtures only. There is no evidence that pre-fork vectors must be re-derived, so level 3 is not met.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Because the feature is opt-in for clients, one could argue it is a new test consumer rather than an assertion on baseline tests. The range is 1–2.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Host-side input construction — `build_execution_witness`\",\"summary\":\"Producing a witness requires the executing host to export trie nodes, read bytecode and ancestor headers gathered during execution.\"},{\"source\":\"eip.md\",\"locator\":\"Specification references — stateless_host / stateless_host_exec_witness\",\"summary\":\"The reference implementation has host modules for witness construction. The t8n interface itself is not described.\"}],\"rationale\":\"Filling fixtures with `StatelessInput`/witness data plausibly requires the state-transition tool to output a new witness artifact (state nodes, codes, headers) and the chain ID. That is a new capture mechanism. No tool evidence is supplied, so this is scored at level 2 rather than 3.\",\"confidence\":\"low\",\"uncertainty_note\":\"No t8n interface evidence is supplied. The witness might be produced outside t8n (range 0) or as a new mechanism with multiple fields (range 3).\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases — \\\"Guest programs should run the `blockchain_test_engine` fixtures\\\"\",\"summary\":\"A new execution facility is needed: running engine fixtures from every behavioral family through a stateless guest.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ encoding — `serialize_stateless_input` / canonical encoding\",\"summary\":\"Requires SSZ construction of `StatelessInput` with a schema prefix, plus mutation tooling for non-canonical and invalid inputs.\"},{\"source\":\"eip.md\",\"locator\":\"Host-side input construction — witness construction steps 1–4\",\"summary\":\"Requires a witness-generation primitive covering accessed nodes, sibling nodes for branch collapse, codes and the header window.\"}],\"rationale\":\"The target needs a shared framework facility (witness generation, `StatelessInput` packaging, a guest runner and result checking) that changes how all engine-fixture families are constructed and checked, not only target-specific tests.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The actual availability of helpers in the referenced repositories cannot be verified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Guest validation — `compute_new_payload_request_root`\",\"summary\":\"The guest computes the SSZ `hash_tree_root` of `NewPayloadRequest` using progressive containers. This is a new hashing commitment rule on the EL side.\"},{\"source\":\"eip.md\",\"locator\":\"Guest validation — `WitnessState` \\\"A key reads as absent only when the witness contains the trie path that proves its absence\\\"\",\"summary\":\"Adds MPT inclusion/exclusion proof verification against the parent state root.\"},{\"source\":\"eip.md\",\"locator\":\"Guest validation — `validate_headers`\",\"summary\":\"Adds keccak header-chain contiguity verification.\"}],\"rationale\":\"Several proof and hashing validation rules are added to EL code: the SSZ merkleization commitment, MPT witness proof verification and header-chain hashing. All use established primitives (SHA-256 SSZ merkleization, keccak MPT). No novel cryptography runs on the EL; the zk proof system lives in the proof node.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No test resources for progressive-container hash_tree_root or witness verification are supplied (evidence gap). zk verification is outside the EL.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — bounds table\",\"summary\":\"Adds bounds: MAX_WITNESS_HEADERS 256, MAX_BYTES_PER_CODE 2^16, MAX_BYTES_PER_HEADER and MAX_BYTES_PER_WITNESS_NODE 2^10, MAX_EXTRA_DATA_BYTES 32.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ encoding — schema ID length check and canonical re-encode\",\"summary\":\"Boundaries at input length < 2, schema-ID mismatch, and offset gaps or trailing bytes.\"},{\"source\":\"eip.md\",\"locator\":\"Host-side input construction — \\\"apply each storage trie's insertions and updates before its deletions\\\"\",\"summary\":\"Whether the witness contains the needed sibling node depends on the combination of insert, update and delete patterns and branch collapse.\"},{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — sentinel vs retained result\",\"summary\":\"Decode failure yields zeroed sentinels; validation failure keeps decoded values.\"}],\"rationale\":\"Several independent boundary-sensitive mechanisms are added. At least one has an elevated matrix: witness completeness depends jointly on write ordering, deletion-induced branch collapse and the presence of sibling nodes. Similarly, the header window interacts with BLOCKHASH depth and contiguity. Their combinations change the outcome and cannot be tested independently.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"No change to execution-block RLP decoding or structural validation in block import.\"}],\"rationale\":\"Header RLP decoding happens inside the guest's witness handling, not in block import or sync.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Proof engine interface — \\\"API shape is modelled on the Engine API\\\"\",\"summary\":\"ProofEngine is a separate CL-side interface, not an Engine API change.\"},{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — `NewPayloadRequest` SSZ definition\",\"summary\":\"Engine API request data is given an SSZ form for hashing. No new Engine API method or field is specified.\"},{\"source\":\"supporting/eip-7732.md\",\"locator\":\"Engine API — \\\"No changes needed.\\\"\",\"summary\":\"The prerequisite needs no Engine API change.\"}],\"rationale\":\"No Engine API endpoint or field change is specified. How the host obtains the witness from the EL is left unspecified.\",\"confidence\":\"medium\",\"uncertainty_note\":\"An endpoint for exporting execution witnesses may be needed but is not specified. The `slot_number` payload field's origin is not in the supplied documents. The range is 0–2.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"No system contract is introduced.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"Existing system contracts run unchanged within the guest.\"}],\"rationale\":\"No system contract rules change. System-call state must be witnessed, but that is not a modification.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"No instructions are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — \\\"serves `BLOCKHASH` from their hashes\\\"\",\"summary\":\"In the guest, BLOCKHASH data comes from witness headers, but its specified semantics are unchanged.\"}],\"rationale\":\"Instruction semantics are unchanged; only the data source in a stateless context differs.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"No precompiles are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — `StatelessInput`, `ExecutionWitness`, `StatelessValidationResult`\",\"summary\":\"Adds new SSZ schemas for the EL proof interface.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ encoding — 2-byte schema ID prefix 0x1501, canonical-only decoding\",\"summary\":\"Adds a new codec framing and strict canonical-encoding rule.\"},{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — `NewPayloadRequest`/`ExecutionPayload` as ProgressiveContainer\",\"summary\":\"Defines an SSZ schema for Engine API payload data, including `block_access_list` and builder request lists.\"}],\"rationale\":\"New serialized schemas and a codec are introduced for a protocol-specified EL proof interface.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"No transaction envelope is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"does not change consensus validity rules\\\"\",\"summary\":\"Transaction validity is unchanged.\"}],\"rationale\":\"No consensus transaction-validity change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"No EL header member is added. `slot_number` appears in the SSZ payload, but its definition is not attributed to this EIP.\"}],\"rationale\":\"No header or block field is added by the target.\",\"confidence\":\"medium\",\"uncertainty_note\":\"`slot_number`'s defining EIP is not supplied; it is assumed to come from another proposal.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"SSZ encoding — schema ID fork byte\",\"summary\":\"Fork-specific schema selection only; no state migration.\"}],\"rationale\":\"No activation-specific EL state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Host-side input construction — witness capture including sibling nodes\",\"summary\":\"Adds an EL host workload per block: trie-node capture and post-state recomputation.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"O(n log² n)\\\" proving cost\",\"summary\":\"Proving cost scales with the witnessed computation. Worst-case gas-limit blocks drive witness size and proving latency.\"},{\"source\":\"eip.md\",\"locator\":\"Proof types and containers — MAX_PROOF_SIZE bandwidth budget\",\"summary\":\"Bandwidth bound for proof gossip, which is CL-side.\"}],\"rationale\":\"Targeted integrated benchmarks are needed for EL execution combined with witness generation, and for worst-case witness size and guest execution under adversarial blocks. The mechanism is off the critical path and opt-in, so this is a bounded interaction rather than a baseline end-to-end change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Proving-time targets are not stated.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Guest validation — absence proofs and missing-node failure\",\"summary\":\"Guest soundness depends on witness verification rejecting forged or missing state.\"},{\"source\":\"eip.md\",\"locator\":\"SSZ encoding — \\\"MUST accept only the canonical SSZ encoding\\\"\",\"summary\":\"Malleability boundary of the input codec.\"},{\"source\":\"eip.md\",\"locator\":\"Guest validation — \\\"Production implementations MUST perform this comparison\\\"\",\"summary\":\"The fork/timestamp binding is required beyond the reference implementation.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — Soundness\",\"summary\":\"Effects of a forged proof are limited to the verifying node's local view.\"}],\"rationale\":\"Proof-verifying CL nodes trust the guest's result. This is a bounded interaction that needs targeted fuzzing of witness verification, canonical decoding and schema, chain and fork binding. Since there is no fork-choice impact, it does not reach level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Guest validation — \\\"its Amsterdam guest does not compare the payload timestamp with fork activation data. Production implementations MUST perform this comparison.\\\"\",\"summary\":\"The fork-timestamp check is required but not specified in the reference. The surrounding rule (failure after decoding retains decoded values and sets success to false) suggests one outcome.\"},{\"source\":\"eip.md\",\"locator\":\"Proof engine interface — \\\"The value of `k` will be pinned\\\"\",\"summary\":\"`k` is open but CL-only.\"}],\"rationale\":\"The output for a payload whose timestamp falls outside the guest's fork is not specified exactly. The surrounding failure semantics point to one intended outcome.\",\"confidence\":\"medium\",\"uncertainty_note\":\"It is unclear whether a fork mismatch should produce a sentinel or a retained-value failure; the range is 1–2. The source of `slot_number` is an evidence gap.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — \\\"The `NewPayloadRequest` commits to ... versioned hashes ... typed execution requests\\\"\",\"summary\":\"The request root and guest validation couple EIP-4844, 6110, 7002, 7251, 8282 and 7928 data.\"},{\"source\":\"eip.md\",\"locator\":\"Stateless input and output — \\\"use the progressive containers and lists of EIP-7688\\\"\",\"summary\":\"The hash_tree_root binding depends on EIP-7688 merkleization.\"},{\"source\":\"supporting/eip-7928.md\",\"locator\":\"Security Considerations — \\\"storage reads performed by system calls are not paid for by block gas\\\"\",\"summary\":\"System-call accesses (7002/7251/8282) must be present in the witness.\"},{\"source\":\"eip.md\",\"locator\":\"Consensus Layer — \\\"uses the execution-validation window introduced by EIP-7732\\\"\",\"summary\":\"Timing dependency on EIP-7732.\"}],\"rationale\":\"The guest's request root and its witness completeness couple behavior from several EIPs (blobs, three request system contracts plus builder requests, BAL, progressive SSZ). This requires coordinated scenarios across them and shared fixture vectors.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":4844,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Blob-transaction payloads in the guest: correct vs mismatched `versioned_hashes` (`is_valid_versioned_hashes`) and their effect on the request root and successful_validation.\"},{\"eip\":6110,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Payloads with deposit logs: the `DepositRequest` SSZ list hashed into the request root and validated against the block's requests commitment inside the guest.\"},{\"eip\":7002,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Witness completeness for the end-of-block withdrawal-request system call (queue/excess slots, dequeue reads), including full-queue and empty-queue cases; the WithdrawalRequest SSZ list in the request root.\"},{\"eip\":7251,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Witness completeness for the consolidation system-call storage reads and writes; the ConsolidationRequest SSZ list in the request root.\"},{\"eip\":7688,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"hash_tree_root vectors for `NewPayloadRequest`/`ExecutionPayload`/`ExecutionRequests` as ProgressiveContainer/ProgressiveList, including empty and large lists.\"},{\"eip\":7732,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Check that the guest's NewPayloadRequest matches the payload and withdrawals revealed in the envelope. The validation-window timing is CL-side.\"},{\"eip\":7928,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"`block_access_list` as a ProgressiveByteList in the request root. An invalid or mismatched BAL yields successful_validation=false. The witness is built from the same read/write tracker, including system-call accesses.\"},{\"eip\":8282,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Builder deposit/exit request lists in ExecutionRequests (request root) and witness coverage of both builder predeploys' system calls.\"}],\"unidentified_interactions\":[\"EIP-7685 requests commitment checked via `is_valid_block_hash(..., execution_requests)` in the guest (EIP-7685 not supplied).\",\"BLOCKHASH served from witness headers (256-header window) and the parent-beacon-root / block-hash system calls whose storage must be witnessed (EIP-4788/EIP-2935 not supplied).\",\"`slot_number` field in ExecutionPayload, whose defining EIP is not supplied.\",\"EIP-7702 delegated code reads requiring code entries in the witness.\"]},\"under_specification\":{\"present\":true,\"summary\":\"Several EL-relevant details are not specified in the supplied text. The guest output for a fork-timestamp mismatch is missing; the reference omits the check while production implementations must perform it. The mechanism by which the host or EL exports execution witnesses (any Engine API or t8n interface) is undefined. The `slot_number` payload field has no supplied defining EIP. The CL parameter `k` is still open.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"engine_api_changes\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"new_invariant_on_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"When the payload timestamp is outside the guest's fork, does the guest return a sentinel failure or a failure with retained root, chain_id and schema_id?\",\"How does a stateful EL expose the execution witness to the prover or test filler: an Engine API, JSON-RPC or t8n output?\",\"Which EIP defines `slot_number` in ExecutionPayload, and how is it validated?\",\"Are superfluous witness nodes, codes or headers accepted, or must the witness be minimal?\"]},\"notable_ambiguities\":[\"The EIP says it makes no consensus change, yet it introduces EL guest and witness logic that must be conformance-tested across all engine fixtures.\",\"It is unclear whether running existing engine fixtures through the guest counts as reworking baseline tests or as new feature tests.\",\"The reference guest omits the fork-timestamp comparison that production implementations MUST perform.\",\"The normative specification is mostly delegated to external execution-specs and consensus-specs commits that were not supplied.\",\"EIP-8282's motivation mentions a `0xB0` builder prefix while EIP-7732 lists `0x03`; this is a supporting-document inconsistency that does not affect the target.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8025 adds opt-in execution proofs. Altruistic proving validators generate zk proofs that an execution payload is valid and gossip them on a new CL topic. Proof-verifying nodes check them as a supplementary signal while still re-executing, so consensus validity rules do not change. On the execution layer, the EIP defines a stateless guest program (`run_stateless_guest` / `verify_stateless_new_payload`) and a `WitnessState` backed by MPT trie nodes, code and ancestor headers. It also defines host-side witness construction from the block read/write tracker, and new SSZ schemas (`StatelessInput`, `ExecutionWitness`, an SSZ `NewPayloadRequest` built from progressive containers, `StatelessValidationResult`) with a 2-byte schema-ID prefix and a canonical-encoding requirement. Guest programs are expected to run the existing `blockchain_test_engine` fixtures.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — \"uses the same `new_payload` path as the execution engine\"",
+       "summary": "The guest reuses the unchanged payload execution path; no gas accounting is altered."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"does not change consensus validity rules\"",
+       "summary": "The EIP explicitly leaves consensus rules, including gas, unchanged."
+      }
+     ],
+     "rationale": "No execution-gas charging, metering or limit rule is introduced or changed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Host-side input construction — \"block-level read/write tracker\"",
+       "summary": "Witness construction reuses the existing access tracker. It changes neither instruction access order nor BAL membership."
+      }
+     ],
+     "rationale": "Witness recording observes accesses but does not change when any opcode accesses state or charges gas. BAL contents are unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "Witness completeness depends on accesses recorded in the baseline order. That is a witness-construction concern, not an ordering change.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — `is_valid_versioned_hashes`",
+       "summary": "Existing blob checks are only reused inside the guest."
+      }
+     ],
+     "rationale": "No blob-gas pricing or limit rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"does not change consensus validity rules\"",
+       "summary": "No state-gas mechanism is introduced."
+      }
+     ],
+     "rationale": "No state-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "The EL changes are limited to a stateless guest, witness and serialization; no refund mechanism is added."
+      }
+     ],
+     "rationale": "No new refund.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — \"Guest programs should run the `blockchain_test_engine` fixtures rather than `blockchain_test`\"",
+       "summary": "Existing engine fixtures are reused as guest inputs. Each one then needs a witness and a `StatelessInput` wrapping."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"fully opt-in\"",
+       "summary": "Expected results for normal client execution are unchanged."
+      }
+     ],
+     "rationale": "Expected results of baseline tests do not change. Re-running existing engine fixtures through the guest mostly adds a consumption mode rather than reworking cases. Some localized rework is likely where fixtures need ancestor headers (BLOCKHASH depth) or a full pre-state to derive witnesses, so level 1 rather than 0.",
+     "confidence": "low",
+     "uncertainty_note": "It is unclear whether adapting existing fixtures for guest consumption counts as rework or as purely new feature tests. The plausible range is 0–2.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — engine fixtures run by guest programs",
+       "summary": "Engine fixtures across all behavioral families are consumed by the guest. The guest must output a `StatelessValidationResult` whose `successful_validation` matches the fixture's validity."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — `StatelessValidationResult`",
+       "summary": "This is a new public output (request root, success flag, chain_id, schema_id) that did not exist before."
+      }
+     ],
+     "rationale": "Ordinary cases across many families gain a new checked output: the guest's validation result, request root and schema ID. The assertion covers Amsterdam engine fixtures only. There is no evidence that pre-fork vectors must be re-derived, so level 3 is not met.",
+     "confidence": "medium",
+     "uncertainty_note": "Because the feature is opt-in for clients, one could argue it is a new test consumer rather than an assertion on baseline tests. The range is 1–2.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Host-side input construction — `build_execution_witness`",
+       "summary": "Producing a witness requires the executing host to export trie nodes, read bytecode and ancestor headers gathered during execution."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification references — stateless_host / stateless_host_exec_witness",
+       "summary": "The reference implementation has host modules for witness construction. The t8n interface itself is not described."
+      }
+     ],
+     "rationale": "Filling fixtures with `StatelessInput`/witness data plausibly requires the state-transition tool to output a new witness artifact (state nodes, codes, headers) and the chain ID. That is a new capture mechanism. No tool evidence is supplied, so this is scored at level 2 rather than 3.",
+     "confidence": "low",
+     "uncertainty_note": "No t8n interface evidence is supplied. The witness might be produced outside t8n (range 0) or as a new mechanism with multiple fields (range 3).",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — \"Guest programs should run the `blockchain_test_engine` fixtures\"",
+       "summary": "A new execution facility is needed: running engine fixtures from every behavioral family through a stateless guest."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ encoding — `serialize_stateless_input` / canonical encoding",
+       "summary": "Requires SSZ construction of `StatelessInput` with a schema prefix, plus mutation tooling for non-canonical and invalid inputs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Host-side input construction — witness construction steps 1–4",
+       "summary": "Requires a witness-generation primitive covering accessed nodes, sibling nodes for branch collapse, codes and the header window."
+      }
+     ],
+     "rationale": "The target needs a shared framework facility (witness generation, `StatelessInput` packaging, a guest runner and result checking) that changes how all engine-fixture families are constructed and checked, not only target-specific tests.",
+     "confidence": "medium",
+     "uncertainty_note": "The actual availability of helpers in the referenced repositories cannot be verified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — `compute_new_payload_request_root`",
+       "summary": "The guest computes the SSZ `hash_tree_root` of `NewPayloadRequest` using progressive containers. This is a new hashing commitment rule on the EL side."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — `WitnessState` \"A key reads as absent only when the witness contains the trie path that proves its absence\"",
+       "summary": "Adds MPT inclusion/exclusion proof verification against the parent state root."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — `validate_headers`",
+       "summary": "Adds keccak header-chain contiguity verification."
+      }
+     ],
+     "rationale": "Several proof and hashing validation rules are added to EL code: the SSZ merkleization commitment, MPT witness proof verification and header-chain hashing. All use established primitives (SHA-256 SSZ merkleization, keccak MPT). No novel cryptography runs on the EL; the zk proof system lives in the proof node.",
+     "confidence": "medium",
+     "uncertainty_note": "No test resources for progressive-container hash_tree_root or witness verification are supplied (evidence gap). zk verification is outside the EL.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — bounds table",
+       "summary": "Adds bounds: MAX_WITNESS_HEADERS 256, MAX_BYTES_PER_CODE 2^16, MAX_BYTES_PER_HEADER and MAX_BYTES_PER_WITNESS_NODE 2^10, MAX_EXTRA_DATA_BYTES 32."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ encoding — schema ID length check and canonical re-encode",
+       "summary": "Boundaries at input length < 2, schema-ID mismatch, and offset gaps or trailing bytes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Host-side input construction — \"apply each storage trie's insertions and updates before its deletions\"",
+       "summary": "Whether the witness contains the needed sibling node depends on the combination of insert, update and delete patterns and branch collapse."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — sentinel vs retained result",
+       "summary": "Decode failure yields zeroed sentinels; validation failure keeps decoded values."
+      }
+     ],
+     "rationale": "Several independent boundary-sensitive mechanisms are added. At least one has an elevated matrix: witness completeness depends jointly on write ordering, deletion-induced branch collapse and the presence of sibling nodes. Similarly, the header window interacts with BLOCKHASH depth and contiguity. Their combinations change the outcome and cannot be tested independently.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "No change to execution-block RLP decoding or structural validation in block import."
+      }
+     ],
+     "rationale": "Header RLP decoding happens inside the guest's witness handling, not in block import or sync.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Proof engine interface — \"API shape is modelled on the Engine API\"",
+       "summary": "ProofEngine is a separate CL-side interface, not an Engine API change."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — `NewPayloadRequest` SSZ definition",
+       "summary": "Engine API request data is given an SSZ form for hashing. No new Engine API method or field is specified."
+      },
+      {
+       "source": "supporting/eip-7732.md",
+       "locator": "Engine API — \"No changes needed.\"",
+       "summary": "The prerequisite needs no Engine API change."
+      }
+     ],
+     "rationale": "No Engine API endpoint or field change is specified. How the host obtains the witness from the EL is left unspecified.",
+     "confidence": "medium",
+     "uncertainty_note": "An endpoint for exporting execution witnesses may be needed but is not specified. The `slot_number` payload field's origin is not in the supplied documents. The range is 0–2.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "No system contract is introduced."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "Existing system contracts run unchanged within the guest."
+      }
+     ],
+     "rationale": "No system contract rules change. System-call state must be witnessed, but that is not a modification.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "No instructions are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — \"serves `BLOCKHASH` from their hashes\"",
+       "summary": "In the guest, BLOCKHASH data comes from witness headers, but its specified semantics are unchanged."
+      }
+     ],
+     "rationale": "Instruction semantics are unchanged; only the data source in a stateless context differs.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "No precompiles are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — `StatelessInput`, `ExecutionWitness`, `StatelessValidationResult`",
+       "summary": "Adds new SSZ schemas for the EL proof interface."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ encoding — 2-byte schema ID prefix 0x1501, canonical-only decoding",
+       "summary": "Adds a new codec framing and strict canonical-encoding rule."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — `NewPayloadRequest`/`ExecutionPayload` as ProgressiveContainer",
+       "summary": "Defines an SSZ schema for Engine API payload data, including `block_access_list` and builder request lists."
+      }
+     ],
+     "rationale": "New serialized schemas and a codec are introduced for a protocol-specified EL proof interface.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "No transaction envelope is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"does not change consensus validity rules\"",
+       "summary": "Transaction validity is unchanged."
+      }
+     ],
+     "rationale": "No consensus transaction-validity change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "No EL header member is added. `slot_number` appears in the SSZ payload, but its definition is not attributed to this EIP."
+      }
+     ],
+     "rationale": "No header or block field is added by the target.",
+     "confidence": "medium",
+     "uncertainty_note": "`slot_number`'s defining EIP is not supplied; it is assumed to come from another proposal.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "SSZ encoding — schema ID fork byte",
+       "summary": "Fork-specific schema selection only; no state migration."
+      }
+     ],
+     "rationale": "No activation-specific EL state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Host-side input construction — witness capture including sibling nodes",
+       "summary": "Adds an EL host workload per block: trie-node capture and post-state recomputation."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"O(n log² n)\" proving cost",
+       "summary": "Proving cost scales with the witnessed computation. Worst-case gas-limit blocks drive witness size and proving latency."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Proof types and containers — MAX_PROOF_SIZE bandwidth budget",
+       "summary": "Bandwidth bound for proof gossip, which is CL-side."
+      }
+     ],
+     "rationale": "Targeted integrated benchmarks are needed for EL execution combined with witness generation, and for worst-case witness size and guest execution under adversarial blocks. The mechanism is off the critical path and opt-in, so this is a bounded interaction rather than a baseline end-to-end change.",
+     "confidence": "medium",
+     "uncertainty_note": "Proving-time targets are not stated.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — absence proofs and missing-node failure",
+       "summary": "Guest soundness depends on witness verification rejecting forged or missing state."
+      },
+      {
+       "source": "eip.md",
+       "locator": "SSZ encoding — \"MUST accept only the canonical SSZ encoding\"",
+       "summary": "Malleability boundary of the input codec."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — \"Production implementations MUST perform this comparison\"",
+       "summary": "The fork/timestamp binding is required beyond the reference implementation."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — Soundness",
+       "summary": "Effects of a forged proof are limited to the verifying node's local view."
+      }
+     ],
+     "rationale": "Proof-verifying CL nodes trust the guest's result. This is a bounded interaction that needs targeted fuzzing of witness verification, canonical decoding and schema, chain and fork binding. Since there is no fork-choice impact, it does not reach level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Guest validation — \"its Amsterdam guest does not compare the payload timestamp with fork activation data. Production implementations MUST perform this comparison.\"",
+       "summary": "The fork-timestamp check is required but not specified in the reference. The surrounding rule (failure after decoding retains decoded values and sets success to false) suggests one outcome."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Proof engine interface — \"The value of `k` will be pinned\"",
+       "summary": "`k` is open but CL-only."
+      }
+     ],
+     "rationale": "The output for a payload whose timestamp falls outside the guest's fork is not specified exactly. The surrounding failure semantics point to one intended outcome.",
+     "confidence": "medium",
+     "uncertainty_note": "It is unclear whether a fork mismatch should produce a sentinel or a retained-value failure; the range is 1–2. The source of `slot_number` is an evidence gap.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — \"The `NewPayloadRequest` commits to ... versioned hashes ... typed execution requests\"",
+       "summary": "The request root and guest validation couple EIP-4844, 6110, 7002, 7251, 8282 and 7928 data."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Stateless input and output — \"use the progressive containers and lists of EIP-7688\"",
+       "summary": "The hash_tree_root binding depends on EIP-7688 merkleization."
+      },
+      {
+       "source": "supporting/eip-7928.md",
+       "locator": "Security Considerations — \"storage reads performed by system calls are not paid for by block gas\"",
+       "summary": "System-call accesses (7002/7251/8282) must be present in the witness."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Consensus Layer — \"uses the execution-validation window introduced by EIP-7732\"",
+       "summary": "Timing dependency on EIP-7732."
+      }
+     ],
+     "rationale": "The guest's request root and its witness completeness couple behavior from several EIPs (blobs, three request system contracts plus builder requests, BAL, progressive SSZ). This requires coordinated scenarios across them and shared fixture vectors.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 4844,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Blob-transaction payloads in the guest: correct vs mismatched `versioned_hashes` (`is_valid_versioned_hashes`) and their effect on the request root and successful_validation."
+     },
+     {
+      "eip": 6110,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Payloads with deposit logs: the `DepositRequest` SSZ list hashed into the request root and validated against the block's requests commitment inside the guest."
+     },
+     {
+      "eip": 7002,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Witness completeness for the end-of-block withdrawal-request system call (queue/excess slots, dequeue reads), including full-queue and empty-queue cases; the WithdrawalRequest SSZ list in the request root."
+     },
+     {
+      "eip": 7251,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Witness completeness for the consolidation system-call storage reads and writes; the ConsolidationRequest SSZ list in the request root."
+     },
+     {
+      "eip": 7688,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "hash_tree_root vectors for `NewPayloadRequest`/`ExecutionPayload`/`ExecutionRequests` as ProgressiveContainer/ProgressiveList, including empty and large lists."
+     },
+     {
+      "eip": 7732,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Check that the guest's NewPayloadRequest matches the payload and withdrawals revealed in the envelope. The validation-window timing is CL-side."
+     },
+     {
+      "eip": 7928,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "`block_access_list` as a ProgressiveByteList in the request root. An invalid or mismatched BAL yields successful_validation=false. The witness is built from the same read/write tracker, including system-call accesses."
+     },
+     {
+      "eip": 8282,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Builder deposit/exit request lists in ExecutionRequests (request root) and witness coverage of both builder predeploys' system calls."
+     }
+    ],
+    "unidentified_interactions": [
+     "EIP-7685 requests commitment checked via `is_valid_block_hash(..., execution_requests)` in the guest (EIP-7685 not supplied).",
+     "BLOCKHASH served from witness headers (256-header window) and the parent-beacon-root / block-hash system calls whose storage must be witnessed (EIP-4788/EIP-2935 not supplied).",
+     "`slot_number` field in ExecutionPayload, whose defining EIP is not supplied.",
+     "EIP-7702 delegated code reads requiring code entries in the witness."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "Several EL-relevant details are not specified in the supplied text. The guest output for a fork-timestamp mismatch is missing; the reference omits the check while production implementations must perform it. The mechanism by which the host or EL exports execution witnesses (any Engine API or t8n interface) is undefined. The `slot_number` payload field has no supplied defining EIP. The CL parameter `k` is still open.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "engine_api_changes",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_invariant_on_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "When the payload timestamp is outside the guest's fork, does the guest return a sentinel failure or a failure with retained root, chain_id and schema_id?",
+     "How does a stateful EL expose the execution witness to the prover or test filler: an Engine API, JSON-RPC or t8n output?",
+     "Which EIP defines `slot_number` in ExecutionPayload, and how is it validated?",
+     "Are superfluous witness nodes, codes or headers accepted, or must the witness be minimal?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The EIP says it makes no consensus change, yet it introduces EL guest and witness logic that must be conformance-tested across all engine fixtures.",
+    "It is unclear whether running existing engine fixtures through the guest counts as reworking baseline tests or as new feature tests.",
+    "The reference guest omits the fork-timestamp comparison that production implementations MUST perform.",
+    "The normative specification is mostly delegated to external execution-specs and consensus-specs commits that were not supplied.",
+    "EIP-8282's motivation mentions a `0xB0` builder prefix while EIP-7732 lists `0x03`; this is a supporting-document inconsistency that does not affect the target."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 51661,
+  "type": "result",
+  "duration_ms": 125659,
+  "uuid": "de3fbf6d-26b6-417a-82ff-70aad2003cba",
+  "ttft_stream_ms": 1316,
+  "time_to_request_ms": 409,
+  "first_content_frame_ms": 1317,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

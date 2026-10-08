@@ -1,0 +1,718 @@
+{
+ "case": "hegota/8148",
+ "run_id": "assessment-run-76688ead-86c3-4856-9091-6082cd59bd92",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:55:45.841198Z",
+ "finished_at": "2026-10-08T09:58:14.219402Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "a377b28b2a30feb06ab92d5527f4cf03c8168748dddb92fe4c1b3ed266396eee",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "f97966935660e15231ff5bc7b338ce4e832bdb268fe19e3b91068e55837dad20",
+ "output": {
+  "duration_api_ms": 145990,
+  "stop_reason": "tool_use",
+  "session_id": "008f0686-662a-4e8b-9c44-b0479ad92a8b",
+  "total_cost_usd": 0.8919600000000001,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 70429,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 16426,
+   "output_tokens_details": {
+    "thinking_tokens": 7197
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 70429,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 16426,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 70429,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 70429
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 16426,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 70429,
+    "webSearchRequests": 0,
+    "costUSD": 0.8919600000000001,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 7197,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8148 adds an EIP-7685 execution-layer request type, SET_SWEEP_THRESHOLD_REQUEST_TYPE = 0x05. It is backed by a new stateful predeploy contract at an address still marked TBD. The contract follows the EIP-7002 pattern: a 56-byte add path (pubkey plus a big-endian uint64 threshold), a fee getter with an exponential fee and an inhibitor, and an end-of-block SYSTEM_ADDRESS call. That call dequeues up to 16 requests, updates the excess, resets the count and returns concatenated 76-byte SSZ ValidatorSetSweepThresholdRequest records for the requests list and requests_hash. One difference from EIP-7002: a system call with non-empty calldata disables the queue by setting the inhibitor. The rest of the feature is consensus-layer work: per-validator sweep thresholds, credential-encoded initial thresholds, effective-balance caps and changes to sweep withdrawals.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"dedicated gas limit of `30_000_000`\\\"\",\"summary\":\"The system call reuses the inherited system-call gas treatment: a dedicated limit, excluded from block gas, and not subject to the EIP-7825 cap.\"},{\"source\":\"supporting/eip-7002.md\",\"locator\":\"System Call\",\"summary\":\"EIP-7002 already defines the same dedicated gas and block-gas exclusion rules for request system calls.\"}],\"rationale\":\"No execution-gas charging or metering rule changes. The request fee is an ordinary contract fee paid in value, not a gas accounting mechanism. The system-call gas rules are inherited.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Set sweep threshold request contract\",\"summary\":\"The new behaviour is entirely contract bytecode using existing SLOAD/SSTORE/LOG0; no opcode's ordering is changed.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes, and no new state-accessing operation is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No blob-related rules are mentioned.\"}],\"rationale\":\"No blob-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Add Set Sweep Threshold Request\",\"summary\":\"The queue uses ordinary SSTOREs under the unchanged pricing.\"}],\"rationale\":\"No state-gas accounting mechanism or parameter is changed. The contract only uses existing state-writing operations.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Fee calculation\",\"summary\":\"Fees are not refunded and no gas refund rule is introduced.\"},{\"source\":\"supporting/eip-7002.md\",\"locator\":\"Fee Overpayment — \\\"Overpaid fees are not returned\\\"\",\"summary\":\"The referenced pattern confirms there is no refund of overpayment.\"}],\"rationale\":\"No new protocol refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"If there is no code at `SET_SWEEP_THRESHOLD_REQUEST_PREDEPLOY_ADDRESS`, the corresponding block **MUST** be marked invalid\\\"\",\"summary\":\"Every target-fork block requires the new contract in pre-state. Without it, baseline vectors become invalid blocks.\"},{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header — \\\"Items with empty `request_data` are excluded\\\"\",\"summary\":\"requests_hash is unchanged for blocks without the new requests, so most baseline request-hash expectations remain valid.\"}],\"rationale\":\"Baseline requests_hash values are unchanged when no sweep requests occur, so baseline vectors need little rework. The required predeploy pre-state can be handled through fork pre-allocation. Rework is localized: request-list and type-ordering cases, plus any baseline case that relies on 0x05 being an unused type or on an exact post-state allocation.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The packet does not say whether baseline Engine API or request tests treat type 0x05 as unknown or invalid. Whether adding the predeploy to genesis counts as rework depends on the framework.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"At the end of processing any execution block starting from the `FORK_BLOCK`\\\"\",\"summary\":\"Every block in the target fork runs a new system call that writes contract storage: the excess update (including clearing the inhibitor on the first call) and the count reset.\"},{\"source\":\"eip.md\",\"locator\":\"Constants — `EXCESS_INHIBITOR` \\\"Excess value used to compute the fee before the first system call\\\"\",\"summary\":\"The first post-fork system call changes the excess slot, which changes post-state.\"}],\"rationale\":\"In the target fork, every block-based test now produces a new protocol-mandated storage write, and its post-state and requests output must reflect it. This is universal within the fork, but pre-fork vectors do not need re-deriving, so it is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the predeploy is handled purely by fork pre-allocation and filled state roots, this could be seen as level 1.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Set sweep threshold request — \\\"request_type = SET_SWEEP_THRESHOLD_REQUEST_TYPE\\\"\",\"summary\":\"The requests output of block processing gains a new request type entry.\"},{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header\",\"summary\":\"The requests list and requests_hash commitment are existing outputs.\"}],\"rationale\":\"The existing requests/requests_hash output of the state-transition tool gains a new type, so one field's semantics change. No new exchange mechanism is required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No transition-tool documentation is supplied. If the requests output is fully generic, this may be 0.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — `class ValidatorSetSweepThresholdRequest(Container)`\",\"summary\":\"A new request record type (source_address, validator_pubkey, threshold) must be modelled to build expected requests.\"}],\"rationale\":\"The framework needs a local extension: a new request-type model and helper alongside the existing withdrawal and consolidation request primitives. No new shared abstraction is needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Expected-request generation for the queue and fee may need a generic system-contract abstraction if one does not already exist. This is not evidenced either way.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header — \\\"sha256 hash\\\"\",\"summary\":\"The requests commitment reuses the unchanged sha256 rule.\"},{\"source\":\"eip.md\",\"locator\":\"Set sweep threshold request\",\"summary\":\"validator_pubkey is carried as opaque bytes and is not verified by the EL.\"}],\"rationale\":\"No cryptographic mechanism is added or changed on the EL.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Add Set Sweep Threshold Request — \\\"exactly `56` bytes\\\"\",\"summary\":\"Calldata length decides the code path: 56 bytes adds a request, 0 bytes returns the fee, anything else reverts.\"},{\"source\":\"eip.md\",\"locator\":\"Fee calculation — \\\"msg.value >= fee\\\"\",\"summary\":\"The fee threshold and inhibitor revert are boundaries.\"},{\"source\":\"eip.md\",\"locator\":\"dequeue_set_sweep_threshold_requests — \\\"min(num_in_queue, MAX_SET_SWEEP_THRESHOLD_REQUESTS_PER_BLOCK)\\\"\",\"summary\":\"There are boundaries at 16 dequeued requests per block and at queue-pointer reset when the queue empties.\"},{\"source\":\"eip.md\",\"locator\":\"update_excess_set_sweep_threshold_requests\",\"summary\":\"There are boundaries at the target of 2 requests per block, the inhibitor reset, and non-empty system calldata.\"}],\"rationale\":\"Several independent boundary-sensitive mechanisms are introduced: input length, fee and inhibitor, per-block dequeue maximum and queue reset, excess target, and the fee getter rejecting value. None needs an elevated, non-separable matrix beyond multi-block queue and fee sequences.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"If the call to the contract fails or returns an error, the block **MUST** be invalidated\\\"\",\"summary\":\"These are new block-invalidity conditions tied to the new predeploy.\"},{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header\",\"summary\":\"The requests_hash header validation now includes the new request type.\"}],\"rationale\":\"Block import validation of requests_hash must include the new type, and blocks are invalid when the new contract is missing or fails. These follow the inherited pattern and are mostly execution-derived rather than structural RLP rules, so level 1 is the best fit.\",\"confidence\":\"low\",\"uncertainty_note\":\"Treating the state-dependent invalidation rules as complex structural checks would give 2. Treating them as ordinary execution rules would give 0.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility / Execution Layer Requests — \\\"This changes `ExecutionRequests`\\\"\",\"summary\":\"The set of request types carried between EL and CL changes.\"},{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API method or version change is specified.\"}],\"rationale\":\"The executionRequests content exchanged over the Engine API gains a new allowed type, a semantic change to one field. The text specifies no endpoint change.\",\"confidence\":\"low\",\"uncertainty_note\":\"The Engine API specification is not supplied. A new method version or new request-type validation rules could raise this to 2. If requests are fully opaque and generic, it could be 0.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Constants — `SET_SWEEP_THRESHOLD_REQUEST_PREDEPLOY_ADDRESS` `TBD`\",\"summary\":\"One new protocol-designated contract is introduced; its address is still TBD.\"},{\"source\":\"eip.md\",\"locator\":\"Add Set Sweep Threshold Request\",\"summary\":\"The contract is stateful (queue, count, excess) and produces EIP-7685 execution requests, which is a system action.\"}],\"rationale\":\"Exactly one contract is introduced, and it is both stateful and triggers a system action.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale / Overview\",\"summary\":\"The EIP reuses the EIP-7002 design for a separate contract and does not alter the withdrawal or consolidation contracts.\"},{\"source\":\"supporting/eip-7002.md\",\"locator\":\"Bytecode\",\"summary\":\"The existing withdrawal contract code is unchanged.\"}],\"rationale\":\"No existing system contract's rules, code, storage or surrounding protocol behaviour is changed.\",\"confidence\":\"high\",\"uncertainty_note\":\"The order of the new end-of-block system call relative to existing ones is not stated, but it does not alter those contracts.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Bytecode\",\"summary\":\"The bytecode uses only existing instructions.\"}],\"rationale\":\"No new instruction.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction semantics are changed.\"}],\"rationale\":\"No instruction semantics or availability change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only an EVM system contract is introduced; there is no precompile.\"}],\"rationale\":\"No new precompile.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is referenced or changed.\"}],\"rationale\":\"No precompile changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"returns an opaque byte array of concatenated SSZ-serialized dequeued requests\\\"\",\"summary\":\"Defines a new request payload schema for type 0x05: Bytes20 source_address, Bytes48 pubkey and a little-endian uint64 threshold (76 bytes each).\"},{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Requests — \\\"requests = request_type ++ request_data\\\"\",\"summary\":\"The new payload sits inside the existing request-type scheme.\"}],\"rationale\":\"A new execution-request payload schema within the existing EIP-7685 scheme meets level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Set sweep threshold request\",\"summary\":\"Requests are made by ordinary contract calls. The new type is an execution-request type, not a transaction envelope.\"}],\"rationale\":\"No new EIP-2718 transaction type.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Add Set Sweep Threshold Request — \\\"require(msg.value >= fee\\\"\",\"summary\":\"An insufficient fee causes an application-level revert, not transaction invalidity.\"}],\"rationale\":\"No consensus transaction-validity or intrinsic-gas rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header — `requests_hash`\",\"summary\":\"The requests commitment already exists.\"},{\"source\":\"eip.md\",\"locator\":\"Set sweep threshold request\",\"summary\":\"Adds a request type under the existing commitment.\"}],\"rationale\":\"An additional request type under the existing requests_hash is not a new header field.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Deployment — \\\"deployed like any other smart contract\\\"\",\"summary\":\"The contract is installed by an ordinary deployment transaction (details TBD), not by protocol-mandated installation.\"},{\"source\":\"eip.md\",\"locator\":\"update_excess_set_sweep_threshold_requests — \\\"if previous_excess == EXCESS_INHIBITOR\\\"\",\"summary\":\"The inhibitor is cleared by the contract's own logic in the recurring system call.\"}],\"rationale\":\"No protocol-mandated activation-time state migration or code installation is specified. The inhibitor clearing is contract-internal logic inside the recurring call.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The deployment transaction and address are TBD. If they were later replaced by protocol-mandated installation, this would become level 3.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"dedicated gas limit of `30_000_000`\\\"\",\"summary\":\"Adds one more per-block system call that is outside block gas accounting.\"},{\"source\":\"eip.md\",\"locator\":\"Constants — `MAX_SET_SWEEP_THRESHOLD_REQUESTS_PER_BLOCK` `16`\",\"summary\":\"Dequeue work per block is bounded.\"}],\"rationale\":\"An extra bounded end-of-block system call (at most 16 dequeues, 3 slots each) can be covered by component benchmarks. Baseline end-to-end assumptions do not change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations\",\"summary\":\"Refers to EIP-7002 for fee overpayment, system call failure and empty-code failure.\"},{\"source\":\"eip.md\",\"locator\":\"Disabling the queue — \\\"A system call with non-empty calldata stores `EXCESS_INHIBITOR`\\\"\",\"summary\":\"A new privileged path that only SYSTEM_ADDRESS can reach. It must be checked that ordinary callers cannot trigger it.\"}],\"rationale\":\"The new security conditions can be checked locally: fee-based rate limiting, the system-only dequeue and disable paths, recording msg.sender as source_address, and invalidation on missing code or a failed call. Validating source_address against credentials is CL work.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Constants / Deployment — `TBD`\",\"summary\":\"The predeploy address, deployment transaction and sender are not specified. That leaves the initial storage, such as an inhibitor set at deployment, implicit.\"},{\"source\":\"eip.md\",\"locator\":\"Set sweep threshold request — \\\"`threshold` is returned by the contract little-endian\\\"\",\"summary\":\"The pseudocode stores and reads the threshold without an explicit endianness conversion. The note and the bytecode's byte reversal support little-endian output.\"},{\"source\":\"eip.md\",\"locator\":\"update_excess_set_sweep_threshold_requests vs Bytecode\",\"summary\":\"When the inhibitor is set, the bytecode forces new_excess to 0 regardless of count. The pseudocode instead treats previous_excess as 0. The two match only because adds revert while the inhibitor is active.\"}],\"rationale\":\"These are localized omissions: TBD address and deployment, endianness wording, and small pseudocode/bytecode differences. The note and bytecode support one intended outcome for each. The order of the new end-of-block system call relative to the others is not stated, but appears unobservable in state.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The TBD address and deployment block fixing concrete expected results. If treated as unresolved outcomes, the score could be 2.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header — \\\"`requests` items must be ordered by `request_type` ascending\\\"\",\"summary\":\"Type 0x05 must be combined and ordered with the other request types in requests_hash.\"},{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"not subject to the transaction limit cap introduced in [EIP-7825]\\\"\",\"summary\":\"Explicitly exempts the system call from the EIP-7825 cap.\"},{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"does not follow [EIP-1559] fee burn semantics\\\"\",\"summary\":\"The system call does not pay a base fee and transfers no value.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale / Overview\",\"summary\":\"The mechanism mirrors the EIP-7002 queue and fee design, and the feature targets EIP-7251 0x02 validators.\"}],\"rationale\":\"Coordinated cases are needed for blocks combining sweep-threshold requests with withdrawal (EIP-7002) and consolidation (EIP-7251) requests, checking EIP-7685 type ordering and requests_hash composition. The new system call runs alongside the existing request system calls. The EIP-7825 and EIP-1559 interactions only need local checks. This fits coordinated cases without restructuring shared vectors.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Multi-type request blocks could be read as coupling several EIPs at once, which would give level 3.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":7685,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Type 0x05 requests in the block requests list and requests_hash: blocks with no sweep requests (entry excluded), blocks with sweep requests only, and blocks mixing them with other types, checking ascending type ordering and the hash.\"},{\"eip\":7002,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Blocks containing both withdrawal requests and set-sweep-threshold requests. Both end-of-block system calls run from SYSTEM_ADDRESS, the request lists stay correct, and each queue and fee is independent.\"},{\"eip\":7251,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Blocks combining consolidation requests (type 0x02) with set-sweep-threshold requests (type 0x05), checking ordering and requests_hash. Requests target 0x02 compounding validators, but credential validation is CL-only.\"},{\"eip\":7825,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Check that the 30M-gas system call is not rejected or capped by the 2^24 transaction gas cap.\"},{\"eip\":1559,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Check that the system call pays no base fee, transfers no value and does not affect block gas_used or the base-fee calculation.\"}],\"unidentified_interactions\":[\"Deposit requests (type 0x00, defined by an EIP not supplied) share the requests list and ordering with the new type 0x05.\",\"Other end-of-block or start-of-block system calls in the Amsterdam baseline: their relative ordering with the new system call is not specified.\",\"Any Amsterdam-baseline feature that records system-call state accesses, such as block-level access lists, is not covered by the supplied documents.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The predeploy address, deployment transaction and sender are TBD, so the deployed initial storage (presumably excess = EXCESS_INHIBITOR) is only implied. The pseudocode omits the little-endian conversion of the threshold that the note and the bytecode imply. The inhibitor handling differs slightly between pseudocode and bytecode, though not observably. Engine API changes and the order of the new system call relative to other request system calls are not stated.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"engine_api_changes\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"block_syncing_changes\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"new_invariant_on_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"cross_eip_interactions\",\"minimum_score\":2,\"maximum_score\":3}],\"unresolved_questions\":[\"What are the predeploy address and the deployment transaction, and does deployment initialise slot 0 to EXCESS_INHIBITOR?\",\"Is the threshold output by the contract little-endian, as the note and bytecode imply, or does the pseudocode, which has no conversion, govern?\",\"Does the Engine API need a new method version, or new validation of request types, to accept type 0x05?\",\"In what order does the new end-of-block system call run relative to the EIP-7002 and EIP-7251 system calls?\"]},\"notable_ambiguities\":[\"The add-path pseudocode stores `validator_pubkey[32:48] ++ threshold` without uint64_to_little_endian, unlike EIP-7002. The dequeue pseudocode reads `[16:24]` directly. The note and the bytecode's mstore8 byte reversal indicate little-endian output.\",\"When the inhibitor is set, the bytecode forces new_excess to 0 regardless of count, while the pseudocode resets previous_excess to 0 and then applies the count. These match only because adds revert while the inhibitor is active.\",\"The queue-disable path (system call with non-empty calldata) is unreachable under this EIP but present in the bytecode. Tests may need to confirm that only SYSTEM_ADDRESS can reach it.\",\"Request type 0x05 is assigned without the supplied documents defining types 0x03 and 0x04 in the baseline.\",\"The Deployment section is entirely TBD.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8148 adds an EIP-7685 execution-layer request type, SET_SWEEP_THRESHOLD_REQUEST_TYPE = 0x05. It is backed by a new stateful predeploy contract at an address still marked TBD. The contract follows the EIP-7002 pattern: a 56-byte add path (pubkey plus a big-endian uint64 threshold), a fee getter with an exponential fee and an inhibitor, and an end-of-block SYSTEM_ADDRESS call. That call dequeues up to 16 requests, updates the excess, resets the count and returns concatenated 76-byte SSZ ValidatorSetSweepThresholdRequest records for the requests list and requests_hash. One difference from EIP-7002: a system call with non-empty calldata disables the queue by setting the inhibitor. The rest of the feature is consensus-layer work: per-validator sweep thresholds, credential-encoded initial thresholds, effective-balance caps and changes to sweep withdrawals.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"dedicated gas limit of `30_000_000`\"",
+       "summary": "The system call reuses the inherited system-call gas treatment: a dedicated limit, excluded from block gas, and not subject to the EIP-7825 cap."
+      },
+      {
+       "source": "supporting/eip-7002.md",
+       "locator": "System Call",
+       "summary": "EIP-7002 already defines the same dedicated gas and block-gas exclusion rules for request system calls."
+      }
+     ],
+     "rationale": "No execution-gas charging or metering rule changes. The request fee is an ordinary contract fee paid in value, not a gas accounting mechanism. The system-call gas rules are inherited.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Set sweep threshold request contract",
+       "summary": "The new behaviour is entirely contract bytecode using existing SLOAD/SSTORE/LOG0; no opcode's ordering is changed."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes, and no new state-accessing operation is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No blob-related rules are mentioned."
+      }
+     ],
+     "rationale": "No blob-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Add Set Sweep Threshold Request",
+       "summary": "The queue uses ordinary SSTOREs under the unchanged pricing."
+      }
+     ],
+     "rationale": "No state-gas accounting mechanism or parameter is changed. The contract only uses existing state-writing operations.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Fee calculation",
+       "summary": "Fees are not refunded and no gas refund rule is introduced."
+      },
+      {
+       "source": "supporting/eip-7002.md",
+       "locator": "Fee Overpayment — \"Overpaid fees are not returned\"",
+       "summary": "The referenced pattern confirms there is no refund of overpayment."
+      }
+     ],
+     "rationale": "No new protocol refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"If there is no code at `SET_SWEEP_THRESHOLD_REQUEST_PREDEPLOY_ADDRESS`, the corresponding block **MUST** be marked invalid\"",
+       "summary": "Every target-fork block requires the new contract in pre-state. Without it, baseline vectors become invalid blocks."
+      },
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header — \"Items with empty `request_data` are excluded\"",
+       "summary": "requests_hash is unchanged for blocks without the new requests, so most baseline request-hash expectations remain valid."
+      }
+     ],
+     "rationale": "Baseline requests_hash values are unchanged when no sweep requests occur, so baseline vectors need little rework. The required predeploy pre-state can be handled through fork pre-allocation. Rework is localized: request-list and type-ordering cases, plus any baseline case that relies on 0x05 being an unused type or on an exact post-state allocation.",
+     "confidence": "medium",
+     "uncertainty_note": "The packet does not say whether baseline Engine API or request tests treat type 0x05 as unknown or invalid. Whether adding the predeploy to genesis counts as rework depends on the framework.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"At the end of processing any execution block starting from the `FORK_BLOCK`\"",
+       "summary": "Every block in the target fork runs a new system call that writes contract storage: the excess update (including clearing the inhibitor on the first call) and the count reset."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Constants — `EXCESS_INHIBITOR` \"Excess value used to compute the fee before the first system call\"",
+       "summary": "The first post-fork system call changes the excess slot, which changes post-state."
+      }
+     ],
+     "rationale": "In the target fork, every block-based test now produces a new protocol-mandated storage write, and its post-state and requests output must reflect it. This is universal within the fork, but pre-fork vectors do not need re-deriving, so it is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "If the predeploy is handled purely by fork pre-allocation and filled state roots, this could be seen as level 1.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Set sweep threshold request — \"request_type = SET_SWEEP_THRESHOLD_REQUEST_TYPE\"",
+       "summary": "The requests output of block processing gains a new request type entry."
+      },
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header",
+       "summary": "The requests list and requests_hash commitment are existing outputs."
+      }
+     ],
+     "rationale": "The existing requests/requests_hash output of the state-transition tool gains a new type, so one field's semantics change. No new exchange mechanism is required.",
+     "confidence": "medium",
+     "uncertainty_note": "No transition-tool documentation is supplied. If the requests output is fully generic, this may be 0.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — `class ValidatorSetSweepThresholdRequest(Container)`",
+       "summary": "A new request record type (source_address, validator_pubkey, threshold) must be modelled to build expected requests."
+      }
+     ],
+     "rationale": "The framework needs a local extension: a new request-type model and helper alongside the existing withdrawal and consolidation request primitives. No new shared abstraction is needed.",
+     "confidence": "medium",
+     "uncertainty_note": "Expected-request generation for the queue and fee may need a generic system-contract abstraction if one does not already exist. This is not evidenced either way.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header — \"sha256 hash\"",
+       "summary": "The requests commitment reuses the unchanged sha256 rule."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Set sweep threshold request",
+       "summary": "validator_pubkey is carried as opaque bytes and is not verified by the EL."
+      }
+     ],
+     "rationale": "No cryptographic mechanism is added or changed on the EL.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Add Set Sweep Threshold Request — \"exactly `56` bytes\"",
+       "summary": "Calldata length decides the code path: 56 bytes adds a request, 0 bytes returns the fee, anything else reverts."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Fee calculation — \"msg.value >= fee\"",
+       "summary": "The fee threshold and inhibitor revert are boundaries."
+      },
+      {
+       "source": "eip.md",
+       "locator": "dequeue_set_sweep_threshold_requests — \"min(num_in_queue, MAX_SET_SWEEP_THRESHOLD_REQUESTS_PER_BLOCK)\"",
+       "summary": "There are boundaries at 16 dequeued requests per block and at queue-pointer reset when the queue empties."
+      },
+      {
+       "source": "eip.md",
+       "locator": "update_excess_set_sweep_threshold_requests",
+       "summary": "There are boundaries at the target of 2 requests per block, the inhibitor reset, and non-empty system calldata."
+      }
+     ],
+     "rationale": "Several independent boundary-sensitive mechanisms are introduced: input length, fee and inhibitor, per-block dequeue maximum and queue reset, excess target, and the fee getter rejecting value. None needs an elevated, non-separable matrix beyond multi-block queue and fee sequences.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"If the call to the contract fails or returns an error, the block **MUST** be invalidated\"",
+       "summary": "These are new block-invalidity conditions tied to the new predeploy."
+      },
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header",
+       "summary": "The requests_hash header validation now includes the new request type."
+      }
+     ],
+     "rationale": "Block import validation of requests_hash must include the new type, and blocks are invalid when the new contract is missing or fails. These follow the inherited pattern and are mostly execution-derived rather than structural RLP rules, so level 1 is the best fit.",
+     "confidence": "low",
+     "uncertainty_note": "Treating the state-dependent invalidation rules as complex structural checks would give 2. Treating them as ordinary execution rules would give 0.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility / Execution Layer Requests — \"This changes `ExecutionRequests`\"",
+       "summary": "The set of request types carried between EL and CL changes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API method or version change is specified."
+      }
+     ],
+     "rationale": "The executionRequests content exchanged over the Engine API gains a new allowed type, a semantic change to one field. The text specifies no endpoint change.",
+     "confidence": "low",
+     "uncertainty_note": "The Engine API specification is not supplied. A new method version or new request-type validation rules could raise this to 2. If requests are fully opaque and generic, it could be 0.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Constants — `SET_SWEEP_THRESHOLD_REQUEST_PREDEPLOY_ADDRESS` `TBD`",
+       "summary": "One new protocol-designated contract is introduced; its address is still TBD."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Add Set Sweep Threshold Request",
+       "summary": "The contract is stateful (queue, count, excess) and produces EIP-7685 execution requests, which is a system action."
+      }
+     ],
+     "rationale": "Exactly one contract is introduced, and it is both stateful and triggers a system action.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Overview",
+       "summary": "The EIP reuses the EIP-7002 design for a separate contract and does not alter the withdrawal or consolidation contracts."
+      },
+      {
+       "source": "supporting/eip-7002.md",
+       "locator": "Bytecode",
+       "summary": "The existing withdrawal contract code is unchanged."
+      }
+     ],
+     "rationale": "No existing system contract's rules, code, storage or surrounding protocol behaviour is changed.",
+     "confidence": "high",
+     "uncertainty_note": "The order of the new end-of-block system call relative to existing ones is not stated, but it does not alter those contracts.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Bytecode",
+       "summary": "The bytecode uses only existing instructions."
+      }
+     ],
+     "rationale": "No new instruction.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction semantics are changed."
+      }
+     ],
+     "rationale": "No instruction semantics or availability change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only an EVM system contract is introduced; there is no precompile."
+      }
+     ],
+     "rationale": "No new precompile.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is referenced or changed."
+      }
+     ],
+     "rationale": "No precompile changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"returns an opaque byte array of concatenated SSZ-serialized dequeued requests\"",
+       "summary": "Defines a new request payload schema for type 0x05: Bytes20 source_address, Bytes48 pubkey and a little-endian uint64 threshold (76 bytes each)."
+      },
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Requests — \"requests = request_type ++ request_data\"",
+       "summary": "The new payload sits inside the existing request-type scheme."
+      }
+     ],
+     "rationale": "A new execution-request payload schema within the existing EIP-7685 scheme meets level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Set sweep threshold request",
+       "summary": "Requests are made by ordinary contract calls. The new type is an execution-request type, not a transaction envelope."
+      }
+     ],
+     "rationale": "No new EIP-2718 transaction type.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Add Set Sweep Threshold Request — \"require(msg.value >= fee\"",
+       "summary": "An insufficient fee causes an application-level revert, not transaction invalidity."
+      }
+     ],
+     "rationale": "No consensus transaction-validity or intrinsic-gas rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header — `requests_hash`",
+       "summary": "The requests commitment already exists."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Set sweep threshold request",
+       "summary": "Adds a request type under the existing commitment."
+      }
+     ],
+     "rationale": "An additional request type under the existing requests_hash is not a new header field.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Deployment — \"deployed like any other smart contract\"",
+       "summary": "The contract is installed by an ordinary deployment transaction (details TBD), not by protocol-mandated installation."
+      },
+      {
+       "source": "eip.md",
+       "locator": "update_excess_set_sweep_threshold_requests — \"if previous_excess == EXCESS_INHIBITOR\"",
+       "summary": "The inhibitor is cleared by the contract's own logic in the recurring system call."
+      }
+     ],
+     "rationale": "No protocol-mandated activation-time state migration or code installation is specified. The inhibitor clearing is contract-internal logic inside the recurring call.",
+     "confidence": "medium",
+     "uncertainty_note": "The deployment transaction and address are TBD. If they were later replaced by protocol-mandated installation, this would become level 3.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"dedicated gas limit of `30_000_000`\"",
+       "summary": "Adds one more per-block system call that is outside block gas accounting."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Constants — `MAX_SET_SWEEP_THRESHOLD_REQUESTS_PER_BLOCK` `16`",
+       "summary": "Dequeue work per block is bounded."
+      }
+     ],
+     "rationale": "An extra bounded end-of-block system call (at most 16 dequeues, 3 slots each) can be covered by component benchmarks. Baseline end-to-end assumptions do not change.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations",
+       "summary": "Refers to EIP-7002 for fee overpayment, system call failure and empty-code failure."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Disabling the queue — \"A system call with non-empty calldata stores `EXCESS_INHIBITOR`\"",
+       "summary": "A new privileged path that only SYSTEM_ADDRESS can reach. It must be checked that ordinary callers cannot trigger it."
+      }
+     ],
+     "rationale": "The new security conditions can be checked locally: fee-based rate limiting, the system-only dequeue and disable paths, recording msg.sender as source_address, and invalidation on missing code or a failed call. Validating source_address against credentials is CL work.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Constants / Deployment — `TBD`",
+       "summary": "The predeploy address, deployment transaction and sender are not specified. That leaves the initial storage, such as an inhibitor set at deployment, implicit."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Set sweep threshold request — \"`threshold` is returned by the contract little-endian\"",
+       "summary": "The pseudocode stores and reads the threshold without an explicit endianness conversion. The note and the bytecode's byte reversal support little-endian output."
+      },
+      {
+       "source": "eip.md",
+       "locator": "update_excess_set_sweep_threshold_requests vs Bytecode",
+       "summary": "When the inhibitor is set, the bytecode forces new_excess to 0 regardless of count. The pseudocode instead treats previous_excess as 0. The two match only because adds revert while the inhibitor is active."
+      }
+     ],
+     "rationale": "These are localized omissions: TBD address and deployment, endianness wording, and small pseudocode/bytecode differences. The note and bytecode support one intended outcome for each. The order of the new end-of-block system call relative to the others is not stated, but appears unobservable in state.",
+     "confidence": "medium",
+     "uncertainty_note": "The TBD address and deployment block fixing concrete expected results. If treated as unresolved outcomes, the score could be 2.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header — \"`requests` items must be ordered by `request_type` ascending\"",
+       "summary": "Type 0x05 must be combined and ordered with the other request types in requests_hash."
+      },
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"not subject to the transaction limit cap introduced in [EIP-7825]\"",
+       "summary": "Explicitly exempts the system call from the EIP-7825 cap."
+      },
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"does not follow [EIP-1559] fee burn semantics\"",
+       "summary": "The system call does not pay a base fee and transfers no value."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Overview",
+       "summary": "The mechanism mirrors the EIP-7002 queue and fee design, and the feature targets EIP-7251 0x02 validators."
+      }
+     ],
+     "rationale": "Coordinated cases are needed for blocks combining sweep-threshold requests with withdrawal (EIP-7002) and consolidation (EIP-7251) requests, checking EIP-7685 type ordering and requests_hash composition. The new system call runs alongside the existing request system calls. The EIP-7825 and EIP-1559 interactions only need local checks. This fits coordinated cases without restructuring shared vectors.",
+     "confidence": "medium",
+     "uncertainty_note": "Multi-type request blocks could be read as coupling several EIPs at once, which would give level 3.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 7685,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Type 0x05 requests in the block requests list and requests_hash: blocks with no sweep requests (entry excluded), blocks with sweep requests only, and blocks mixing them with other types, checking ascending type ordering and the hash."
+     },
+     {
+      "eip": 7002,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Blocks containing both withdrawal requests and set-sweep-threshold requests. Both end-of-block system calls run from SYSTEM_ADDRESS, the request lists stay correct, and each queue and fee is independent."
+     },
+     {
+      "eip": 7251,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Blocks combining consolidation requests (type 0x02) with set-sweep-threshold requests (type 0x05), checking ordering and requests_hash. Requests target 0x02 compounding validators, but credential validation is CL-only."
+     },
+     {
+      "eip": 7825,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Check that the 30M-gas system call is not rejected or capped by the 2^24 transaction gas cap."
+     },
+     {
+      "eip": 1559,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Check that the system call pays no base fee, transfers no value and does not affect block gas_used or the base-fee calculation."
+     }
+    ],
+    "unidentified_interactions": [
+     "Deposit requests (type 0x00, defined by an EIP not supplied) share the requests list and ordering with the new type 0x05.",
+     "Other end-of-block or start-of-block system calls in the Amsterdam baseline: their relative ordering with the new system call is not specified.",
+     "Any Amsterdam-baseline feature that records system-call state accesses, such as block-level access lists, is not covered by the supplied documents."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The predeploy address, deployment transaction and sender are TBD, so the deployed initial storage (presumably excess = EXCESS_INHIBITOR) is only implied. The pseudocode omits the little-endian conversion of the threshold that the note and the bytecode imply. The inhibitor handling differs slightly between pseudocode and bytecode, though not observably. Engine API changes and the order of the new system call relative to other request system calls are not stated.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "engine_api_changes",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "block_syncing_changes",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "new_invariant_on_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "cross_eip_interactions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     }
+    ],
+    "unresolved_questions": [
+     "What are the predeploy address and the deployment transaction, and does deployment initialise slot 0 to EXCESS_INHIBITOR?",
+     "Is the threshold output by the contract little-endian, as the note and bytecode imply, or does the pseudocode, which has no conversion, govern?",
+     "Does the Engine API need a new method version, or new validation of request types, to accept type 0x05?",
+     "In what order does the new end-of-block system call run relative to the EIP-7002 and EIP-7251 system calls?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The add-path pseudocode stores `validator_pubkey[32:48] ++ threshold` without uint64_to_little_endian, unlike EIP-7002. The dequeue pseudocode reads `[16:24]` directly. The note and the bytecode's mstore8 byte reversal indicate little-endian output.",
+    "When the inhibitor is set, the bytecode forces new_excess to 0 regardless of count, while the pseudocode resets previous_excess to 0 and then applies the count. These match only because adds revert while the inhibitor is active.",
+    "The queue-disable path (system call with non-empty calldata) is unreachable under this EIP but present in the bytecode. Tests may need to confirm that only SYSTEM_ADDRESS can reach it.",
+    "Request type 0x05 is assigned without the supplied documents defining types 0x03 and 0x04 in the baseline.",
+    "The Deployment section is entirely TBD."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 73706,
+  "type": "result",
+  "duration_ms": 146445,
+  "uuid": "d3b20d51-11f7-46c4-829b-5c052c932dc6",
+  "ttft_stream_ms": 3707,
+  "time_to_request_ms": 450,
+  "first_content_frame_ms": 3707,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

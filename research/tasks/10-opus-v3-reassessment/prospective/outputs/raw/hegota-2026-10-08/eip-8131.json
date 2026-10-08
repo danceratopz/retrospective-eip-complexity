@@ -1,0 +1,665 @@
+{
+ "case": "hegota/8131",
+ "run_id": "assessment-run-44c740c2-a1ee-496c-9e09-612c6526b11a",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:55:03.572185Z",
+ "finished_at": "2026-10-08T09:56:56.971549Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "3b3daa1d42add79ba464e3b5bbbf5504fc812b2228aac5cf6ea50cd7ee48c3be",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "c90b99626d1a1a9f935a98ebf0fcec5aa369e6393530388fcc40c6a6957b179b",
+ "output": {
+  "duration_api_ms": 110959,
+  "stop_reason": "tool_use",
+  "session_id": "788875c0-a247-46e4-bdb1-5d14c942e71f",
+  "total_cost_usd": 0.817864,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 69882,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 12940,
+   "output_tokens_details": {
+    "thinking_tokens": 4969
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 69882,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 12940,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 69882,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 69882
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 12940,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 69882,
+    "webSearchRequests": 0,
+    "costUSD": 0.817864,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 4969,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8131 replaces the separate calldata floor (EIP-7623/EIP-7976) and the EIP-7981 access-list data surcharge with one transaction floor: tx_floor = 21000 + 64 × (calldata bytes + 20·access-list addresses + 32·storage keys + 108·EIP-7702 authorizations + 32·EIP-4844 blob versioned hashes). A transaction is valid only if tx.gas >= max(intrinsic, tx_floor), and tx.gasUsed = max(execution_gas_used, tx_floor). Intrinsic gas is stated to be unchanged. The stated goal is to cap user-controlled content at block_gas_limit/64 bytes per block, and it newly brings authorization tuples and blob versioned hashes under the floor. The EIP adds no new transaction type, header field, opcode, precompile or encoding.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Transaction floor\",\"summary\":\"Redefines the existing floor term to add access-list, authorization and blob-versioned-hash byte counts at 64 gas/byte.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Charging — \\\"The `max(intrinsic, floor)` shape of EIP-7623 is preserved\\\"\",\"summary\":\"Settlement keeps the existing max(execution, floor) mechanism. Only its inputs change.\"},{\"source\":\"supporting/eip-7981.md\",\"locator\":\"Specification — \\\"added as a flat surcharge to the gas used calculation\\\"\",\"summary\":\"In the baseline, access-list data cost is an always-paid surcharge. EIP-8131 folds it into the floor instead.\"}],\"rationale\":\"The transaction gas settlement rule (the floor) changes its terms and rates, and the EIP-7981 always-paid surcharge moves into the floor. No new accounting mechanism is added; the existing max(intrinsic+execution, floor) mechanism is modified. That fits level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"How much of the change is structural depends on whether the EIP-7981 surcharge is removed from intrinsic/gasUsed, which the text leaves ambiguous ('Intrinsic gas is unchanged'). Either way no new mechanism is added.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only transaction-level floor gas is specified. No instruction behavior or access ordering is touched.\"}],\"rationale\":\"No opcode state-access or gas-charge ordering changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Transaction floor — \\\"BLOB_VERSIONED_HASH_BYTES * num_blob_versioned_hashes\\\"\",\"summary\":\"Blob versioned hashes are charged in regular gas through the floor, not in blob gas.\"},{\"source\":\"supporting/eip-4844.md\",\"locator\":\"Gas accounting\",\"summary\":\"Blob gas is an independent gas type with its own pricing, which the target does not change.\"}],\"rationale\":\"Blob gas pricing, limits and settlement are unchanged. The new term is regular-gas floor content.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state-write or state-byte accounting is defined.\"}],\"rationale\":\"No state-gas accounting changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Charging\",\"summary\":\"Only the floor/max settlement is specified. No refund mechanism is introduced.\"}],\"rationale\":\"No new refund mechanism. The existing refund-before-floor interaction is inherited from EIP-7623.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases / EIP-4844 with six blob versioned hashes\",\"summary\":\"A blob tx with no calldata now has a floor above 21000 (+2048 per hash), so minimal blob txs become floor-bound and txs with gas limit 21000 become invalid.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — bind-rate table\",\"summary\":\"Type-3 bind rate is 60%, and type-4 bind rate rises from 0.04% to 20.63%, so ordinary cases in those families change gasUsed.\"},{\"source\":\"supporting/eip-7981.md\",\"locator\":\"Specification\",\"summary\":\"Baseline access-list txs always pay a 1280/2048 surcharge. Under the unified floor, access-list bytes are paid only when the floor binds, which changes ordinary access-list gas expectations.\"}],\"rationale\":\"One common rule change (the unified content floor) requires reworking ordinary cases in several distinct families: blob tx gas, validity and balance tests; access-list (EIP-2930/7981) gas expectations; calldata-floor tests that mix fields; and type-4 txs carrying calldata. That fits level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"How much access-list rework is needed depends on whether the EIP-7981 surcharge stays in intrinsic gas. If it stays, that family is less affected and the score could be 2.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new log, header, receipt field or protocol storage write.\"}],\"rationale\":\"Only existing gas values change, and that is counted under PAT.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Charging\",\"summary\":\"The floor is computed from existing transaction fields. No new inputs or outputs are needed.\"}],\"rationale\":\"Existing t8n inputs and outputs carry the changed gas results.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Transaction floor\",\"summary\":\"The framework's floor-cost calculator must count authorizations and blob hashes and drop or fold the EIP-7981 surcharge.\"}],\"rationale\":\"This is a local extension of an existing primitive (fork-specific intrinsic/floor gas calculation). No new abstraction is needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No supplied evidence about framework helper structure.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only counts of fields are used. No signing, hashing or proof rules change.\"}],\"rationale\":\"No cryptographic change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Charging — \\\"require tx.gas >= max(intrinsic, tx_floor)\\\"\",\"summary\":\"The validity boundary at the gas limit changes with the new floor terms.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"When does the floor bite?\\\"\",\"summary\":\"The settlement crossover between execution gas and the floor is boundary-sensitive.\"},{\"source\":\"supporting/eip-7702.md\",\"locator\":\"Gas Costs\",\"summary\":\"Intrinsic gas includes 25000 per auth while the floor uses 6912 per auth, so which side dominates depends on the content mix.\"}],\"rationale\":\"At least two boundary-sensitive rules change: the gas-limit validity threshold max(intrinsic, floor) and the gasUsed crossover max(execution, floor). Floor terms are additive, so each field can largely be tested independently. That fits level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Deciding which of intrinsic or floor dominates depends jointly on calldata zero/non-zero mix, access entries, auths, blob count, creation and refunds. A reviewer could treat that as an elevated matrix (level 3).\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No block RLP decoding or structural validation change. This is an execution gas rule only.\"}],\"rationale\":\"Ordinary execution-rule changes do not qualify.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API fields or methods are mentioned.\"}],\"rationale\":\"No Engine API change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is introduced.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is referenced.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instructions are added.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction semantics change.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are added.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale / Content-only, not full RLP\",\"summary\":\"The floor is computed from field counts. Transaction schemas are unchanged.\"}],\"rationale\":\"No serialized schema changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Transaction floor — \\\"A field absent from a given transaction type contributes zero\\\"\",\"summary\":\"The rule applies to existing transaction types only.\"}],\"rationale\":\"No new envelope.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Charging — \\\"require tx.gas >= max(intrinsic, tx_floor)\\\"\",\"summary\":\"The gas-limit validity rule gains new floor terms for auths, blob hashes and access-list bytes.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations / Gas estimation\",\"summary\":\"Floor-bound transactions with insufficient gas are rejected at validation.\"},{\"source\":\"supporting/eip-7981.md\",\"locator\":\"Specification — \\\"Any transaction with a gas limit below tx.gasUsed evaluated with execution_gas_used = 0 is considered invalid\\\"\",\"summary\":\"The baseline access-list validity threshold is replaced by the unified floor.\"}],\"rationale\":\"The changed validity threshold needs dedicated per-field cases (types 1–4, contract creation, mixed content) at gas_limit = floor−1 and = floor. Baseline validation sequencing and test construction still work. That fits level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"This could be argued as level 1 (an existing condition with new terms). The new dependence on auth and blob counts motivates level 2.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"Hard fork.\\\"\",\"summary\":\"Only a rule selection at the fork. No state migration.\"}],\"rationale\":\"No activation-specific state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations / Block-size bound\",\"summary\":\"Claims user content per block is at most block_gas_limit/64 (~0.89 MB at 60M), with envelopes adding ~372 KB.\"}],\"rationale\":\"The worst-case block-size bound changes, and auth- and blob-hash-heavy blocks are now constrained. Worst-case payload-size benchmarks should be re-validated against the new bound. No new resource coupling is introduced.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The change reduces worst-case load, so some reviewers might score 0.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale / Per-auth term is a constant — \\\"maximum RLP size ... 9 B chain_id\\\"\",\"summary\":\"Assumes a 108-byte maximum auth tuple.\"},{\"source\":\"supporting/eip-7702.md\",\"locator\":\"Set code transaction — \\\"assert auth.chain_id < 2**256\\\"\",\"summary\":\"chain_id may be up to 256 bits and y_parity up to 2**8, so a tuple can exceed 108 bytes and the claimed bound is not strictly tight.\"}],\"rationale\":\"The changed invariant is the per-block content bound. It can be checked locally through floor arithmetic and worst-case constructions. The auth-size assumption should be checked against oversized-field authorizations.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether exceeding the bound via oversized authorization fields matters is a design question, not a testing-breadth one.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Charging — \\\"Intrinsic gas is unchanged.\\\"\",\"summary\":\"Does not say whether the EIP-7981 access-list data surcharge (part of baseline intrinsic/gasUsed) is removed or kept, even though the abstract says the rule 'replaces' EIP-7981.\"},{\"source\":\"supporting/eip-7981.md\",\"locator\":\"Reference Implementation — \\\"intrinsic_gas = ... + access_list_data_cost\\\"\",\"summary\":\"In the baseline, intrinsic gas includes the surcharge.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Charging — \\\"tx.gasUsed = max(execution_gas_used, tx_floor)\\\"\",\"summary\":\"execution_gas_used is not redefined here. EIP-7623 defines it as EVM gas excluding intrinsic. Backwards Compatibility implies 'intrinsic plus execution'.\"}],\"rationale\":\"Access-list transactions have two competing outcomes (surcharge kept in intrinsic vs. removed), differing by 1280/2048 gas per entry, and this must be agreed before expected values can be fixed. The execution_gas_used naming is a secondary localized issue that surrounding text resolves. That fits level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"A later revision or client agreement may resolve this; none is supplied.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Transaction floor\",\"summary\":\"One formula couples calldata (EIP-7976), access lists (EIP-2930/7981), authorizations (EIP-7702) and blob hashes (EIP-4844).\"},{\"source\":\"supporting/eip-7702.md\",\"locator\":\"Gas Costs / Behavior step 7\",\"summary\":\"Per-auth intrinsic cost and refunds for existing authorities interact with the floor's max settlement.\"},{\"source\":\"supporting/eip-4844.md\",\"locator\":\"Execution layer validation\",\"summary\":\"The blob-tx balance check uses tx.gas; floor-raised gas limits interact with max_total_fee and the separate blob fee.\"}],\"rationale\":\"The target couples behavior defined by several EIPs into one settlement and validity rule. Coordinated scenarios are needed across type-1/2 access lists, type-3 blob hashes, type-4 authorizations and calldata mixes, including how each interacts with that EIP's own intrinsic cost and refund rules. That fits level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The access-list interaction depends on the unresolved fate of the EIP-7981 surcharge.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":7702,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Type-4 txs with N auths plus calldata where the floor (6912/auth) binds versus intrinsic (25000/auth). Invalid or duplicate auths still counted. Refunds for non-empty authorities reducing execution gas toward the floor. Gas-limit validity at the floor boundary.\"},{\"eip\":4844,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Blob txs with 1..max blob hashes and no calldata, where the floor exceeds 21000 (gas limit 21000 now invalid). Floor-bound settlement while the blob fee stays separate. Balance check max_total_fee using a floor-raised tx.gas.\"},{\"eip\":2930,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Access-list address and storage-key counts (including duplicates) in the floor, alongside the 2400/1900 intrinsic per-item costs. Type-1 txs with mixed access list and calldata.\"},{\"eip\":7981,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Replacement of the always-paid access-list data surcharge by floor-only pricing. Cases where execution exceeds the floor show whether the surcharge still applies. Validity threshold changes.\"},{\"eip\":7976,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"64 gas/byte calldata floor combined with the other content terms, including zero vs non-zero bytes and contract-creation initcode.\"},{\"eip\":7623,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Confirm the max(intrinsic, floor) validity shape and refund-subtracted execution gas are preserved.\"},{\"eip\":2028,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Confirm standard intrinsic calldata pricing (4/16) is unchanged.\"},{\"eip\":1559,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Floor-bound gasUsed flows into fee payment, priority fee and block gas_used. Type-2 txs pay the same floor as legacy for the same content.\"}],\"unidentified_interactions\":[\"Legacy (type 0) transactions: the type-symmetry claim requires the same floor as typed transactions carrying identical content.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The EIP states that intrinsic gas is unchanged while also saying it replaces EIP-7981. It does not say whether the EIP-7981 access-list data surcharge, which is part of baseline intrinsic gas and gasUsed, is removed. It also reuses the term execution_gas_used without redefining it relative to EIP-7623's definition, which excludes intrinsic gas.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":2,\"maximum_score\":3}],\"unresolved_questions\":[\"Is the EIP-7981 access_list_data_cost removed from intrinsic gas and gasUsed, or kept alongside the new floor term?\",\"Does execution_gas_used in 'tx.gasUsed = max(execution_gas_used, tx_floor)' include intrinsic gas, as the Backwards Compatibility text implies, or follow the EIP-7623 definition?\",\"Should AUTH_TUPLE_BYTES = 108 stay a fixed constant even though EIP-7702 allows larger chain_id and y_parity encodings that break the stated worst-case bound?\"]},\"notable_ambiguities\":[\"'Intrinsic gas is unchanged' conflicts with 'replaces EIP-7981'. The baseline intrinsic gas includes the EIP-7981 surcharge.\",\"execution_gas_used is used with different scope than in EIP-7623.\",\"The 108-byte auth tuple 'maximum' assumes a 9-byte chain_id, but EIP-7702 allows chain_id < 2**256.\",\"The discussions-to URL references EIP-9999, which is only a citation and has no supplied behavior.\",\"The impact analysis uses a mainnet baseline without EIP-7976/7981, while the assessment baseline includes them.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8131 replaces the separate calldata floor (EIP-7623/EIP-7976) and the EIP-7981 access-list data surcharge with one transaction floor: tx_floor = 21000 + 64 × (calldata bytes + 20·access-list addresses + 32·storage keys + 108·EIP-7702 authorizations + 32·EIP-4844 blob versioned hashes). A transaction is valid only if tx.gas >= max(intrinsic, tx_floor), and tx.gasUsed = max(execution_gas_used, tx_floor). Intrinsic gas is stated to be unchanged. The stated goal is to cap user-controlled content at block_gas_limit/64 bytes per block, and it newly brings authorization tuples and blob versioned hashes under the floor. The EIP adds no new transaction type, header field, opcode, precompile or encoding.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Transaction floor",
+       "summary": "Redefines the existing floor term to add access-list, authorization and blob-versioned-hash byte counts at 64 gas/byte."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Charging — \"The `max(intrinsic, floor)` shape of EIP-7623 is preserved\"",
+       "summary": "Settlement keeps the existing max(execution, floor) mechanism. Only its inputs change."
+      },
+      {
+       "source": "supporting/eip-7981.md",
+       "locator": "Specification — \"added as a flat surcharge to the gas used calculation\"",
+       "summary": "In the baseline, access-list data cost is an always-paid surcharge. EIP-8131 folds it into the floor instead."
+      }
+     ],
+     "rationale": "The transaction gas settlement rule (the floor) changes its terms and rates, and the EIP-7981 always-paid surcharge moves into the floor. No new accounting mechanism is added; the existing max(intrinsic+execution, floor) mechanism is modified. That fits level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "How much of the change is structural depends on whether the EIP-7981 surcharge is removed from intrinsic/gasUsed, which the text leaves ambiguous ('Intrinsic gas is unchanged'). Either way no new mechanism is added.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only transaction-level floor gas is specified. No instruction behavior or access ordering is touched."
+      }
+     ],
+     "rationale": "No opcode state-access or gas-charge ordering changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Transaction floor — \"BLOB_VERSIONED_HASH_BYTES * num_blob_versioned_hashes\"",
+       "summary": "Blob versioned hashes are charged in regular gas through the floor, not in blob gas."
+      },
+      {
+       "source": "supporting/eip-4844.md",
+       "locator": "Gas accounting",
+       "summary": "Blob gas is an independent gas type with its own pricing, which the target does not change."
+      }
+     ],
+     "rationale": "Blob gas pricing, limits and settlement are unchanged. The new term is regular-gas floor content.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state-write or state-byte accounting is defined."
+      }
+     ],
+     "rationale": "No state-gas accounting changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Charging",
+       "summary": "Only the floor/max settlement is specified. No refund mechanism is introduced."
+      }
+     ],
+     "rationale": "No new refund mechanism. The existing refund-before-floor interaction is inherited from EIP-7623.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases / EIP-4844 with six blob versioned hashes",
+       "summary": "A blob tx with no calldata now has a floor above 21000 (+2048 per hash), so minimal blob txs become floor-bound and txs with gas limit 21000 become invalid."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — bind-rate table",
+       "summary": "Type-3 bind rate is 60%, and type-4 bind rate rises from 0.04% to 20.63%, so ordinary cases in those families change gasUsed."
+      },
+      {
+       "source": "supporting/eip-7981.md",
+       "locator": "Specification",
+       "summary": "Baseline access-list txs always pay a 1280/2048 surcharge. Under the unified floor, access-list bytes are paid only when the floor binds, which changes ordinary access-list gas expectations."
+      }
+     ],
+     "rationale": "One common rule change (the unified content floor) requires reworking ordinary cases in several distinct families: blob tx gas, validity and balance tests; access-list (EIP-2930/7981) gas expectations; calldata-floor tests that mix fields; and type-4 txs carrying calldata. That fits level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "How much access-list rework is needed depends on whether the EIP-7981 surcharge stays in intrinsic gas. If it stays, that family is less affected and the score could be 2.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new log, header, receipt field or protocol storage write."
+      }
+     ],
+     "rationale": "Only existing gas values change, and that is counted under PAT.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Charging",
+       "summary": "The floor is computed from existing transaction fields. No new inputs or outputs are needed."
+      }
+     ],
+     "rationale": "Existing t8n inputs and outputs carry the changed gas results.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Transaction floor",
+       "summary": "The framework's floor-cost calculator must count authorizations and blob hashes and drop or fold the EIP-7981 surcharge."
+      }
+     ],
+     "rationale": "This is a local extension of an existing primitive (fork-specific intrinsic/floor gas calculation). No new abstraction is needed.",
+     "confidence": "medium",
+     "uncertainty_note": "No supplied evidence about framework helper structure.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only counts of fields are used. No signing, hashing or proof rules change."
+      }
+     ],
+     "rationale": "No cryptographic change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Charging — \"require tx.gas >= max(intrinsic, tx_floor)\"",
+       "summary": "The validity boundary at the gas limit changes with the new floor terms."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"When does the floor bite?\"",
+       "summary": "The settlement crossover between execution gas and the floor is boundary-sensitive."
+      },
+      {
+       "source": "supporting/eip-7702.md",
+       "locator": "Gas Costs",
+       "summary": "Intrinsic gas includes 25000 per auth while the floor uses 6912 per auth, so which side dominates depends on the content mix."
+      }
+     ],
+     "rationale": "At least two boundary-sensitive rules change: the gas-limit validity threshold max(intrinsic, floor) and the gasUsed crossover max(execution, floor). Floor terms are additive, so each field can largely be tested independently. That fits level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Deciding which of intrinsic or floor dominates depends jointly on calldata zero/non-zero mix, access entries, auths, blob count, creation and refunds. A reviewer could treat that as an elevated matrix (level 3).",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No block RLP decoding or structural validation change. This is an execution gas rule only."
+      }
+     ],
+     "rationale": "Ordinary execution-rule changes do not qualify.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API fields or methods are mentioned."
+      }
+     ],
+     "rationale": "No Engine API change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is introduced."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is referenced."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instructions are added."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction semantics change."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are added."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Content-only, not full RLP",
+       "summary": "The floor is computed from field counts. Transaction schemas are unchanged."
+      }
+     ],
+     "rationale": "No serialized schema changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Transaction floor — \"A field absent from a given transaction type contributes zero\"",
+       "summary": "The rule applies to existing transaction types only."
+      }
+     ],
+     "rationale": "No new envelope.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Charging — \"require tx.gas >= max(intrinsic, tx_floor)\"",
+       "summary": "The gas-limit validity rule gains new floor terms for auths, blob hashes and access-list bytes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations / Gas estimation",
+       "summary": "Floor-bound transactions with insufficient gas are rejected at validation."
+      },
+      {
+       "source": "supporting/eip-7981.md",
+       "locator": "Specification — \"Any transaction with a gas limit below tx.gasUsed evaluated with execution_gas_used = 0 is considered invalid\"",
+       "summary": "The baseline access-list validity threshold is replaced by the unified floor."
+      }
+     ],
+     "rationale": "The changed validity threshold needs dedicated per-field cases (types 1–4, contract creation, mixed content) at gas_limit = floor−1 and = floor. Baseline validation sequencing and test construction still work. That fits level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "This could be argued as level 1 (an existing condition with new terms). The new dependence on auth and blob counts motivates level 2.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"Hard fork.\"",
+       "summary": "Only a rule selection at the fork. No state migration."
+      }
+     ],
+     "rationale": "No activation-specific state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations / Block-size bound",
+       "summary": "Claims user content per block is at most block_gas_limit/64 (~0.89 MB at 60M), with envelopes adding ~372 KB."
+      }
+     ],
+     "rationale": "The worst-case block-size bound changes, and auth- and blob-hash-heavy blocks are now constrained. Worst-case payload-size benchmarks should be re-validated against the new bound. No new resource coupling is introduced.",
+     "confidence": "medium",
+     "uncertainty_note": "The change reduces worst-case load, so some reviewers might score 0.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale / Per-auth term is a constant — \"maximum RLP size ... 9 B chain_id\"",
+       "summary": "Assumes a 108-byte maximum auth tuple."
+      },
+      {
+       "source": "supporting/eip-7702.md",
+       "locator": "Set code transaction — \"assert auth.chain_id < 2**256\"",
+       "summary": "chain_id may be up to 256 bits and y_parity up to 2**8, so a tuple can exceed 108 bytes and the claimed bound is not strictly tight."
+      }
+     ],
+     "rationale": "The changed invariant is the per-block content bound. It can be checked locally through floor arithmetic and worst-case constructions. The auth-size assumption should be checked against oversized-field authorizations.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether exceeding the bound via oversized authorization fields matters is a design question, not a testing-breadth one.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Charging — \"Intrinsic gas is unchanged.\"",
+       "summary": "Does not say whether the EIP-7981 access-list data surcharge (part of baseline intrinsic/gasUsed) is removed or kept, even though the abstract says the rule 'replaces' EIP-7981."
+      },
+      {
+       "source": "supporting/eip-7981.md",
+       "locator": "Reference Implementation — \"intrinsic_gas = ... + access_list_data_cost\"",
+       "summary": "In the baseline, intrinsic gas includes the surcharge."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Charging — \"tx.gasUsed = max(execution_gas_used, tx_floor)\"",
+       "summary": "execution_gas_used is not redefined here. EIP-7623 defines it as EVM gas excluding intrinsic. Backwards Compatibility implies 'intrinsic plus execution'."
+      }
+     ],
+     "rationale": "Access-list transactions have two competing outcomes (surcharge kept in intrinsic vs. removed), differing by 1280/2048 gas per entry, and this must be agreed before expected values can be fixed. The execution_gas_used naming is a secondary localized issue that surrounding text resolves. That fits level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "A later revision or client agreement may resolve this; none is supplied.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Transaction floor",
+       "summary": "One formula couples calldata (EIP-7976), access lists (EIP-2930/7981), authorizations (EIP-7702) and blob hashes (EIP-4844)."
+      },
+      {
+       "source": "supporting/eip-7702.md",
+       "locator": "Gas Costs / Behavior step 7",
+       "summary": "Per-auth intrinsic cost and refunds for existing authorities interact with the floor's max settlement."
+      },
+      {
+       "source": "supporting/eip-4844.md",
+       "locator": "Execution layer validation",
+       "summary": "The blob-tx balance check uses tx.gas; floor-raised gas limits interact with max_total_fee and the separate blob fee."
+      }
+     ],
+     "rationale": "The target couples behavior defined by several EIPs into one settlement and validity rule. Coordinated scenarios are needed across type-1/2 access lists, type-3 blob hashes, type-4 authorizations and calldata mixes, including how each interacts with that EIP's own intrinsic cost and refund rules. That fits level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "The access-list interaction depends on the unresolved fate of the EIP-7981 surcharge.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 7702,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Type-4 txs with N auths plus calldata where the floor (6912/auth) binds versus intrinsic (25000/auth). Invalid or duplicate auths still counted. Refunds for non-empty authorities reducing execution gas toward the floor. Gas-limit validity at the floor boundary."
+     },
+     {
+      "eip": 4844,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Blob txs with 1..max blob hashes and no calldata, where the floor exceeds 21000 (gas limit 21000 now invalid). Floor-bound settlement while the blob fee stays separate. Balance check max_total_fee using a floor-raised tx.gas."
+     },
+     {
+      "eip": 2930,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Access-list address and storage-key counts (including duplicates) in the floor, alongside the 2400/1900 intrinsic per-item costs. Type-1 txs with mixed access list and calldata."
+     },
+     {
+      "eip": 7981,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Replacement of the always-paid access-list data surcharge by floor-only pricing. Cases where execution exceeds the floor show whether the surcharge still applies. Validity threshold changes."
+     },
+     {
+      "eip": 7976,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "64 gas/byte calldata floor combined with the other content terms, including zero vs non-zero bytes and contract-creation initcode."
+     },
+     {
+      "eip": 7623,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Confirm the max(intrinsic, floor) validity shape and refund-subtracted execution gas are preserved."
+     },
+     {
+      "eip": 2028,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Confirm standard intrinsic calldata pricing (4/16) is unchanged."
+     },
+     {
+      "eip": 1559,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Floor-bound gasUsed flows into fee payment, priority fee and block gas_used. Type-2 txs pay the same floor as legacy for the same content."
+     }
+    ],
+    "unidentified_interactions": [
+     "Legacy (type 0) transactions: the type-symmetry claim requires the same floor as typed transactions carrying identical content."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The EIP states that intrinsic gas is unchanged while also saying it replaces EIP-7981. It does not say whether the EIP-7981 access-list data surcharge, which is part of baseline intrinsic gas and gasUsed, is removed. It also reuses the term execution_gas_used without redefining it relative to EIP-7623's definition, which excludes intrinsic gas.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     }
+    ],
+    "unresolved_questions": [
+     "Is the EIP-7981 access_list_data_cost removed from intrinsic gas and gasUsed, or kept alongside the new floor term?",
+     "Does execution_gas_used in 'tx.gasUsed = max(execution_gas_used, tx_floor)' include intrinsic gas, as the Backwards Compatibility text implies, or follow the EIP-7623 definition?",
+     "Should AUTH_TUPLE_BYTES = 108 stay a fixed constant even though EIP-7702 allows larger chain_id and y_parity encodings that break the stated worst-case bound?"
+    ]
+   },
+   "notable_ambiguities": [
+    "'Intrinsic gas is unchanged' conflicts with 'replaces EIP-7981'. The baseline intrinsic gas includes the EIP-7981 surcharge.",
+    "execution_gas_used is used with different scope than in EIP-7623.",
+    "The 108-byte auth tuple 'maximum' assumes a 9-byte chain_id, but EIP-7702 allows chain_id < 2**256.",
+    "The discussions-to URL references EIP-9999, which is only a citation and has no supplied behavior.",
+    "The impact analysis uses a mainnet baseline without EIP-7976/7981, while the assessment baseline includes them."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 49549,
+  "type": "result",
+  "duration_ms": 111408,
+  "uuid": "c788d908-d121-4539-b86d-9932ce0210bb",
+  "ttft_stream_ms": 1103,
+  "time_to_request_ms": 442,
+  "first_content_frame_ms": 1104,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

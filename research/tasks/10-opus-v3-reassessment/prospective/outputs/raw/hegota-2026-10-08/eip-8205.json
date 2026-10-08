@@ -1,0 +1,679 @@
+{
+ "case": "hegota/8205",
+ "run_id": "assessment-run-cc43d541-6fa5-4ba0-b006-8942c8790edf",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:58:14.558120Z",
+ "finished_at": "2026-10-08T10:00:10.631512Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "a41f520eb4780f122ea6e786253ed584ae23d44a70adc4593e25534a90b7a3fc",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "8905574c4d56a8ace804dbb2a9d6e22d40b9e7669e6a07f467ad0941ce035592",
+ "output": {
+  "duration_api_ms": 113379,
+  "stop_reason": "tool_use",
+  "session_id": "268acf8e-7ae4-41c7-83a6-3485f4ee6c4c",
+  "total_cost_usd": 1.074592,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 102673,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 12660,
+   "output_tokens_details": {
+    "thinking_tokens": 5033
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 102673,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 12660,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 102673,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 102673
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 12660,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 102673,
+    "webSearchRequests": 0,
+    "costUSD": 1.074592,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 5033,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8205 adds a new EIP-7685 request contract on the execution layer for withdrawal-credential preregistrations. A request is pubkey ++ withdrawal_credentials ++ signature, 176 bytes. The contract copies the EIP-7002/7251 design: a queue, an exponential fee with TARGET=1 and MAX=4 dequeued per block, an EXCESS_INHIBITOR, a fee getter that reverts if value is attached, LOG0 emission, and an end-of-block system call that returns SSZ-serialized records. A system call with calldata disables the queue, but nothing under this EIP reaches that path. The consensus layer stores the preregistrations, checks their BLS signatures, enforces them against validator deposits and expires them. The EL side only queues and passes requests on; it performs no cryptographic checks. The bytecode, address, request type and deployment are all still TBD.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"Gas consumed by this call does not count against the block's overall gas usage\\\"\",\"summary\":\"Reuses the system-call gas treatment already defined by EIP-7002/7251; no new gas accounting rule.\"},{\"source\":\"eip.md\",\"locator\":\"Fee calculation\",\"summary\":\"The request fee is an ordinary value charged by the contract, not an EVM gas accounting rule.\"}],\"rationale\":\"No execution-gas charging, metering or settlement rule changes. The system-call gas exemption is inherited and the fee is a contract-level charge.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Preregistration Request Contract\",\"summary\":\"Only new contract code is added; no instruction's access or charge ordering changes.\"}],\"rationale\":\"No opcode ordering changes and no new ordering rule.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Blobs are not mentioned.\"}],\"rationale\":\"No blob-gas changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Add Preregistration Request\",\"summary\":\"The contract stores data with ordinary SSTOREs; no state-gas accounting is defined.\"}],\"rationale\":\"Uses unchanged state-writing operations and adds no state-gas mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Fee overpayment — \\\"The system contract does not refund excess fee payment\\\"\",\"summary\":\"No refund mechanism of any kind.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"At the end of processing any execution block starting from the FORK_BLOCK\\\"\",\"summary\":\"A new end-of-block system call is added to every block alongside the existing request system calls.\"},{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header — \\\"Items with empty request_data are excluded\\\"\",\"summary\":\"Blocks with no preregistration requests keep the same requests_hash, which limits rework.\"}],\"rationale\":\"Empty request data is excluded from the commitment, so ordinary baseline tests keep their expected outputs. Rework is limited to request-bus cases, such as tests that enumerate request types and their ordering or that test missing system-contract code. That is localized rework.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Post-state roots change because the new contract's storage is written (the excess moves from the inhibitor to 0). Fixture filling normally absorbs this, but some tests that assert explicit post-state could be affected.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"Each preregistration request must appear in the EIP-7685 requests list\\\"\",\"summary\":\"A new request type enters the requests list and requests_hash, but only when requests are dequeued.\"},{\"source\":\"eip.md\",\"locator\":\"update_excess_preregistration_requests\",\"summary\":\"A protocol-mandated storage write (resetting the inhibitor, updating excess and count) happens in each block.\"}],\"rationale\":\"New outputs (the request entry and contract storage) only matter to assertions in the request-related subset of tests. Ordinary baseline tests produce no preregistration requests.\",\"confidence\":\"medium\",\"uncertainty_note\":\"An argument could be made that every test should check the system-contract storage writes, which would be level 2.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Preregistration request operation — \\\"request_type = PREREGISTRATION_REQUEST_TYPE\\\"\",\"summary\":\"The transition tool's requests output must carry a new request type.\"}],\"rationale\":\"The meaning of the existing requests output field is extended to include a new type. No new mechanism is needed, since the system-call and request plumbing already exist from 7002/7251.\",\"confidence\":\"low\",\"uncertainty_note\":\"If an output for a new request type does not count as a semantic field change, this would be 0. No transition-tool documentation was supplied.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Preregistration request operation\",\"summary\":\"Adds a new 176-byte request object (pubkey, withdrawal_credentials, signature).\"},{\"source\":\"supporting/eip-7002.md\",\"locator\":\"Withdrawal request operation\",\"summary\":\"The same kind of request primitive already exists for prerequisite request types.\"}],\"rationale\":\"The framework needs a new request-type helper and a predeploy entry, which are local extensions of existing request primitives. The EL does not verify BLS, so test data can be arbitrary bytes.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"BLS verification on CL only — \\\"BLS verification happens on the CL, not in the EL system contract\\\"\",\"summary\":\"The EL performs no new cryptographic verification.\"},{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header\",\"summary\":\"The requests_hash still uses unchanged sha256.\"}],\"rationale\":\"BLS verification happens only on the CL. The EL reuses an unchanged hash commitment.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Preregistration Request Contract — \\\"requires a 176 byte input\\\" / \\\"any other input length MUST cause the call to revert\\\"\",\"summary\":\"Dispatch on exact input length.\"},{\"source\":\"eip.md\",\"locator\":\"Add Preregistration Request — \\\"require(msg.value >= fee\\\"\",\"summary\":\"Fee threshold boundary.\"},{\"source\":\"eip.md\",\"locator\":\"dequeue_preregistration_requests — \\\"min(num_in_queue, MAX_PREREGISTRATION_REQUESTS_PER_BLOCK)\\\"\",\"summary\":\"Per-block dequeue cap of 4 and resetting the head/tail pointers.\"},{\"source\":\"eip.md\",\"locator\":\"update_excess_preregistration_requests\",\"summary\":\"Excess and target arithmetic, inhibitor reset, and disabling on non-empty calldata.\"},{\"source\":\"eip.md\",\"locator\":\"Fee Getter — \\\"a value-bearing fee getter call MUST revert\\\"\",\"summary\":\"The fee getter has a value boundary.\"}],\"rationale\":\"Several independent boundary-sensitive mechanisms are introduced: input length, fee threshold, dequeue cap, excess/target update, inhibitor state and fee-getter value. Each can mostly be tested on its own.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The dispatch on caller × calldata length × value × inhibitor state could be treated as an elevated matrix, which would be level 3.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"If there is no code at PREREGISTRATION_REQUEST_PREDEPLOY_ADDRESS, the corresponding block MUST be marked invalid\\\"\",\"summary\":\"Block invalidity follows from execution and state, using the same pattern as EIP-7002.\"}],\"rationale\":\"No RLP decoding or structural header/block rule changes. The new invalidity conditions are execution-derived. The rubric says ordinary execution-rule changes alone do not count.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the no-code and system-call-failure rules were treated as block validation, this could be 1.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Requests — \\\"opaque byte array\\\"\",\"summary\":\"Requests are carried as opaque typed bytes. Adding a type does not change any Engine API field or method.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Lists EL changes as a system contract and a request type only.\"}],\"rationale\":\"No Engine API field or endpoint change is specified. The new type travels through the existing requests field.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No Engine API specification was supplied.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Preregistration Request Contract\",\"summary\":\"One new stateful contract with a queue, excess and count storage. Its system call produces EIP-7685 requests.\"}],\"rationale\":\"Exactly one new contract, which is stateful and triggers a system action (an execution request).\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Modified deposit request ingestion\",\"summary\":\"Deposit enforcement changes only on the CL. The EL deposit contract and its log parsing are unchanged.\"},{\"source\":\"eip.md\",\"locator\":\"Disabling the queue\",\"summary\":\"The inhibitor and disable mechanism belongs to the new contract, not to existing ones.\"}],\"rationale\":\"No existing system contract's rules, code or storage change on the EL.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The new end-of-block call joins the existing sequence of request system calls, and its relative order is unspecified, but it does not appear to change outcomes.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new instruction. SLOTNUM comes from EIP-7843 and is only cited for application use.\"}],\"rationale\":\"No new opcodes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction semantics change.\"}],\"rationale\":\"No opcode changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is introduced.\"}],\"rationale\":\"No new precompiles.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"No precompile changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Preregistration request operation — \\\"Each serialized request record is 176 bytes\\\"\",\"summary\":\"New execution-request payload schema: pubkey(48) ++ withdrawal_credentials(32) ++ signature(96), SSZ-serialized.\"}],\"rationale\":\"Adds a new request payload schema within the existing EIP-7685 request scheme.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Preregistration request operation\",\"summary\":\"This is an execution-request type, not a transaction envelope.\"}],\"rationale\":\"No new transaction type.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Add Preregistration Request\",\"summary\":\"Insufficient fees or a bad input length cause application-level reverts, not transaction invalidity.\"}],\"rationale\":\"No consensus rule on transaction validity or intrinsic gas changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Block Header\",\"summary\":\"The requests_hash already exists. A new request type under it is not a new header field.\"}],\"rationale\":\"No new header or block field.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Deployment — \\\"TBD — the deterministic deployment transaction will be provided\\\"\",\"summary\":\"Deployment is through an ordinary deterministic transaction, like EIP-7002.\"},{\"source\":\"eip.md\",\"locator\":\"update_excess_preregistration_requests — \\\"Reset excess to 0 on the first system call after activation\\\"\",\"summary\":\"Clearing the inhibitor happens inside the recurring system call, not as a one-time migration.\"}],\"rationale\":\"Deployment is ordinary and the first-call inhibitor reset is part of recurring processing. No activation-specific EL state transition is specified.\",\"confidence\":\"low\",\"uncertainty_note\":\"Deployment is TBD. If the final design installs code at the fork (as a mandated predeploy), this becomes 3.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System Call — \\\"The call has a dedicated gas limit of 30_000_000\\\"\",\"summary\":\"Adds a bounded per-block system call that dequeues up to 4 records of 6 slots each.\"},{\"source\":\"eip.md\",\"locator\":\"Fee calculation\",\"summary\":\"The fake_exponential loop on submission and in the getter is bounded.\"}],\"rationale\":\"One more bounded per-block system call and contract workload, which component benchmarks can cover. CL-side BLS cost is out of EL scope.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Bytecode is TBD, so actual gas and timing cannot be measured yet.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System call failure — \\\"the block MUST be deemed invalid\\\"\",\"summary\":\"The contract must never fail during the system call under adversarial queue states.\"},{\"source\":\"eip.md\",\"locator\":\"DoS and state growth\",\"summary\":\"The fee is the rate limiter against spam.\"},{\"source\":\"eip.md\",\"locator\":\"BLS verification on CL only\",\"summary\":\"The EL does no authorization; the CL does all semantic validation.\"}],\"rationale\":\"The EL-side security conditions (system-call robustness, fee gating, inhibitor, faithful request ordering) can be checked locally and follow the 7002 pattern. The enforcement security model lives on the CL.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The cross-layer dependence of deposit-protection guarantees on accurate EL request transport could justify level 2.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Configuration — PREREGISTRATION_REQUEST_PREDEPLOY_ADDRESS / PREREGISTRATION_REQUEST_TYPE \\\"TBD\\\"\",\"summary\":\"The address and request type are unspecified.\"},{\"source\":\"eip.md\",\"locator\":\"Bytecode — \\\"TBD\\\"\",\"summary\":\"Runtime bytecode, and therefore the gas consumed by calls, is unspecified.\"}],\"rationale\":\"Placeholders (address, type byte, bytecode, deployment) leave concrete expected values open. The pseudocode still fixes one intended behavior, with no competing normative interpretations.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Because bytecode is TBD, the gas consumed by calls is consensus-visible but undetermined, which could argue for level 2.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"supporting/eip-7685.md\",\"locator\":\"Ordering — \\\"ordered by request_type ascending\\\"\",\"summary\":\"The new type must be ordered and hashed together with the other request types.\"},{\"source\":\"eip.md\",\"locator\":\"Race between preregistration and deposit — \\\"If both arrive in the same execution payload\\\"\",\"summary\":\"Deposit (EIP-6110) and preregistration requests can share a payload.\"},{\"source\":\"supporting/eip-8282.md\",\"locator\":\"Constants — \\\"Final request-type values MUST be unique\\\"\",\"summary\":\"Request-type allocation must coordinate with types 0x03 and 0x04.\"}],\"rationale\":\"Coordinated cases are needed for blocks that carry preregistration requests alongside other request types: deposits, withdrawals, consolidations and builder requests. Those cases check requests_hash ordering and content. Other interactions only need local compatibility checks.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The final type byte is TBD, so its exact position in the ordering is unknown.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":7685,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Blocks with the new type and existing request types: check type-ascending ordering, exclusion of empty data, and the requests_hash value.\"},{\"eip\":6110,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Same block with a deposit-contract log and a preregistration submission: both request lists appear correctly in requests_hash.\"},{\"eip\":7002,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Shares the SYSTEM_ADDRESS end-of-block call pattern; check that both system calls run and storage stays independent.\"},{\"eip\":7251,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Same check as for 7002: independent end-of-block system calls coexist.\"},{\"eip\":8282,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The request type must be unique relative to 0x03/0x04; builder request contracts coexist in the same block.\"},{\"eip\":1559,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The system call transfers no value and is not counted in block gas.\"}],\"unidentified_interactions\":[\"The order of the new end-of-block system call relative to the other request-contract system calls is not specified.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The contract address, EIP-7685 request type, runtime bytecode and deployment method are all TBD. Test cases and the reference implementation are also TBD. The pseudocode defines the intended behavior, but concrete gas usage, request ordering position and the activation/deployment method are unresolved.\",\"affected_criteria\":[{\"criterion\":\"new_fork_activation_mechanism\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"security_risks\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"What are the predeploy address and the request-type byte?\",\"What is the runtime bytecode, and therefore the gas consumed by submissions, fee-getter calls and system calls?\",\"Is the contract deployed by an ordinary pre-fork transaction or installed at the fork?\",\"What is the order of the system call relative to the other request contracts' system calls?\"]},\"notable_ambiguities\":[\"The non-empty-calldata disable path cannot be reached under this EIP. Whether tests should still exercise it at the contract level (for example by calling directly as SYSTEM_ADDRESS) is unclear.\",\"EIP-8282 describes its inhibitor as 'permanently' disabling the queue. EIP-8205 says the same mechanism can be re-enabled by a later system call with empty calldata.\",\"Bytecode TBD prevents fixing expected gas values in fixtures.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8205 adds a new EIP-7685 request contract on the execution layer for withdrawal-credential preregistrations. A request is pubkey ++ withdrawal_credentials ++ signature, 176 bytes. The contract copies the EIP-7002/7251 design: a queue, an exponential fee with TARGET=1 and MAX=4 dequeued per block, an EXCESS_INHIBITOR, a fee getter that reverts if value is attached, LOG0 emission, and an end-of-block system call that returns SSZ-serialized records. A system call with calldata disables the queue, but nothing under this EIP reaches that path. The consensus layer stores the preregistrations, checks their BLS signatures, enforces them against validator deposits and expires them. The EL side only queues and passes requests on; it performs no cryptographic checks. The bytecode, address, request type and deployment are all still TBD.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"Gas consumed by this call does not count against the block's overall gas usage\"",
+       "summary": "Reuses the system-call gas treatment already defined by EIP-7002/7251; no new gas accounting rule."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Fee calculation",
+       "summary": "The request fee is an ordinary value charged by the contract, not an EVM gas accounting rule."
+      }
+     ],
+     "rationale": "No execution-gas charging, metering or settlement rule changes. The system-call gas exemption is inherited and the fee is a contract-level charge.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Preregistration Request Contract",
+       "summary": "Only new contract code is added; no instruction's access or charge ordering changes."
+      }
+     ],
+     "rationale": "No opcode ordering changes and no new ordering rule.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Blobs are not mentioned."
+      }
+     ],
+     "rationale": "No blob-gas changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Add Preregistration Request",
+       "summary": "The contract stores data with ordinary SSTOREs; no state-gas accounting is defined."
+      }
+     ],
+     "rationale": "Uses unchanged state-writing operations and adds no state-gas mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Fee overpayment — \"The system contract does not refund excess fee payment\"",
+       "summary": "No refund mechanism of any kind."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"At the end of processing any execution block starting from the FORK_BLOCK\"",
+       "summary": "A new end-of-block system call is added to every block alongside the existing request system calls."
+      },
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header — \"Items with empty request_data are excluded\"",
+       "summary": "Blocks with no preregistration requests keep the same requests_hash, which limits rework."
+      }
+     ],
+     "rationale": "Empty request data is excluded from the commitment, so ordinary baseline tests keep their expected outputs. Rework is limited to request-bus cases, such as tests that enumerate request types and their ordering or that test missing system-contract code. That is localized rework.",
+     "confidence": "medium",
+     "uncertainty_note": "Post-state roots change because the new contract's storage is written (the excess moves from the inhibitor to 0). Fixture filling normally absorbs this, but some tests that assert explicit post-state could be affected.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"Each preregistration request must appear in the EIP-7685 requests list\"",
+       "summary": "A new request type enters the requests list and requests_hash, but only when requests are dequeued."
+      },
+      {
+       "source": "eip.md",
+       "locator": "update_excess_preregistration_requests",
+       "summary": "A protocol-mandated storage write (resetting the inhibitor, updating excess and count) happens in each block."
+      }
+     ],
+     "rationale": "New outputs (the request entry and contract storage) only matter to assertions in the request-related subset of tests. Ordinary baseline tests produce no preregistration requests.",
+     "confidence": "medium",
+     "uncertainty_note": "An argument could be made that every test should check the system-contract storage writes, which would be level 2.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Preregistration request operation — \"request_type = PREREGISTRATION_REQUEST_TYPE\"",
+       "summary": "The transition tool's requests output must carry a new request type."
+      }
+     ],
+     "rationale": "The meaning of the existing requests output field is extended to include a new type. No new mechanism is needed, since the system-call and request plumbing already exist from 7002/7251.",
+     "confidence": "low",
+     "uncertainty_note": "If an output for a new request type does not count as a semantic field change, this would be 0. No transition-tool documentation was supplied.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Preregistration request operation",
+       "summary": "Adds a new 176-byte request object (pubkey, withdrawal_credentials, signature)."
+      },
+      {
+       "source": "supporting/eip-7002.md",
+       "locator": "Withdrawal request operation",
+       "summary": "The same kind of request primitive already exists for prerequisite request types."
+      }
+     ],
+     "rationale": "The framework needs a new request-type helper and a predeploy entry, which are local extensions of existing request primitives. The EL does not verify BLS, so test data can be arbitrary bytes.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "BLS verification on CL only — \"BLS verification happens on the CL, not in the EL system contract\"",
+       "summary": "The EL performs no new cryptographic verification."
+      },
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header",
+       "summary": "The requests_hash still uses unchanged sha256."
+      }
+     ],
+     "rationale": "BLS verification happens only on the CL. The EL reuses an unchanged hash commitment.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Preregistration Request Contract — \"requires a 176 byte input\" / \"any other input length MUST cause the call to revert\"",
+       "summary": "Dispatch on exact input length."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Add Preregistration Request — \"require(msg.value >= fee\"",
+       "summary": "Fee threshold boundary."
+      },
+      {
+       "source": "eip.md",
+       "locator": "dequeue_preregistration_requests — \"min(num_in_queue, MAX_PREREGISTRATION_REQUESTS_PER_BLOCK)\"",
+       "summary": "Per-block dequeue cap of 4 and resetting the head/tail pointers."
+      },
+      {
+       "source": "eip.md",
+       "locator": "update_excess_preregistration_requests",
+       "summary": "Excess and target arithmetic, inhibitor reset, and disabling on non-empty calldata."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Fee Getter — \"a value-bearing fee getter call MUST revert\"",
+       "summary": "The fee getter has a value boundary."
+      }
+     ],
+     "rationale": "Several independent boundary-sensitive mechanisms are introduced: input length, fee threshold, dequeue cap, excess/target update, inhibitor state and fee-getter value. Each can mostly be tested on its own.",
+     "confidence": "medium",
+     "uncertainty_note": "The dispatch on caller × calldata length × value × inhibitor state could be treated as an elevated matrix, which would be level 3.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"If there is no code at PREREGISTRATION_REQUEST_PREDEPLOY_ADDRESS, the corresponding block MUST be marked invalid\"",
+       "summary": "Block invalidity follows from execution and state, using the same pattern as EIP-7002."
+      }
+     ],
+     "rationale": "No RLP decoding or structural header/block rule changes. The new invalidity conditions are execution-derived. The rubric says ordinary execution-rule changes alone do not count.",
+     "confidence": "medium",
+     "uncertainty_note": "If the no-code and system-call-failure rules were treated as block validation, this could be 1.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Requests — \"opaque byte array\"",
+       "summary": "Requests are carried as opaque typed bytes. Adding a type does not change any Engine API field or method."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Lists EL changes as a system contract and a request type only."
+      }
+     ],
+     "rationale": "No Engine API field or endpoint change is specified. The new type travels through the existing requests field.",
+     "confidence": "medium",
+     "uncertainty_note": "No Engine API specification was supplied.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Preregistration Request Contract",
+       "summary": "One new stateful contract with a queue, excess and count storage. Its system call produces EIP-7685 requests."
+      }
+     ],
+     "rationale": "Exactly one new contract, which is stateful and triggers a system action (an execution request).",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Modified deposit request ingestion",
+       "summary": "Deposit enforcement changes only on the CL. The EL deposit contract and its log parsing are unchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Disabling the queue",
+       "summary": "The inhibitor and disable mechanism belongs to the new contract, not to existing ones."
+      }
+     ],
+     "rationale": "No existing system contract's rules, code or storage change on the EL.",
+     "confidence": "medium",
+     "uncertainty_note": "The new end-of-block call joins the existing sequence of request system calls, and its relative order is unspecified, but it does not appear to change outcomes.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new instruction. SLOTNUM comes from EIP-7843 and is only cited for application use."
+      }
+     ],
+     "rationale": "No new opcodes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction semantics change."
+      }
+     ],
+     "rationale": "No opcode changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is introduced."
+      }
+     ],
+     "rationale": "No new precompiles.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "No precompile changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Preregistration request operation — \"Each serialized request record is 176 bytes\"",
+       "summary": "New execution-request payload schema: pubkey(48) ++ withdrawal_credentials(32) ++ signature(96), SSZ-serialized."
+      }
+     ],
+     "rationale": "Adds a new request payload schema within the existing EIP-7685 request scheme.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Preregistration request operation",
+       "summary": "This is an execution-request type, not a transaction envelope."
+      }
+     ],
+     "rationale": "No new transaction type.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Add Preregistration Request",
+       "summary": "Insufficient fees or a bad input length cause application-level reverts, not transaction invalidity."
+      }
+     ],
+     "rationale": "No consensus rule on transaction validity or intrinsic gas changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Block Header",
+       "summary": "The requests_hash already exists. A new request type under it is not a new header field."
+      }
+     ],
+     "rationale": "No new header or block field.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Deployment — \"TBD — the deterministic deployment transaction will be provided\"",
+       "summary": "Deployment is through an ordinary deterministic transaction, like EIP-7002."
+      },
+      {
+       "source": "eip.md",
+       "locator": "update_excess_preregistration_requests — \"Reset excess to 0 on the first system call after activation\"",
+       "summary": "Clearing the inhibitor happens inside the recurring system call, not as a one-time migration."
+      }
+     ],
+     "rationale": "Deployment is ordinary and the first-call inhibitor reset is part of recurring processing. No activation-specific EL state transition is specified.",
+     "confidence": "low",
+     "uncertainty_note": "Deployment is TBD. If the final design installs code at the fork (as a mandated predeploy), this becomes 3.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System Call — \"The call has a dedicated gas limit of 30_000_000\"",
+       "summary": "Adds a bounded per-block system call that dequeues up to 4 records of 6 slots each."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Fee calculation",
+       "summary": "The fake_exponential loop on submission and in the getter is bounded."
+      }
+     ],
+     "rationale": "One more bounded per-block system call and contract workload, which component benchmarks can cover. CL-side BLS cost is out of EL scope.",
+     "confidence": "medium",
+     "uncertainty_note": "Bytecode is TBD, so actual gas and timing cannot be measured yet.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System call failure — \"the block MUST be deemed invalid\"",
+       "summary": "The contract must never fail during the system call under adversarial queue states."
+      },
+      {
+       "source": "eip.md",
+       "locator": "DoS and state growth",
+       "summary": "The fee is the rate limiter against spam."
+      },
+      {
+       "source": "eip.md",
+       "locator": "BLS verification on CL only",
+       "summary": "The EL does no authorization; the CL does all semantic validation."
+      }
+     ],
+     "rationale": "The EL-side security conditions (system-call robustness, fee gating, inhibitor, faithful request ordering) can be checked locally and follow the 7002 pattern. The enforcement security model lives on the CL.",
+     "confidence": "medium",
+     "uncertainty_note": "The cross-layer dependence of deposit-protection guarantees on accurate EL request transport could justify level 2.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Configuration — PREREGISTRATION_REQUEST_PREDEPLOY_ADDRESS / PREREGISTRATION_REQUEST_TYPE \"TBD\"",
+       "summary": "The address and request type are unspecified."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Bytecode — \"TBD\"",
+       "summary": "Runtime bytecode, and therefore the gas consumed by calls, is unspecified."
+      }
+     ],
+     "rationale": "Placeholders (address, type byte, bytecode, deployment) leave concrete expected values open. The pseudocode still fixes one intended behavior, with no competing normative interpretations.",
+     "confidence": "medium",
+     "uncertainty_note": "Because bytecode is TBD, the gas consumed by calls is consensus-visible but undetermined, which could argue for level 2.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "supporting/eip-7685.md",
+       "locator": "Ordering — \"ordered by request_type ascending\"",
+       "summary": "The new type must be ordered and hashed together with the other request types."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Race between preregistration and deposit — \"If both arrive in the same execution payload\"",
+       "summary": "Deposit (EIP-6110) and preregistration requests can share a payload."
+      },
+      {
+       "source": "supporting/eip-8282.md",
+       "locator": "Constants — \"Final request-type values MUST be unique\"",
+       "summary": "Request-type allocation must coordinate with types 0x03 and 0x04."
+      }
+     ],
+     "rationale": "Coordinated cases are needed for blocks that carry preregistration requests alongside other request types: deposits, withdrawals, consolidations and builder requests. Those cases check requests_hash ordering and content. Other interactions only need local compatibility checks.",
+     "confidence": "medium",
+     "uncertainty_note": "The final type byte is TBD, so its exact position in the ordering is unknown.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 7685,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Blocks with the new type and existing request types: check type-ascending ordering, exclusion of empty data, and the requests_hash value."
+     },
+     {
+      "eip": 6110,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Same block with a deposit-contract log and a preregistration submission: both request lists appear correctly in requests_hash."
+     },
+     {
+      "eip": 7002,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Shares the SYSTEM_ADDRESS end-of-block call pattern; check that both system calls run and storage stays independent."
+     },
+     {
+      "eip": 7251,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Same check as for 7002: independent end-of-block system calls coexist."
+     },
+     {
+      "eip": 8282,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The request type must be unique relative to 0x03/0x04; builder request contracts coexist in the same block."
+     },
+     {
+      "eip": 1559,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The system call transfers no value and is not counted in block gas."
+     }
+    ],
+    "unidentified_interactions": [
+     "The order of the new end-of-block system call relative to the other request-contract system calls is not specified."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The contract address, EIP-7685 request type, runtime bytecode and deployment method are all TBD. Test cases and the reference implementation are also TBD. The pseudocode defines the intended behavior, but concrete gas usage, request ordering position and the activation/deployment method are unresolved.",
+    "affected_criteria": [
+     {
+      "criterion": "new_fork_activation_mechanism",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "security_risks",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "What are the predeploy address and the request-type byte?",
+     "What is the runtime bytecode, and therefore the gas consumed by submissions, fee-getter calls and system calls?",
+     "Is the contract deployed by an ordinary pre-fork transaction or installed at the fork?",
+     "What is the order of the system call relative to the other request contracts' system calls?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The non-empty-calldata disable path cannot be reached under this EIP. Whether tests should still exercise it at the contract level (for example by calling directly as SYSTEM_ADDRESS) is unclear.",
+    "EIP-8282 describes its inhibitor as 'permanently' disabling the queue. EIP-8205 says the same mechanism can be re-enabled by a later system call with empty calldata.",
+    "Bytecode TBD prevents fixing expected gas values in fixtures."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 54190,
+  "type": "result",
+  "duration_ms": 113893,
+  "uuid": "1a937cc5-84a7-4e2a-96a9-1a0cea5ad443",
+  "ttft_stream_ms": 1308,
+  "time_to_request_ms": 510,
+  "first_content_frame_ms": 1308,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

@@ -1,0 +1,666 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: hegota
+snapshot_id: hegota-2026-10-08-6dac5e7
+eip_8081_list: CFI
+eip:
+  number: 8253
+  title: Bump nonce of zero-nonce storage accounts
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: EIP-8253 adds a one-time irregular state transition at the start of the Hegotá
+    fork block. Before any pre-execution system contract call or transaction, it sets the nonce to 1 for
+    a fixed list of 28 Mainnet accounts that have empty code, zero nonce and non-empty storage. Balance,
+    code hash and storage root stay the same, and the transition produces no transaction, receipt or log
+    and uses no gas. Because the bumped accounts now fail EIP-684's nonce == 0 precondition, later CREATE/CREATE2
+    calls to these addresses fail; the EIP offers this as an alternative to EIP-7610's runtime storage
+    check. When EIP-7928 is active, each targeted account must appear in the block access list (BAL) with
+    a single NonceChange [0, 1] and no other changes.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/packages/hegota-2026-10-08/eip-8253/manifest.yaml
+    manifest_sha256: d5354c3484e69db1d641e641c204cc52e71baf24e6502243c67c27cad2e5ecd8
+  cohort_snapshot:
+    snapshot_id: hegota-2026-10-08-6dac5e7
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/cohort.yaml
+    manifest_sha256: 6fa7b2fb6b0fcd2304a354e17b8952099a5e6e39707d7a136bc1e595ca1c96da
+    pulled_at: '2026-10-08T09:12:50Z'
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    committed_at: '2026-10-07T22:23:55Z'
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+    eip_8081_list: CFI
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    path: EIPS/eip-8253.md
+    committed_at: '2026-10-07T22:23:55Z'
+    git_blob_sha: 1c8c02121c7fdb8fc53a06491de530fd7b76ac60
+    content_sha256: 4a26740655d1843335233a41dee7bbad2fef148346a46494bb2abae5919c5264
+    immutable_url: https://github.com/ethereum/EIPs/blob/6dac5e74918b54511298fdbff79650e8f8d27d78/EIPS/eip-8253.md
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  assessment_contract: &id001
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  session_prompt: *id001
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:59:03.794451Z'
+    session_id: assessment-run-9bb9b445-74c8-4282-b833-445fd9b00d5e
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-161.md
+  - supporting/eip-684.md
+  - supporting/eip-2935.md
+  - supporting/eip-4788.md
+  - supporting/eip-7002.md
+  - supporting/eip-7251.md
+  - supporting/eip-7523.md
+  - supporting/eip-7610.md
+  - supporting/eip-7928.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 4422ffc0b45c875557049ffd87c1190bc57b19e78098584549dfdb652b3e8bb2
+    schema_sha256: e25448a638676134d15f255dc7316a81ebd19d8414de65f4603c0d14c223d22e
+    started_at: '2026-10-08T09:59:03.794451Z'
+    finished_at: '2026-10-08T10:00:53.026387Z'
+    duration_ms: 107103
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 78513
+      cache_read_input_tokens: 0
+      output_tokens: 11960
+      output_tokens_details:
+        thinking_tokens: 4651
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 78513
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 11960
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 78513
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 78513
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 11960
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 78513
+        webSearchRequests: 0
+        costUSD: 0.867312
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 4651
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.867312
+  assessor_raw_output:
+    path: prospective/outputs/raw/hegota-2026-10-08/eip-8253.json
+    content_sha256: a51c83a934db05ef79610fc11e71e53b31a99ce8d3a9fc50ea6569e08a6c591b
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "consumes no gas"
+    summary: The transition is gas-free and does not change any execution-gas rule.
+  - source: eip.md
+    locator: Test Cases — "CALL unchanged"
+    summary: CALL to A still does not charge new-account gas; existing gas rules are untouched.
+  rationale: No execution-gas charging, metering or settlement rule changes. Level 0.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition
+    summary: The transition is a block-level pre-execution step, not an instruction. No opcode's access
+      or gas-charge sequence changes.
+  - source: eip.md
+    locator: Interaction with EIP-7928
+    summary: BAL entries are recorded at index 0 for the transition. This adds entries but does not change
+      what counts as a recordable access for opcodes.
+  rationale: No instruction's state-access or gas-charge ordering changes. The BAL recording is a non-opcode
+    block-level change and is covered under cross-EIP interactions.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Nothing in the specification touches blob gas.
+  rationale: No blob-gas accounting change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "consumes no gas"
+    summary: The state mutation is not charged and adds no state-gas mechanism.
+  rationale: No state-gas accounting change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No refund mechanism is defined.
+  rationale: No new refund.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition
+    summary: Only listed accounts are modified, and only at the fork block. CREATE/CALL rules stay the
+      same.
+  - source: eip.md
+    locator: Application to non-Mainnet chains
+    summary: Chains that never had such accounts end up with an empty list and MAY ignore the EIP, so
+      ordinary test chains are expected to be unaffected.
+  - source: supporting/eip-7610.md
+    locator: Test Cases
+    summary: Existing tests deploy to targets with non-empty storage. This EIP does not change their rule,
+      because it does not alter EIP-684 semantics for arbitrary addresses.
+  rationale: Baseline tests use arbitrary addresses and do not run the irregular transition, so their
+    inputs and expected results do not change. Level 0.
+  confidence: medium
+  uncertainty_note: If clients apply the Mainnet list on test chains, fork-transition tests into Hegotá
+    would see changed post-states or created accounts. That would require rework across transition tests.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "produces no transaction, receipt, or log"
+    summary: No new log, receipt or header output is produced.
+  rationale: No new output that baseline tests would need to assert.
+  confidence: medium
+  uncertainty_note: If the Mainnet list applied to test chains, fork-block BAL entries would appear in
+    every transition test.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Application to non-Mainnet chains — "Other chains have to generate the list for their own
+      state"
+    summary: The account list depends on the chain. Test chains need their own list to exercise the transition.
+  - source: eip.md
+    locator: Test Cases — "Tested as the first transaction of the fork block"
+    summary: Tests must run the fork-block transition with targeted accounts in the pre-state.
+  rationale: 'To test the feature on non-Mainnet fixtures, the transition tool most plausibly needs one
+    new input: the per-chain targeted-account list. Fork-transition configuration already exists. Level
+    1.'
+  confidence: low
+  uncertainty_note: If clients hard-code the Mainnet list and tests place those addresses in the pre-state,
+    no interface change is needed (level 0).
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Test Cases
+    summary: Tests need fork-block transition fixtures with targeted accounts in the pre-state, post-fork-block
+      state checks, and BAL index-0 nonce-change expectations.
+  - source: eip.md
+    locator: Interaction with EIP-7928
+    summary: The BAL must contain a non-system-call NonceChange at index 0.
+  rationale: 'Existing transition-fork and BAL expectation primitives need a local extension: an irregular
+    state transition at the fork block with a configurable or fixed account list. No shared new abstraction
+    is required.'
+  confidence: medium
+  uncertainty_note: If the framework must model chain-specific irregular-transition lists as a new fork-config
+    abstraction, this could be level 2.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Mainnet account list — "The slot information is not used by the state transition"
+    summary: The keccak hashes in the list are supporting information for verification and are not part
+      of a new validation rule.
+  rationale: No cryptographic rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: State transition — "At the start of the fork block"
+    summary: The transition applies exactly once, at the fork block, and before system calls and transactions.
+  - source: eip.md
+    locator: Test Cases — items 2 and 4
+    summary: CREATE before and after the fork, and non-targeted accounts, give different outcomes.
+  rationale: 'There is one boundary-sensitive mechanism: activation at the fork block (pre-fork, fork
+    block, post-fork; listed vs non-listed accounts). Level 1.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition
+    summary: The change is a state mutation. No block RLP decoding or structural validation changes.
+  rationale: This is an execution-rule change only.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API change. The BAL field is inherited from EIP-7928.
+  rationale: No Engine API change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition
+    summary: No contract is deployed.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "before any pre-execution system contract calls"
+    summary: The transition is ordered before system calls but does not touch their state or rules.
+  rationale: System contracts and the calls around them are unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instruction is defined.
+  rationale: None added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility — "now reverts under EIP-684 (because nonce != 0)"
+    summary: CREATE/CREATE2 semantics are unchanged. Only the target account's state changes.
+  rationale: Instruction semantics do not change; the different outcome comes from changed state under
+    unchanged EIP-684 rules.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is added.
+  rationale: None added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is changed.
+  rationale: None modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Interaction with EIP-7928
+    summary: The transition uses the existing AccountChanges/NonceChange schema. Only new values are added.
+  rationale: No schema or codec change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: State transition — "produces no transaction"
+    summary: No transaction envelope is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Test Cases — "CREATE reverts"
+    summary: A creation to a bumped account fails during execution under the existing EIP-684 rule. This
+      is not a validity change.
+  rationale: Transaction eligibility rules are unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header or block field is added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: State transition — "At the start of the fork block ... The nonce of A MUST be set to 1"
+    summary: This is a one-time irregular mutation of persistent account state at activation.
+  - source: eip.md
+    locator: Reference Implementation — apply_irregular_state_transition
+    summary: The transition is separate from ordinary post-fork processing.
+  rationale: 'A one-time activation-specific migration of pre-fork state: setting nonces for listed accounts
+    at the fork block. Level 3.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — "only needs 28 nonce bumps"
+    summary: The one-time work is trivial and bounded.
+  rationale: No performance validation is needed.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations — "Both an omission and a spurious entry are consensus-relevant"
+    summary: List correctness is a consensus-critical, locally checkable condition.
+  - source: eip.md
+    locator: Abstract
+    summary: The transition defuses the CREATE collision risk with storage by making the accounts fail
+      EIP-684's nonce check.
+  rationale: 'The security conditions are local: list correctness, and CREATE to bumped accounts failing.
+    They can be checked without changing other components'' assumptions. Level 1.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: State transition / Reference Implementation — state.set_nonce(entry.address, 1)
+    summary: 'The nonce is set unconditionally. The spec does not say what happens if a listed account
+      does not exist, or no longer matches the predicate (e.g., in a test or non-Mainnet state): create
+      it, or skip it.'
+  - source: eip.md
+    locator: Application to non-Mainnet chains — "Chains forked from Mainnet ... can apply the same list
+      ... MAY ignore"
+    summary: Which list applies to a given chain (including test chains with chain ID 1) is permissive
+      and not consensus-fixed, so fixture expectations can differ between clients.
+  rationale: 'There are localized competing outcomes: whether nonexistent listed accounts are created
+    with nonce 1, and which list (Mainnet, generated, or empty) clients apply on non-Mainnet or test chains.
+    Both must be agreed before expected results can be fixed. Level 2.'
+  confidence: medium
+  uncertainty_note: The referenced assets (targeted-accounts.json, methodology.md) are not supplied and
+    might clarify list handling.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Test Cases — "CREATE reverts"
+    summary: CREATE/CREATE2 to A must fail under EIP-684 after the fork and succeed before it; tested
+      in the fork block.
+  - source: eip.md
+    locator: Interaction with EIP-7928
+    summary: The BAL must encode a NonceChange at index 0, ordered before system calls, and must reproduce
+      the state root.
+  - source: supporting/eip-7928.md
+    locator: BlockAccessIndex Assignment
+    summary: Index 0 is otherwise defined for pre-execution system calls, so the transition's entries
+      share that index with them.
+  - source: supporting/eip-7523.md
+    locator: Specification — empty account definition
+    summary: An account with zero balance, zero nonce and no code is 'empty' whatever its storage, so
+      test pre-states must avoid zero balance.
+  rationale: Coordinated cases are needed with EIP-684 (creation outcome across the fork boundary) and
+    EIP-7928 (fork-block BAL index-0 NonceChange, merged with system-call entries and later transaction
+    accesses). Other EIPs need only local compatibility checks. Level 2.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 684
+  - 7928
+  - 7610
+  - 161
+  - 7523
+  - 2935
+  - 4788
+  - 7002
+  - 7251
+  unidentified_interactions: []
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 684
+  - 7928
+  interaction_details:
+  - eip: 684
+    interaction: coordinated_cases
+    cases: 'CREATE, CREATE2 and creation transactions targeting a listed account: they succeed (or fail
+      only under EIP-7610) before the fork, and fail with the nonce != 0 collision once the transition
+      runs. Includes the first transaction of the fork block.'
+  - eip: 7928
+    interaction: coordinated_cases
+    cases: 'Fork-block BAL contains, for each targeted account, a single NonceChange [0,1] alongside EIP-2935/4788
+      index-0 system-call entries. Also covers: lexicographic ordering with other accounts; a later transaction
+      reading or calling A (merged entry); and checking that the BAL reproduces the state root.'
+  - eip: 7610
+    interaction: local_compatibility_check
+    cases: If EIP-7610 is also active, CREATE to A still fails with the same observable result.
+  - eip: 161
+    interaction: local_compatibility_check
+    cases: A CALL to A after the fork charges no new-account gas and A is not deleted. Pre-bump zero-balance
+      shape is treated as empty.
+  - eip: 7523
+    interaction: local_compatibility_check
+    cases: Targeted pre-states must use non-zero balance, otherwise the account is an 'empty' account
+      and invalid post-merge.
+  - eip: 2935
+    interaction: local_compatibility_check
+    cases: The transition is ordered before the history system call. Their state does not overlap; check
+      that both appear correctly at BAL index 0.
+  - eip: 4788
+    interaction: local_compatibility_check
+    cases: Same ordering and BAL index-0 coexistence check as for EIP-2935.
+  - eip: 7002
+    interaction: local_compatibility_check
+    cases: Ordering is named in the spec, but the 7002 post-execution call is unaffected; sanity check
+      only.
+  - eip: 7251
+    interaction: local_compatibility_check
+    cases: Ordering is named in the spec, but the 7251 post-execution call is unaffected; sanity check
+      only.
+totals:
+  primary_score: 11
+  complexity_tier: low
+under_specification:
+  present: true
+  summary: The EIP sets nonces unconditionally from a list but does not define behavior when a listed
+    account is absent or does not match the predicate. It also leaves which list applies on non-Mainnet
+    or test chains permissive ('can apply', 'MAY ignore'). This affects how fixtures exercise the transition
+    and whether fork-transition tests see extra accounts.
+  affected_criteria:
+  - patterns_affecting_pre_existing_tests
+  - new_invariant_on_pre_existing_tests
+  - transition_tool_interface_changes
+  - new_test_framework_primitives
+  - unspecified_behavior_requiring_cross_client_consensus
+  criterion_ranges:
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: new_invariant_on_pre_existing_tests
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: transition_tool_interface_changes
+    minimum_score: 0
+    maximum_score: 1
+  - criterion: new_test_framework_primitives
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 1
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 9
+    maximum: 16
+  plausible_tiers:
+  - low
+  - medium
+  unresolved_questions:
+  - If a listed address does not exist in state at the fork block, is an account with nonce 1 created,
+    or is the entry skipped?
+  - If a listed account has code or a non-zero nonce on a given chain, is its nonce still set to 1?
+  - Which account list must clients apply on test networks and other non-Mainnet chains (including chain
+    ID 1 test fixtures), and how is it configured?
+  - If a fork-block transaction also accesses a targeted account, how should the BAL entry be described?
+    The spec says the other lists are 'empty', but a later transaction could add, e.g., storage_reads.
+notable_ambiguities:
+- The referenced assets (targeted-accounts.json, methodology.md, zero-nonce-matches.jsonl) are not supplied,
+  so list contents and how the list was constructed cannot be verified.
+- EIP-161/EIP-7523 define 'empty' without regard to storage. A test pre-state with zero balance for A
+  would be an invalid post-merge empty account, so Test Case 1's balance b must be non-zero.
+- Test Case 2 says that without this EIP, CREATE to A 'would succeed (under EIP-684 alone)'. Whether EIP-7610
+  is in the Amsterdam baseline is not established by the supplied documents.
+- EIP-7928 defines BAL index 0 for pre-execution system contract calls. The target extends index 0 to
+  an irregular transition that is not a system call.
+overall_confidence: medium
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'

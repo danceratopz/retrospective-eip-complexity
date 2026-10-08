@@ -1,0 +1,644 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: hegota
+snapshot_id: hegota-2026-10-08-6dac5e7
+eip_8081_list: PFI
+eip:
+  number: 7709
+  title: Read BLOCKHASH from Storage and Update Cost
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: EIP-7709 changes how BLOCKHASH (0x40) resolves in-window lookups. From the fork
+    block onward, a lookup for one of the last 256 ancestors is treated as an SLOAD of slot `arg % 8191`
+    at the EIP-2935 HISTORY_STORAGE_ADDRESS. The opcode then charges the cold or warm SLOAD cost on top
+    of the BLOCKHASH base cost, warms the slot, and applies any state-access recording the active fork
+    requires. Out-of-window and future arguments still return 0 with no extra effects, and the return-value
+    semantics are declared unchanged. Clients may resolve the value by direct SLOAD, by a non-system `get`
+    call (whose execution gas is not charged) or from memory. The EIP assumes EIP-2935 was active at least
+    256 blocks earlier, or at genesis.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/packages/hegota-2026-10-08/eip-7709/manifest.yaml
+    manifest_sha256: b3df9fc76a596f95df4bb4b14d2706fc018d91c367e37343bf4a921b3d6b336f
+  cohort_snapshot:
+    snapshot_id: hegota-2026-10-08-6dac5e7
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/cohort.yaml
+    manifest_sha256: 6fa7b2fb6b0fcd2304a354e17b8952099a5e6e39707d7a136bc1e595ca1c96da
+    pulled_at: '2026-10-08T09:12:50Z'
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    committed_at: '2026-10-07T22:23:55Z'
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+    eip_8081_list: PFI
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    path: EIPS/eip-7709.md
+    committed_at: '2026-10-07T22:23:55Z'
+    git_blob_sha: 0c7c4c625efdd4e0a8932f38d005c39463284cf1
+    content_sha256: ed806dda2e43f8c887e52a89988dbe7354a8dfd305587955e09b6254994716ea
+    immutable_url: https://github.com/ethereum/EIPs/blob/6dac5e74918b54511298fdbff79650e8f8d27d78/EIPS/eip-7709.md
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  assessment_contract: &id001
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  session_prompt: *id001
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:51:34.670170Z'
+    session_id: assessment-run-f85de760-25b0-4864-8f3e-5bc4f00dc4ba
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2935.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: d1dd697d002e65f751247d715cb065b29a96be50005939cb2f30d76add3d9c98
+    schema_sha256: 7538242fc46550dc8bd9d0309915a78b9c4cff6da36e847d4a8e2b959a0def25
+    started_at: '2026-10-08T09:51:34.670170Z'
+    finished_at: '2026-10-08T09:53:21.736622Z'
+    duration_ms: 105083
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 29763
+      cache_read_input_tokens: 0
+      output_tokens: 11882
+      output_tokens_details:
+        thinking_tokens: 4285
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 29763
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 11882
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 29763
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 29763
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 11882
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 29763
+        webSearchRequests: 0
+        costUSD: 0.47575200000000006
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 4285
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.47575200000000006
+  assessor_raw_output:
+    path: prospective/outputs/raw/hegota-2026-10-08/eip-7709.json
+    content_sha256: 9dc5801be938ef673d33474e77bd2e29e50d37bf40fd5015e1f66b8381da8b32
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas costs
+    summary: In-window BLOCKHASH charges the corresponding SLOAD cold/warm cost for slot arg % HISTORY_SERVE_WINDOW
+      in addition to the base cost.
+  - source: eip.md
+    locator: Reading from the System contract
+    summary: System-contract execution gas is not charged even if resolved via a call; only the SLOAD
+      effect applies.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Significant increase in the cost of in-window BLOCKHASH queries.
+  rationale: An existing opcode's gas rule changes from a constant cost to a cost that depends on access
+    state. It reuses the existing cold/warm SLOAD accounting and adds no new accounting mechanism, so
+    this is level 1.
+  confidence: medium
+  uncertainty_note: Treating BLOCKHASH's move to access-dependent gas as a new charging site for an existing
+    mechanism rather than a new mechanism is a judgement call. The warming of the account address is also
+    unspecified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — "performs an sload on arg % HISTORY_SERVE_WINDOW including gas charges, warming
+      effects as well as state-access recording"
+    summary: BLOCKHASH now performs a storage access with gas charging and state-access recording, but
+      only after the window check.
+  - source: eip.md
+    locator: Test Cases — "returns 0 without applying additional storage access effects"
+    summary: Out-of-window calls must not record an access or warm the slot.
+  rationale: Exactly one existing opcode, BLOCKHASH, gains a storage access whose gas charge and access
+    recording must be ordered (window check, then charge and access). No general rule for an opcode class
+    changes, so this is level 1.
+  confidence: medium
+  uncertainty_note: 'Two points are unstated: the order of base-gas and SLOAD-gas checks relative to recording
+    on out-of-gas, and whether the history account itself is recorded or warmed. This could support level
+    2 if treated as a new state-accessing operation.'
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only BLOCKHASH resolution and gas are affected; blob gas is not mentioned.
+  rationale: No blob-gas rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas costs
+    summary: Only SLOAD-style access charges are applied; no state writes or state-gas accounting.
+  rationale: Cold/warm access charges belong under GAS. There are no state-write accounting changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas costs
+    summary: No refund mechanism is introduced.
+  rationale: No new refund.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility — "significant increase in the cost of in-window BLOCKHASH queries"
+    summary: Baseline BLOCKHASH gas expectations change for all in-window lookups.
+  - source: eip.md
+    locator: Specification — "return state.load_slot(HISTORY_STORAGE_ADDRESS, arg % HISTORY_SERVE_WINDOW)"
+    summary: Returned values now come from history-contract storage, so test pre-states and environment
+      block hashes must be consistent with that storage. Access-list expectations gain entries.
+  rationale: 'Ordinary cases throughout the BLOCKHASH family need new gas expectations and new access-recording
+    expectations. Localized cases in other families also need rework: EIP-2935 direct-call tests that
+    combine with BLOCKHASH (warm slot) and state tests whose environment block hashes must match history
+    storage. There is no common rewrite across distinct families, so this is level 2.'
+  confidence: medium
+  uncertainty_note: How many baseline fixtures use BLOCKHASH incidentally with tight gas or access-list
+    expectations is not measurable without the supplied suite.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "Any state-access recording required by the active fork"
+    summary: Recording uses the active fork's existing mechanism; extra entries are changed expected values,
+      not a new output.
+  rationale: No new output field or commitment is introduced. Additional access-recording entries are
+    rework of existing expectations and are counted under PAT.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Resolution reads existing state; no new inputs or outputs are defined.
+  rationale: No interface field or mechanism change is required. Values come from pre-state storage that
+    the tool already receives.
+  confidence: medium
+  uncertainty_note: Whether existing environment block-hash inputs must be reconciled with storage is
+    a fixture-consistency issue, not an interface change. No tool evidence was supplied.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Specification — clients MAY do SLOAD, system call, or serve from memory
+    summary: Fixtures must keep history storage consistent with chain block hashes so that all resolution
+      methods agree.
+  - source: eip.md
+    locator: Gas costs
+    summary: BLOCKHASH gas becomes cold/warm dependent.
+  rationale: 'Local extensions are needed: an access-dependent BLOCKHASH gas calculation in the fork gas
+    model, and helpers to keep pre-state history storage aligned with environment block hashes. No new
+    abstraction is required, so this is level 1.'
+  confidence: medium
+  uncertainty_note: This could be 0 if existing gas-calculation helpers already parameterize access state
+    per opcode.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No hashing or verification rule changes; block hashes are read from storage.
+  rationale: No cryptographic change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: 'Specification — "if arg >= block.number or (arg + BLOCKHASH_SERVE_WINDOW) < block.number:
+      return 0"'
+    summary: The window boundary now determines whether SLOAD gas and access effects apply.
+  - source: eip.md
+    locator: Activation
+    summary: Correctness depends on EIP-2935 being active at least 256 blocks earlier, or at genesis.
+  - source: eip.md
+    locator: Gas costs — "HISTORY_SERVE_WINDOW and BLOCKHASH_SERVE_WINDOW are different"
+    summary: The slot is computed modulo 8191 while the window is 256, which creates a ring-buffer wrap
+      case.
+  rationale: 'Several boundary-sensitive mechanisms are involved: the window boundary that gates the new
+    charge and access (combined with cold/warm), the activation-distance boundary relative to EIP-2935,
+    and slot mapping across the 8191 ring-buffer wrap. Their dimensions can largely be tested independently,
+    so there is no elevated matrix and this is level 2.'
+  confidence: medium
+  uncertainty_note: Handling of arguments larger than uint64 (the pseudocode types arg as uint64) is an
+    additional implicit edge.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block decoding or structural validation changes.
+  rationale: Only an execution rule changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API changes are mentioned.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — HISTORY_STORAGE_ADDRESS
+    summary: Reuses the existing EIP-2935 contract.
+  rationale: No new system contract.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Reading from the System contract
+    summary: BLOCKHASH reads EIP-2935 storage without running contract code; a direct call still follows
+      normal execution.
+  - source: supporting/eip-2935.md
+    locator: Gas costs — "first call to the contract will pay for warming up the account and storage slots"
+    summary: The baseline warm/cold assumptions for direct contract calls change once BLOCKHASH can warm
+      slots.
+  - source: eip.md
+    locator: Backwards Compatibility — "system contract would not have saved the required history"
+    summary: BLOCKHASH correctness now depends on the state of the contract's storage.
+  rationale: The contract's code and rules are unchanged. However, opcode semantics now depend on its
+    storage (a new state assumption), and BLOCKHASH warming changes the gas outcomes of later direct calls
+    (an interaction). This goes beyond one local convention, so this is level 2.
+  confidence: medium
+  uncertainty_note: Whether the contract account itself is warmed is unspecified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: Only the existing BLOCKHASH opcode is updated.
+  rationale: No new opcode.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification — "The BLOCKHASH opcode semantics remains the same as before."
+    summary: Return values and stack behaviour are declared unchanged; only gas and access effects change.
+  - source: eip.md
+    locator: Backwards Compatibility — "does not change the return-value semantics"
+    summary: Explicitly confirms that return values are preserved.
+  rationale: The changes are gas and access effects only, which the rubric excludes from this criterion.
+  confidence: medium
+  uncertainty_note: If storage diverges from chain history (activation fewer than 256 blocks after EIP-2935,
+    or a missing contract), storage-based resolution would change return values. The text acknowledges
+    this as a breaking case but declares semantics unchanged.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile changes.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No serialized schema changes.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction type is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only opcode execution gas changes; no intrinsic gas or validity rule changes.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header fields are added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Activation
+    summary: Assumes EIP-2935 was activated earlier; no migration or state installation at the fork.
+  rationale: The change is rule selection at the fork timestamp only, with no one-time state transition.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Rationale — "updated gas cost matches the accessed resource"
+    summary: Pricing rises to match SLOAD, so the opcode's worst-case throughput falls.
+  rationale: Gas rises to standard SLOAD pricing. This reduces the opcode's throughput and adds no workload
+    under-priced relative to existing SLOAD assumptions, so no extra performance validation is established.
+  confidence: medium
+  uncertainty_note: Clients that switch to trie-backed resolution may want a sanity benchmark, which could
+    arguably justify level 1.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: No security considerations beyond those of EIP-2935 are stated.
+  - source: eip.md
+    locator: Specification — clients MAY choose resolution method
+    summary: Different resolution paths must yield identical values and effects, or a consensus split
+      results.
+  rationale: The new condition is that the BLOCKHASH value and effects agree across resolution methods
+    and match history storage. This can be checked locally, so this is level 1.
+  confidence: medium
+  uncertainty_note: Misconfigured networks where history storage diverges could make this a cross-component
+    consensus issue (level 2).
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Specification — "SLOAD after effects on the slot (warming the slot)"
+    summary: The text does not say whether the HISTORY_STORAGE_ADDRESS account is warmed or recorded,
+      which affects later CALL/BALANCE costs on that address.
+  - source: eip.md
+    locator: Specification — "clients MAY choose to either"
+    summary: Allowed resolution methods give different values when storage is inconsistent with history
+      (activation fewer than 256 blocks after EIP-2935, or the contract absent), and no canonical outcome
+      is stated beyond the pseudocode.
+  - source: eip.md
+    locator: 'Specification — "def resolve_blockhash(block: Block, state: State, arg: uint64)"'
+    summary: The out-of-gas ordering between the base charge and the SLOAD charge, and access recording
+      on failure, are unspecified.
+  rationale: 'Several localized details have competing plausible outcomes that clients must agree on before
+    expected gas and access results can be fixed: account warming, out-of-gas ordering and recording,
+    and inconsistent-storage resolution. This is level 2.'
+  confidence: medium
+  uncertainty_note: The active fork's SLOAD definition might resolve some of these by analogy, but that
+    definition was not supplied.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Test Cases — "If the EIP-2935 contract is called directly ..."
+    summary: Direct calls to the contract must keep normal semantics alongside BLOCKHASH effects.
+  - source: supporting/eip-2935.md
+    locator: Gas costs
+    summary: The first call to the contract pays for warming the account and slots, which interacts with
+      slots BLOCKHASH has already warmed.
+  - source: eip.md
+    locator: Activation
+    summary: Activation spacing relative to EIP-2935 must be tested.
+  rationale: Coordinated cases with EIP-2935 are needed. These cover BLOCKHASH followed by a direct `get`
+    call (and the reverse) for warm/cold slot and account gas, reverted-frame warming, consistency between
+    the system call's set and BLOCKHASH reads, and activation spacing. The active fork's state-access
+    recording is also involved. This is level 2.
+  confidence: medium
+  uncertainty_note: The access-recording and warm/cold EIPs are referenced only implicitly, not by number.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 2935
+  unidentified_interactions:
+  - The active fork's state-access recording (block-level access list) must include the history slot read
+    by in-window BLOCKHASH and exclude out-of-window calls.
+  - Cold/warm storage-access accounting (the EIP-2929-style accessed-storage set), cited via EIP-2935,
+    governs BLOCKHASH gas and warming.
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 2935
+  interaction_details:
+  - eip: 2935
+    interaction: coordinated_cases
+    cases: BLOCKHASH then a direct get call to HISTORY_STORAGE_ADDRESS in the same transaction (slot warm,
+      account warmth unspecified), and the reverse order; warming rollback in reverted frames; agreement
+      between system-call set writes and BLOCKHASH reads, including ring-buffer slot wrap; EIP-7709 activated
+      at genesis together with EIP-2935 versus at least 256 blocks after it; behaviour when history is
+      incomplete.
+totals:
+  primary_score: 14
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: 'The EIP says BLOCKHASH applies the full SLOAD effects but leaves several points open: whether
+    the HISTORY_STORAGE_ADDRESS account (not just the slot) is warmed or recorded; the out-of-gas ordering
+    between base and SLOAD charges and whether the access is recorded on failure; and which result is
+    canonical when client-chosen resolution methods diverge because history storage is incomplete or the
+    contract is absent.'
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - modified_system_contracts
+  - modified_opcodes
+  - security_risks
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: state_access_ordering_within_opcode_execution
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: modified_system_contracts
+    minimum_score: 1
+    maximum_score: 2
+  - criterion: modified_opcodes
+    minimum_score: 0
+    maximum_score: 3
+  - criterion: security_risks
+    minimum_score: 1
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 13
+    maximum: 20
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - Does in-window BLOCKHASH warm or record the HISTORY_STORAGE_ADDRESS account address, changing the
+    cold-account cost of a later CALL/BALANCE to it?
+  - If the frame lacks gas for the SLOAD component, is the slot still recorded in the fork's state-access
+    record?
+  - When history storage disagrees with actual chain hashes (late EIP-2935 activation or missing contract),
+    must clients return the storage value per the pseudocode, or the true hash?
+  - How should arguments wider than uint64 be handled, given the pseudocode's uint64 typing?
+notable_ambiguities:
+- The 'MAY serve from memory' option is only equivalent to the normative pseudocode if history storage
+  is complete and consistent; test fixtures (especially state tests with explicit environment block hashes)
+  must keep these aligned.
+- 'Activation spacing: the text acknowledges a breaking change if fewer than 256 blocks pass between EIP-2935
+  and this EIP, but gives no rule for that case.'
+- The base BLOCKHASH cost is not restated; the EIP only says the SLOAD cost is added to it.
+overall_confidence: medium
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'

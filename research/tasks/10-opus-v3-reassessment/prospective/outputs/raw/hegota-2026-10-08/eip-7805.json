@@ -1,0 +1,677 @@
+{
+ "case": "hegota/7805",
+ "run_id": "assessment-run-a3879a7c-31bf-4c92-a314-980dbf51f175",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:52:33.750467Z",
+ "finished_at": "2026-10-08T09:54:34.631323Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "2f50ef56c5ca83c2e548140338951e74e8604d8c6f564e87e7a6d77e1d98132b",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "c8c0bb3c98edbacec24a5fb32d680c1692e7f581c8b83f6fd3660ac36fe022fa",
+ "output": {
+  "duration_api_ms": 118481,
+  "stop_reason": "tool_use",
+  "session_id": "dfcba04e-98e0-44fc-b128-42967c20de20",
+  "total_cost_usd": 0.52528,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 32094,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 13426,
+   "output_tokens_details": {
+    "thinking_tokens": 4726
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 32094,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 13426,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 32094,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 32094
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 13426,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 32094,
+    "webSearchRequests": 0,
+    "costUSD": 0.52528,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 4726,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-7805 (FOCIL) adds a per-slot committee of 16 validators. Each member gossips a signed inclusion list (IL) of up to 8 KiB of RLP-encoded transactions taken from its mempool view. On the execution side, `engine_newPayload` gains a post-execution check. For every IL transaction not already in the block, the EL checks whether `T.gas <= gas_left` and whether the transaction passes nonce and balance checks against the post-block state. If any such transaction would be valid, the EL returns a new `INCLUSION_LIST_UNSATISFIED` status. The block stays valid, but attesters will not vote for it. The Engine API also gains `engine_getInclusionListV1`, an IL field in `forkchoiceUpdated` `payloadAttributes` for payload building, and an IL-transactions parameter in `newPayload`. There are no EVM, gas, header, transaction-type or system-contract changes; the remaining changes (committee, gossip, equivocation handling and fork choice) are consensus-layer only.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"Let `gas_left` be the gas remaining after execution of B.\\\"\",\"summary\":\"gas_left is only read to decide IL satisfaction; no charging, metering or settlement rule changes.\"}],\"rationale\":\"Remaining block gas is used only as an input to the IL-satisfaction check. No execution-gas accounting rule or parameter changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"The new check runs after all payload transactions have executed and does not touch opcode execution.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes, and no new state-accessing operation is introduced in the EVM.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"checking the nonce and balance of `T.origin`\\\"\",\"summary\":\"Only nonce and balance checks are applied to IL transactions; blob gas pricing and limits are untouched.\"}],\"rationale\":\"There are no blob-gas charging, pricing or limit changes. How blob transactions in ILs are treated is a validity or specification question, not accounting.\",\"confidence\":\"high\",\"uncertainty_note\":\"The text does not say whether the balance check includes blob fees or whether the gas check covers blob gas. That is recorded under UNSP, not here.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No state-write cost or state-gas rule is defined.\"}],\"rationale\":\"State-gas accounting does not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Core Properties — \\\"No incentive mechanism\\\"\",\"summary\":\"No rewards or refunds are introduced; no refund rule appears in the specification.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Engine API Changes — \\\"Modify `engine_newPayload` endpoint to include a parameter for transactions in ILs\\\"\",\"summary\":\"Every newPayload call in the target fork carries a new IL parameter.\"},{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"Although the block is valid\\\"\",\"summary\":\"Block validity and execution results are unchanged, so expected state and validity outcomes of baseline tests stay the same.\"}],\"rationale\":\"Baseline expected results do not change. Only the engine-API form of baseline blockchain tests needs a changed input: an empty or absent IL passed to the new newPayload variant. That is confined to one family (engine newPayload invocation) and is mechanical.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the framework injects an empty IL automatically, no per-test rework is needed (level 0).\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"With no IL supplied, the only new output (INCLUSION_LIST_UNSATISFIED) cannot occur. No header, receipt or log output is added.\"}],\"rationale\":\"Baseline tests gain no new output to assert. IL-satisfaction status matters only for tests that supply ILs, which are new feature tests.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"After all of the transactions in the payload have been executed, we check whether any transaction from ILs...\\\"\",\"summary\":\"A post-execution evaluation phase over externally supplied IL transactions against the post-state, needed to derive expected IL-satisfaction outcomes.\"},{\"source\":\"eip.md\",\"locator\":\"Engine API Changes\",\"summary\":\"IL transactions are a new input to payload validation and building.\"}],\"rationale\":\"To fill IL-satisfaction expectations, the transition tool must accept IL transactions and run a new post-block check: is each transaction present, does `T.gas` fit in `gas_left`, does it pass nonce/balance checks. It must also report the result. That is a new mechanism with at least one new input field. Level 2 is the best-supported score, but adding the output status as a second field would reach level 3.\",\"confidence\":\"low\",\"uncertainty_note\":\"No transition-tool evidence was supplied. Expected status could instead be hand-specified (lower), or both an IL input and a satisfaction output could be required (level 3).\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Engine API Changes — \\\"If the IL is not satisfied an `INCLUSION_LIST_UNSATISFIED` status must be returned.\\\"\",\"summary\":\"A third newPayload outcome, distinct from VALID and INVALID, must be expressible and checked.\"},{\"source\":\"eip.md\",\"locator\":\"Engine API Changes — \\\"`payloadAttributes` is extended to include the IL\\\"\",\"summary\":\"Payload-building tests must supply ILs and check that the built payload includes valid IL transactions.\"},{\"source\":\"eip.md\",\"locator\":\"IL Building\",\"summary\":\"engine_getInclusionListV1 draws on the mempool, which needs a mempool-driven test setup.\"}],\"rationale\":\"Testing needs new abstractions: an IL attachment modifier for blocks/newPayload, a new 'valid but IL-unsatisfied' expectation, and payload-building or getInclusionList tests that depend on mempool state. These are new expectation and construction abstractions within the target's suite (level 2). They do not clearly change how unrelated families are built or checked.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the engine fixture format must change for all target-fork fixtures, or a shared mempool/payload-building facility is required, this could reach level 3.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"CL P2P Validation Rules — \\\"the only nontrivial check performed on IL propagation is signature verification\\\"\",\"summary\":\"The new IL signatures are BLS signatures checked by the CL. On the EL, sender recovery of transactions is unchanged.\"},{\"source\":\"eip.md\",\"locator\":\"New containers — SignedInclusionList\",\"summary\":\"The signed IL container is a CL object.\"}],\"rationale\":\"The EL does not execute any new or changed cryptographic verification, signing or hashing rule. IL signature verification is confined to the CL.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"If `T.gas` > `gas_left`, then jump to the next transaction\\\"\",\"summary\":\"Gas-fit boundary (T.gas equal to vs exceeding gas_left).\"},{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"Validate `T` against `S` by checking the nonce and balance of `T.origin`\\\"\",\"summary\":\"Nonce boundary (exact vs off by one) and balance boundary (exactly sufficient vs 1 wei short), both evaluated against the post-block state.\"},{\"source\":\"eip.md\",\"locator\":\"IL Building — \\\"maximum size of `MAX_BYTES_PER_INCLUSION_LIST = 8 KiB`\\\"\",\"summary\":\"Byte-size bound on ILs produced by the EL.\"},{\"source\":\"eip.md\",\"locator\":\"Payload Construction\",\"summary\":\"Dependencies between IL transactions (balance transfers, nonce chains) and in-block changes to sender nonce/balance alter the outcome.\"}],\"rationale\":\"Several boundary-sensitive mechanisms are introduced: gas-fit against `gas_left`, the post-state nonce check, the post-state balance check, and the 8 KiB IL size bound. The satisfaction outcome depends on interacting dimensions that cannot be tested independently. These are: whether the transaction is already in the block, remaining gas, sender nonce and balance as changed by in-block transactions, multiple IL transactions from the same sender, duplicates across ILs, and multiple ILs.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If gas-fit, nonce and balance are treated as separable conjunctive checks, level 2 would apply.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"Although the block is valid, the CL will not attest to it.\\\"\",\"summary\":\"IL satisfaction is not a block validity rule. The block's RLP and structural validation are unchanged.\"}],\"rationale\":\"There is no execution-block decoding or structural validation change. The IL check affects fork-choice attestation, not block import.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Engine API Changes — \\\"Add `engine_getInclusionListV1` endpoint\\\"\",\"summary\":\"New endpoint.\"},{\"source\":\"eip.md\",\"locator\":\"Engine API Changes — \\\"`payloadAttributes` is extended to include the IL\\\"\",\"summary\":\"New field in forkchoiceUpdated payloadAttributes.\"},{\"source\":\"eip.md\",\"locator\":\"Engine API Changes — \\\"Modify `engine_newPayload` ... include a parameter for transactions in ILs ... `INCLUSION_LIST_UNSATISFIED` status\\\"\",\"summary\":\"New newPayload parameter and new response-status rule.\"}],\"rationale\":\"Endpoint-level changes (a new method and a new newPayload response status) come together with multiple field changes (the payloadAttributes IL and the newPayload IL parameter).\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No protocol-designated contract is defined.\"}],\"rationale\":\"No system contract is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No existing system contract is referenced or changed.\"}],\"rationale\":\"No system-contract change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No EVM instruction is defined.\"}],\"rationale\":\"No new opcode.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction semantics change.\"}],\"rationale\":\"No opcode semantics or availability change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is defined.\"}],\"rationale\":\"No new precompile.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"No precompile change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Engine API Changes\",\"summary\":\"The payloadAttributes schema gains an IL member, and the newPayload parameter list gains IL transactions.\"},{\"source\":\"eip.md\",\"locator\":\"IL Building — \\\"for all of the RLP encoded transactions\\\"\",\"summary\":\"ILs are lists of RLP-encoded transactions exchanged over the Engine API (getInclusionList response).\"}],\"rationale\":\"Engine API serialized schemas change: a new IL field in payloadAttributes, a new IL-transactions parameter in newPayload, and a new response schema for getInclusionListV1.\",\"confidence\":\"high\",\"uncertainty_note\":\"Exact JSON field names and versions are not given in the supplied text.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new EIP-2718 transaction envelope is defined.\"}],\"rationale\":\"No new transaction type.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"Validate `T` against `S` by checking the nonce and balance of `T.origin`\\\"\",\"summary\":\"A new post-block validity evaluation of non-included transactions against the post-execution state; its result is consensus-relevant via fork choice.\"},{\"source\":\"eip.md\",\"locator\":\"Attesters — \\\"determining if any missing transactions are invalid when appended to the end of the payload\\\"\",\"summary\":\"Validity is judged as if the transaction were appended to the end of the payload.\"}],\"rationale\":\"Block inclusion validity is unchanged, but FOCIL adds a new fork-choice-relevant transaction-validity evaluation: nonce, balance and gas-fit of IL transactions against the post-block state. It needs dedicated cases built from block contents plus IL transactions. Existing validity sequencing can be reused for the nonce and balance checks themselves.\",\"confidence\":\"low\",\"uncertainty_note\":\"A strict reading (block validity unchanged) gives 0. If coordinated block/IL/state scenarios are judged to need restructured shared construction, it could be 3.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"ILs are passed via the Engine API and are not committed in the execution block or header.\"}],\"rationale\":\"No EL block-level or header member is added. The IL is an API-only input.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"A hard fork is needed for CL validation changes. No EL state migration or code installation is described.\"}],\"rationale\":\"No activation-specific EL state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer\",\"summary\":\"newPayload must decode and recover the sender of each IL transaction and read sender nonce and balance from the post-state, adding to validation latency.\"},{\"source\":\"eip.md\",\"locator\":\"Preset — IL_COMMITTEE_SIZE 16, MAX_BYTES_PER_INCLUSION_LIST 8192\",\"summary\":\"Bounds the workload: up to 16 × 8 KiB of IL transactions per slot.\"},{\"source\":\"eip.md\",\"locator\":\"Payload Construction — \\\"`O(n^2)`\\\"\",\"summary\":\"A naive payload update is quadratic; builders must update payloads under tight timing (t=11s).\"},{\"source\":\"eip.md\",\"locator\":\"Consensus Liveness\",\"summary\":\"Liveness depends on enough time to update the payload after the IL freeze.\"}],\"rationale\":\"Targeted integrated benchmarks are needed for two bounded interactions. The first is newPayload latency with maximum-size adversarial ILs (many distinct senders forcing cold state reads, invalid signatures). The second is payload-update time in forkchoiceUpdated with ILs under the slot deadline.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Coupling with attestation deadlines and mempool-driven IL building could justify level 3.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"CL P2P Validation Rules — \\\"ILs are allowed to contain any transactions—valid or invalid\\\"\",\"summary\":\"The EL receives untrusted, unvalidated transaction bytes through the Engine API.\"},{\"source\":\"eip.md\",\"locator\":\"Core Properties — Fork-choice enforced\",\"summary\":\"The EL's satisfaction result decides whether attesters vote, so divergent EL results across clients split fork choice.\"},{\"source\":\"eip.md\",\"locator\":\"Consensus Liveness\",\"summary\":\"Builders unable to satisfy ILs cannot produce canonical blocks.\"}],\"rationale\":\"A shared validation invariant now spans the EL newPayload check, the EL payload builder and CL fork choice. Clients must agree exactly on IL satisfaction for adversarially crafted ILs (malformed or undecodable transactions, edge nonce/balance cases, dependency chains, equivocation-filtered sets). Otherwise blocks are wrongly rejected or censorship is missed. This needs coordinated adversarial scenarios across components.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Could be argued as level 2 if the check is treated as a bounded EL/CL interaction.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"(i.e. nonce and balance checks pass)\\\"\",\"summary\":\"Only nonce and balance are named. The text does not say whether other validity rules apply (signature/chain ID, max fee vs base fee, intrinsic gas, blob transactions without sidecars, transaction-type rules) or how the balance requirement is computed.\"},{\"source\":\"eip.md\",\"locator\":\"Execution Layer — \\\"Check whether `T` is present in `B`\\\"\",\"summary\":\"The presence criterion (hash equality?) and the handling of undecodable or duplicate IL entries are unspecified.\"},{\"source\":\"eip.md\",\"locator\":\"Engine API Changes\",\"summary\":\"Parameters, schema and versioning of the endpoints are not given.\"}],\"rationale\":\"These are localized competing outcomes within the IL-satisfaction check. Clients could disagree on whether a transaction with insufficient max fee or too-low intrinsic gas, a blob transaction, or an undecodable entry makes the IL unsatisfied. Agreement is needed before expected statuses can be fixed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Linked consensus-spec or execution-API documents might resolve some of these but were not supplied.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Payload Construction — \\\"when the `balance` changes without a `nonce` increment (e.g., after an Account Abstraction (AA) transaction has interacted with that EOA)\\\"\",\"summary\":\"IL validity depends on account-abstraction-style balance changes from other transactions in the block.\"},{\"source\":\"eip.md\",\"locator\":\"CL P2P Validation Rules — \\\"ILs are allowed to contain any transactions\\\"\",\"summary\":\"Any baseline transaction type can appear in an IL, including types defined by other EIPs.\"},{\"source\":\"supporting/eip-7547.md\",\"locator\":\"Abstract\",\"summary\":\"EIP-7547 is a superseded forward-IL design that is only referenced for comparison; it is not part of the baseline.\"}],\"rationale\":\"Coordinated cases are needed where IL-transaction validity depends on behavior defined elsewhere. Examples: in-block account-abstraction or delegated-code transactions changing an IL sender's balance or nonce without the sender's own transaction, and IL transactions of other typed formats such as blob-carrying transactions. The supplied text does not name these EIPs. EIP-7547 is only a comparison design and needs no tests.\",\"confidence\":\"low\",\"uncertainty_note\":\"Interacting EIPs are inferred from unnumbered descriptions. If treated as local compatibility checks, the score would be 1.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[],\"unidentified_interactions\":[\"Account-abstraction transactions in the block that change an IL sender's balance (or nonce) without the sender's own transaction affect whether the missing IL transaction is valid against the post-state (Payload Construction section).\",\"ILs may contain any transaction; IL transactions of other typed formats (e.g. blob-carrying or authorization-carrying types in the baseline) need cases defining how the nonce/balance/gas-fit check applies to them.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The EL IL-satisfaction check is only described as 'nonce and balance checks'. The supplied text does not specify: the full validity predicate, how the balance requirement is computed, how presence in the block is determined, how undecodable or duplicate entries are handled, or the exact Engine API schemas and versions. The transition-tool and framework requirements are inferred.\",\"affected_criteria\":[{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":1,\"maximum_score\":3},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"new_or_modified_transaction_validity_mechanisms\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"performance_risks\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"cross_eip_interactions\",\"minimum_score\":1,\"maximum_score\":2}],\"unresolved_questions\":[\"Does 'balance check' mean value + gas_limit × max_fee_per_gas (plus blob fees), and against which base fee?\",\"Do signature, chain ID, max-fee-vs-base-fee, intrinsic-gas and type-specific rules apply when deciding whether a missing IL transaction is 'valid'?\",\"How are blob transactions (no sidecars) and undecodable or malformed entries in an IL treated?\",\"Is presence in B determined by transaction hash, and how are duplicates across ILs handled?\",\"Is the gas-fit check against execution gas only, or also blob gas?\",\"What are the exact parameters, field names and versions of engine_getInclusionListV1, the payloadAttributes IL field and the newPayload IL parameter?\"]},\"notable_ambiguities\":[\"IL satisfaction is not a block-validity rule; it is a separate newPayload status. This blurs whether it counts as transaction validity or syncing.\",\"The order in which IL transactions are evaluated, and the early-termination rule, could matter if implementations evaluate IL transactions with interdependent effects differently.\",\"EIP-7547 is a stagnant alternative design used only for comparison and is not part of the baseline.\",\"Builder-side payload update timing ('exact timings will be defined after running some tests/benchmarks') is left open.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-7805 (FOCIL) adds a per-slot committee of 16 validators. Each member gossips a signed inclusion list (IL) of up to 8 KiB of RLP-encoded transactions taken from its mempool view. On the execution side, `engine_newPayload` gains a post-execution check. For every IL transaction not already in the block, the EL checks whether `T.gas <= gas_left` and whether the transaction passes nonce and balance checks against the post-block state. If any such transaction would be valid, the EL returns a new `INCLUSION_LIST_UNSATISFIED` status. The block stays valid, but attesters will not vote for it. The Engine API also gains `engine_getInclusionListV1`, an IL field in `forkchoiceUpdated` `payloadAttributes` for payload building, and an IL-transactions parameter in `newPayload`. There are no EVM, gas, header, transaction-type or system-contract changes; the remaining changes (committee, gossip, equivocation handling and fork choice) are consensus-layer only.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"Let `gas_left` be the gas remaining after execution of B.\"",
+       "summary": "gas_left is only read to decide IL satisfaction; no charging, metering or settlement rule changes."
+      }
+     ],
+     "rationale": "Remaining block gas is used only as an input to the IL-satisfaction check. No execution-gas accounting rule or parameter changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "The new check runs after all payload transactions have executed and does not touch opcode execution."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes, and no new state-accessing operation is introduced in the EVM.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"checking the nonce and balance of `T.origin`\"",
+       "summary": "Only nonce and balance checks are applied to IL transactions; blob gas pricing and limits are untouched."
+      }
+     ],
+     "rationale": "There are no blob-gas charging, pricing or limit changes. How blob transactions in ILs are treated is a validity or specification question, not accounting.",
+     "confidence": "high",
+     "uncertainty_note": "The text does not say whether the balance check includes blob fees or whether the gas check covers blob gas. That is recorded under UNSP, not here.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No state-write cost or state-gas rule is defined."
+      }
+     ],
+     "rationale": "State-gas accounting does not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Core Properties — \"No incentive mechanism\"",
+       "summary": "No rewards or refunds are introduced; no refund rule appears in the specification."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes — \"Modify `engine_newPayload` endpoint to include a parameter for transactions in ILs\"",
+       "summary": "Every newPayload call in the target fork carries a new IL parameter."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"Although the block is valid\"",
+       "summary": "Block validity and execution results are unchanged, so expected state and validity outcomes of baseline tests stay the same."
+      }
+     ],
+     "rationale": "Baseline expected results do not change. Only the engine-API form of baseline blockchain tests needs a changed input: an empty or absent IL passed to the new newPayload variant. That is confined to one family (engine newPayload invocation) and is mechanical.",
+     "confidence": "medium",
+     "uncertainty_note": "If the framework injects an empty IL automatically, no per-test rework is needed (level 0).",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "With no IL supplied, the only new output (INCLUSION_LIST_UNSATISFIED) cannot occur. No header, receipt or log output is added."
+      }
+     ],
+     "rationale": "Baseline tests gain no new output to assert. IL-satisfaction status matters only for tests that supply ILs, which are new feature tests.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"After all of the transactions in the payload have been executed, we check whether any transaction from ILs...\"",
+       "summary": "A post-execution evaluation phase over externally supplied IL transactions against the post-state, needed to derive expected IL-satisfaction outcomes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes",
+       "summary": "IL transactions are a new input to payload validation and building."
+      }
+     ],
+     "rationale": "To fill IL-satisfaction expectations, the transition tool must accept IL transactions and run a new post-block check: is each transaction present, does `T.gas` fit in `gas_left`, does it pass nonce/balance checks. It must also report the result. That is a new mechanism with at least one new input field. Level 2 is the best-supported score, but adding the output status as a second field would reach level 3.",
+     "confidence": "low",
+     "uncertainty_note": "No transition-tool evidence was supplied. Expected status could instead be hand-specified (lower), or both an IL input and a satisfaction output could be required (level 3).",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes — \"If the IL is not satisfied an `INCLUSION_LIST_UNSATISFIED` status must be returned.\"",
+       "summary": "A third newPayload outcome, distinct from VALID and INVALID, must be expressible and checked."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes — \"`payloadAttributes` is extended to include the IL\"",
+       "summary": "Payload-building tests must supply ILs and check that the built payload includes valid IL transactions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "IL Building",
+       "summary": "engine_getInclusionListV1 draws on the mempool, which needs a mempool-driven test setup."
+      }
+     ],
+     "rationale": "Testing needs new abstractions: an IL attachment modifier for blocks/newPayload, a new 'valid but IL-unsatisfied' expectation, and payload-building or getInclusionList tests that depend on mempool state. These are new expectation and construction abstractions within the target's suite (level 2). They do not clearly change how unrelated families are built or checked.",
+     "confidence": "medium",
+     "uncertainty_note": "If the engine fixture format must change for all target-fork fixtures, or a shared mempool/payload-building facility is required, this could reach level 3.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "CL P2P Validation Rules — \"the only nontrivial check performed on IL propagation is signature verification\"",
+       "summary": "The new IL signatures are BLS signatures checked by the CL. On the EL, sender recovery of transactions is unchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "New containers — SignedInclusionList",
+       "summary": "The signed IL container is a CL object."
+      }
+     ],
+     "rationale": "The EL does not execute any new or changed cryptographic verification, signing or hashing rule. IL signature verification is confined to the CL.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"If `T.gas` > `gas_left`, then jump to the next transaction\"",
+       "summary": "Gas-fit boundary (T.gas equal to vs exceeding gas_left)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"Validate `T` against `S` by checking the nonce and balance of `T.origin`\"",
+       "summary": "Nonce boundary (exact vs off by one) and balance boundary (exactly sufficient vs 1 wei short), both evaluated against the post-block state."
+      },
+      {
+       "source": "eip.md",
+       "locator": "IL Building — \"maximum size of `MAX_BYTES_PER_INCLUSION_LIST = 8 KiB`\"",
+       "summary": "Byte-size bound on ILs produced by the EL."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Payload Construction",
+       "summary": "Dependencies between IL transactions (balance transfers, nonce chains) and in-block changes to sender nonce/balance alter the outcome."
+      }
+     ],
+     "rationale": "Several boundary-sensitive mechanisms are introduced: gas-fit against `gas_left`, the post-state nonce check, the post-state balance check, and the 8 KiB IL size bound. The satisfaction outcome depends on interacting dimensions that cannot be tested independently. These are: whether the transaction is already in the block, remaining gas, sender nonce and balance as changed by in-block transactions, multiple IL transactions from the same sender, duplicates across ILs, and multiple ILs.",
+     "confidence": "medium",
+     "uncertainty_note": "If gas-fit, nonce and balance are treated as separable conjunctive checks, level 2 would apply.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"Although the block is valid, the CL will not attest to it.\"",
+       "summary": "IL satisfaction is not a block validity rule. The block's RLP and structural validation are unchanged."
+      }
+     ],
+     "rationale": "There is no execution-block decoding or structural validation change. The IL check affects fork-choice attestation, not block import.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes — \"Add `engine_getInclusionListV1` endpoint\"",
+       "summary": "New endpoint."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes — \"`payloadAttributes` is extended to include the IL\"",
+       "summary": "New field in forkchoiceUpdated payloadAttributes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes — \"Modify `engine_newPayload` ... include a parameter for transactions in ILs ... `INCLUSION_LIST_UNSATISFIED` status\"",
+       "summary": "New newPayload parameter and new response-status rule."
+      }
+     ],
+     "rationale": "Endpoint-level changes (a new method and a new newPayload response status) come together with multiple field changes (the payloadAttributes IL and the newPayload IL parameter).",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No protocol-designated contract is defined."
+      }
+     ],
+     "rationale": "No system contract is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No existing system contract is referenced or changed."
+      }
+     ],
+     "rationale": "No system-contract change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No EVM instruction is defined."
+      }
+     ],
+     "rationale": "No new opcode.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction semantics change."
+      }
+     ],
+     "rationale": "No opcode semantics or availability change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is defined."
+      }
+     ],
+     "rationale": "No new precompile.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "No precompile change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes",
+       "summary": "The payloadAttributes schema gains an IL member, and the newPayload parameter list gains IL transactions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "IL Building — \"for all of the RLP encoded transactions\"",
+       "summary": "ILs are lists of RLP-encoded transactions exchanged over the Engine API (getInclusionList response)."
+      }
+     ],
+     "rationale": "Engine API serialized schemas change: a new IL field in payloadAttributes, a new IL-transactions parameter in newPayload, and a new response schema for getInclusionListV1.",
+     "confidence": "high",
+     "uncertainty_note": "Exact JSON field names and versions are not given in the supplied text.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new EIP-2718 transaction envelope is defined."
+      }
+     ],
+     "rationale": "No new transaction type.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"Validate `T` against `S` by checking the nonce and balance of `T.origin`\"",
+       "summary": "A new post-block validity evaluation of non-included transactions against the post-execution state; its result is consensus-relevant via fork choice."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Attesters — \"determining if any missing transactions are invalid when appended to the end of the payload\"",
+       "summary": "Validity is judged as if the transaction were appended to the end of the payload."
+      }
+     ],
+     "rationale": "Block inclusion validity is unchanged, but FOCIL adds a new fork-choice-relevant transaction-validity evaluation: nonce, balance and gas-fit of IL transactions against the post-block state. It needs dedicated cases built from block contents plus IL transactions. Existing validity sequencing can be reused for the nonce and balance checks themselves.",
+     "confidence": "low",
+     "uncertainty_note": "A strict reading (block validity unchanged) gives 0. If coordinated block/IL/state scenarios are judged to need restructured shared construction, it could be 3.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "ILs are passed via the Engine API and are not committed in the execution block or header."
+      }
+     ],
+     "rationale": "No EL block-level or header member is added. The IL is an API-only input.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "A hard fork is needed for CL validation changes. No EL state migration or code installation is described."
+      }
+     ],
+     "rationale": "No activation-specific EL state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer",
+       "summary": "newPayload must decode and recover the sender of each IL transaction and read sender nonce and balance from the post-state, adding to validation latency."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Preset — IL_COMMITTEE_SIZE 16, MAX_BYTES_PER_INCLUSION_LIST 8192",
+       "summary": "Bounds the workload: up to 16 × 8 KiB of IL transactions per slot."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Payload Construction — \"`O(n^2)`\"",
+       "summary": "A naive payload update is quadratic; builders must update payloads under tight timing (t=11s)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Consensus Liveness",
+       "summary": "Liveness depends on enough time to update the payload after the IL freeze."
+      }
+     ],
+     "rationale": "Targeted integrated benchmarks are needed for two bounded interactions. The first is newPayload latency with maximum-size adversarial ILs (many distinct senders forcing cold state reads, invalid signatures). The second is payload-update time in forkchoiceUpdated with ILs under the slot deadline.",
+     "confidence": "medium",
+     "uncertainty_note": "Coupling with attestation deadlines and mempool-driven IL building could justify level 3.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "CL P2P Validation Rules — \"ILs are allowed to contain any transactions—valid or invalid\"",
+       "summary": "The EL receives untrusted, unvalidated transaction bytes through the Engine API."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Core Properties — Fork-choice enforced",
+       "summary": "The EL's satisfaction result decides whether attesters vote, so divergent EL results across clients split fork choice."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Consensus Liveness",
+       "summary": "Builders unable to satisfy ILs cannot produce canonical blocks."
+      }
+     ],
+     "rationale": "A shared validation invariant now spans the EL newPayload check, the EL payload builder and CL fork choice. Clients must agree exactly on IL satisfaction for adversarially crafted ILs (malformed or undecodable transactions, edge nonce/balance cases, dependency chains, equivocation-filtered sets). Otherwise blocks are wrongly rejected or censorship is missed. This needs coordinated adversarial scenarios across components.",
+     "confidence": "medium",
+     "uncertainty_note": "Could be argued as level 2 if the check is treated as a bounded EL/CL interaction.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"(i.e. nonce and balance checks pass)\"",
+       "summary": "Only nonce and balance are named. The text does not say whether other validity rules apply (signature/chain ID, max fee vs base fee, intrinsic gas, blob transactions without sidecars, transaction-type rules) or how the balance requirement is computed."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Execution Layer — \"Check whether `T` is present in `B`\"",
+       "summary": "The presence criterion (hash equality?) and the handling of undecodable or duplicate IL entries are unspecified."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Engine API Changes",
+       "summary": "Parameters, schema and versioning of the endpoints are not given."
+      }
+     ],
+     "rationale": "These are localized competing outcomes within the IL-satisfaction check. Clients could disagree on whether a transaction with insufficient max fee or too-low intrinsic gas, a blob transaction, or an undecodable entry makes the IL unsatisfied. Agreement is needed before expected statuses can be fixed.",
+     "confidence": "medium",
+     "uncertainty_note": "Linked consensus-spec or execution-API documents might resolve some of these but were not supplied.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Payload Construction — \"when the `balance` changes without a `nonce` increment (e.g., after an Account Abstraction (AA) transaction has interacted with that EOA)\"",
+       "summary": "IL validity depends on account-abstraction-style balance changes from other transactions in the block."
+      },
+      {
+       "source": "eip.md",
+       "locator": "CL P2P Validation Rules — \"ILs are allowed to contain any transactions\"",
+       "summary": "Any baseline transaction type can appear in an IL, including types defined by other EIPs."
+      },
+      {
+       "source": "supporting/eip-7547.md",
+       "locator": "Abstract",
+       "summary": "EIP-7547 is a superseded forward-IL design that is only referenced for comparison; it is not part of the baseline."
+      }
+     ],
+     "rationale": "Coordinated cases are needed where IL-transaction validity depends on behavior defined elsewhere. Examples: in-block account-abstraction or delegated-code transactions changing an IL sender's balance or nonce without the sender's own transaction, and IL transactions of other typed formats such as blob-carrying transactions. The supplied text does not name these EIPs. EIP-7547 is only a comparison design and needs no tests.",
+     "confidence": "low",
+     "uncertainty_note": "Interacting EIPs are inferred from unnumbered descriptions. If treated as local compatibility checks, the score would be 1.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [],
+    "unidentified_interactions": [
+     "Account-abstraction transactions in the block that change an IL sender's balance (or nonce) without the sender's own transaction affect whether the missing IL transaction is valid against the post-state (Payload Construction section).",
+     "ILs may contain any transaction; IL transactions of other typed formats (e.g. blob-carrying or authorization-carrying types in the baseline) need cases defining how the nonce/balance/gas-fit check applies to them."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The EL IL-satisfaction check is only described as 'nonce and balance checks'. The supplied text does not specify: the full validity predicate, how the balance requirement is computed, how presence in the block is determined, how undecodable or duplicate entries are handled, or the exact Engine API schemas and versions. The transition-tool and framework requirements are inferred.",
+    "affected_criteria": [
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 1,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_or_modified_transaction_validity_mechanisms",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "performance_risks",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "cross_eip_interactions",
+      "minimum_score": 1,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "Does 'balance check' mean value + gas_limit × max_fee_per_gas (plus blob fees), and against which base fee?",
+     "Do signature, chain ID, max-fee-vs-base-fee, intrinsic-gas and type-specific rules apply when deciding whether a missing IL transaction is 'valid'?",
+     "How are blob transactions (no sidecars) and undecodable or malformed entries in an IL treated?",
+     "Is presence in B determined by transaction hash, and how are duplicates across ILs handled?",
+     "Is the gas-fit check against execution gas only, or also blob gas?",
+     "What are the exact parameters, field names and versions of engine_getInclusionListV1, the payloadAttributes IL field and the newPayload IL parameter?"
+    ]
+   },
+   "notable_ambiguities": [
+    "IL satisfaction is not a block-validity rule; it is a separate newPayload status. This blurs whether it counts as transaction validity or syncing.",
+    "The order in which IL transactions are evaluated, and the early-termination rule, could matter if implementations evaluate IL transactions with interdependent effects differently.",
+    "EIP-7547 is a stagnant alternative design used only for comparison and is not part of the baseline.",
+    "Builder-side payload update timing ('exact timings will be defined after running some tests/benchmarks') is left open."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 50174,
+  "type": "result",
+  "duration_ms": 118940,
+  "uuid": "e51d4ee8-587c-4857-88b5-ff357518a537",
+  "ttft_stream_ms": 2106,
+  "time_to_request_ms": 455,
+  "first_content_frame_ms": 2106,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

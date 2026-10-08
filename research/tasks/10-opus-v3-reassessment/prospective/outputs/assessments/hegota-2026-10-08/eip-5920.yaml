@@ -1,0 +1,654 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: hegota
+snapshot_id: hegota-2026-10-08-6dac5e7
+eip_8081_list: PFI
+eip:
+  number: 5920
+  title: PAY opcode
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: EIP-5920 adds one EVM instruction, PAY (0xfc). It pops `addr` then `val` and
+    sends `val` wei from the current account to `addr` without running any code at `addr`. If the frame
+    is static (EIP-214) or the upper 12 bytes of `addr` are non-zero, it halts exceptionally. It charges
+    warm/cold access gas (EIP-2929), plus GAS_NEW_ACCOUNT when the recipient does not exist and `val`
+    is non-zero, plus GAS_CALL_VALUE when `val` is non-zero. It then adds `addr` to `accessed_addresses`
+    and pushes 1 on success or 0 if the balance is too low. It relies on EIP-7523 (no empty accounts)
+    and adds no transaction, header, encoding or system-contract changes.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/packages/hegota-2026-10-08/eip-5920/manifest.yaml
+    manifest_sha256: 666da39addad9119a65e3365aa119033b162b61316627384c63d2f058912ef4d
+  cohort_snapshot:
+    snapshot_id: hegota-2026-10-08-6dac5e7
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/cohort.yaml
+    manifest_sha256: 6fa7b2fb6b0fcd2304a354e17b8952099a5e6e39707d7a136bc1e595ca1c96da
+    pulled_at: '2026-10-08T09:12:50Z'
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    committed_at: '2026-10-07T22:23:55Z'
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+    eip_8081_list: PFI
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    path: EIPS/eip-5920.md
+    committed_at: '2026-10-07T22:23:55Z'
+    git_blob_sha: f8c6f353cb4690043c096995ea1877bf763fb987
+    content_sha256: f9b6d29381744114128f035d4a2a989a3d6ae08f838506fff96cd3c76e26ff11
+    immutable_url: https://github.com/ethereum/EIPs/blob/6dac5e74918b54511298fdbff79650e8f8d27d78/EIPS/eip-5920.md
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  assessment_contract: &id001
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  session_prompt: *id001
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:50:43.103249Z'
+    session_id: assessment-run-a35c7d66-73e2-4c70-b565-407fa2a7d06f
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-141.md
+  - supporting/eip-214.md
+  - supporting/eip-1153.md
+  - supporting/eip-1283.md
+  - supporting/eip-2200.md
+  - supporting/eip-2929.md
+  - supporting/eip-6780.md
+  - supporting/eip-7523.md
+  - supporting/eip-7702.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 3de4e3e1cc7c072f7b34e2a770397eac5bfbd13235789a65d322ddf3ae6fae23
+    schema_sha256: 844591f5379e667383e5468178eb7b7b832bba545ba8133d28f33b0c2c6ddf08
+    started_at: '2026-10-08T09:50:43.103249Z'
+    finished_at: '2026-10-08T09:52:33.425275Z'
+    duration_ms: 108269
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 66736
+      cache_read_input_tokens: 0
+      output_tokens: 12273
+      output_tokens_details:
+        thinking_tokens: 4934
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 66736
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 12273
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 66736
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 66736
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 12273
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 66736
+        webSearchRequests: 0
+        costUSD: 0.779356
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 4934
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.779356
+  assessor_raw_output:
+    path: prospective/outputs/raw/hegota-2026-10-08/eip-5920.json
+    content_sha256: 8a99ab1da92ad1f0a21e9e43fd323a6e876cc20f3d673e3d8d9e5aa13c78e1d3
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: 'PAY has its own gas function that adds three conditional parts: warm/cold access, GAS_NEW_ACCOUNT
+      when the recipient does not exist and val is non-zero, and GAS_CALL_VALUE when val is non-zero.
+      No stipend or 63/64 forwarding applies.'
+  - source: supporting/eip-2929.md
+    locator: Storage read changes
+    summary: Defines the WARM_STORAGE_READ_COST and COLD_ACCOUNT_ACCESS_COST that PAY reuses. Charges
+      for existing opcodes are not changed by the target.
+  rationale: 'PAY adds a new dynamic charging rule at a new instruction. It is built from existing components
+    and does not change any existing opcode''s gas or baseline gas results. That fits level 2: a new mechanism
+    with no change to existing rules.'
+  confidence: medium
+  uncertainty_note: One could argue that reusing existing gas components is not a new accounting mechanism,
+    which would give 0. Level 2 is the best-supported reading because the opcode's charging rule is new
+    and conditional.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: 'Fixes the order: static check, pop, address-width halt, charge gas, mark addr warm, then
+      a conditional transfer. The gas charge depends on reading whether the recipient exists before the
+      transfer.'
+  - source: supporting/eip-2929.md
+    locator: Specification
+    summary: Changes to access sets are reverted when a scope reverts. This applies to PAY's warming.
+  rationale: PAY is a new state-accessing operation that needs its own ordering rule. The existence read
+    and the warm/cold check come before the charge, and the warming and transfer come after it. No existing
+    opcode's ordering changes. Relevant combinations are cold/warm, existing/non-existing recipient, static/non-static,
+    enough/too little balance, revert/success, and out-of-gas at each gas part.
+  confidence: medium
+  uncertainty_note: The Amsterdam baseline's block-level access list rules are not supplied. Whether `addr`
+    is recorded on out-of-gas or insufficient-balance paths cannot be checked.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Covers only an EVM opcode. Blobs are not mentioned.
+  rationale: No blob-gas rule is affected.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Charges GAS_NEW_ACCOUNT when the recipient does not exist and val is non-zero. This is a
+      charge for creating a new account in state, at a new site.
+  - source: eip.md
+    locator: Constants
+    summary: GAS_NEW_ACCOUNT is taken from the frontier EELS constant. No state-gas reservoir or state-byte
+      rule is specified.
+  rationale: 'PAY adds a new place where an existing account-creation charge applies, without a new state-gas
+    mechanism. That matches level 2: charging added at a new site using an existing mechanism.'
+  confidence: low
+  uncertainty_note: Any state-gas mechanism in the Amsterdam baseline is not supplied. If GAS_NEW_ACCOUNT
+    is treated purely as execution gas, this could be 0. If the baseline has a separate state-gas dimension,
+    PAY must also be wired into it, which the EIP does not specify.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Specifies charges only. No refund is mentioned.
+  rationale: No refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: Assigns opcode 0xfc, which was previously undefined.
+  rationale: Baseline tests that treat 0xfc as an undefined or invalid opcode need new expected results.
+    This rework is limited to particular cases in one family (undefined-opcode coverage).
+  confidence: medium
+  uncertainty_note: No test suite was supplied, so the exact number of affected undefined-opcode cases
+    cannot be measured.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new log, receipt, header field or protocol storage write is introduced.
+  rationale: Baseline tests need no new assertion.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Changes only EVM execution. No new transaction, block or environment input or output.
+  rationale: The transition tool's interface does not need to change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: A new opcode 0xfc with two stack inputs and one output.
+  rationale: 'The framework''s opcode definitions need a local extension for PAY: its stack arity and
+    a gas calculator for its dynamic cost. No new abstraction is needed.'
+  confidence: medium
+  uncertainty_note: This could be 0 if adding an opcode entry does not count as extending a primitive.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No hashing, signing or verification is involved.
+  rationale: No cryptographic mechanism changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: 'Has several boundaries: halt if any of the high 12 address bytes are non-zero; transfer
+      only when balance >= val; static-frame halt.'
+  - source: eip.md
+    locator: Gas Cost
+    summary: The new-account charge depends on both recipient existence and whether val is zero, combined
+      with warm/cold access and the value charge.
+  rationale: 'There are several independent boundary-sensitive mechanisms: address-width validation (bit
+    160 vs. lower bits), the balance >= val comparison (equal, one wei short), and exact-gas out-of-gas
+    points. The gas rule has an elevated matrix: recipient existence × val zero/non-zero decides GAS_NEW_ACCOUNT,
+    and warm/cold adds to it. These cannot be tested independently, so level 3 applies.'
+  confidence: medium
+  uncertainty_note: The matrix is fairly small (three binary dimensions). A stricter reading of 'elevated'
+    would give 2.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Only a hard fork is needed. Block structure is unchanged.
+  rationale: No block decoding or structural validation changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API fields or methods are mentioned.
+  rationale: No Engine API change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contract is introduced.
+  rationale: None added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: PAY sends value without running the recipient's code. No system contract's rules change.
+  rationale: No system contract's rules or surrounding protocol behavior change.
+  confidence: medium
+  uncertainty_note: Value can now reach a system contract without its code running. This is an application-level
+    concern and does not change the contracts' rules.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: PAY (0xfc) pops 2 values, pushes 1 and has no immediate data.
+  - source: eip.md
+    locator: Gas Cost
+    summary: Gas depends on access state, recipient existence and value.
+  rationale: Exactly one instruction is added. Its gas is dynamic, so it is complex, which gives level
+    2.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: Only a new opcode is defined. CALL and other existing opcodes are unchanged.
+  rationale: No existing instruction's semantics or availability change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is introduced.
+  rationale: None added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile changes.
+  rationale: None modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No serialized object or codec changes.
+  rationale: No schema changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction envelope is defined.
+  rationale: No new transaction type.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Changes only execution. No intrinsic-gas or validity rules change.
+  rationale: No consensus rule on transaction validity changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header field is added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: '''This change requires a hard fork.'' No state migration is described.'
+  rationale: Only a rule switch at activation. No one-time state transition.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Creating accounts and touching cold accounts are priced from existing constants, with no
+      code execution.
+  - source: eip.md
+    locator: Motivation
+    summary: PAY is cheaper than CALL because the recipient's code is not run or paid for.
+  rationale: A component benchmark of worst-case PAY workloads (many cold or new-account transfers per
+    block) is enough. Baseline end-to-end performance assumptions do not change.
+  confidence: medium
+  uncertainty_note: Account-creation throughput per gas is close to CALL with value, but PAY skips loading
+    code. No benchmark evidence was supplied.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Security Considerations
+    summary: Moving ETH without calling the recipient was already possible (SELFDESTRUCT, coinbase). PAY
+      makes it cheaper but does not break an invariant.
+  - source: eip.md
+    locator: Behavior
+    summary: Static-frame halt and address-width halt are the safety checks.
+  rationale: 'The new security conditions can be checked locally: static enforcement, address-width halting,
+    insufficient-balance handling, and no code running at the recipient (including delegated EOAs). No
+    other component''s assumptions change.'
+  confidence: medium
+  uncertainty_note: Some applications that assume value arrives only through code may be affected, but
+    this is outside the protocol and the EIP says it is not a new invariant.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: '''PAY cannot be implemented on networks with empty accounts.'' The EIP does not say whether
+      a zero-value PAY to a non-existent address creates or touches an account.'
+  - source: eip.md
+    locator: Behavior
+    summary: The order of charge, warm and conditional transfer is given, so gas and warming apply even
+      when the balance is too low. Interaction with block-level access lists and with any state-gas dimension
+      in the baseline is not stated.
+  rationale: 'Some local details are omitted: account creation on a zero-value PAY, self-PAY, and access-list
+    recording on failure paths. The surrounding rules (no empty accounts, CALL-like semantics) support
+    one intended outcome for each, so this is level 1.'
+  confidence: medium
+  uncertainty_note: The Amsterdam block-level access list and state-gas specifications are not supplied.
+    If they create competing outcomes for recording or charging on out-of-gas or insufficient-balance
+    paths, this would be 2.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Behavior
+    summary: Uses EIP-214's static flag and EIP-2929's accessed_addresses.
+  - source: eip.md
+    locator: Motivation
+    summary: Sending to an EIP-7702 delegated EOA must not run its code.
+  - source: supporting/eip-7702.md
+    locator: Delegation indicator
+    summary: Only CALL-family opcodes and transactions follow delegation. Resolving delegated code adds
+      a cold-access charge.
+  - source: eip.md
+    locator: Security Considerations
+    summary: Refers to EIP-6780 SELFDESTRUCT as another way to move value.
+  rationale: Coordinated cases are needed with EIP-214 (PAY in static frames, including val=0), EIP-2929
+    (warming shared with CALL/BALANCE, and warming undone on revert) and EIP-7702 (PAY to a delegated
+    EOA runs no code and charges no delegation-resolution cost). Each of these is a pairwise interaction,
+    not a coupled multi-EIP restructuring, so level 2 applies.
+  confidence: medium
+  uncertainty_note: Whether the EIP-6780 cases (PAY to or from a contract created and self-destructed
+    in the same transaction) need coordinated cases or only compatibility checks is a judgement call.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 214
+  - 2929
+  - 7702
+  - 6780
+  - 7523
+  - 1153
+  unidentified_interactions:
+  - 'Block-level access list rules in the Amsterdam baseline (not supplied): whether PAY''s recipient
+    is recorded on success, insufficient balance and out-of-gas paths.'
+  - 'Any state-gas dimension in the Amsterdam baseline (not supplied): how PAY''s account-creation charge
+    splits between state and execution gas.'
+  - Comparison with CALL value transfer (GAS_CALL_VALUE without a stipend) and coinbase priority-fee funding
+    as other ways to move value.
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 214
+  - 2929
+  - 7702
+  - 6780
+  interaction_details:
+  - eip: 214
+    interaction: coordinated_cases
+    cases: PAY inside a STATICCALL frame halts exceptionally for zero and non-zero val (unlike CALL with
+      zero value). Also PAY in a frame nested under a static call.
+  - eip: 2929
+    interaction: coordinated_cases
+    cases: Cold vs. warm PAY. PAY warms addr so a later CALL/BALANCE/EXT* is warm, and vice versa. Warming
+      is undone when a sub-call that ran PAY reverts. Precompile addresses start warm.
+  - eip: 7702
+    interaction: coordinated_cases
+    cases: PAY to a delegated EOA moves value without running the delegated code and without a cold-access
+      charge for resolving the delegation target. Also PAY run from inside delegated code.
+  - eip: 6780
+    interaction: coordinated_cases
+    cases: PAY to a contract created and self-destructed in the same transaction, before and after the
+      SELFDESTRUCT. PAY from a contract followed by SELFDESTRUCT, checking balance conservation.
+  - eip: 7523
+    interaction: local_compatibility_check
+    cases: Check that the existence-based GAS_NEW_ACCOUNT rule assumes no empty accounts. Test fixtures
+      must not contain empty accounts.
+  - eip: 1153
+    interaction: local_compatibility_check
+    cases: Check that PAY to a contract cannot change that contract's transient storage, because no code
+      runs.
+totals:
+  primary_score: 18
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: 'The core semantics are clear. Some details depend on baseline mechanisms that are not supplied
+    or are only implied: whether a zero-value PAY to a non-existent address creates or touches an account,
+    how failure paths are recorded in block-level access lists, and how GAS_NEW_ACCOUNT maps onto any
+    state-gas accounting in Amsterdam.'
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - state_gas_accounting_changes
+  - unspecified_behavior_requiring_cross_client_consensus
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: state_access_ordering_within_opcode_execution
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: state_gas_accounting_changes
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 1
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 14
+    maximum: 20
+  plausible_tiers:
+  - medium
+  unresolved_questions:
+  - Does a zero-value PAY to a non-existent address create, touch or leave the account absent?
+  - Is addr recorded in the block-level access list when PAY fails for insufficient balance or runs out
+    of gas after the existence check?
+  - How does GAS_NEW_ACCOUNT interact with any state-gas or reservoir mechanism in the Amsterdam baseline?
+  - 'Self-PAY (addr == current address): is it a no-op that still charges GAS_CALL_VALUE?'
+notable_ambiguities:
+- Gas is charged and addr is warmed before the conditional transfer, so a PAY that fails for insufficient
+  balance still pays the full cost, including GAS_NEW_ACCOUNT. This follows from the order of the bullets
+  rather than an explicit statement.
+- The static-frame halt is unconditional, even for val=0, which differs from CALL. The halt also appears
+  to come before the stack pops, but the difference is not observable.
+- The constants are linked to frontier EELS values instead of being given numerically.
+overall_confidence: medium
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'

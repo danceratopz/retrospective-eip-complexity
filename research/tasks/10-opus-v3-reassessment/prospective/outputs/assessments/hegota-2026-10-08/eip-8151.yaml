@@ -1,0 +1,658 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: hegota
+snapshot_id: hegota-2026-10-08-6dac5e7
+eip_8081_list: PFI
+eip:
+  number: 8151
+  title: Account Code Restricted ecRecover
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: EIP-8151 changes the ecRecover precompile at address 0x01. After a successful
+    ECDSA recovery, the precompile charges the EIP-2929 warm/cold account-access cost for the recovered
+    address (+100 or +2600 on top of 3000) and adds that address to accessed_addresses. It then reads
+    the address's raw code without following delegation. It returns the address only if that code is empty
+    or exactly a 23-byte 0xef0100||address EIP-7702 delegation indicator; otherwise it returns 32 zero
+    bytes. A failed recovery keeps the 3000 gas cost and does no state access. The goal is to stop an
+    old ECDSA key from authorizing contract actions after the account moves to non-delegation code, in
+    line with the EIP-3607/EIP-7702 transaction-origination rule.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/packages/hegota-2026-10-08/eip-8151/manifest.yaml
+    manifest_sha256: f66347b75a3c35525acb0e4407368c7f4173aa05321867275592dab57547e2cd
+  cohort_snapshot:
+    snapshot_id: hegota-2026-10-08-6dac5e7
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/cohort.yaml
+    manifest_sha256: 6fa7b2fb6b0fcd2304a354e17b8952099a5e6e39707d7a136bc1e595ca1c96da
+    pulled_at: '2026-10-08T09:12:50Z'
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    committed_at: '2026-10-07T22:23:55Z'
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+    eip_8081_list: PFI
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    path: EIPS/eip-8151.md
+    committed_at: '2026-10-07T22:23:55Z'
+    git_blob_sha: fdca74467a0c9d901de61c5cbd8a4094bfdf1ca8
+    content_sha256: 47ee87b138dc90eb82089da1dd7cd2bd9ca0e9252487b44b9757f3aae4da2e6e
+    immutable_url: https://github.com/ethereum/EIPs/blob/6dac5e74918b54511298fdbff79650e8f8d27d78/EIPS/eip-8151.md
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  assessment_contract: &id001
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  session_prompt: *id001
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:56:57.323567Z'
+    session_id: assessment-run-c5bd15de-505c-4a33-bf97-131a91034f1d
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-20.md
+  - supporting/eip-2612.md
+  - supporting/eip-2929.md
+  - supporting/eip-3607.md
+  - supporting/eip-7702.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 7b9af50883aadc422febe38d366bfedac9177aba4b20516d744945f2635bdb0b
+    schema_sha256: ca6ef3d4115b75c4e9d36c0a8f1a0d4974d3cc733b585a4246afbd8408313748
+    started_at: '2026-10-08T09:56:57.323567Z'
+    finished_at: '2026-10-08T09:59:03.440217Z'
+    duration_ms: 124067
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 45715
+      cache_read_input_tokens: 0
+      output_tokens: 13338
+      output_tokens_details:
+        thinking_tokens: 5785
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 45715
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 13338
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 45715
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 45715
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 13338
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 45715
+        webSearchRequests: 0
+        costUSD: 0.6324879999999999
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 5785
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.6324879999999999
+  assessor_raw_output:
+    path: prospective/outputs/raw/hegota-2026-10-08/eip-8151.json
+    content_sha256: 62ddbc5bc60ad9782eb4541f715b501cfa56321d2b430c644d0bcffd30140f9c
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Successful recovery adds 100 (warm) or 2600 (cold) gas following EIP-2929 and warms recovered_address;
+      failed recovery stays at 3000.
+  - source: eip.md
+    locator: Rationale / EIP-2929 Gas Accounting
+    summary: Reuses the existing warm/cold access pattern to 'avoid introducing a new gas model'.
+  - source: supporting/eip-2929.md
+    locator: Storage read changes
+    summary: Defines the existing accessed_addresses warm/cold charging rule being applied at the new
+      site.
+  rationale: 'The existing EIP-2929 warm/cold rule is applied at a new site: the ecRecover precompile''s
+    gas schedule. This changes the expected gas of a baseline operation (every successful ecRecover) without
+    defining a new accounting mechanism. That fits level 1.'
+  confidence: medium
+  uncertainty_note: Making precompile gas depend on state and recovery outcome could be treated as a new
+    accounting mechanism that also changes baseline gas results (level 3).
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Modified ecRecover Behavior, step 3
+    summary: 'After recovery succeeds, charge 3000 plus the access cost, then check the raw code: a new
+      state access with a defined charge-then-read sequence.'
+  - source: eip.md
+    locator: Reference Implementation / ecrecover_gas
+    summary: The address is added to accessed_addresses inside the gas computation, before the code check.
+  rationale: 'The precompile becomes a new state-accessing operation and needs an ordering rule: recover,
+    then charge, then mark warm, then read code. Relevant combinations are cold/warm, recovery success/failure,
+    out-of-gas in the precompile frame, and caller revert. No opcode class''s common ordering changes,
+    so this is level 2.'
+  confidence: medium
+  uncertainty_note: The text does not say whether the recovered address is recorded in the Amsterdam block-level
+    access list. Under the rubric's footnote on precompile internals, this could be argued down to 0–1.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Only execution-gas changes for ecRecover; nothing on blobs.
+  rationale: No blob-gas rule is affected.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Account Code Check
+    summary: Read-only access to raw code; no state writes.
+  rationale: Only a state read and an access charge are added. Per the rubric, access charges belong under
+    GAS, not state-gas accounting.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: No refund is described.
+  rationale: No refund mechanism is introduced.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Every successful recovery now costs +100/+2600, and accounts with non-delegation code now
+      get zero instead of the recovered address.
+  - source: eip.md
+    locator: Gas Cost
+    summary: recovered_address becomes warm for later operations in the same transaction.
+  rationale: Gas expectations change for all ordinary successful-recovery cases in the ecRecover precompile
+    family. Tests in other families that call 0x01 with exact gas, or later touch the recovered address,
+    also need localized gas rework. There is no common rewrite across families, so this is level 2.
+  confidence: medium
+  uncertainty_note: If the 32-zero-byte wording is read literally for failure cases, existing failure-case
+    return-data expectations also change (see UNSP).
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new log, header, receipt field or protocol-mandated write is introduced.
+  rationale: Changed gas and output values count as rework (PAT), not new assertions.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Changes are internal to precompile execution, using existing state and access-set inputs.
+  rationale: No transition-tool field or mechanism change is required.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Precompile gas now depends on recovery outcome and warm/cold status.
+  - source: supporting/eip-3607.md
+    locator: Test Cases
+    summary: Shows the pattern of placing code at an address derived from a known private key.
+  rationale: 'Existing primitives need local extensions: a state- and warmth-aware ecRecover gas calculator,
+    and pre-state accounts with code at key-derived addresses that sign ecRecover inputs. No new shared
+    abstraction is needed, so this is level 1.'
+  confidence: medium
+  uncertainty_note: Whether existing helpers already cover this is not evidenced; the score could be 0.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Modified ecRecover Behavior, step 1
+    summary: ECDSA recovery is performed 'as currently specified'.
+  rationale: The cryptographic primitive and its validation rules are unchanged. The new gate is a state
+    check after recovery.
+  confidence: medium
+  uncertainty_note: The change could be read as altering the signature-verification outcome rule (level
+    1).
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Account Code Check
+    summary: Permitted only if len==0, or len==23 with prefix ef0100; absent account counts as empty.
+  - source: eip.md
+    locator: Gas Cost
+    summary: Warm 100 vs cold 2600, and no extra charge on recovery failure.
+  rationale: 'There are two boundary-sensitive mechanisms. (1) The code classification: empty, absent,
+    length 22/23/24, prefix variants, delegation to zero/precompile/self. (2) The gas tiers 3000/3100/5600
+    with exact-gas out-of-gas boundaries. Their dimensions mostly separate (output depends on code; gas
+    depends on warmth), so there is no elevated matrix. That is level 2.'
+  confidence: medium
+  uncertainty_note: Gas available × warmth × recovery success with out-of-gas outcomes could be argued
+    to form an elevated matrix (level 3).
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No block decoding or structural validation change.
+  rationale: Only an execution-rule change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API is mentioned or changed.
+  rationale: No Engine API change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: Only a native precompile is changed.
+  rationale: No system contract is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contract is referenced.
+  rationale: No system contract is modified.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instruction.
+  rationale: No opcode is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Modified ecRecover Behavior
+    summary: Only precompile behavior changes; CALL/STATICCALL semantics are unchanged.
+  rationale: Precompile behavior changing behind an unchanged instruction does not count as an opcode
+    modification.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Abstract
+    summary: Modifies the existing precompile at 0x01.
+  rationale: No new precompile address.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Modified ecRecover Behavior
+    summary: Output now depends on the recovered account's raw code.
+  - source: eip.md
+    locator: Gas Cost
+    summary: 'Gas becomes dynamic: 3000, 3100 or 5600 depending on recovery outcome and warmth.'
+  rationale: ecRecover has a behavior change (state-dependent output). Its gas becomes dynamic after the
+    change, which makes it complex under this criterion. A complex precompile with a behavior change is
+    level 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No serialized schema changes.
+  rationale: No codec or schema change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No transaction type is introduced.
+  rationale: No new transaction envelope.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Motivation
+    summary: EIP-3607/7702 already govern transaction authority; this EIP changes only the precompile.
+  - source: supporting/eip-7702.md
+    locator: Behavior, step 3/5
+    summary: Authorization processing has its own recovery and code check, separate from the precompile.
+  rationale: Transaction validity and intrinsic gas are unchanged. Precompile outputs are excluded from
+    this criterion.
+  confidence: high
+  uncertainty_note: The text does not explicitly say that protocol-internal recovery (tx sender, 7702
+    authority) is unaffected, but the EIP scopes itself to the precompile.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header field is added.
+  rationale: No header member is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Modified ecRecover Behavior
+    summary: '''Starting at the activation'': a rule selection only, with no state migration.'
+  rationale: No activation-specific state transition.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Successful recovery now triggers an account code read priced at the standard 2600 cold access.
+  - source: supporting/eip-2929.md
+    locator: Motivation
+    summary: The 2600 cold access cost was calibrated for state-access IO.
+  rationale: ecRecover becomes a CPU-plus-IO workload. An attacker can recover many distinct cold addresses,
+    but each read is priced like an existing cold account access with 3000 gas on top. Benchmarking the
+    combined precompile path should cover it without changing end-to-end assumptions, so this is level
+    1.
+  confidence: medium
+  uncertainty_note: Block-level access list growth from recovered addresses is unspecified and could call
+    for integrated benchmarks (level 2).
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Security Considerations / Cross-Domain / L2 Fault Proof Implications
+    summary: ecRecover is no longer a pure function of (hash, v, r, s).
+  - source: eip.md
+    locator: Motivation
+    summary: Changes authorization results for permit-style contracts after migration.
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Calls near their gas limit may now go out of gas, adding a failure path where the rationale
+      claims ecRecover never fails.
+  rationale: 'The precompile''s purity and stable gas assumptions, which calling contracts and re-execution
+    systems rely on, change. Adversarial checks are needed: the code-check bypass via the delegation-prefix
+    boundary, the delegation-indicator allowance, and fixed-gas callers turning rejection into out-of-gas.
+    The scope is a bounded precompile/caller interaction, so this is level 2.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Modified ecRecover Behavior, steps 2 and 5
+    summary: States 'return 32 zero bytes' for failure and rejection, calling this 'the existing zero
+      return value'.
+  - source: eip.md
+    locator: Rationale / Returning 32 Zero Bytes
+    summary: Asserts malformed v and failed recovery currently 'return 32 zero bytes with success = 1'.
+  - source: eip.md
+    locator: Reference Implementation
+    summary: Adds to accessed_addresses inside the gas function before any out-of-gas check; out-of-gas
+      handling is not specified.
+  rationale: 'Under the established baseline, ecRecover failure gives empty output (RETURNDATASIZE 0),
+    but the EIP''s normative text says 32 zero bytes. That leaves competing observable outcomes for both
+    the existing failure path and the new rejection path: a return-data size of 0 or 32. It also does
+    not say whether the recovered address is warmed when the extra charge runs out of gas, or whether
+    it enters the block-level access list. These localized competing outcomes need agreement before expected
+    values can be fixed, which is level 2.'
+  confidence: medium
+  uncertainty_note: Treating baseline failure output as empty relies on general protocol knowledge rather
+    than a supplied document. The block-level access list rules are not supplied, so that point is partly
+    an evidence gap.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Gas Cost
+    summary: Reads and writes the EIP-2929 accessed_addresses set shared with other operations.
+  - source: eip.md
+    locator: Account Code Check
+    summary: Exempts EIP-7702 delegation indicators and does not follow delegation.
+  - source: supporting/eip-7702.md
+    locator: Behavior, steps 4 and 8
+    summary: Authorization warms the authority and writes or clears the delegation indicator, both visible
+      to the new check in the same transaction.
+  rationale: 'Coordinated cases are needed with EIP-2929 and EIP-7702. For EIP-2929: warmth from the tx
+    sender, the access list or earlier opcodes sets ecRecover''s cost, ecRecover''s warming lowers later
+    opcode costs, and warmth is rolled back on revert. For EIP-7702: authorization in a type-4 transaction
+    followed by ecRecover, delegation clearing, and the boundaries of the 23-byte indicator. EIP-3607
+    needs only a consistency check. The scenarios are bounded, so this is level 2 rather than coupled
+    restructuring.'
+  confidence: medium
+  uncertainty_note: A type-4 transaction that both warms and delegates the authority, followed by ecRecover,
+    couples two EIPs; this could be read as level 3.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 2929
+  - 7702
+  - 3607
+  unidentified_interactions:
+  - L2 / cross-domain fault-proof systems that re-execute ecRecover assuming it is pure (stated in Security
+    Considerations).
+  - 'Block-level access list recording of the recovered address in the Amsterdam baseline: not addressed
+    by the supplied text.'
+  base_score: 2
+  bonus: 0
+  bonus_qualifying_eips:
+  - 2929
+  - 7702
+  interaction_details:
+  - eip: 2929
+    interaction: coordinated_cases
+    cases: Cost of ecRecover when the recovered address is already warm (tx.sender, tx.to, access-list
+      entry, prior BALANCE/CALL) or cold; ecRecover's warming lowering later BALANCE/EXTCODE*/CALL costs;
+      warmth rolled back when the calling scope reverts; out-of-gas inside the precompile after the access
+      charge.
+  - eip: 7702
+    interaction: coordinated_cases
+    cases: Type-4 authorization sets a delegation, then ecRecover in the same or a later transaction returns
+      the address at warm cost; delegation cleared to the zero address restores empty code; delegation
+      to a precompile or another delegated account is not followed; 7702 authority warming affects ecRecover
+      gas; malformed 23-byte or 0xef01xx codes are rejected.
+  - eip: 3607
+    interaction: local_compatibility_check
+    cases: Consistency check that accounts barred from originating transactions (non-delegation code)
+      are also rejected by ecRecover, and permitted ones are accepted.
+totals:
+  primary_score: 18
+  complexity_tier: medium
+under_specification:
+  present: true
+  summary: The spec says failure and rejection 'return 32 zero bytes', calling this the existing behavior.
+    This conflicts with the baseline, where ecRecover failure gives empty output, and makes return-data
+    size ambiguous. The spec also does not say whether the address stays warm when the extra access charge
+    runs out of gas, or whether the recovered address is recorded in the block-level access list.
+  affected_criteria:
+  - evm_gas_rule_changes
+  - state_access_ordering_within_opcode_execution
+  - patterns_affecting_pre_existing_tests
+  - edge_boundary_conditions
+  - cross_eip_interactions
+  criterion_ranges:
+  - criterion: evm_gas_rule_changes
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: state_access_ordering_within_opcode_execution
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: edge_boundary_conditions
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: cross_eip_interactions
+    minimum_score: 2
+    maximum_score: 3
+  plausible_total_range:
+    minimum: 17
+    maximum: 24
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - Does ecRecover return empty output or 32 zero bytes on recovery failure and on the new code-check
+    rejection (RETURNDATASIZE 0 or 32)?
+  - If the caller supplies enough gas for 3000 but not for the warm/cold surcharge, is the address still
+    added to accessed_addresses, and is the failure an ordinary out-of-gas?
+  - Is the recovered address recorded in the Amsterdam block-level access list?
+  - Is protocol-internal recovery (transaction sender, EIP-7702 authority) explicitly unaffected?
+notable_ambiguities:
+- Claim that existing ecRecover returns 32 zero bytes on failure versus baseline empty output.
+- The reference implementation mutates accessed_addresses inside the gas function, before execution and
+  any out-of-gas check.
+- Interaction with Amsterdam block-level access lists is not addressed.
+- The rationale says ecRecover never signals failure, but the added gas makes out-of-gas failures possible
+  for callers that pass a fixed gas amount.
+overall_confidence: medium
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'

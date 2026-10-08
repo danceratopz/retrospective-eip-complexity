@@ -1,0 +1,736 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: hegota
+snapshot_id: hegota-2026-10-08-6dac5e7
+eip_8081_list: CFI
+eip:
+  number: 8279
+  title: Block Access List Byte Floor
+  layers:
+  - execution
+assessment:
+  snapshot_scope_summary: EIP-8279 adds two per-transaction counters, `bal_data_bytes` and `floor_gas_used`,
+    to EIP-7928 Block Access List (BAL) processing. Before an opcode inserts an entry into the BAL, it
+    calls `meter_bal_data` with a fixed byte count for cold account or storage accesses, storage-value
+    changes, value transfers, CREATE nonce and balance entries, and deployed code. That count, at 64 gas
+    per byte, is added to the EIP-8131 static transaction floor. If the floor would exceed `tx.gas`, the
+    operation raises OutOfGasError. The static floor seed also gains a fixed 51 BAL bytes per EIP-7702
+    authorization, which changes the transaction validity threshold. A storage slot returned to its pre-transaction
+    value gets its 32 value bytes back. Final charging stays `tx.gasUsed = max(execution_gas_used, floor_gas_used)`.
+    System calls and withdrawals are excluded from the meter.
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/packages/hegota-2026-10-08/eip-8279/manifest.yaml
+    manifest_sha256: d3e5584327bfb6bd517030229e8d0f7ee10b24cb538e1a3e5f5ad5c72a56e300
+  cohort_snapshot:
+    snapshot_id: hegota-2026-10-08-6dac5e7
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/cohort.yaml
+    manifest_sha256: 6fa7b2fb6b0fcd2304a354e17b8952099a5e6e39707d7a136bc1e595ca1c96da
+    pulled_at: '2026-10-08T09:12:50Z'
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    committed_at: '2026-10-07T22:23:55Z'
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+    eip_8081_list: CFI
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    path: EIPS/eip-8279.md
+    committed_at: '2026-10-07T22:23:55Z'
+    git_blob_sha: 43a44216d4d2daed998542b506b14ae5f368f557
+    content_sha256: 90d09fbcdaddf1c892bd9e47d08ff4616aea7b9d0737377a9ee9bb4171272745
+    immutable_url: https://github.com/ethereum/EIPs/blob/6dac5e74918b54511298fdbff79650e8f8d27d78/EIPS/eip-8279.md
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  assessment_contract: &id001
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  session_prompt: *id001
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T10:00:10.981428Z'
+    session_id: assessment-run-1a790485-7bae-4705-91f3-6e3c5f747889
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-2935.md
+  - supporting/eip-3529.md
+  - supporting/eip-4788.md
+  - supporting/eip-4844.md
+  - supporting/eip-7002.md
+  - supporting/eip-7251.md
+  - supporting/eip-7623.md
+  - supporting/eip-7702.md
+  - supporting/eip-7928.md
+  - supporting/eip-7976.md
+  - supporting/eip-7981.md
+  - supporting/eip-8131.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: 1cd9dccbd67599d88afbbafb8bb6ec4b15d6e512b9a59af29c5cc3865040544b
+    schema_sha256: ba22818d0638c0c6614b6f8d28ce8be5f3604c694d69b775f4997915ad10c71c
+    started_at: '2026-10-08T10:00:10.981428Z'
+    finished_at: '2026-10-08T10:03:46.465363Z'
+    duration_ms: 213481
+    num_turns: 3
+    usage:
+      input_tokens: 4
+      cache_creation_input_tokens: 133063
+      cache_read_input_tokens: 115799
+      output_tokens: 26651
+      output_tokens_details:
+        thinking_tokens: 7519
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 133063
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 9913
+        cache_read_input_tokens: 115799
+        cache_creation_input_tokens: 17264
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 17264
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 4
+        outputTokens: 26651
+        cacheReadInputTokens: 115799
+        cacheCreationInputTokens: 133063
+        webSearchRequests: 0
+        costUSD: 1.6206998000000001
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 7519
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 1.6206998000000001
+  assessor_raw_output:
+    path: prospective/outputs/raw/hegota-2026-10-08/eip-8279.json
+    content_sha256: 1a5d8d629fd8423aa6fed40ecb346ea25c82cea455715a19c195c383fe976f00
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator
+    summary: 'Adds a new runtime per-transaction floor accumulator: `new_floor = static_floor + bal_data_bytes
+      * 64`. If the new floor exceeds `tx.gas`, the operation raises OutOfGasError.'
+  - source: eip.md
+    locator: Final charge
+    summary: '`tx.gasUsed = max(execution_gas_used, tx_env.floor_gas_used)` now includes runtime BAL bytes.'
+  - source: eip.md
+    locator: Static floor seed
+    summary: The static floor adds 64 × 51 gas per authorization on top of EIP-8131's `tx_floor`.
+  - source: supporting/eip-8131.md
+    locator: Charging
+    summary: 'Baseline: `tx.gasUsed = max(execution_gas_used, tx_floor)`, a floor computed only from transaction
+      content.'
+  rationale: 'This adds a new accounting mechanism: a runtime floor accumulator with its own out-of-gas
+    trigger. It also changes existing settlement results: any floor-bound transaction that touches state,
+    and type-4 transactions whose floor dominates, now get a different gasUsed. That meets level 3.'
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator — "MUST be called BEFORE the matching BAL insertion or state
+      mutation"
+    summary: Adds a new gate before BAL insertion. An OutOfGasError at that gate aborts the operation
+      before the BAL entry exists.
+  - source: eip.md
+    locator: Runtime data metering
+    summary: 'Metering applies across a whole class of operations: BALANCE, EXT*, CALL*, SELFDESTRUCT,
+      CREATE/CREATE2, SLOAD and SSTORE, plus value transfers and code deployment.'
+  - source: supporting/eip-7928.md
+    locator: Gas Validation Before State Access
+    summary: 'Baseline two-phase rule: pre-state validation must pass before access. Once it passes, the
+      target is included in the BAL.'
+  rationale: 'A common new ordering step (the floor check before BAL insertion) is added for every account-accessing
+    and storage-accessing opcode class. It changes which accesses get recorded: an access that passes
+    EIP-7928 pre-state validation can still be left out of the BAL if the floor check fails. Baseline
+    BAL expectations for floor-bound transactions must be revised. This meets level 3.'
+  confidence: medium
+  uncertainty_note: The order of the floor check relative to EIP-7928 pre-state gas validation is not
+    specified. Baseline revisions are limited to floor-bound transactions, so level 2 is plausible.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Static floor seed
+    summary: Blob versioned hashes enter the floor only through EIP-8131's `tx_floor`. This EIP leaves
+      blob-gas pricing unchanged.
+  rationale: No blob-gas charging, pricing or limits change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Runtime data metering
+    summary: SSTORE value bytes and deployed code bytes are charged as BAL data bytes at the floor rate,
+      not as state-growth gas.
+  rationale: The rubric places BAL data-size charges under GAS. No state-gas mechanism changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Runtime data metering — "`SSTORE` returning a slot to its pre-transaction value | −32 (refund)"
+    summary: Adds a byte refund to the floor meter. It depends on the slot's pre-transaction value and
+      on whether it was charged earlier.
+  - source: eip.md
+    locator: Runtime data metering — "not the EIP-3529 SSTORE gas refund"
+    summary: The refund is explicitly separate from EIP-3529 refunds, which are unchanged.
+  rationale: The floor-byte refund depends on history (original vs current value, earlier charge state,
+    revert behaviour), so it counts as complex under the rubric. Existing EIP-3529 refund rules and baseline
+    refund expectations are unchanged. That is level 2.
+  confidence: medium
+  uncertainty_note: It is debatable whether a reduction of the floor accumulator counts as an 'EVM gas
+    refund'. If it does not, the score would be 0.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Minimum `tx.gas` changes only when the floor side already dominated, i.e. for calldata-heavy
+      or BAL-heavy transactions.
+  - source: eip.md
+    locator: Static floor seed
+    summary: The per-authorization term changes the floor of type-4 transactions.
+  rationale: 'Rework is localized to several families: floor-bound calldata or access-list tests from
+    EIP-8131/7623 that touch state, type-4 floor and validity boundary tests, and BAL tests built on floor-bound
+    transactions. No common rewrite is needed across ordinary tests, because the floor rarely binds. That
+    is level 2.'
+  confidence: medium
+  uncertainty_note: No test suite was supplied. The breadth is estimated from the specification.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator — "Neither is part of the signed transaction, RLP-encoded,
+      gossiped, or persisted"
+    summary: The new counters are internal. No new outputs exist.
+  rationale: No new header, receipt or log output is added. Effects show up only in existing gasUsed values.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator
+    summary: The counters are internal per-transaction state and are not part of any interface.
+  rationale: No input or output fields need to change. gasUsed is already reported.
+  confidence: medium
+  uncertainty_note: Tooling might choose to expose `floor_gas_used` for debugging, but the specification
+    does not require it.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Runtime data metering
+    summary: Computing expected gasUsed for floor-bound transactions requires modelling per-opcode BAL
+      byte contributions, including SSTORE value tracking and refunds.
+  - source: eip.md
+    locator: Gas estimation
+    summary: '`floor_gas_used` must be simulated alongside intrinsic gas.'
+  rationale: Tests need a new expectation helper. It must compute the runtime BAL-byte floor from an execution
+    trace (cold accesses, value transfers, SSTORE original/current tracking, deployed code length) and
+    combine it with the static floor. Fork floor calculators also need the per-auth term. This is a new
+    expectation abstraction within the target's suite, which is level 2.
+  confidence: medium
+  uncertainty_note: Framework capabilities are not evidenced.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No cryptographic operations are introduced or changed.
+  rationale: No cryptographic changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator — "if new_floor > tx_env.gas_limit"
+    summary: Adds a runtime floor-overflow boundary at exactly `tx.gas`.
+  - source: eip.md
+    locator: Final charge — "tx.gas >= max(intrinsic, static_floor)"
+    summary: Changes the validity boundary through the per-auth term.
+  - source: eip.md
+    locator: Runtime data metering — storage value bytes charged/refunded
+    summary: The SSTORE value-byte charge and refund depend on original, current and new values.
+  - source: eip.md
+    locator: Reverts
+    summary: Meter entries in reverted frames are not rewound, so outcomes depend on revert context.
+  rationale: 'Several boundary-sensitive mechanisms are involved: the runtime floor-vs-`tx.gas` check,
+    the static validity threshold with auths, the execution/floor crossover in the final `max`, and SSTORE
+    value charge and refund. The SSTORE mechanism has an elevated matrix of original/current/new value
+    × cold/warm × frame revert × whether the floor binds. The runtime check interacts with opcode type
+    and the static seed. That meets level 3.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator
+    summary: No block structure or RLP changes.
+  rationale: Only execution and gas rules change. Block decoding and structural validation are unchanged.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No Engine API changes are described.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: System transactions and withdrawals
+    summary: Mentions existing system contracts only.
+  rationale: No new system contracts.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: System transactions and withdrawals — "do NOT consume from a per-transaction floor"
+    summary: System calls are excluded from metering, so their behavior is unchanged.
+  rationale: Contract rules and surrounding protocol behavior are unchanged. The exclusion leaves baseline
+    behavior intact.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Runtime data metering
+    summary: Only existing opcodes are metered.
+  rationale: No new instructions.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator
+    summary: Opcodes gain an out-of-gas condition driven by the floor accumulator. Stack, memory and return
+      semantics are unchanged.
+  - source: eip.md
+    locator: Counter, not a reservation
+    summary: Execution gas accounting is untouched. The meter only updates counters and checks against
+      `tx.gas`.
+  rationale: The only change at instruction level is an additional out-of-gas halt that comes from gas
+    accounting. Under the rubric, gas-only and ordering-only changes do not count.
+  confidence: low
+  uncertainty_note: The floor OutOfGasError is a new exceptional-halt condition that does not depend on
+    the frame's gas. If treated as a semantic change, the score would be 3.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompiles are introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile changes.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator — "no new transaction field or type is introduced"
+    summary: No schema changes.
+  rationale: No serialized schema changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator
+    summary: Explicitly introduces no new transaction type.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Final charge — "Transaction validation continues to require tx.gas >= max(intrinsic, static_floor)"
+    summary: The existing validity condition now uses a static floor that includes 51 bytes × 64 gas per
+      authorization.
+  - source: supporting/eip-8131.md
+    locator: Charging
+    summary: 'Baseline requirement: `tx.gas >= max(intrinsic, tx_floor)`.'
+  rationale: Only a local bound changes in the existing floor validity condition (the per-auth term).
+    The runtime check is an execution-time OOG, not a validity rule.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No header fields are added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility — "Hard fork."
+    summary: Rule activation only. No state migration.
+  rationale: No activation-specific state transition.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 1
+  evidence:
+  - source: eip.md
+    locator: Abstract — "block content is capped at block_gas_limit / 64 ≈ 0.89 MB"
+    summary: The worst-case block plus BAL size bound is reduced.
+  - source: eip.md
+    locator: Runtime data metering
+    summary: Adds per-opcode metering and per-slot original-value tracking on hot paths.
+  rationale: Component benchmarks of metering overhead are enough, together with checks that adversarial
+    calldata+SLOAD blocks are capped. The change tightens a bound rather than adding resource coupling.
+  confidence: medium
+  uncertainty_note: Validating the reduced worst-case block size could need integrated block-building
+    measurements (level 2).
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Block-size bound
+    summary: The security claim is that every BAL byte is covered by the floor. Under-counting breaks
+      the bound.
+  - source: eip.md
+    locator: Per-auth coverage is static — "would propagate uncaught and crash block processing"
+    summary: Metering at the wrong site can crash block processing.
+  - source: supporting/eip-7928.md
+    locator: Recording Semantics by Change Type
+    summary: BAL entries include CALL sender balances, precompiles and delegated targets. The meter must
+      cover these (only the recipient's 32 balance bytes are listed for CALL).
+  rationale: The change couples transaction settlement to how the BAL builder records entries. The meter
+    must stay an upper bound on EIP-7928 contents. Possible gaps include warm-but-unrecorded addresses,
+    CALL-sender balance changes and delegation resolution. The meter must also never fire outside the
+    EVM exception handler. This bounded interaction needs targeted differential fuzzing of the meter against
+    actual BAL contents. That is level 2.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Data meter and floor accumulator — `tx_env.bal_data_bytes += num_bytes` before the check
+    summary: Bytes are added even when the check raises OutOfGasError and are not rolled back. Later meter
+      calls, or the refund recompute, could then push `floor_gas_used` above `tx.gas`.
+  - source: eip.md
+    locator: Runtime data metering — "The refund subtracts from bal_data_bytes and recomputes floor_gas_used"
+    summary: The refund recompute has no `tx.gas` check, and its interaction with failed-meter bytes is
+      undefined.
+  - source: eip.md
+    locator: Reverts — "value bytes charged inside a frame that later reverts are left in place"
+    summary: It is unclear whether the per-slot 'charged' state is reverted. This contradicts 'at most
+      once per slot' for an O→X write in a reverted frame followed by a committed O→Y.
+  - source: supporting/eip-7928.md
+    locator: Gas Validation Before State Access
+    summary: The order of the floor meter relative to pre-state and post-state gas checks is unspecified.
+      It is observable when the frame then OOGs and the floor binds.
+  rationale: 'Several localized outcomes are left open, and each changes gasUsed when the floor binds:
+    the state after a failed meter, refund recompute bounds, revert handling of slot-charge tracking,
+    ordering against EIP-7928 gas checks, and whether resolving an EIP-7702 delegated target meters 20
+    bytes. Clients must agree on these before expected values can be fixed. That is level 2.'
+  confidence: medium
+  uncertainty_note: Some of these outcomes may be intended to follow the pseudocode literally.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Abstract — "Neither EIP alone closes the bypass"
+    summary: Behaviour is coupled with EIP-8131's floor and EIP-7928's BAL.
+  - source: eip.md
+    locator: Runtime data metering — "mirrors EIP-7928 ... not the EIP-3529 SSTORE gas refund"
+    summary: Coordinated cases are needed with EIP-7928 no-op-write semantics and EIP-3529 refunds.
+  - source: eip.md
+    locator: Per-auth coverage is static
+    summary: Couples with EIP-7702 `set_delegation` and the authorization floor.
+  rationale: The target couples EIP-8131 static floors, EIP-7928 BAL recording rules, EIP-7702 authorization
+    and delegation handling, and EIP-3529 SSTORE refunds. Coordinated scenarios are needed that check
+    BAL contents and floor gas together. That meets level 3.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 7928
+  - 8131
+  - 7702
+  - 3529
+  - 7623
+  - 7976
+  - 7981
+  - 4844
+  - 2935
+  - 4788
+  - 7002
+  - 7251
+  unidentified_interactions:
+  - EIP-2929 cold/warm access sets decide when the 20-byte and 32-byte access charges fire. Warmth rolls
+    back on frame revert, so re-access is metered again.
+  - EIP-3651 warm coinbase and always-warm precompiles enter the BAL without runtime metering. They rely
+    on TX_BASE headroom.
+  - EIP-2200 original/current SSTORE semantics drive the value-byte charge and refund.
+  - EIP-4895 withdrawals are excluded from the meter and absorbed by the EIP-7928 item buffer.
+  - Contract code-size limits bound the per-byte metering of deployed code.
+  base_score: 3
+  bonus: 0
+  bonus_qualifying_eips:
+  - 7928
+  - 8131
+  - 7702
+  - 3529
+  interaction_details:
+  - eip: 7928
+    interaction: coordinated_cases
+    cases: 'Assert BAL contents together with floor gas for every metered trigger. Cases: a floor OOG
+      before insertion leaves the entry out of the BAL; a no-op write (O→X→O) keeps the key in storage_reads
+      and refunds the value bytes; a reverted CALL with value keeps the over-count; SELFDESTRUCT and CREATE
+      nonce/code entries.'
+  - eip: 8131
+    interaction: coordinated_cases
+    cases: 'Static seed equals tx_floor plus the per-auth term. Cases: a calldata + cold-SLOAD bypass
+      transaction hits the runtime floor OOG exactly at `tx.gas`; validity boundary at `max(intrinsic,
+      static_floor)`; access-list and blob-hash floor composition.'
+  - eip: 7702
+    interaction: coordinated_cases
+    cases: 'The 51-byte per-auth static term at the validity boundary. Cases: duplicate or invalid auths
+      still pay the floor; no runtime metering in `set_delegation`; whether resolving a delegated target
+      during CALL meters 20 bytes.'
+  - eip: 3529
+    interaction: coordinated_cases
+    cases: 'Clearing a non-zero slot to zero earns the gas refund but no byte refund. Case: restoring
+      to the original value earns both refunds. Interaction of the refund cap on the execution side with
+      `max(exec, floor)`.'
+  - eip: 7623
+    interaction: local_compatibility_check
+    cases: The `max(execution, floor)` charging shape is preserved.
+  - eip: 7976
+    interaction: local_compatibility_check
+    cases: The 64 gas/byte rate is reused for BAL bytes.
+  - eip: 7981
+    interaction: local_compatibility_check
+    cases: Access-list-prewarmed addresses and slots are not metered again as cold accesses. Their bytes
+      are already priced through the 8131 floor.
+  - eip: 4844
+    interaction: local_compatibility_check
+    cases: Blob transactions with runtime BAL metering. Blob-hash floor bytes are unchanged.
+  - eip: 2935
+    interaction: local_compatibility_check
+    cases: The pre-execution system call does not meter.
+  - eip: 4788
+    interaction: local_compatibility_check
+    cases: The pre-execution system call does not meter.
+  - eip: 7002
+    interaction: local_compatibility_check
+    cases: The post-execution system call does not meter. User calls with value to the contract meter
+      normally.
+  - eip: 7251
+    interaction: local_compatibility_check
+    cases: The post-execution system call does not meter. User calls with value to the contract meter
+      normally.
+totals:
+  primary_score: 24
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: The pseudocode adds to `bal_data_bytes` before the OutOfGasError check and never rolls it back.
+    The refund path recomputes `floor_gas_used` without a `tx.gas` check, so the floor could exceed `tx.gas`.
+    Revert handling of per-slot value-charge tracking conflicts with the 'at most once per slot' wording.
+    The meter's position relative to EIP-7928 pre-state and post-state gas validation is not given. It
+    is also unclear whether resolving an EIP-7702 delegated target counts as a metered cold access.
+  affected_criteria:
+  - state_access_ordering_within_opcode_execution
+  - new_evm_gas_refund
+  - modified_opcodes
+  - unspecified_behavior_requiring_cross_client_consensus
+  criterion_ranges:
+  - criterion: state_access_ordering_within_opcode_execution
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: new_evm_gas_refund
+    minimum_score: 0
+    maximum_score: 2
+  - criterion: modified_opcodes
+    minimum_score: 0
+    maximum_score: 3
+  - criterion: unspecified_behavior_requiring_cross_client_consensus
+    minimum_score: 1
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 20
+    maximum: 27
+  plausible_tiers:
+  - medium
+  - high
+  unresolved_questions:
+  - After a floor OutOfGasError, are the bytes already added to `bal_data_bytes` kept for later meter
+    calls and refund recomputation?
+  - Can the refund recompute set `floor_gas_used` above `tx.gas`, and if so, what gasUsed is charged?
+  - Is per-slot value-charge tracking reverted with the frame? Does a committed O→Y write after a reverted
+    O→X write meter 32 value bytes again?
+  - Is `meter_bal_data` called before or after the EIP-7928 pre-state gas validation for each opcode?
+  - Is resolving an EIP-7702 delegated target metered as a 20-byte cold account access?
+notable_ambiguities:
+- After a failed `meter_bal_data`, are the bytes that were added to `bal_data_bytes` kept? Can a later
+  refund recompute push `floor_gas_used` above `tx.gas`?
+- An O→X write happens in a reverted frame, then a committed O→Y write follows. Are the 32 value bytes
+  charged again, and is the per-slot charged flag reverted?
+- Is the floor check before or after EIP-7928 pre-state gas validation? This matters when the frame then
+  OOGs and the floor binds.
+- Does resolving an EIP-7702 delegated target during CALL* meter 20 bytes as a cold account access?
+- The balance change of the CALL sender and accesses to warm-but-unrecorded addresses (precompiles) are
+  not listed as metered triggers. This may break the claimed upper bound.
+- The specification refers to an `auth_bytes` term, but the defined name is `auth_bal_bytes`.
+overall_confidence: medium
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'

@@ -1,0 +1,584 @@
+{
+ "case": "hegota/8116",
+ "run_id": "assessment-run-beed7603-31e6-4260-a6ce-7d21ee975c83",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:54:34.945725Z",
+ "finished_at": "2026-10-08T09:55:45.551671Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "bf86cebca0d7ab2d5aafac2011231e20422337d8f75e8a4ed74d8a3d45ffa2d4",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "bcb100bd4478a09accb66847b37216997305a5ebae592644a614af51ec852d9d",
+ "output": {
+  "duration_api_ms": 68086,
+  "stop_reason": "tool_use",
+  "session_id": "ecbfc745-4bf6-44b8-a6d9-7eb1daa780c4",
+  "total_cost_usd": 0.2614954,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 12240,
+   "cache_read_input_tokens": 10537,
+   "output_tokens": 8073,
+   "output_tokens_details": {
+    "thinking_tokens": 2402
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 12240,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 8073,
+     "cache_read_input_tokens": 10537,
+     "cache_creation_input_tokens": 12240,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 12240
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 8073,
+    "cacheReadInputTokens": 10537,
+    "cacheCreationInputTokens": 12240,
+    "webSearchRequests": 0,
+    "costUSD": 0.2614954,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 2402,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8116 changes the on-chain receipt so that, after activation, each receipt records the transaction's own `gasUsed` instead of the running block total `cumulativeGasUsed`. As a result, the serialized receipt contents and the `receiptsRoot` commitment change for every block with more than one transaction. The EIP also changes the JSON-RPC `logIndex` so it counts within each receipt instead of across the block. It says this second part is RPC-only. The EIP does not change gas charging, transaction validity, headers, opcodes, precompiles or system contracts.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction\",\"summary\":\"Only changes which gas value the receipt records. Gas charging and metering are untouched.\"}],\"rationale\":\"No execution-gas charging, metering, limit or settlement rule changes. Only the value recorded in the receipt changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction-level state access or gas ordering is mentioned.\"}],\"rationale\":\"No opcode ordering or access-list rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Blob gas is not mentioned.\"}],\"rationale\":\"No blob-gas accounting change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"State-gas accounting is not mentioned.\"}],\"rationale\":\"No state-gas accounting change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No refund mechanism is introduced.\"}],\"rationale\":\"No new refund mechanism.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction — \\\"track the individual transaction's `gasUsed` instead of the incremental `cumulativeGasUsed`\\\"\",\"summary\":\"Receipt contents change for every transaction after the first in a block.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Users of verified gasUsed/cumulativeGasUsed values must adapt.\"}],\"rationale\":\"Expected `receiptsRoot` values for multi-transaction blocks change, but filling the fixtures again regenerates them without changing test inputs or steps. Hand-written rework is limited to the receipt-focused cases that explicitly assert cumulative gas across multi-transaction blocks. That is a localized subset of one family.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If many baseline families explicitly assert per-receipt cumulative gas, the rework could reach level 2.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction\",\"summary\":\"An existing receipt field changes its meaning. No new output is added.\"}],\"rationale\":\"No new output is added. The changed receipt value is rework under PAT, not a new assertion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction\",\"summary\":\"The receipt's cumulative gas field becomes per-transaction gas after activation.\"}],\"rationale\":\"The transition tool's receipt output changes the meaning of one field (cumulative gas → per-transaction gas), depending on the fork. No new exchange mechanism is needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No transition-tool schema was supplied, so whether the output keeps the field name or adds a new one is not evidenced.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction\",\"summary\":\"Changes only the value of an existing receipt field.\"}],\"rationale\":\"The existing receipt expectation and receipts-root checks are enough. Only the expected value changes, depending on the fork.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the framework computes receipts or receipt roots itself, it may need a small fork-aware extension (level 1).\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No hashing, signing or proof rule changes. The receipts trie keeps the same construction.\"}],\"rationale\":\"Only the encoded message bytes change. The trie and hashing rules stay the same.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction — \\\"All receipts emitted after this EIP activates\\\"\",\"summary\":\"The only boundary is ordinary fork activation.\"}],\"rationale\":\"No new boundary-sensitive rule. Cases such as single-transaction blocks (where the value is unchanged) and the fork transition block are ordinary coverage points.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The fork-transition block could be treated as one boundary-sensitive mechanism (level 1).\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction\",\"summary\":\"Receipt contents change, so the receiptsRoot that block import validates is derived differently after activation.\"}],\"rationale\":\"Block import must now check `receiptsRoot` against receipts built with the new semantics, and receipt data exchanged during sync has a different meaning after the fork. This is treated as one changed validation rule.\",\"confidence\":\"low\",\"uncertainty_note\":\"This could be seen as an ordinary execution-result change (level 0). Alternatively, receipts-root checks depend on execution and could be called complex (level 2).\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API change. The existing receiptsRoot field just carries a different value.\"}],\"rationale\":\"No Engine API field or endpoint changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contracts are mentioned.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contracts are mentioned.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No opcodes are mentioned.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No instruction semantics change. Log emission is unchanged; only RPC logIndex numbering changes.\"}],\"rationale\":\"No opcode semantics change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are mentioned.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are mentioned.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction\",\"summary\":\"The serialized on-chain receipt's cumulativeGasUsed field is replaced by the per-transaction gasUsed.\"},{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"change the on-chain receipt data\\\"\",\"summary\":\"The serialized receipt object is what changes.\"}],\"rationale\":\"The meaning of a serialized field in the EL receipt (the object committed in receiptsRoot and exchanged between peers) changes from cumulative to per-transaction gas. That is a change to a receipt schema field.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The EIP does not say whether the field keeps its position and type or the receipt layout otherwise changes.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new transaction type is introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No transaction-validity or intrinsic-gas change.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only the value of the existing receiptsRoot changes. No header field is added.\"}],\"rationale\":\"No new header member.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction — \\\"All receipts emitted after this EIP activates\\\"\",\"summary\":\"Only new receipts are affected. No migration of past state.\"}],\"rationale\":\"Only a fork-dependent rule selection is needed. No one-time state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Motivation\",\"summary\":\"The change is meant to remove a stateful dependency between receipts. It adds no workload.\"}],\"rationale\":\"No new or larger workload needs performance validation.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"None\\\"\",\"summary\":\"The authors identify no security considerations.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction\",\"summary\":\"The receiptsRoot commitment, which is consensus-critical, changes semantics at the fork.\"}],\"rationale\":\"Building receipts with the wrong semantics, especially around the fork boundary, would cause a receiptsRoot mismatch and a consensus split. This can be checked locally through receipt-root comparison.\",\"confidence\":\"low\",\"uncertainty_note\":\"This could be scored 0 because it is a plain consensus-value change.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction — \\\"track the individual transaction's `gasUsed`\\\"\",\"summary\":\"\\\"gasUsed\\\" is not defined precisely, e.g. before or after refunds or minimum-gas floors, and the encoded position or name is not given.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"aligning on-chain data with the RPC data\\\"\",\"summary\":\"Points to the RPC receipt gasUsed (the gas the transaction is charged) as the intended value.\"}],\"rationale\":\"The exact definition of the per-transaction gasUsed and its encoding details are omitted. The rationale supports one intended reading (the RPC receipt's gasUsed), so this is a localized omission.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the baseline separates block-level gas from user-charged gas, competing readings could push this to level 2.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / `Receipt` construction — \\\"All receipts\\\"\",\"summary\":\"Applies to every receipt, i.e. every typed-receipt format in the baseline.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Only application-level adaptation is discussed.\"}],\"rationale\":\"Each baseline transaction/receipt type and the existing gas-settlement rules only need local compatibility checks that the new per-transaction value is used correctly. No coordinated cross-EIP scenarios are required. No candidate EIPs were supplied.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The definition of gasUsed may depend on baseline refund and floor rules not supplied here.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[],\"unidentified_interactions\":[\"The change applies to all receipts, so every typed transaction/receipt envelope in the baseline needs a local check that per-transaction gasUsed is encoded.\",\"The per-transaction gasUsed value depends on the baseline's gas-settlement rules (refunds and any minimum-gas rules), which define what 'gasUsed' means; local compatibility checks only.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The EIP does not define 'gasUsed' precisely or give the exact receipt encoding (whether the field keeps its position, type or name). The RPC logIndex change is described, but the exact activation semantics for RPC on pre-fork blocks are not.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"block_syncing_changes\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"new_test_framework_primitives\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":0,\"maximum_score\":1}],\"unresolved_questions\":[\"Is per-transaction gasUsed the gas charged to the sender (after refunds and floors), or a block-accounting gas value?\",\"Does gasUsed replace cumulativeGasUsed in the same RLP position with the same type in all typed receipts?\",\"Does 'receipts emitted after this EIP activates' mean all receipts in blocks at or after the fork block?\",\"Does the logIndex change apply to pre-fork blocks served over RPC?\"]},\"notable_ambiguities\":[\"Whether 'gasUsed' means the pre-refund or post-refund amount is unstated.\",\"The receipt RLP layout after the change is not given explicitly.\",\"The logIndex change is RPC-only, but whether it applies to historical blocks is unspecified.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8116 changes the on-chain receipt so that, after activation, each receipt records the transaction's own `gasUsed` instead of the running block total `cumulativeGasUsed`. As a result, the serialized receipt contents and the `receiptsRoot` commitment change for every block with more than one transaction. The EIP also changes the JSON-RPC `logIndex` so it counts within each receipt instead of across the block. It says this second part is RPC-only. The EIP does not change gas charging, transaction validity, headers, opcodes, precompiles or system contracts.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction",
+       "summary": "Only changes which gas value the receipt records. Gas charging and metering are untouched."
+      }
+     ],
+     "rationale": "No execution-gas charging, metering, limit or settlement rule changes. Only the value recorded in the receipt changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction-level state access or gas ordering is mentioned."
+      }
+     ],
+     "rationale": "No opcode ordering or access-list rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Blob gas is not mentioned."
+      }
+     ],
+     "rationale": "No blob-gas accounting change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "State-gas accounting is not mentioned."
+      }
+     ],
+     "rationale": "No state-gas accounting change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No refund mechanism is introduced."
+      }
+     ],
+     "rationale": "No new refund mechanism.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction — \"track the individual transaction's `gasUsed` instead of the incremental `cumulativeGasUsed`\"",
+       "summary": "Receipt contents change for every transaction after the first in a block."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Users of verified gasUsed/cumulativeGasUsed values must adapt."
+      }
+     ],
+     "rationale": "Expected `receiptsRoot` values for multi-transaction blocks change, but filling the fixtures again regenerates them without changing test inputs or steps. Hand-written rework is limited to the receipt-focused cases that explicitly assert cumulative gas across multi-transaction blocks. That is a localized subset of one family.",
+     "confidence": "medium",
+     "uncertainty_note": "If many baseline families explicitly assert per-receipt cumulative gas, the rework could reach level 2.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction",
+       "summary": "An existing receipt field changes its meaning. No new output is added."
+      }
+     ],
+     "rationale": "No new output is added. The changed receipt value is rework under PAT, not a new assertion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction",
+       "summary": "The receipt's cumulative gas field becomes per-transaction gas after activation."
+      }
+     ],
+     "rationale": "The transition tool's receipt output changes the meaning of one field (cumulative gas → per-transaction gas), depending on the fork. No new exchange mechanism is needed.",
+     "confidence": "medium",
+     "uncertainty_note": "No transition-tool schema was supplied, so whether the output keeps the field name or adds a new one is not evidenced.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction",
+       "summary": "Changes only the value of an existing receipt field."
+      }
+     ],
+     "rationale": "The existing receipt expectation and receipts-root checks are enough. Only the expected value changes, depending on the fork.",
+     "confidence": "medium",
+     "uncertainty_note": "If the framework computes receipts or receipt roots itself, it may need a small fork-aware extension (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No hashing, signing or proof rule changes. The receipts trie keeps the same construction."
+      }
+     ],
+     "rationale": "Only the encoded message bytes change. The trie and hashing rules stay the same.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction — \"All receipts emitted after this EIP activates\"",
+       "summary": "The only boundary is ordinary fork activation."
+      }
+     ],
+     "rationale": "No new boundary-sensitive rule. Cases such as single-transaction blocks (where the value is unchanged) and the fork transition block are ordinary coverage points.",
+     "confidence": "medium",
+     "uncertainty_note": "The fork-transition block could be treated as one boundary-sensitive mechanism (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction",
+       "summary": "Receipt contents change, so the receiptsRoot that block import validates is derived differently after activation."
+      }
+     ],
+     "rationale": "Block import must now check `receiptsRoot` against receipts built with the new semantics, and receipt data exchanged during sync has a different meaning after the fork. This is treated as one changed validation rule.",
+     "confidence": "low",
+     "uncertainty_note": "This could be seen as an ordinary execution-result change (level 0). Alternatively, receipts-root checks depend on execution and could be called complex (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API change. The existing receiptsRoot field just carries a different value."
+      }
+     ],
+     "rationale": "No Engine API field or endpoint changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contracts are mentioned."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contracts are mentioned."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No opcodes are mentioned."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No instruction semantics change. Log emission is unchanged; only RPC logIndex numbering changes."
+      }
+     ],
+     "rationale": "No opcode semantics change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are mentioned."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are mentioned."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction",
+       "summary": "The serialized on-chain receipt's cumulativeGasUsed field is replaced by the per-transaction gasUsed."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"change the on-chain receipt data\"",
+       "summary": "The serialized receipt object is what changes."
+      }
+     ],
+     "rationale": "The meaning of a serialized field in the EL receipt (the object committed in receiptsRoot and exchanged between peers) changes from cumulative to per-transaction gas. That is a change to a receipt schema field.",
+     "confidence": "medium",
+     "uncertainty_note": "The EIP does not say whether the field keeps its position and type or the receipt layout otherwise changes.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new transaction type is introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No transaction-validity or intrinsic-gas change."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only the value of the existing receiptsRoot changes. No header field is added."
+      }
+     ],
+     "rationale": "No new header member.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction — \"All receipts emitted after this EIP activates\"",
+       "summary": "Only new receipts are affected. No migration of past state."
+      }
+     ],
+     "rationale": "Only a fork-dependent rule selection is needed. No one-time state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Motivation",
+       "summary": "The change is meant to remove a stateful dependency between receipts. It adds no workload."
+      }
+     ],
+     "rationale": "No new or larger workload needs performance validation.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"None\"",
+       "summary": "The authors identify no security considerations."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction",
+       "summary": "The receiptsRoot commitment, which is consensus-critical, changes semantics at the fork."
+      }
+     ],
+     "rationale": "Building receipts with the wrong semantics, especially around the fork boundary, would cause a receiptsRoot mismatch and a consensus split. This can be checked locally through receipt-root comparison.",
+     "confidence": "low",
+     "uncertainty_note": "This could be scored 0 because it is a plain consensus-value change.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction — \"track the individual transaction's `gasUsed`\"",
+       "summary": "\"gasUsed\" is not defined precisely, e.g. before or after refunds or minimum-gas floors, and the encoded position or name is not given."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"aligning on-chain data with the RPC data\"",
+       "summary": "Points to the RPC receipt gasUsed (the gas the transaction is charged) as the intended value."
+      }
+     ],
+     "rationale": "The exact definition of the per-transaction gasUsed and its encoding details are omitted. The rationale supports one intended reading (the RPC receipt's gasUsed), so this is a localized omission.",
+     "confidence": "medium",
+     "uncertainty_note": "If the baseline separates block-level gas from user-charged gas, competing readings could push this to level 2.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / `Receipt` construction — \"All receipts\"",
+       "summary": "Applies to every receipt, i.e. every typed-receipt format in the baseline."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Only application-level adaptation is discussed."
+      }
+     ],
+     "rationale": "Each baseline transaction/receipt type and the existing gas-settlement rules only need local compatibility checks that the new per-transaction value is used correctly. No coordinated cross-EIP scenarios are required. No candidate EIPs were supplied.",
+     "confidence": "medium",
+     "uncertainty_note": "The definition of gasUsed may depend on baseline refund and floor rules not supplied here.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [],
+    "unidentified_interactions": [
+     "The change applies to all receipts, so every typed transaction/receipt envelope in the baseline needs a local check that per-transaction gasUsed is encoded.",
+     "The per-transaction gasUsed value depends on the baseline's gas-settlement rules (refunds and any minimum-gas rules), which define what 'gasUsed' means; local compatibility checks only."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The EIP does not define 'gasUsed' precisely or give the exact receipt encoding (whether the field keeps its position, type or name). The RPC logIndex change is described, but the exact activation semantics for RPC on pre-fork blocks are not.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "block_syncing_changes",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_test_framework_primitives",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 0,
+      "maximum_score": 1
+     }
+    ],
+    "unresolved_questions": [
+     "Is per-transaction gasUsed the gas charged to the sender (after refunds and floors), or a block-accounting gas value?",
+     "Does gasUsed replace cumulativeGasUsed in the same RLP position with the same type in all typed receipts?",
+     "Does 'receipts emitted after this EIP activates' mean all receipts in blocks at or after the fork block?",
+     "Does the logIndex change apply to pre-fork blocks served over RPC?"
+    ]
+   },
+   "notable_ambiguities": [
+    "Whether 'gasUsed' means the pre-refund or post-refund amount is unstated.",
+    "The receipt RLP layout after the change is not given explicitly.",
+    "The logIndex change is RPC-only, but whether it applies to historical blocks is unspecified."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 25173,
+  "type": "result",
+  "duration_ms": 68472,
+  "uuid": "5dc1d36b-a9ac-4e29-9809-eafbb459f795",
+  "ttft_stream_ms": 1593,
+  "time_to_request_ms": 383,
+  "first_content_frame_ms": 1594,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

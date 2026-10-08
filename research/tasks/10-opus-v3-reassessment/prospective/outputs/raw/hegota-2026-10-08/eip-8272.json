@@ -1,0 +1,725 @@
+{
+ "case": "hegota/8272",
+ "run_id": "assessment-run-dac779db-69b3-4346-ad58-78fa2f30e9c2",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:59:40.284671Z",
+ "finished_at": "2026-10-08T10:02:21.310295Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "ba170f19d3203ca670049f024484d85767aa5b2eb18f4d7609dc6a2f805e1cb7",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "0087cbbb89ab721f48dd6df0301069101cde17fe38b6f12dee358f3875990454",
+ "output": {
+  "duration_api_ms": 158511,
+  "stop_reason": "tool_use",
+  "session_id": "2f61b3aa-5a7a-4e3d-ab7f-dfd14db5b633",
+  "total_cost_usd": 1.020924,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 83852,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 17505,
+   "output_tokens_details": {
+    "thinking_tokens": 7240
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 83852,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 17505,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 83852,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 83852
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 17505,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 83852,
+    "webSearchRequests": 0,
+    "costUSD": 1.020924,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 7240,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8272 sets up a stateful recent root contract at RECENT_ROOT_ADDRESS (0x…8272), installed by the protocol at activation. Root sources write domain-separated keccak entry hashes into an 8192-slot ring buffer keyed by (source_id, slot) using 64-byte calldata. The same contract checks 1–16 packed 72-byte (source_id, slot, root) tuples against storage and the EIP-7843 SLOTNUM within an 8191-slot window. A canonical EIP-8141 VERIFY frame, `recent_root_verify`, calls this check before account validation, so a failed check invalidates the frame transaction. The EIP-8141 public mempool policy is extended with: a fixed frame position, a SLOTNUM/SLOAD exception, MAX_VERIFY_GAS accounting, dependency indexing, and eviction on age, slot advance, reorg and code change. There is no new opcode, transaction envelope, header field or gas mechanism.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Recent root contract — \\\"All calls use ordinary EVM execution and gas accounting.\\\"\",\"summary\":\"The contract uses unchanged EVM gas accounting.\"},{\"source\":\"eip.md\",\"locator\":\"Recent root verifier frame — \\\"This EIP adds no special intrinsic gas, warming rule, or exemption from block gas.\\\"\",\"summary\":\"No new intrinsic, warming or block-gas rule.\"}],\"rationale\":\"The frame and contract calls use ordinary EVM and EIP-8141 gas rules. Counting the frame's limit toward MAX_VERIFY_GAS is mempool policy, not execution-gas accounting. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"Actual gas use depends on RECENT_ROOT_CODE, which is TBD, but that is the cost of contract code, not an accounting rule.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Recent root verifier frame — \\\"Its target access and storage reads follow the normal warm and cold access rules\\\"\",\"summary\":\"Access rules are unchanged; the frame-entry target charge comes from EIP-8141.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes. The frame-entry cold access charge is inherited from EIP-8141. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Nothing in the specification touches blobs or blob gas.\"}],\"rationale\":\"No blob-gas rules change. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Implicit source creation — \\\"writes that create storage entries pay the ordinary state growth cost\\\"\",\"summary\":\"Writes use ordinary state-growth pricing.\"},{\"source\":\"eip.md\",\"locator\":\"Recent root verifier frame — \\\"frame.limits.state == 0\\\"\",\"summary\":\"The verifier frame uses no state gas.\"}],\"rationale\":\"Writes are ordinary SSTOREs under unchanged state-gas rules. There is no registration surcharge and no new charge site. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"A future surcharge is only mentioned as a possibility in Security Considerations.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Recent root contract\",\"summary\":\"No refund mechanism is defined.\"}],\"rationale\":\"No new refund. Overwriting ring-buffer slots uses existing SSTORE refund rules. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Public mempool handling — \\\"clients MUST skip both optional leading protocol verifier frames. The EIP-8141 rule that deploy is first applies after these frames are skipped.\\\"\",\"summary\":\"Changes EIP-8141 prefix-shape matching and where the deploy-first rule applies.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Expiry Verifier Frame (Mempool) — \\\"expiry verifier frame is skipped\\\"\",\"summary\":\"The baseline skip rule covered only expiry_verify.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"Calls to that address change behavior after activation\\\"\",\"summary\":\"The behavior of RECENT_ROOT_ADDRESS changes.\"}],\"rationale\":\"Rework is limited to particular cases in the EIP-8141 public mempool prefix-shape family. A VERIFY frame with flags 0 targeting 0x…8272 before account validation used to be rejected and may now be accepted, and the deploy-first check now applies after skipping. Baseline execution tests are otherwise unaffected. Level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If tests whose genesis is already in the fork must run the activation install in block 1, many blockchain-test post-states would change.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Activation — \\\"clients MUST create it with balance 0, nonce 1, code RECENT_ROOT_CODE, and empty storage\\\"\",\"summary\":\"Protocol-mandated account creation in the first active block.\"}],\"rationale\":\"Fork-transition tests must also assert the newly installed account (code, nonce 1, preserved balance, empty storage) in the first active block. Only that restricted family needs the assertion. Level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The text does not say whether the install applies when genesis is already in the fork. If it does, many more tests would be affected.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Current slot — \\\"MUST obtain current_slot from the EIP-7843 slotNumber field\\\"\",\"summary\":\"The slot input comes from the prerequisite.\"},{\"source\":\"eip.md\",\"locator\":\"Activation — \\\"For the first block in which this EIP is active\\\"\",\"summary\":\"Activation needs knowledge of the fork boundary.\"}],\"rationale\":\"slotNumber is a prerequisite (EIP-7843) field. The EIP adds no transition-tool field or mechanism. Mempool handling is outside t8n. Level 0.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Detecting the first active block may need parent-fork information in the t8n input. No tool evidence was supplied.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Public mempool handling — \\\"On admission, clients MUST record each distinct (storage_key, entry_hash) dependency\\\"\",\"summary\":\"Mempool dependency tracking, age-based eviction and reorg eviction.\"},{\"source\":\"eip.md\",\"locator\":\"Entry and storage keys\",\"summary\":\"Tests need helpers that compute entry hashes and storage keys to pre-populate state.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Revalidation\",\"summary\":\"The prerequisite already needs mempool revalidation on new heads.\"}],\"rationale\":\"Needs local extensions to existing kinds of primitive: tuple and frame builders, an entry-hash/storage-key pre-state helper, and mempool eviction expectations for slot advance and reorg on top of the EIP-8141 mempool revalidation harness. No new shared abstraction is architecturally required. Level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the EIP-8141 baseline has no mempool/reorg harness that can be driven from tests, the eviction and reorg cases would need a new expectation abstraction (level 2).\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Entry and storage keys — \\\"entry_hash = keccak256(RECENT_ROOT_ENTRY_DOMAIN || ...)\\\"\",\"summary\":\"Uses unchanged keccak256 with domain separation inside contract code.\"}],\"rationale\":\"Only reuses keccak256 inside contract logic and mempool direct evaluation. No cryptographic verification or protocol hashing rule changes. Level 0.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The domain-separated key derivation is new, but it is message construction that the template treats as an encoding concern.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Validation operation — \\\"slot < current_slot\\\" / \\\"current_slot - slot <= RECENT_ROOT_USABLE_WINDOW\\\"\",\"summary\":\"Age-window boundary: 8191 accepted, 8192 rejected, current or future slot rejected.\"},{\"source\":\"eip.md\",\"locator\":\"Validation operation — \\\"1 <= n <= MAX_RECENT_ROOT_REFERENCES\\\"\",\"summary\":\"Calldata-length boundaries: 64-byte write, 71/72/73 bytes, 16 vs 17 tuples.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases — \\\"Signature verification cost plus all validation prefix execution limits ... equals MAX_VERIFY_GAS\\\" / \\\"exceeds ... by one\\\"\",\"summary\":\"Verify-gas budget boundary and the one-gas-short execution limit.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases — \\\"Each of EIP-8141's four recognized validation prefix shapes must be tested with no protocol verifier, with recent_root_verify, with expiry_verify, and with expiry_verify followed by recent_root_verify.\\\"\",\"summary\":\"Elevated matrix of prefix shape × verifier presence × order.\"}],\"rationale\":\"There are several independent boundary-sensitive mechanisms: the age window and ring index, calldata length and tuple count, the MAX_VERIFY_GAS budget, the execution limit, and the activation-state conditions. The frame-position rule is an elevated matrix: four prefix shapes × expiry_verify presence × recent_root_verify presence × order and duplication, where combinations change acceptance. Separately, the current_slot definition (mempool header+1 vs payload slotNumber) interacts with the age window. Level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Activation — \\\"If this condition is false, the first active block is invalid.\\\"\",\"summary\":\"A new block-validity rule that depends on parent state at activation.\"}],\"rationale\":\"One complex block-validity rule, tested through block import: the first active block is invalid if RECENT_ROOT_ADDRESS has nonempty code or storage in the parent state. It depends on state, so it is complex. No RLP decoding changes. Level 2.\",\"confidence\":\"low\",\"uncertainty_note\":\"This is a state-dependent rule rather than a structural one. It could be treated as an activation/execution matter only, which would give 0.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"supporting/eip-7843.md\",\"locator\":\"Engine API changes\",\"summary\":\"slotNumber Engine API changes belong to EIP-7843.\"},{\"source\":\"eip.md\",\"locator\":\"Current slot\",\"summary\":\"Consumes the existing slotNumber field.\"}],\"rationale\":\"No Engine API change beyond the prerequisite. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Constants — \\\"RECENT_ROOT_ADDRESS 0x0000000000000000000000000000000000008272\\\" / \\\"RECENT_ROOT_CODE TBD\\\"\",\"summary\":\"One protocol-designated contract address; code TBD.\"},{\"source\":\"eip.md\",\"locator\":\"Write operation — \\\"storage[storage_key] = entry_hash\\\"\",\"summary\":\"The contract keeps persistent ring-buffer storage.\"}],\"rationale\":\"Exactly one stateful system contract is introduced. Level 2.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Public mempool handling — \\\"[expiry_verify?] [recent_root_verify?] [deploy?] [account validation]\\\"\",\"summary\":\"The expiry verifier keeps its rules and its first-frame position.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Expiry Verifier Frame\",\"summary\":\"The expiry verifier is an ordinary deployed contract; its behavior is unchanged.\"}],\"rationale\":\"No existing protocol-designated contract changes its rules, code or layout. The expiry verifier's position and semantics are unchanged. Level 0.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The extended prefix-skip rule touches handling around expiry_verify, but expiry_verify itself stays first.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"no new opcode\\\"\",\"summary\":\"Explicitly states that no opcode is added.\"}],\"rationale\":\"No new instruction. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Application introspection — \\\"This EIP adds no transaction parameter or opcode.\\\"\",\"summary\":\"FRAMEPARAM and the other introspection opcodes are used unchanged.\"},{\"source\":\"eip.md\",\"locator\":\"Public mempool handling — \\\"SLOTNUM MAY execute inside RECENT_ROOT_CODE\\\"\",\"summary\":\"Mempool permission only; SLOTNUM semantics are unchanged.\"}],\"rationale\":\"Instruction semantics are unchanged. The SLOTNUM/SLOAD permissions are public-mempool policy only. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Recent root contract\",\"summary\":\"An EVM contract, not a precompile.\"}],\"rationale\":\"No precompile is introduced. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile is referenced or changed.\"}],\"rationale\":\"Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"This requires no change to the FrameTx envelope\\\"\",\"summary\":\"No envelope change.\"},{\"source\":\"eip.md\",\"locator\":\"Recent root verifier frame — \\\"This EIP does not change the transaction payload or signature hash.\\\"\",\"summary\":\"Payload and signature hash are unchanged.\"}],\"rationale\":\"Only contract calldata and storage layouts are new, and the template excludes those. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"does not modify other transaction types\\\"\",\"summary\":\"Reuses the EIP-8141 frame transaction.\"}],\"rationale\":\"No new envelope. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Recent root verifier frame — \\\"If the contract reverts or the frame halts exceptionally, EIP-8141 makes the transaction invalid.\\\"\",\"summary\":\"Block inclusion now depends on recent-root storage and the slot window.\"},{\"source\":\"eip.md\",\"locator\":\"Current slot — \\\"References MUST target slots strictly before current_slot. A root written during slot S becomes referenceable beginning in slot S + 1.\\\"\",\"summary\":\"Validity depends on writes across blocks and on the payload slotNumber.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Behavior — \\\"If the frame fails by reverting or halting exceptionally, the transaction is invalid.\\\"\",\"summary\":\"The baseline VERIFY invalidation rule.\"}],\"rationale\":\"The VERIFY invalidation rule is inherited, but the protocol-installed contract adds a new consensus validity dependency on recent-root storage, SLOTNUM and the window. This needs dedicated multi-block cases: write in slot S then reference at S+1, a same-slot reference, ages 8191 and 8192, overwrite within a slot, and a reorg-removed root. Baseline EIP-8141 test construction remains usable. Level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Could be read as an application-level revert under an unchanged VERIFY rule (level 1). However, the contract is protocol-mandated and bound to slot semantics.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"supporting/eip-7843.md\",\"locator\":\"Header extension\",\"summary\":\"slotNumber is added by the prerequisite.\"}],\"rationale\":\"No header field is added by the target. Level 0.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Activation — \\\"clients MUST initialize RECENT_ROOT_ADDRESS against the parent state before executing any transaction\\\"\",\"summary\":\"One-time protocol-mandated code installation.\"},{\"source\":\"eip.md\",\"locator\":\"Activation — \\\"set its nonce to max(existing_nonce, 1), preserve its balance\\\"\",\"summary\":\"Conditional handling of an existing account.\"},{\"source\":\"eip.md\",\"locator\":\"Activation — \\\"Clients MUST handle reorganizations across activation\\\"\",\"summary\":\"Reorgs across activation must apply or undo the transition.\"}],\"rationale\":\"Activation installs code at a new or existing empty account: nonce max(n,1), balance preserved, invalid if code or storage is present. This differs from ordinary post-fork processing. Level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"Behavior when genesis is already in the fork is not stated.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"A reorganization or synchronized expiry may evict many transactions that use one popular root\\\"\",\"summary\":\"Mass eviction workload in the mempool.\"},{\"source\":\"eip.md\",\"locator\":\"Public mempool handling — \\\"Clients SHOULD index pending transactions by these values\\\"\",\"summary\":\"New dependency-indexing workload when slots advance or reorgs occur.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases — \\\"Sixteen valid tuples with distinct cold storage keys\\\"\",\"summary\":\"Up to 16 cold SLOADs per frame within MAX_VERIFY_GAS.\"}],\"rationale\":\"Needs targeted integrated benchmarks of mempool dependency indexing and revalidation under reorgs and synchronized expiry of popular roots, and of 16-SLOAD validation inside the MAX_VERIFY_GAS budget. This is a bounded interaction between mempool and state. Level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Unbounded growth in the number of source_ids is priced by ordinary state growth; whether that needs separate benchmarking is not established.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale — \\\"EIP-8141 public mempool validation normally rejects reads from shared mutable storage. Recent root storage is a narrow exception\\\"\",\"summary\":\"Relaxes the EIP-8141 mempool isolation invariant.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Mempool — \\\"avoid allowing an arbitrary number of transactions to be invalidated by a single environmental change\\\"\",\"summary\":\"The baseline invariant that is being relaxed.\"},{\"source\":\"eip.md\",\"locator\":\"Write operation — \\\"DELEGATECALL and CALLCODE use the invoking account's storage context, while EIP-7702 delegated code uses the delegating account's storage context\\\"\",\"summary\":\"Storage-context boundary for writes.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations — \\\"Validation logic that does not authorize the canonical signature hash must bind the recent root verifier frame\\\"\",\"summary\":\"Application binding responsibilities.\"}],\"rationale\":\"Relaxing the mempool's no-shared-mutable-state invariant changes security assumptions between mempool admission/eviction, block-builder revalidation and the contract. Needed adversarial cases: mass invalidation via reorg or expiry, same-slot overwrite, and the gap between mempool slot and payload slot. Write-context isolation (static, DELEGATECALL, 7702) also needs checking. This is a bounded interaction rather than a change across many components. Level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Could reach 3 if the mempool DoS invariant change is treated as a shared trust invariant across mempool, builder and applications.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Constants — \\\"RECENT_ROOT_CODE | TBD\\\"\",\"summary\":\"Bytecode is unspecified, so gas use, check order and revert vs halt are not fixed.\"},{\"source\":\"eip.md\",\"locator\":\"Write operation — \\\"In static context, the write MUST fail\\\"\",\"summary\":\"Does not say whether failure is a revert or an exceptional halt; gas outcomes differ.\"},{\"source\":\"eip.md\",\"locator\":\"Activation — \\\"For the first block in which this EIP is active\\\"\",\"summary\":\"Unclear whether this applies when genesis is already in the fork.\"}],\"rationale\":\"Several consensus-visible outcomes cannot be fixed yet: gas used by write and validation calls, short-circuit order on failing tuples (which affects warm sets and gas), the failure mode for static-context writes, and the install trigger when genesis is in the fork. These are localized competing outcomes that need specification agreement. Level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Once RECENT_ROOT_CODE is published, most of these resolve.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Public mempool handling — \\\"[expiry_verify?] [recent_root_verify?] [deploy?] [account validation]\\\"\",\"summary\":\"Couples with EIP-8141 prefix shapes, expiry verifier and MAX_VERIFY_GAS.\"},{\"source\":\"eip.md\",\"locator\":\"Current slot — \\\"The simulated SLOTNUM value MUST equal this slot\\\" / \\\"revalidate it with SLOTNUM set to that payload's slotNumber\\\"\",\"summary\":\"Couples with EIP-7843 slotNumber in mempool and in block building.\"},{\"source\":\"eip.md\",\"locator\":\"Application introspection\",\"summary\":\"Account validation reads the verifier frame via EIP-8141 FRAMEPARAM/FRAMEDATALOAD.\"},{\"source\":\"eip.md\",\"locator\":\"Write operation — \\\"EIP-7702 delegated code uses the delegating account's storage context\\\"\",\"summary\":\"Write-context interaction with EIP-7702.\"}],\"rationale\":\"The target couples EIP-8141 (frame modes, flags, STATICCALL VERIFY, frame-entry cold charge, prefix matching, MAX_VERIFY_GAS, introspection, revalidation) with EIP-7843 (SLOTNUM as current_slot, mempool header+1 slot, payload slot revalidation). This requires coordinated scenarios across both, plus EIP-7702 storage-context checks. Level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":8141,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Four validation prefix shapes × {none, recent_root_verify, expiry_verify, expiry_verify+recent_root_verify}, with reversed or duplicate verifiers rejected. Frame-shape gating: flags 0/1/ATOMIC_BATCH, nonzero value, nonzero limits.state. Frame-entry cold target charge within limits.execution for 16 tuples. MAX_VERIFY_GAS equality and plus-one. Account validation reading the frame via FRAMEPARAM/FRAMEDATALOAD/FRAMEDATACOPY, including status. A failed VERIFY invalidating the block transaction. Direct evaluation matching the receipt and warm sets. Mempool revalidation and eviction on reorg.\"},{\"eip\":7843,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"current_slot from the header slotNumber. Mempool simulation with SLOTNUM = latest header slot + 1, unchanged across empty slots. Builder revalidation at the payload slotNumber when slots are skipped. Write in slot S referenceable from S+1. Age 8191/8192 against slotNumber. SLOTNUM exception allowed only inside RECENT_ROOT_CODE at top level.\"},{\"eip\":7702,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"An EOA delegated to RECENT_ROOT_ADDRESS that executes the write path stores into its own storage, not the recent root storage. A delegated EOA calling the contract writes under msg.sender = the EOA.\"}],\"unidentified_interactions\":[\"EIP-2929 warm/cold accounting for the frame target and up to 16 cold SLOADs (the target says only \\\"normal warm and cold access rules\\\").\",\"Ordinary state-growth (state gas) pricing for first writes that create storage slots. The defining EIP (EIP-8037, via EIP-8141) was not supplied.\",\"DELEGATECALL/CALLCODE storage-context isolation for write calls.\",\"Canonical paymaster and deploy-frame prefix shapes combined with the leading protocol verifiers.\"]},\"under_specification\":{\"present\":true,\"summary\":\"RECENT_ROOT_CODE is TBD, so the gas used by write and validation calls, the order of checks and short-circuiting, and revert-vs-halt behavior cannot be fixed. The failure mode of a static-context write is unspecified. It is unclear whether the activation install runs when genesis is already in the fork, and how a transition tool detects the first active block.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":2,\"maximum_score\":2},{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"new_invariant_on_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"block_syncing_changes\",\"minimum_score\":0,\"maximum_score\":2}],\"unresolved_questions\":[\"What is the exact RECENT_ROOT_CODE bytecode, and therefore the gas used by write and validation calls?\",\"Does the validation operation stop at the first failing tuple, and in what order does it check the window and SLOAD (this affects warm sets and gas used)?\",\"Does a write in static context revert or halt exceptionally?\",\"If genesis is already in the fork, does the activation install run in block 1, or must the contract be in genesis allocation?\",\"How does a transition tool learn that a block is the first active block?\"]},\"notable_ambiguities\":[\"RECENT_ROOT_CODE is TBD, but the EIP requires direct evaluation to match EVM gas use and warm sets exactly.\",\"A static-context write \\\"MUST fail\\\" without saying whether it reverts or halts exceptionally.\",\"The activation trigger is unclear for chains or tests whose genesis is already in the fork.\",\"Mempool current_slot (header slotNumber + 1) can differ from the payload slot, so builder revalidation is required; the expected eviction behavior for skipped slots is only partly specified.\",\"The admission margin for references close to expiry is left to the node, so expiry-near admission results are not deterministic across clients.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8272 sets up a stateful recent root contract at RECENT_ROOT_ADDRESS (0x…8272), installed by the protocol at activation. Root sources write domain-separated keccak entry hashes into an 8192-slot ring buffer keyed by (source_id, slot) using 64-byte calldata. The same contract checks 1–16 packed 72-byte (source_id, slot, root) tuples against storage and the EIP-7843 SLOTNUM within an 8191-slot window. A canonical EIP-8141 VERIFY frame, `recent_root_verify`, calls this check before account validation, so a failed check invalidates the frame transaction. The EIP-8141 public mempool policy is extended with: a fixed frame position, a SLOTNUM/SLOAD exception, MAX_VERIFY_GAS accounting, dependency indexing, and eviction on age, slot advance, reorg and code change. There is no new opcode, transaction envelope, header field or gas mechanism.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Recent root contract — \"All calls use ordinary EVM execution and gas accounting.\"",
+       "summary": "The contract uses unchanged EVM gas accounting."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Recent root verifier frame — \"This EIP adds no special intrinsic gas, warming rule, or exemption from block gas.\"",
+       "summary": "No new intrinsic, warming or block-gas rule."
+      }
+     ],
+     "rationale": "The frame and contract calls use ordinary EVM and EIP-8141 gas rules. Counting the frame's limit toward MAX_VERIFY_GAS is mempool policy, not execution-gas accounting. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "Actual gas use depends on RECENT_ROOT_CODE, which is TBD, but that is the cost of contract code, not an accounting rule.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Recent root verifier frame — \"Its target access and storage reads follow the normal warm and cold access rules\"",
+       "summary": "Access rules are unchanged; the frame-entry target charge comes from EIP-8141."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes. The frame-entry cold access charge is inherited from EIP-8141. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Nothing in the specification touches blobs or blob gas."
+      }
+     ],
+     "rationale": "No blob-gas rules change. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Implicit source creation — \"writes that create storage entries pay the ordinary state growth cost\"",
+       "summary": "Writes use ordinary state-growth pricing."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Recent root verifier frame — \"frame.limits.state == 0\"",
+       "summary": "The verifier frame uses no state gas."
+      }
+     ],
+     "rationale": "Writes are ordinary SSTOREs under unchanged state-gas rules. There is no registration surcharge and no new charge site. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "A future surcharge is only mentioned as a possibility in Security Considerations.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Recent root contract",
+       "summary": "No refund mechanism is defined."
+      }
+     ],
+     "rationale": "No new refund. Overwriting ring-buffer slots uses existing SSTORE refund rules. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Public mempool handling — \"clients MUST skip both optional leading protocol verifier frames. The EIP-8141 rule that deploy is first applies after these frames are skipped.\"",
+       "summary": "Changes EIP-8141 prefix-shape matching and where the deploy-first rule applies."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Expiry Verifier Frame (Mempool) — \"expiry verifier frame is skipped\"",
+       "summary": "The baseline skip rule covered only expiry_verify."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"Calls to that address change behavior after activation\"",
+       "summary": "The behavior of RECENT_ROOT_ADDRESS changes."
+      }
+     ],
+     "rationale": "Rework is limited to particular cases in the EIP-8141 public mempool prefix-shape family. A VERIFY frame with flags 0 targeting 0x…8272 before account validation used to be rejected and may now be accepted, and the deploy-first check now applies after skipping. Baseline execution tests are otherwise unaffected. Level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "If tests whose genesis is already in the fork must run the activation install in block 1, many blockchain-test post-states would change.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Activation — \"clients MUST create it with balance 0, nonce 1, code RECENT_ROOT_CODE, and empty storage\"",
+       "summary": "Protocol-mandated account creation in the first active block."
+      }
+     ],
+     "rationale": "Fork-transition tests must also assert the newly installed account (code, nonce 1, preserved balance, empty storage) in the first active block. Only that restricted family needs the assertion. Level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "The text does not say whether the install applies when genesis is already in the fork. If it does, many more tests would be affected.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Current slot — \"MUST obtain current_slot from the EIP-7843 slotNumber field\"",
+       "summary": "The slot input comes from the prerequisite."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Activation — \"For the first block in which this EIP is active\"",
+       "summary": "Activation needs knowledge of the fork boundary."
+      }
+     ],
+     "rationale": "slotNumber is a prerequisite (EIP-7843) field. The EIP adds no transition-tool field or mechanism. Mempool handling is outside t8n. Level 0.",
+     "confidence": "medium",
+     "uncertainty_note": "Detecting the first active block may need parent-fork information in the t8n input. No tool evidence was supplied.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Public mempool handling — \"On admission, clients MUST record each distinct (storage_key, entry_hash) dependency\"",
+       "summary": "Mempool dependency tracking, age-based eviction and reorg eviction."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Entry and storage keys",
+       "summary": "Tests need helpers that compute entry hashes and storage keys to pre-populate state."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Revalidation",
+       "summary": "The prerequisite already needs mempool revalidation on new heads."
+      }
+     ],
+     "rationale": "Needs local extensions to existing kinds of primitive: tuple and frame builders, an entry-hash/storage-key pre-state helper, and mempool eviction expectations for slot advance and reorg on top of the EIP-8141 mempool revalidation harness. No new shared abstraction is architecturally required. Level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "If the EIP-8141 baseline has no mempool/reorg harness that can be driven from tests, the eviction and reorg cases would need a new expectation abstraction (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Entry and storage keys — \"entry_hash = keccak256(RECENT_ROOT_ENTRY_DOMAIN || ...)\"",
+       "summary": "Uses unchanged keccak256 with domain separation inside contract code."
+      }
+     ],
+     "rationale": "Only reuses keccak256 inside contract logic and mempool direct evaluation. No cryptographic verification or protocol hashing rule changes. Level 0.",
+     "confidence": "medium",
+     "uncertainty_note": "The domain-separated key derivation is new, but it is message construction that the template treats as an encoding concern.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Validation operation — \"slot < current_slot\" / \"current_slot - slot <= RECENT_ROOT_USABLE_WINDOW\"",
+       "summary": "Age-window boundary: 8191 accepted, 8192 rejected, current or future slot rejected."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Validation operation — \"1 <= n <= MAX_RECENT_ROOT_REFERENCES\"",
+       "summary": "Calldata-length boundaries: 64-byte write, 71/72/73 bytes, 16 vs 17 tuples."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — \"Signature verification cost plus all validation prefix execution limits ... equals MAX_VERIFY_GAS\" / \"exceeds ... by one\"",
+       "summary": "Verify-gas budget boundary and the one-gas-short execution limit."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — \"Each of EIP-8141's four recognized validation prefix shapes must be tested with no protocol verifier, with recent_root_verify, with expiry_verify, and with expiry_verify followed by recent_root_verify.\"",
+       "summary": "Elevated matrix of prefix shape × verifier presence × order."
+      }
+     ],
+     "rationale": "There are several independent boundary-sensitive mechanisms: the age window and ring index, calldata length and tuple count, the MAX_VERIFY_GAS budget, the execution limit, and the activation-state conditions. The frame-position rule is an elevated matrix: four prefix shapes × expiry_verify presence × recent_root_verify presence × order and duplication, where combinations change acceptance. Separately, the current_slot definition (mempool header+1 vs payload slotNumber) interacts with the age window. Level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Activation — \"If this condition is false, the first active block is invalid.\"",
+       "summary": "A new block-validity rule that depends on parent state at activation."
+      }
+     ],
+     "rationale": "One complex block-validity rule, tested through block import: the first active block is invalid if RECENT_ROOT_ADDRESS has nonempty code or storage in the parent state. It depends on state, so it is complex. No RLP decoding changes. Level 2.",
+     "confidence": "low",
+     "uncertainty_note": "This is a state-dependent rule rather than a structural one. It could be treated as an activation/execution matter only, which would give 0.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "supporting/eip-7843.md",
+       "locator": "Engine API changes",
+       "summary": "slotNumber Engine API changes belong to EIP-7843."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Current slot",
+       "summary": "Consumes the existing slotNumber field."
+      }
+     ],
+     "rationale": "No Engine API change beyond the prerequisite. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Constants — \"RECENT_ROOT_ADDRESS 0x0000000000000000000000000000000000008272\" / \"RECENT_ROOT_CODE TBD\"",
+       "summary": "One protocol-designated contract address; code TBD."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Write operation — \"storage[storage_key] = entry_hash\"",
+       "summary": "The contract keeps persistent ring-buffer storage."
+      }
+     ],
+     "rationale": "Exactly one stateful system contract is introduced. Level 2.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Public mempool handling — \"[expiry_verify?] [recent_root_verify?] [deploy?] [account validation]\"",
+       "summary": "The expiry verifier keeps its rules and its first-frame position."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Expiry Verifier Frame",
+       "summary": "The expiry verifier is an ordinary deployed contract; its behavior is unchanged."
+      }
+     ],
+     "rationale": "No existing protocol-designated contract changes its rules, code or layout. The expiry verifier's position and semantics are unchanged. Level 0.",
+     "confidence": "medium",
+     "uncertainty_note": "The extended prefix-skip rule touches handling around expiry_verify, but expiry_verify itself stays first.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"no new opcode\"",
+       "summary": "Explicitly states that no opcode is added."
+      }
+     ],
+     "rationale": "No new instruction. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Application introspection — \"This EIP adds no transaction parameter or opcode.\"",
+       "summary": "FRAMEPARAM and the other introspection opcodes are used unchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Public mempool handling — \"SLOTNUM MAY execute inside RECENT_ROOT_CODE\"",
+       "summary": "Mempool permission only; SLOTNUM semantics are unchanged."
+      }
+     ],
+     "rationale": "Instruction semantics are unchanged. The SLOTNUM/SLOAD permissions are public-mempool policy only. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Recent root contract",
+       "summary": "An EVM contract, not a precompile."
+      }
+     ],
+     "rationale": "No precompile is introduced. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile is referenced or changed."
+      }
+     ],
+     "rationale": "Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"This requires no change to the FrameTx envelope\"",
+       "summary": "No envelope change."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Recent root verifier frame — \"This EIP does not change the transaction payload or signature hash.\"",
+       "summary": "Payload and signature hash are unchanged."
+      }
+     ],
+     "rationale": "Only contract calldata and storage layouts are new, and the template excludes those. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"does not modify other transaction types\"",
+       "summary": "Reuses the EIP-8141 frame transaction."
+      }
+     ],
+     "rationale": "No new envelope. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Recent root verifier frame — \"If the contract reverts or the frame halts exceptionally, EIP-8141 makes the transaction invalid.\"",
+       "summary": "Block inclusion now depends on recent-root storage and the slot window."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Current slot — \"References MUST target slots strictly before current_slot. A root written during slot S becomes referenceable beginning in slot S + 1.\"",
+       "summary": "Validity depends on writes across blocks and on the payload slotNumber."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Behavior — \"If the frame fails by reverting or halting exceptionally, the transaction is invalid.\"",
+       "summary": "The baseline VERIFY invalidation rule."
+      }
+     ],
+     "rationale": "The VERIFY invalidation rule is inherited, but the protocol-installed contract adds a new consensus validity dependency on recent-root storage, SLOTNUM and the window. This needs dedicated multi-block cases: write in slot S then reference at S+1, a same-slot reference, ages 8191 and 8192, overwrite within a slot, and a reorg-removed root. Baseline EIP-8141 test construction remains usable. Level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Could be read as an application-level revert under an unchanged VERIFY rule (level 1). However, the contract is protocol-mandated and bound to slot semantics.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "supporting/eip-7843.md",
+       "locator": "Header extension",
+       "summary": "slotNumber is added by the prerequisite."
+      }
+     ],
+     "rationale": "No header field is added by the target. Level 0.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Activation — \"clients MUST initialize RECENT_ROOT_ADDRESS against the parent state before executing any transaction\"",
+       "summary": "One-time protocol-mandated code installation."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Activation — \"set its nonce to max(existing_nonce, 1), preserve its balance\"",
+       "summary": "Conditional handling of an existing account."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Activation — \"Clients MUST handle reorganizations across activation\"",
+       "summary": "Reorgs across activation must apply or undo the transition."
+      }
+     ],
+     "rationale": "Activation installs code at a new or existing empty account: nonce max(n,1), balance preserved, invalid if code or storage is present. This differs from ordinary post-fork processing. Level 3.",
+     "confidence": "high",
+     "uncertainty_note": "Behavior when genesis is already in the fork is not stated.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"A reorganization or synchronized expiry may evict many transactions that use one popular root\"",
+       "summary": "Mass eviction workload in the mempool."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Public mempool handling — \"Clients SHOULD index pending transactions by these values\"",
+       "summary": "New dependency-indexing workload when slots advance or reorgs occur."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases — \"Sixteen valid tuples with distinct cold storage keys\"",
+       "summary": "Up to 16 cold SLOADs per frame within MAX_VERIFY_GAS."
+      }
+     ],
+     "rationale": "Needs targeted integrated benchmarks of mempool dependency indexing and revalidation under reorgs and synchronized expiry of popular roots, and of 16-SLOAD validation inside the MAX_VERIFY_GAS budget. This is a bounded interaction between mempool and state. Level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Unbounded growth in the number of source_ids is priced by ordinary state growth; whether that needs separate benchmarking is not established.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale — \"EIP-8141 public mempool validation normally rejects reads from shared mutable storage. Recent root storage is a narrow exception\"",
+       "summary": "Relaxes the EIP-8141 mempool isolation invariant."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Mempool — \"avoid allowing an arbitrary number of transactions to be invalidated by a single environmental change\"",
+       "summary": "The baseline invariant that is being relaxed."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Write operation — \"DELEGATECALL and CALLCODE use the invoking account's storage context, while EIP-7702 delegated code uses the delegating account's storage context\"",
+       "summary": "Storage-context boundary for writes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations — \"Validation logic that does not authorize the canonical signature hash must bind the recent root verifier frame\"",
+       "summary": "Application binding responsibilities."
+      }
+     ],
+     "rationale": "Relaxing the mempool's no-shared-mutable-state invariant changes security assumptions between mempool admission/eviction, block-builder revalidation and the contract. Needed adversarial cases: mass invalidation via reorg or expiry, same-slot overwrite, and the gap between mempool slot and payload slot. Write-context isolation (static, DELEGATECALL, 7702) also needs checking. This is a bounded interaction rather than a change across many components. Level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Could reach 3 if the mempool DoS invariant change is treated as a shared trust invariant across mempool, builder and applications.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Constants — \"RECENT_ROOT_CODE | TBD\"",
+       "summary": "Bytecode is unspecified, so gas use, check order and revert vs halt are not fixed."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Write operation — \"In static context, the write MUST fail\"",
+       "summary": "Does not say whether failure is a revert or an exceptional halt; gas outcomes differ."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Activation — \"For the first block in which this EIP is active\"",
+       "summary": "Unclear whether this applies when genesis is already in the fork."
+      }
+     ],
+     "rationale": "Several consensus-visible outcomes cannot be fixed yet: gas used by write and validation calls, short-circuit order on failing tuples (which affects warm sets and gas), the failure mode for static-context writes, and the install trigger when genesis is in the fork. These are localized competing outcomes that need specification agreement. Level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Once RECENT_ROOT_CODE is published, most of these resolve.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Public mempool handling — \"[expiry_verify?] [recent_root_verify?] [deploy?] [account validation]\"",
+       "summary": "Couples with EIP-8141 prefix shapes, expiry verifier and MAX_VERIFY_GAS."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Current slot — \"The simulated SLOTNUM value MUST equal this slot\" / \"revalidate it with SLOTNUM set to that payload's slotNumber\"",
+       "summary": "Couples with EIP-7843 slotNumber in mempool and in block building."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Application introspection",
+       "summary": "Account validation reads the verifier frame via EIP-8141 FRAMEPARAM/FRAMEDATALOAD."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Write operation — \"EIP-7702 delegated code uses the delegating account's storage context\"",
+       "summary": "Write-context interaction with EIP-7702."
+      }
+     ],
+     "rationale": "The target couples EIP-8141 (frame modes, flags, STATICCALL VERIFY, frame-entry cold charge, prefix matching, MAX_VERIFY_GAS, introspection, revalidation) with EIP-7843 (SLOTNUM as current_slot, mempool header+1 slot, payload slot revalidation). This requires coordinated scenarios across both, plus EIP-7702 storage-context checks. Level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 8141,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Four validation prefix shapes × {none, recent_root_verify, expiry_verify, expiry_verify+recent_root_verify}, with reversed or duplicate verifiers rejected. Frame-shape gating: flags 0/1/ATOMIC_BATCH, nonzero value, nonzero limits.state. Frame-entry cold target charge within limits.execution for 16 tuples. MAX_VERIFY_GAS equality and plus-one. Account validation reading the frame via FRAMEPARAM/FRAMEDATALOAD/FRAMEDATACOPY, including status. A failed VERIFY invalidating the block transaction. Direct evaluation matching the receipt and warm sets. Mempool revalidation and eviction on reorg."
+     },
+     {
+      "eip": 7843,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "current_slot from the header slotNumber. Mempool simulation with SLOTNUM = latest header slot + 1, unchanged across empty slots. Builder revalidation at the payload slotNumber when slots are skipped. Write in slot S referenceable from S+1. Age 8191/8192 against slotNumber. SLOTNUM exception allowed only inside RECENT_ROOT_CODE at top level."
+     },
+     {
+      "eip": 7702,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "An EOA delegated to RECENT_ROOT_ADDRESS that executes the write path stores into its own storage, not the recent root storage. A delegated EOA calling the contract writes under msg.sender = the EOA."
+     }
+    ],
+    "unidentified_interactions": [
+     "EIP-2929 warm/cold accounting for the frame target and up to 16 cold SLOADs (the target says only \"normal warm and cold access rules\").",
+     "Ordinary state-growth (state gas) pricing for first writes that create storage slots. The defining EIP (EIP-8037, via EIP-8141) was not supplied.",
+     "DELEGATECALL/CALLCODE storage-context isolation for write calls.",
+     "Canonical paymaster and deploy-frame prefix shapes combined with the leading protocol verifiers."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "RECENT_ROOT_CODE is TBD, so the gas used by write and validation calls, the order of checks and short-circuiting, and revert-vs-halt behavior cannot be fixed. The failure mode of a static-context write is unspecified. It is unclear whether the activation install runs when genesis is already in the fork, and how a transition tool detects the first active block.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 2,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_invariant_on_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "block_syncing_changes",
+      "minimum_score": 0,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "What is the exact RECENT_ROOT_CODE bytecode, and therefore the gas used by write and validation calls?",
+     "Does the validation operation stop at the first failing tuple, and in what order does it check the window and SLOAD (this affects warm sets and gas used)?",
+     "Does a write in static context revert or halt exceptionally?",
+     "If genesis is already in the fork, does the activation install run in block 1, or must the contract be in genesis allocation?",
+     "How does a transition tool learn that a block is the first active block?"
+    ]
+   },
+   "notable_ambiguities": [
+    "RECENT_ROOT_CODE is TBD, but the EIP requires direct evaluation to match EVM gas use and warm sets exactly.",
+    "A static-context write \"MUST fail\" without saying whether it reverts or halts exceptionally.",
+    "The activation trigger is unclear for chains or tests whose genesis is already in the fork.",
+    "Mempool current_slot (header slotNumber + 1) can differ from the payload slot, so builder revalidation is required; the expected eviction behavior for skipped slots is only partly specified.",
+    "The admission margin for references close to expiry is left to the node, so expiry-near admission results are not deterministic across clients."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 78906,
+  "type": "result",
+  "duration_ms": 158948,
+  "uuid": "0d8d3f6b-66c3-4256-a4ff-e586730d8dd3",
+  "ttft_stream_ms": 2525,
+  "time_to_request_ms": 432,
+  "first_content_frame_ms": 2525,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

@@ -1,0 +1,727 @@
+{
+ "case": "hegota/8279",
+ "run_id": "assessment-run-1a790485-7bae-4705-91f3-6e3c5f747889",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T10:00:10.981428Z",
+ "finished_at": "2026-10-08T10:03:46.465363Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "1cd9dccbd67599d88afbbafb8bb6ec4b15d6e512b9a59af29c5cc3865040544b",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "ba22818d0638c0c6614b6f8d28ce8be5f3604c694d69b775f4997915ad10c71c",
+ "output": {
+  "duration_api_ms": 213044,
+  "stop_reason": "tool_use",
+  "session_id": "9c83d022-7051-4fbd-ba93-6c99a12dabe6",
+  "total_cost_usd": 1.6206998000000001,
+  "usage": {
+   "input_tokens": 4,
+   "cache_creation_input_tokens": 133063,
+   "cache_read_input_tokens": 115799,
+   "output_tokens": 26651,
+   "output_tokens_details": {
+    "thinking_tokens": 7519
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 133063,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 9913,
+     "cache_read_input_tokens": 115799,
+     "cache_creation_input_tokens": 17264,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 17264
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 4,
+    "outputTokens": 26651,
+    "cacheReadInputTokens": 115799,
+    "cacheCreationInputTokens": 133063,
+    "webSearchRequests": 0,
+    "costUSD": 1.6206998000000001,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 7519,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 3,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8279 adds two per-transaction counters, `bal_data_bytes` and `floor_gas_used`, to EIP-7928 Block Access List (BAL) processing. Before an opcode inserts an entry into the BAL, it calls `meter_bal_data` with a fixed byte count for cold account or storage accesses, storage-value changes, value transfers, CREATE nonce and balance entries, and deployed code. That count, at 64 gas per byte, is added to the EIP-8131 static transaction floor. If the floor would exceed `tx.gas`, the operation raises OutOfGasError. The static floor seed also gains a fixed 51 BAL bytes per EIP-7702 authorization, which changes the transaction validity threshold. A storage slot returned to its pre-transaction value gets its 32 value bytes back. Final charging stays `tx.gasUsed = max(execution_gas_used, floor_gas_used)`. System calls and withdrawals are excluded from the meter.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator\",\"summary\":\"Adds a new runtime per-transaction floor accumulator: `new_floor = static_floor + bal_data_bytes * 64`. If the new floor exceeds `tx.gas`, the operation raises OutOfGasError.\"},{\"source\":\"eip.md\",\"locator\":\"Final charge\",\"summary\":\"`tx.gasUsed = max(execution_gas_used, tx_env.floor_gas_used)` now includes runtime BAL bytes.\"},{\"source\":\"eip.md\",\"locator\":\"Static floor seed\",\"summary\":\"The static floor adds 64 × 51 gas per authorization on top of EIP-8131's `tx_floor`.\"},{\"source\":\"supporting/eip-8131.md\",\"locator\":\"Charging\",\"summary\":\"Baseline: `tx.gasUsed = max(execution_gas_used, tx_floor)`, a floor computed only from transaction content.\"}],\"rationale\":\"This adds a new accounting mechanism: a runtime floor accumulator with its own out-of-gas trigger. It also changes existing settlement results: any floor-bound transaction that touches state, and type-4 transactions whose floor dominates, now get a different gasUsed. That meets level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator — \\\"MUST be called BEFORE the matching BAL insertion or state mutation\\\"\",\"summary\":\"Adds a new gate before BAL insertion. An OutOfGasError at that gate aborts the operation before the BAL entry exists.\"},{\"source\":\"eip.md\",\"locator\":\"Runtime data metering\",\"summary\":\"Metering applies across a whole class of operations: BALANCE, EXT*, CALL*, SELFDESTRUCT, CREATE/CREATE2, SLOAD and SSTORE, plus value transfers and code deployment.\"},{\"source\":\"supporting/eip-7928.md\",\"locator\":\"Gas Validation Before State Access\",\"summary\":\"Baseline two-phase rule: pre-state validation must pass before access. Once it passes, the target is included in the BAL.\"}],\"rationale\":\"A common new ordering step (the floor check before BAL insertion) is added for every account-accessing and storage-accessing opcode class. It changes which accesses get recorded: an access that passes EIP-7928 pre-state validation can still be left out of the BAL if the floor check fails. Baseline BAL expectations for floor-bound transactions must be revised. This meets level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The order of the floor check relative to EIP-7928 pre-state gas validation is not specified. Baseline revisions are limited to floor-bound transactions, so level 2 is plausible.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Static floor seed\",\"summary\":\"Blob versioned hashes enter the floor only through EIP-8131's `tx_floor`. This EIP leaves blob-gas pricing unchanged.\"}],\"rationale\":\"No blob-gas charging, pricing or limits change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Runtime data metering\",\"summary\":\"SSTORE value bytes and deployed code bytes are charged as BAL data bytes at the floor rate, not as state-growth gas.\"}],\"rationale\":\"The rubric places BAL data-size charges under GAS. No state-gas mechanism changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Runtime data metering — \\\"`SSTORE` returning a slot to its pre-transaction value | −32 (refund)\\\"\",\"summary\":\"Adds a byte refund to the floor meter. It depends on the slot's pre-transaction value and on whether it was charged earlier.\"},{\"source\":\"eip.md\",\"locator\":\"Runtime data metering — \\\"not the EIP-3529 SSTORE gas refund\\\"\",\"summary\":\"The refund is explicitly separate from EIP-3529 refunds, which are unchanged.\"}],\"rationale\":\"The floor-byte refund depends on history (original vs current value, earlier charge state, revert behaviour), so it counts as complex under the rubric. Existing EIP-3529 refund rules and baseline refund expectations are unchanged. That is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"It is debatable whether a reduction of the floor accumulator counts as an 'EVM gas refund'. If it does not, the score would be 0.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Minimum `tx.gas` changes only when the floor side already dominated, i.e. for calldata-heavy or BAL-heavy transactions.\"},{\"source\":\"eip.md\",\"locator\":\"Static floor seed\",\"summary\":\"The per-authorization term changes the floor of type-4 transactions.\"}],\"rationale\":\"Rework is localized to several families: floor-bound calldata or access-list tests from EIP-8131/7623 that touch state, type-4 floor and validity boundary tests, and BAL tests built on floor-bound transactions. No common rewrite is needed across ordinary tests, because the floor rarely binds. That is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No test suite was supplied. The breadth is estimated from the specification.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator — \\\"Neither is part of the signed transaction, RLP-encoded, gossiped, or persisted\\\"\",\"summary\":\"The new counters are internal. No new outputs exist.\"}],\"rationale\":\"No new header, receipt or log output is added. Effects show up only in existing gasUsed values.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator\",\"summary\":\"The counters are internal per-transaction state and are not part of any interface.\"}],\"rationale\":\"No input or output fields need to change. gasUsed is already reported.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Tooling might choose to expose `floor_gas_used` for debugging, but the specification does not require it.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Runtime data metering\",\"summary\":\"Computing expected gasUsed for floor-bound transactions requires modelling per-opcode BAL byte contributions, including SSTORE value tracking and refunds.\"},{\"source\":\"eip.md\",\"locator\":\"Gas estimation\",\"summary\":\"`floor_gas_used` must be simulated alongside intrinsic gas.\"}],\"rationale\":\"Tests need a new expectation helper. It must compute the runtime BAL-byte floor from an execution trace (cold accesses, value transfers, SSTORE original/current tracking, deployed code length) and combine it with the static floor. Fork floor calculators also need the per-auth term. This is a new expectation abstraction within the target's suite, which is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Framework capabilities are not evidenced.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No cryptographic operations are introduced or changed.\"}],\"rationale\":\"No cryptographic changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator — \\\"if new_floor > tx_env.gas_limit\\\"\",\"summary\":\"Adds a runtime floor-overflow boundary at exactly `tx.gas`.\"},{\"source\":\"eip.md\",\"locator\":\"Final charge — \\\"tx.gas >= max(intrinsic, static_floor)\\\"\",\"summary\":\"Changes the validity boundary through the per-auth term.\"},{\"source\":\"eip.md\",\"locator\":\"Runtime data metering — storage value bytes charged/refunded\",\"summary\":\"The SSTORE value-byte charge and refund depend on original, current and new values.\"},{\"source\":\"eip.md\",\"locator\":\"Reverts\",\"summary\":\"Meter entries in reverted frames are not rewound, so outcomes depend on revert context.\"}],\"rationale\":\"Several boundary-sensitive mechanisms are involved: the runtime floor-vs-`tx.gas` check, the static validity threshold with auths, the execution/floor crossover in the final `max`, and SSTORE value charge and refund. The SSTORE mechanism has an elevated matrix of original/current/new value × cold/warm × frame revert × whether the floor binds. The runtime check interacts with opcode type and the static seed. That meets level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator\",\"summary\":\"No block structure or RLP changes.\"}],\"rationale\":\"Only execution and gas rules change. Block decoding and structural validation are unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API changes are described.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System transactions and withdrawals\",\"summary\":\"Mentions existing system contracts only.\"}],\"rationale\":\"No new system contracts.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"System transactions and withdrawals — \\\"do NOT consume from a per-transaction floor\\\"\",\"summary\":\"System calls are excluded from metering, so their behavior is unchanged.\"}],\"rationale\":\"Contract rules and surrounding protocol behavior are unchanged. The exclusion leaves baseline behavior intact.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Runtime data metering\",\"summary\":\"Only existing opcodes are metered.\"}],\"rationale\":\"No new instructions.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator\",\"summary\":\"Opcodes gain an out-of-gas condition driven by the floor accumulator. Stack, memory and return semantics are unchanged.\"},{\"source\":\"eip.md\",\"locator\":\"Counter, not a reservation\",\"summary\":\"Execution gas accounting is untouched. The meter only updates counters and checks against `tx.gas`.\"}],\"rationale\":\"The only change at instruction level is an additional out-of-gas halt that comes from gas accounting. Under the rubric, gas-only and ordering-only changes do not count.\",\"confidence\":\"low\",\"uncertainty_note\":\"The floor OutOfGasError is a new exceptional-halt condition that does not depend on the frame's gas. If treated as a semantic change, the score would be 3.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are introduced.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator — \\\"no new transaction field or type is introduced\\\"\",\"summary\":\"No schema changes.\"}],\"rationale\":\"No serialized schema changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator\",\"summary\":\"Explicitly introduces no new transaction type.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Final charge — \\\"Transaction validation continues to require tx.gas >= max(intrinsic, static_floor)\\\"\",\"summary\":\"The existing validity condition now uses a static floor that includes 51 bytes × 64 gas per authorization.\"},{\"source\":\"supporting/eip-8131.md\",\"locator\":\"Charging\",\"summary\":\"Baseline requirement: `tx.gas >= max(intrinsic, tx_floor)`.\"}],\"rationale\":\"Only a local bound changes in the existing floor validity condition (the per-auth term). The runtime check is an execution-time OOG, not a validity rule.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility — \\\"Hard fork.\\\"\",\"summary\":\"Rule activation only. No state migration.\"}],\"rationale\":\"No activation-specific state transition.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"block content is capped at block_gas_limit / 64 ≈ 0.89 MB\\\"\",\"summary\":\"The worst-case block plus BAL size bound is reduced.\"},{\"source\":\"eip.md\",\"locator\":\"Runtime data metering\",\"summary\":\"Adds per-opcode metering and per-slot original-value tracking on hot paths.\"}],\"rationale\":\"Component benchmarks of metering overhead are enough, together with checks that adversarial calldata+SLOAD blocks are capped. The change tightens a bound rather than adding resource coupling.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Validating the reduced worst-case block size could need integrated block-building measurements (level 2).\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block-size bound\",\"summary\":\"The security claim is that every BAL byte is covered by the floor. Under-counting breaks the bound.\"},{\"source\":\"eip.md\",\"locator\":\"Per-auth coverage is static — \\\"would propagate uncaught and crash block processing\\\"\",\"summary\":\"Metering at the wrong site can crash block processing.\"},{\"source\":\"supporting/eip-7928.md\",\"locator\":\"Recording Semantics by Change Type\",\"summary\":\"BAL entries include CALL sender balances, precompiles and delegated targets. The meter must cover these (only the recipient's 32 balance bytes are listed for CALL).\"}],\"rationale\":\"The change couples transaction settlement to how the BAL builder records entries. The meter must stay an upper bound on EIP-7928 contents. Possible gaps include warm-but-unrecorded addresses, CALL-sender balance changes and delegation resolution. The meter must also never fire outside the EVM exception handler. This bounded interaction needs targeted differential fuzzing of the meter against actual BAL contents. That is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Data meter and floor accumulator — `tx_env.bal_data_bytes += num_bytes` before the check\",\"summary\":\"Bytes are added even when the check raises OutOfGasError and are not rolled back. Later meter calls, or the refund recompute, could then push `floor_gas_used` above `tx.gas`.\"},{\"source\":\"eip.md\",\"locator\":\"Runtime data metering — \\\"The refund subtracts from bal_data_bytes and recomputes floor_gas_used\\\"\",\"summary\":\"The refund recompute has no `tx.gas` check, and its interaction with failed-meter bytes is undefined.\"},{\"source\":\"eip.md\",\"locator\":\"Reverts — \\\"value bytes charged inside a frame that later reverts are left in place\\\"\",\"summary\":\"It is unclear whether the per-slot 'charged' state is reverted. This contradicts 'at most once per slot' for an O→X write in a reverted frame followed by a committed O→Y.\"},{\"source\":\"supporting/eip-7928.md\",\"locator\":\"Gas Validation Before State Access\",\"summary\":\"The order of the floor meter relative to pre-state and post-state gas checks is unspecified. It is observable when the frame then OOGs and the floor binds.\"}],\"rationale\":\"Several localized outcomes are left open, and each changes gasUsed when the floor binds: the state after a failed meter, refund recompute bounds, revert handling of slot-charge tracking, ordering against EIP-7928 gas checks, and whether resolving an EIP-7702 delegated target meters 20 bytes. Clients must agree on these before expected values can be fixed. That is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Some of these outcomes may be intended to follow the pseudocode literally.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract — \\\"Neither EIP alone closes the bypass\\\"\",\"summary\":\"Behaviour is coupled with EIP-8131's floor and EIP-7928's BAL.\"},{\"source\":\"eip.md\",\"locator\":\"Runtime data metering — \\\"mirrors EIP-7928 ... not the EIP-3529 SSTORE gas refund\\\"\",\"summary\":\"Coordinated cases are needed with EIP-7928 no-op-write semantics and EIP-3529 refunds.\"},{\"source\":\"eip.md\",\"locator\":\"Per-auth coverage is static\",\"summary\":\"Couples with EIP-7702 `set_delegation` and the authorization floor.\"}],\"rationale\":\"The target couples EIP-8131 static floors, EIP-7928 BAL recording rules, EIP-7702 authorization and delegation handling, and EIP-3529 SSTORE refunds. Coordinated scenarios are needed that check BAL contents and floor gas together. That meets level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":7928,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Assert BAL contents together with floor gas for every metered trigger. Cases: a floor OOG before insertion leaves the entry out of the BAL; a no-op write (O→X→O) keeps the key in storage_reads and refunds the value bytes; a reverted CALL with value keeps the over-count; SELFDESTRUCT and CREATE nonce/code entries.\"},{\"eip\":8131,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Static seed equals tx_floor plus the per-auth term. Cases: a calldata + cold-SLOAD bypass transaction hits the runtime floor OOG exactly at `tx.gas`; validity boundary at `max(intrinsic, static_floor)`; access-list and blob-hash floor composition.\"},{\"eip\":7702,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"The 51-byte per-auth static term at the validity boundary. Cases: duplicate or invalid auths still pay the floor; no runtime metering in `set_delegation`; whether resolving a delegated target during CALL meters 20 bytes.\"},{\"eip\":3529,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Clearing a non-zero slot to zero earns the gas refund but no byte refund. Case: restoring to the original value earns both refunds. Interaction of the refund cap on the execution side with `max(exec, floor)`.\"},{\"eip\":7623,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The `max(execution, floor)` charging shape is preserved.\"},{\"eip\":7976,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The 64 gas/byte rate is reused for BAL bytes.\"},{\"eip\":7981,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Access-list-prewarmed addresses and slots are not metered again as cold accesses. Their bytes are already priced through the 8131 floor.\"},{\"eip\":4844,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Blob transactions with runtime BAL metering. Blob-hash floor bytes are unchanged.\"},{\"eip\":2935,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The pre-execution system call does not meter.\"},{\"eip\":4788,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The pre-execution system call does not meter.\"},{\"eip\":7002,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The post-execution system call does not meter. User calls with value to the contract meter normally.\"},{\"eip\":7251,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The post-execution system call does not meter. User calls with value to the contract meter normally.\"}],\"unidentified_interactions\":[\"EIP-2929 cold/warm access sets decide when the 20-byte and 32-byte access charges fire. Warmth rolls back on frame revert, so re-access is metered again.\",\"EIP-3651 warm coinbase and always-warm precompiles enter the BAL without runtime metering. They rely on TX_BASE headroom.\",\"EIP-2200 original/current SSTORE semantics drive the value-byte charge and refund.\",\"EIP-4895 withdrawals are excluded from the meter and absorbed by the EIP-7928 item buffer.\",\"Contract code-size limits bound the per-byte metering of deployed code.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The pseudocode adds to `bal_data_bytes` before the OutOfGasError check and never rolls it back. The refund path recomputes `floor_gas_used` without a `tx.gas` check, so the floor could exceed `tx.gas`. Revert handling of per-slot value-charge tracking conflicts with the 'at most once per slot' wording. The meter's position relative to EIP-7928 pre-state and post-state gas validation is not given. It is also unclear whether resolving an EIP-7702 delegated target counts as a metered cold access.\",\"affected_criteria\":[{\"criterion\":\"unspecified_behavior_requiring_cross_client_consensus\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"state_access_ordering_within_opcode_execution\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"modified_opcodes\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"new_evm_gas_refund\",\"minimum_score\":0,\"maximum_score\":2}],\"unresolved_questions\":[\"After a floor OutOfGasError, are the bytes already added to `bal_data_bytes` kept for later meter calls and refund recomputation?\",\"Can the refund recompute set `floor_gas_used` above `tx.gas`, and if so, what gasUsed is charged?\",\"Is per-slot value-charge tracking reverted with the frame? Does a committed O→Y write after a reverted O→X write meter 32 value bytes again?\",\"Is `meter_bal_data` called before or after the EIP-7928 pre-state gas validation for each opcode?\",\"Is resolving an EIP-7702 delegated target metered as a 20-byte cold account access?\"]},\"notable_ambiguities\":[\"After a failed `meter_bal_data`, are the bytes that were added to `bal_data_bytes` kept? Can a later refund recompute push `floor_gas_used` above `tx.gas`?\",\"An O→X write happens in a reverted frame, then a committed O→Y write follows. Are the 32 value bytes charged again, and is the per-slot charged flag reverted?\",\"Is the floor check before or after EIP-7928 pre-state gas validation? This matters when the frame then OOGs and the floor binds.\",\"Does resolving an EIP-7702 delegated target during CALL* meter 20 bytes as a cold account access?\",\"The balance change of the CALL sender and accesses to warm-but-unrecorded addresses (precompiles) are not listed as metered triggers. This may break the claimed upper bound.\",\"The specification refers to an `auth_bytes` term, but the defined name is `auth_bal_bytes`.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8279 adds two per-transaction counters, `bal_data_bytes` and `floor_gas_used`, to EIP-7928 Block Access List (BAL) processing. Before an opcode inserts an entry into the BAL, it calls `meter_bal_data` with a fixed byte count for cold account or storage accesses, storage-value changes, value transfers, CREATE nonce and balance entries, and deployed code. That count, at 64 gas per byte, is added to the EIP-8131 static transaction floor. If the floor would exceed `tx.gas`, the operation raises OutOfGasError. The static floor seed also gains a fixed 51 BAL bytes per EIP-7702 authorization, which changes the transaction validity threshold. A storage slot returned to its pre-transaction value gets its 32 value bytes back. Final charging stays `tx.gasUsed = max(execution_gas_used, floor_gas_used)`. System calls and withdrawals are excluded from the meter.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator",
+       "summary": "Adds a new runtime per-transaction floor accumulator: `new_floor = static_floor + bal_data_bytes * 64`. If the new floor exceeds `tx.gas`, the operation raises OutOfGasError."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Final charge",
+       "summary": "`tx.gasUsed = max(execution_gas_used, tx_env.floor_gas_used)` now includes runtime BAL bytes."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Static floor seed",
+       "summary": "The static floor adds 64 × 51 gas per authorization on top of EIP-8131's `tx_floor`."
+      },
+      {
+       "source": "supporting/eip-8131.md",
+       "locator": "Charging",
+       "summary": "Baseline: `tx.gasUsed = max(execution_gas_used, tx_floor)`, a floor computed only from transaction content."
+      }
+     ],
+     "rationale": "This adds a new accounting mechanism: a runtime floor accumulator with its own out-of-gas trigger. It also changes existing settlement results: any floor-bound transaction that touches state, and type-4 transactions whose floor dominates, now get a different gasUsed. That meets level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator — \"MUST be called BEFORE the matching BAL insertion or state mutation\"",
+       "summary": "Adds a new gate before BAL insertion. An OutOfGasError at that gate aborts the operation before the BAL entry exists."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering",
+       "summary": "Metering applies across a whole class of operations: BALANCE, EXT*, CALL*, SELFDESTRUCT, CREATE/CREATE2, SLOAD and SSTORE, plus value transfers and code deployment."
+      },
+      {
+       "source": "supporting/eip-7928.md",
+       "locator": "Gas Validation Before State Access",
+       "summary": "Baseline two-phase rule: pre-state validation must pass before access. Once it passes, the target is included in the BAL."
+      }
+     ],
+     "rationale": "A common new ordering step (the floor check before BAL insertion) is added for every account-accessing and storage-accessing opcode class. It changes which accesses get recorded: an access that passes EIP-7928 pre-state validation can still be left out of the BAL if the floor check fails. Baseline BAL expectations for floor-bound transactions must be revised. This meets level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "The order of the floor check relative to EIP-7928 pre-state gas validation is not specified. Baseline revisions are limited to floor-bound transactions, so level 2 is plausible.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Static floor seed",
+       "summary": "Blob versioned hashes enter the floor only through EIP-8131's `tx_floor`. This EIP leaves blob-gas pricing unchanged."
+      }
+     ],
+     "rationale": "No blob-gas charging, pricing or limits change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering",
+       "summary": "SSTORE value bytes and deployed code bytes are charged as BAL data bytes at the floor rate, not as state-growth gas."
+      }
+     ],
+     "rationale": "The rubric places BAL data-size charges under GAS. No state-gas mechanism changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering — \"`SSTORE` returning a slot to its pre-transaction value | −32 (refund)\"",
+       "summary": "Adds a byte refund to the floor meter. It depends on the slot's pre-transaction value and on whether it was charged earlier."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering — \"not the EIP-3529 SSTORE gas refund\"",
+       "summary": "The refund is explicitly separate from EIP-3529 refunds, which are unchanged."
+      }
+     ],
+     "rationale": "The floor-byte refund depends on history (original vs current value, earlier charge state, revert behaviour), so it counts as complex under the rubric. Existing EIP-3529 refund rules and baseline refund expectations are unchanged. That is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "It is debatable whether a reduction of the floor accumulator counts as an 'EVM gas refund'. If it does not, the score would be 0.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Minimum `tx.gas` changes only when the floor side already dominated, i.e. for calldata-heavy or BAL-heavy transactions."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Static floor seed",
+       "summary": "The per-authorization term changes the floor of type-4 transactions."
+      }
+     ],
+     "rationale": "Rework is localized to several families: floor-bound calldata or access-list tests from EIP-8131/7623 that touch state, type-4 floor and validity boundary tests, and BAL tests built on floor-bound transactions. No common rewrite is needed across ordinary tests, because the floor rarely binds. That is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "No test suite was supplied. The breadth is estimated from the specification.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator — \"Neither is part of the signed transaction, RLP-encoded, gossiped, or persisted\"",
+       "summary": "The new counters are internal. No new outputs exist."
+      }
+     ],
+     "rationale": "No new header, receipt or log output is added. Effects show up only in existing gasUsed values.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator",
+       "summary": "The counters are internal per-transaction state and are not part of any interface."
+      }
+     ],
+     "rationale": "No input or output fields need to change. gasUsed is already reported.",
+     "confidence": "medium",
+     "uncertainty_note": "Tooling might choose to expose `floor_gas_used` for debugging, but the specification does not require it.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering",
+       "summary": "Computing expected gasUsed for floor-bound transactions requires modelling per-opcode BAL byte contributions, including SSTORE value tracking and refunds."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Gas estimation",
+       "summary": "`floor_gas_used` must be simulated alongside intrinsic gas."
+      }
+     ],
+     "rationale": "Tests need a new expectation helper. It must compute the runtime BAL-byte floor from an execution trace (cold accesses, value transfers, SSTORE original/current tracking, deployed code length) and combine it with the static floor. Fork floor calculators also need the per-auth term. This is a new expectation abstraction within the target's suite, which is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Framework capabilities are not evidenced.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No cryptographic operations are introduced or changed."
+      }
+     ],
+     "rationale": "No cryptographic changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator — \"if new_floor > tx_env.gas_limit\"",
+       "summary": "Adds a runtime floor-overflow boundary at exactly `tx.gas`."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Final charge — \"tx.gas >= max(intrinsic, static_floor)\"",
+       "summary": "Changes the validity boundary through the per-auth term."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering — storage value bytes charged/refunded",
+       "summary": "The SSTORE value-byte charge and refund depend on original, current and new values."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Reverts",
+       "summary": "Meter entries in reverted frames are not rewound, so outcomes depend on revert context."
+      }
+     ],
+     "rationale": "Several boundary-sensitive mechanisms are involved: the runtime floor-vs-`tx.gas` check, the static validity threshold with auths, the execution/floor crossover in the final `max`, and SSTORE value charge and refund. The SSTORE mechanism has an elevated matrix of original/current/new value × cold/warm × frame revert × whether the floor binds. The runtime check interacts with opcode type and the static seed. That meets level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator",
+       "summary": "No block structure or RLP changes."
+      }
+     ],
+     "rationale": "Only execution and gas rules change. Block decoding and structural validation are unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API changes are described."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System transactions and withdrawals",
+       "summary": "Mentions existing system contracts only."
+      }
+     ],
+     "rationale": "No new system contracts.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "System transactions and withdrawals — \"do NOT consume from a per-transaction floor\"",
+       "summary": "System calls are excluded from metering, so their behavior is unchanged."
+      }
+     ],
+     "rationale": "Contract rules and surrounding protocol behavior are unchanged. The exclusion leaves baseline behavior intact.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering",
+       "summary": "Only existing opcodes are metered."
+      }
+     ],
+     "rationale": "No new instructions.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator",
+       "summary": "Opcodes gain an out-of-gas condition driven by the floor accumulator. Stack, memory and return semantics are unchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Counter, not a reservation",
+       "summary": "Execution gas accounting is untouched. The meter only updates counters and checks against `tx.gas`."
+      }
+     ],
+     "rationale": "The only change at instruction level is an additional out-of-gas halt that comes from gas accounting. Under the rubric, gas-only and ordering-only changes do not count.",
+     "confidence": "low",
+     "uncertainty_note": "The floor OutOfGasError is a new exceptional-halt condition that does not depend on the frame's gas. If treated as a semantic change, the score would be 3.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are introduced."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator — \"no new transaction field or type is introduced\"",
+       "summary": "No schema changes."
+      }
+     ],
+     "rationale": "No serialized schema changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator",
+       "summary": "Explicitly introduces no new transaction type."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Final charge — \"Transaction validation continues to require tx.gas >= max(intrinsic, static_floor)\"",
+       "summary": "The existing validity condition now uses a static floor that includes 51 bytes × 64 gas per authorization."
+      },
+      {
+       "source": "supporting/eip-8131.md",
+       "locator": "Charging",
+       "summary": "Baseline requirement: `tx.gas >= max(intrinsic, tx_floor)`."
+      }
+     ],
+     "rationale": "Only a local bound changes in the existing floor validity condition (the per-auth term). The runtime check is an execution-time OOG, not a validity rule.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility — \"Hard fork.\"",
+       "summary": "Rule activation only. No state migration."
+      }
+     ],
+     "rationale": "No activation-specific state transition.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"block content is capped at block_gas_limit / 64 ≈ 0.89 MB\"",
+       "summary": "The worst-case block plus BAL size bound is reduced."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering",
+       "summary": "Adds per-opcode metering and per-slot original-value tracking on hot paths."
+      }
+     ],
+     "rationale": "Component benchmarks of metering overhead are enough, together with checks that adversarial calldata+SLOAD blocks are capped. The change tightens a bound rather than adding resource coupling.",
+     "confidence": "medium",
+     "uncertainty_note": "Validating the reduced worst-case block size could need integrated block-building measurements (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block-size bound",
+       "summary": "The security claim is that every BAL byte is covered by the floor. Under-counting breaks the bound."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Per-auth coverage is static — \"would propagate uncaught and crash block processing\"",
+       "summary": "Metering at the wrong site can crash block processing."
+      },
+      {
+       "source": "supporting/eip-7928.md",
+       "locator": "Recording Semantics by Change Type",
+       "summary": "BAL entries include CALL sender balances, precompiles and delegated targets. The meter must cover these (only the recipient's 32 balance bytes are listed for CALL)."
+      }
+     ],
+     "rationale": "The change couples transaction settlement to how the BAL builder records entries. The meter must stay an upper bound on EIP-7928 contents. Possible gaps include warm-but-unrecorded addresses, CALL-sender balance changes and delegation resolution. The meter must also never fire outside the EVM exception handler. This bounded interaction needs targeted differential fuzzing of the meter against actual BAL contents. That is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Data meter and floor accumulator — `tx_env.bal_data_bytes += num_bytes` before the check",
+       "summary": "Bytes are added even when the check raises OutOfGasError and are not rolled back. Later meter calls, or the refund recompute, could then push `floor_gas_used` above `tx.gas`."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering — \"The refund subtracts from bal_data_bytes and recomputes floor_gas_used\"",
+       "summary": "The refund recompute has no `tx.gas` check, and its interaction with failed-meter bytes is undefined."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Reverts — \"value bytes charged inside a frame that later reverts are left in place\"",
+       "summary": "It is unclear whether the per-slot 'charged' state is reverted. This contradicts 'at most once per slot' for an O→X write in a reverted frame followed by a committed O→Y."
+      },
+      {
+       "source": "supporting/eip-7928.md",
+       "locator": "Gas Validation Before State Access",
+       "summary": "The order of the floor meter relative to pre-state and post-state gas checks is unspecified. It is observable when the frame then OOGs and the floor binds."
+      }
+     ],
+     "rationale": "Several localized outcomes are left open, and each changes gasUsed when the floor binds: the state after a failed meter, refund recompute bounds, revert handling of slot-charge tracking, ordering against EIP-7928 gas checks, and whether resolving an EIP-7702 delegated target meters 20 bytes. Clients must agree on these before expected values can be fixed. That is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Some of these outcomes may be intended to follow the pseudocode literally.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract — \"Neither EIP alone closes the bypass\"",
+       "summary": "Behaviour is coupled with EIP-8131's floor and EIP-7928's BAL."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Runtime data metering — \"mirrors EIP-7928 ... not the EIP-3529 SSTORE gas refund\"",
+       "summary": "Coordinated cases are needed with EIP-7928 no-op-write semantics and EIP-3529 refunds."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Per-auth coverage is static",
+       "summary": "Couples with EIP-7702 `set_delegation` and the authorization floor."
+      }
+     ],
+     "rationale": "The target couples EIP-8131 static floors, EIP-7928 BAL recording rules, EIP-7702 authorization and delegation handling, and EIP-3529 SSTORE refunds. Coordinated scenarios are needed that check BAL contents and floor gas together. That meets level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 7928,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Assert BAL contents together with floor gas for every metered trigger. Cases: a floor OOG before insertion leaves the entry out of the BAL; a no-op write (O→X→O) keeps the key in storage_reads and refunds the value bytes; a reverted CALL with value keeps the over-count; SELFDESTRUCT and CREATE nonce/code entries."
+     },
+     {
+      "eip": 8131,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Static seed equals tx_floor plus the per-auth term. Cases: a calldata + cold-SLOAD bypass transaction hits the runtime floor OOG exactly at `tx.gas`; validity boundary at `max(intrinsic, static_floor)`; access-list and blob-hash floor composition."
+     },
+     {
+      "eip": 7702,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "The 51-byte per-auth static term at the validity boundary. Cases: duplicate or invalid auths still pay the floor; no runtime metering in `set_delegation`; whether resolving a delegated target during CALL meters 20 bytes."
+     },
+     {
+      "eip": 3529,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Clearing a non-zero slot to zero earns the gas refund but no byte refund. Case: restoring to the original value earns both refunds. Interaction of the refund cap on the execution side with `max(exec, floor)`."
+     },
+     {
+      "eip": 7623,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The `max(execution, floor)` charging shape is preserved."
+     },
+     {
+      "eip": 7976,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The 64 gas/byte rate is reused for BAL bytes."
+     },
+     {
+      "eip": 7981,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Access-list-prewarmed addresses and slots are not metered again as cold accesses. Their bytes are already priced through the 8131 floor."
+     },
+     {
+      "eip": 4844,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Blob transactions with runtime BAL metering. Blob-hash floor bytes are unchanged."
+     },
+     {
+      "eip": 2935,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The pre-execution system call does not meter."
+     },
+     {
+      "eip": 4788,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The pre-execution system call does not meter."
+     },
+     {
+      "eip": 7002,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The post-execution system call does not meter. User calls with value to the contract meter normally."
+     },
+     {
+      "eip": 7251,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The post-execution system call does not meter. User calls with value to the contract meter normally."
+     }
+    ],
+    "unidentified_interactions": [
+     "EIP-2929 cold/warm access sets decide when the 20-byte and 32-byte access charges fire. Warmth rolls back on frame revert, so re-access is metered again.",
+     "EIP-3651 warm coinbase and always-warm precompiles enter the BAL without runtime metering. They rely on TX_BASE headroom.",
+     "EIP-2200 original/current SSTORE semantics drive the value-byte charge and refund.",
+     "EIP-4895 withdrawals are excluded from the meter and absorbed by the EIP-7928 item buffer.",
+     "Contract code-size limits bound the per-byte metering of deployed code."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The pseudocode adds to `bal_data_bytes` before the OutOfGasError check and never rolls it back. The refund path recomputes `floor_gas_used` without a `tx.gas` check, so the floor could exceed `tx.gas`. Revert handling of per-slot value-charge tracking conflicts with the 'at most once per slot' wording. The meter's position relative to EIP-7928 pre-state and post-state gas validation is not given. It is also unclear whether resolving an EIP-7702 delegated target counts as a metered cold access.",
+    "affected_criteria": [
+     {
+      "criterion": "unspecified_behavior_requiring_cross_client_consensus",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "state_access_ordering_within_opcode_execution",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "modified_opcodes",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "new_evm_gas_refund",
+      "minimum_score": 0,
+      "maximum_score": 2
+     }
+    ],
+    "unresolved_questions": [
+     "After a floor OutOfGasError, are the bytes already added to `bal_data_bytes` kept for later meter calls and refund recomputation?",
+     "Can the refund recompute set `floor_gas_used` above `tx.gas`, and if so, what gasUsed is charged?",
+     "Is per-slot value-charge tracking reverted with the frame? Does a committed O→Y write after a reverted O→X write meter 32 value bytes again?",
+     "Is `meter_bal_data` called before or after the EIP-7928 pre-state gas validation for each opcode?",
+     "Is resolving an EIP-7702 delegated target metered as a 20-byte cold account access?"
+    ]
+   },
+   "notable_ambiguities": [
+    "After a failed `meter_bal_data`, are the bytes that were added to `bal_data_bytes` kept? Can a later refund recompute push `floor_gas_used` above `tx.gas`?",
+    "An O→X write happens in a reverted frame, then a committed O→Y write follows. Are the 32 value bytes charged again, and is the per-slot charged flag reverted?",
+    "Is the floor check before or after EIP-7928 pre-state gas validation? This matters when the frame then OOGs and the floor binds.",
+    "Does resolving an EIP-7702 delegated target during CALL* meter 20 bytes as a cold account access?",
+    "The balance change of the CALL sender and accesses to warm-but-unrecorded addresses (precompiles) are not listed as metered triggers. This may break the claimed upper bound.",
+    "The specification refers to an `auth_bytes` term, but the defined name is `auth_bal_bytes`."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 76598,
+  "type": "result",
+  "duration_ms": 213481,
+  "uuid": "b74b8cab-9267-4a27-bda4-9d5e10b586b7",
+  "ttft_stream_ms": 1757,
+  "time_to_request_ms": 408,
+  "first_content_frame_ms": 1758,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

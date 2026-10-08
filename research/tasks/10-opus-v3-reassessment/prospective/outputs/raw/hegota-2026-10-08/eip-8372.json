@@ -1,0 +1,637 @@
+{
+ "case": "hegota/8372",
+ "run_id": "assessment-run-a92cd5e6-564e-456e-8b55-50059ab618df",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T10:03:31.754196Z",
+ "finished_at": "2026-10-08T10:06:09.357625Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "f56eb35ab369e0b9a8319ba92275146407c2691257a124d4a507ae7482dc11e3",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "d3936e69f19ac6e170a84bac879fcf40329ac93f01b02789303e30c1464bb54f",
+ "output": {
+  "duration_api_ms": 155325,
+  "stop_reason": "tool_use",
+  "session_id": "3e615775-8a40-42b9-8b3b-abfd2718b147",
+  "total_cost_usd": 1.0879121999999999,
+  "usage": {
+   "input_tokens": 4,
+   "cache_creation_input_tokens": 85097,
+   "cache_read_input_tokens": 72901,
+   "output_tokens": 19627,
+   "output_tokens_details": {
+    "thinking_tokens": 4115
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 85097,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 7901,
+     "cache_read_input_tokens": 72901,
+     "cache_creation_input_tokens": 12196,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 12196
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 4,
+    "outputTokens": 19627,
+    "cacheReadInputTokens": 72901,
+    "cacheCreationInputTokens": 85097,
+    "webSearchRequests": 0,
+    "costUSD": 1.0879121999999999,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 4115,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 3,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-8372 changes EIP-8037's two-dimensional gas model. It replaces CPSB with a new value (TBD) and adds STATE_GAS_LIMIT_SCALE (TBD, as a percentage over a denominator of 100). The raw state-gas limit becomes block_gas_limit * SCALE // 100, and that value replaces the block gas limit in EIP-8037's per-transaction state_gas_available check. At block level, raw block_state_gas_used is normalized (× 100 // SCALE) before taking the max with execution gas to form header gas_used, and two validity assertions are added. The EIP adds no transaction or header fields and leaves the reservoir model, transaction-level accounting and receipts unchanged.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting\",\"summary\":\"Header gas_used is now max(block_execution_gas_used, normalized_block_state_gas_used), with gas_used <= block_gas_limit asserted.\"},{\"source\":\"supporting/eip-8037.md\",\"locator\":\"Block-level gas accounting – \\\"gas_used_delta = parent.gas_used - parent.gas_target\\\"\",\"summary\":\"The base-fee update uses header gas_used, so changing how gas_used is computed changes block-level settlement for all gas.\"}],\"rationale\":\"Block-level gas_used, which feeds the gas limit check and the base-fee update, is computed by a changed rule. This is a change to an existing block accounting rule. No new execution-gas charging mechanism is added, and opcode execution-gas costs are unchanged. That fits level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The change mainly concerns state gas. Treating the change to the shared gas_used/base-fee settlement as an execution-gas rule change is a judgement call; 0 is defensible.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility – \\\"Transaction formats, the EIP-8037 reservoir model, transaction-level gas accounting, and receipt semantics remain unchanged\\\"\",\"summary\":\"Opcode-level charging and access timing are unchanged.\"}],\"rationale\":\"No instruction's state-access or charge ordering changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only CPSB, the state-gas limit and block gas_used normalization are specified; blob gas is not mentioned.\"}],\"rationale\":\"No blob-gas rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameters\",\"summary\":\"CPSB is replaced with a new TBD value, which rescales every state-gas charge.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction validation – \\\"state_gas_limit = block_env.block_gas_limit * STATE_GAS_LIMIT_SCALE // STATE_GAS_LIMIT_SCALE_DENOMINATOR\\\"\",\"summary\":\"The block state-gas budget becomes a scaled raw limit instead of the block gas limit.\"},{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting – \\\"normalized_block_state_gas_used\\\"\",\"summary\":\"Raw state gas is normalized before it enters header gas_used.\"}],\"rationale\":\"Beyond the CPSB rate change (level 1), the block-level state-gas budget and how it is allocated change through the scaled limit and normalization. That is a budget-allocation change (level 2). Charging sites, the reservoir, and spill between the reservoir and gas_left are unchanged, so level 3 is not met.\",\"confidence\":\"medium\",\"uncertainty_note\":\"If the chosen SCALE were 100, only the CPSB change would remain (level 1).\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Transaction-level gas accounting, including refunds, is unchanged.\"}],\"rationale\":\"No refund mechanism is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameters – \\\"CPSB | TBD\\\"\",\"summary\":\"A new CPSB changes the expected state-gas cost of every state-creating operation.\"},{\"source\":\"supporting/eip-8037.md\",\"locator\":\"Parameter changes\",\"summary\":\"CPSB drives costs for CREATE/CREATE2, code deposit, CALL to a new account, SELFDESTRUCT, SSTORE set, and 7702 empty-account/auth-base charges.\"},{\"source\":\"supporting/eip-8037.md\",\"locator\":\"System contracts and system transactions – \\\"SYSTEM_CALL_GAS_LIMIT = 30_000_000 + STATE_BYTES_PER_STORAGE_SET × CPSB × SYSTEM_MAX_SSTORES_PER_CALL\\\"\",\"summary\":\"The system-call gas allotment and reservoir depend on CPSB.\"},{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting\",\"summary\":\"Header gas_used, and therefore base-fee expectations, change for state-dominated blocks.\"}],\"rationale\":\"One common change (the CPSB value, plus normalized block gas_used) alters expected gas results across distinct families: SSTORE, contract creation and code deposit, value calls to new accounts, SELFDESTRUCT, 7702 authorizations, reservoir and transaction-gas boundaries, system calls, and block gas_used/base-fee tests. This meets level 3.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Values are TBD. If CPSB stayed equal to the baseline and SCALE = 100, the rework would largely vanish. Tests parameterized on fork constants reduce the manual effort but not the behavioral re-baselining.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract – \\\"No new transaction or block-header fields are introduced.\\\"\",\"summary\":\"There is no new output to assert.\"}],\"rationale\":\"Existing outputs only change value. That is rework, not a new assertion.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting – \\\"No new block header field is introduced.\\\"\",\"summary\":\"Outputs keep the same fields. Only the computed gas_used value changes.\"}],\"rationale\":\"The new constants are fork rules, not interface inputs. gas_used keeps its field identity. No interface change is established.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No transition-tool documentation is supplied. If the tool reports raw state gas used separately, or normalized gas_used counts as a semantic change, level 1 applies.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction validation; Block-level gas accounting\",\"summary\":\"Tests need the scaled state-gas limit and normalized gas_used computed from fork constants.\"}],\"rationale\":\"The existing fork gas-schedule and block-gas helpers need a local extension: a scale parameter and normalized gas_used/base-fee computation. No new abstraction is needed.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No framework is supplied. This is judged from architectural need only.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"There is no cryptographic content.\"}],\"rationale\":\"No cryptographic change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction validation\",\"summary\":\"Transaction inclusion is bounded by tx.gas <= scaled state_gas_limit - block_state_gas_used, with floor division.\"},{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting – \\\"assert block_output.block_state_gas_used <= state_gas_limit\\\"\",\"summary\":\"The block state-gas assertion applies to raw state gas, and the gas_used assertion applies to the normalized, floor-divided value.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations – \\\"up to integer rounding\\\"\",\"summary\":\"Rounding at the limits is acknowledged.\"}],\"rationale\":\"Several boundary-sensitive rules change: the scaled per-transaction state-gas availability check, the raw block state-gas limit, normalized gas_used rounding against the gas limit and gas target (which flips which dimension is max and moves the base fee), and SCALE above vs below 100. The dimensions can mostly be tested one at a time, so this is level 2 rather than an elevated matrix.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether the interaction between SCALE direction, rounding and the binding dimension forms an elevated matrix is debatable.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting\",\"summary\":\"The new assertions are post-execution accounting checks. Header structure is unchanged.\"}],\"rationale\":\"No RLP decoding or structural validation rule changes. The execution-derived checks are ordinary execution-rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract\",\"summary\":\"There are no new fields. The payload format is unaffected.\"}],\"rationale\":\"No Engine API field or endpoint changes.\",\"confidence\":\"medium\",\"uncertainty_note\":\"A reviewer could treat the changed computation of payload gasUsed as a meaning change (level 1).\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No contracts are introduced.\"}],\"rationale\":\"None introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":1,\"evidence\":[{\"source\":\"supporting/eip-8037.md\",\"locator\":\"System contracts and system transactions\",\"summary\":\"SYSTEM_CALL_GAS_LIMIT and its reservoir share are derived from CPSB.\"},{\"source\":\"eip.md\",\"locator\":\"Parameters\",\"summary\":\"CPSB is changed.\"}],\"rationale\":\"Contract rules are unchanged. Indirectly, one input convention changes: the system call's gas allotment and state-gas reservoir follow the new CPSB. That is level 1.\",\"confidence\":\"low\",\"uncertainty_note\":\"The target does not mention system calls. The effect follows from EIP-8037's formula, assuming it still applies after re-parameterization.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No opcodes are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameters\",\"summary\":\"Only the CPSB rate changes, which is a gas-only effect on state-creating opcodes.\"}],\"rationale\":\"Only gas changes. Semantics are unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Precompiles are not touched.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract – \\\"No new transaction or block-header fields are introduced.\\\"\",\"summary\":\"Schemas are unchanged.\"}],\"rationale\":\"No schema or codec changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility – \\\"Transaction formats ... remain unchanged\\\"\",\"summary\":\"No new transaction type.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction validation\",\"summary\":\"The bound in the existing tx.gas <= state_gas_available check becomes the scaled limit.\"},{\"source\":\"supporting/eip-8037.md\",\"locator\":\"Transaction validation – \\\"tx.gas <= state_gas_available\\\"\",\"summary\":\"This is the existing condition being modified.\"}],\"rationale\":\"Only an existing bound changes. No new validation dependency or sequence is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"With SCALE < 100, transactions whose tx.gas exceeds the raw state limit cannot be included even though they fit the execution limit. Tests should cover this, but it remains a local bound change.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting – \\\"No new block header field is introduced.\\\"\",\"summary\":\"No header member is added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility – \\\"Blocks before activation are unaffected.\\\"\",\"summary\":\"Activation only switches constants and rules.\"}],\"rationale\":\"Only constants are selected at activation. No state migration.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations – \\\"the maximum state-byte capacity remains approximately invariant across calibrations, up to integer rounding\\\"\",\"summary\":\"Worst-case state bytes per block are tied to the scaled limit and CPSB.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale – \\\"baseline_cpsb = expected_block_gas_limit * blocks_per_year // (2 * target_state_growth_per_year)\\\"\",\"summary\":\"The baseline can differ from EIP-8037's derivation, changing worst-case state-growth capacity.\"}],\"rationale\":\"If the new CPSB/SCALE shift worst-case state bytes per block, the existing state-creation-heavy workloads need re-benchmarking. Execution and state gas already have separate limits under EIP-8037, so no new resource coupling arises. Level 1.\",\"confidence\":\"low\",\"uncertainty_note\":\"Depends on the TBD values. If capacity is truly invariant, this could be 0. A large SCALE could require block-level stress tests (level 2).\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations\",\"summary\":\"The main risk is miscalibration. The state-byte capacity bound must hold up to rounding.\"}],\"rationale\":\"The changed conditions are the state-capacity bound and the block validity limits under normalization, which can be checked locally. Other components' trust assumptions do not change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Parameters – \\\"CPSB | TBD\\\", \\\"STATE_GAS_LIMIT_SCALE | TBD\\\"\",\"summary\":\"Both consensus constants are unspecified.\"},{\"source\":\"eip.md\",\"locator\":\"Block-level gas accounting\",\"summary\":\"The formulas are otherwise fully specified.\"}],\"rationale\":\"Expected values cannot be fixed until the TBD constants are chosen. The rules themselves have a single interpretation, so there are no competing normative outcomes. Level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Whether EIP-8037's system-call formula picks up the new CPSB is not stated, but the formula implies it does.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract – \\\"This EIP modifies EIP-8037\\\"\",\"summary\":\"The target directly re-parameterizes EIP-8037's validation and block accounting.\"},{\"source\":\"supporting/eip-8037.md\",\"locator\":\"Block-level gas accounting\",\"summary\":\"EIP-8037 defines the calldata floor in the execution dimension, the base-fee delta from gas_used, and EIP-7778 integration, all of which interact with normalized state gas.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale – \\\"manual, one-time analogue of EIP-8075\\\"\",\"summary\":\"EIP-7999 and EIP-8075 are cited only as motivation or analogues.\"}],\"rationale\":\"Coordinated cases with EIP-8037 behavior are needed: the reservoir/tx.gas inclusion check against the scaled limit, the max between execution gas (including the calldata floor) and normalized state gas, base-fee updates, and system-call reservoirs under the new CPSB. EIP-7999 and EIP-8075 are cited only and do not interact. Level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Interactions with base-fee (1559), calldata-floor (7623/7976), 7825 and 7778 behavior pass through EIP-8037's text. Those EIP documents are not supplied.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":8037,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"tx.gas <= scaled state_gas_available inclusion with reservoir-funded transactions; block gas_used = max(execution gas including calldata floor, normalized state gas) at SCALE above, below and equal to 100; base-fee update from normalized gas_used; raw block_state_gas_used limit assertion; new CPSB across SSTORE, CREATE, new-account and 7702 charges; system-call reservoir sized from the new CPSB.\"}],\"unidentified_interactions\":[\"EIP-1559-style base-fee update: per EIP-8037 it uses parent.gas_used - gas_target, and gas_used now carries the normalized state value.\",\"EIP-7623/7976 calldata floor counted in the execution dimension now competes in max() with normalized state gas.\",\"System calls (EIP-2935/4788/7002/7251) get SYSTEM_CALL_GAS_LIMIT and reservoir derived from CPSB.\",\"EIP-7778 refund-exclusion variant of block accounting combined with normalization.\"]},\"under_specification\":{\"present\":true,\"summary\":\"The CPSB and STATE_GAS_LIMIT_SCALE values are TBD, so the size of gas re-baselining and of capacity changes cannot be fixed. The formulas themselves are fully specified.\",\"affected_criteria\":[{\"criterion\":\"patterns_affecting_pre_existing_tests\",\"minimum_score\":1,\"maximum_score\":3},{\"criterion\":\"state_gas_accounting_changes\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"performance_risks\",\"minimum_score\":0,\"maximum_score\":2},{\"criterion\":\"edge_boundary_conditions\",\"minimum_score\":1,\"maximum_score\":3},{\"criterion\":\"modified_system_contracts\",\"minimum_score\":0,\"maximum_score\":1}],\"unresolved_questions\":[\"What are the final CPSB and STATE_GAS_LIMIT_SCALE values?\",\"Does EIP-8037's SYSTEM_CALL_GAS_LIMIT formula apply with the new CPSB?\",\"With SCALE < 100, is it intended that transactions with tx.gas above the raw state limit (but within the execution limit) can never be included?\",\"Is the floor-division rounding in normalized gas_used, and its effect on base-fee updates near the target, intended?\"]},\"notable_ambiguities\":[\"EIP-8037 checks the full tx.gas against state_gas_available. With SCALE < 100 this tightens transaction inclusion for execution-heavy transactions with large gas limits.\",\"The two block assertions (raw state gas <= scaled limit, and normalized gas_used <= gas limit) largely overlap, with only rounding differences.\",\"The target does not explicitly state the effect of the new CPSB on system-call gas or on EIP-8037's derived constants.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-8372 changes EIP-8037's two-dimensional gas model. It replaces CPSB with a new value (TBD) and adds STATE_GAS_LIMIT_SCALE (TBD, as a percentage over a denominator of 100). The raw state-gas limit becomes block_gas_limit * SCALE // 100, and that value replaces the block gas limit in EIP-8037's per-transaction state_gas_available check. At block level, raw block_state_gas_used is normalized (× 100 // SCALE) before taking the max with execution gas to form header gas_used, and two validity assertions are added. The EIP adds no transaction or header fields and leaves the reservoir model, transaction-level accounting and receipts unchanged.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting",
+       "summary": "Header gas_used is now max(block_execution_gas_used, normalized_block_state_gas_used), with gas_used <= block_gas_limit asserted."
+      },
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "Block-level gas accounting – \"gas_used_delta = parent.gas_used - parent.gas_target\"",
+       "summary": "The base-fee update uses header gas_used, so changing how gas_used is computed changes block-level settlement for all gas."
+      }
+     ],
+     "rationale": "Block-level gas_used, which feeds the gas limit check and the base-fee update, is computed by a changed rule. This is a change to an existing block accounting rule. No new execution-gas charging mechanism is added, and opcode execution-gas costs are unchanged. That fits level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "The change mainly concerns state gas. Treating the change to the shared gas_used/base-fee settlement as an execution-gas rule change is a judgement call; 0 is defensible.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility – \"Transaction formats, the EIP-8037 reservoir model, transaction-level gas accounting, and receipt semantics remain unchanged\"",
+       "summary": "Opcode-level charging and access timing are unchanged."
+      }
+     ],
+     "rationale": "No instruction's state-access or charge ordering changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only CPSB, the state-gas limit and block gas_used normalization are specified; blob gas is not mentioned."
+      }
+     ],
+     "rationale": "No blob-gas rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameters",
+       "summary": "CPSB is replaced with a new TBD value, which rescales every state-gas charge."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction validation – \"state_gas_limit = block_env.block_gas_limit * STATE_GAS_LIMIT_SCALE // STATE_GAS_LIMIT_SCALE_DENOMINATOR\"",
+       "summary": "The block state-gas budget becomes a scaled raw limit instead of the block gas limit."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting – \"normalized_block_state_gas_used\"",
+       "summary": "Raw state gas is normalized before it enters header gas_used."
+      }
+     ],
+     "rationale": "Beyond the CPSB rate change (level 1), the block-level state-gas budget and how it is allocated change through the scaled limit and normalization. That is a budget-allocation change (level 2). Charging sites, the reservoir, and spill between the reservoir and gas_left are unchanged, so level 3 is not met.",
+     "confidence": "medium",
+     "uncertainty_note": "If the chosen SCALE were 100, only the CPSB change would remain (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Transaction-level gas accounting, including refunds, is unchanged."
+      }
+     ],
+     "rationale": "No refund mechanism is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameters – \"CPSB | TBD\"",
+       "summary": "A new CPSB changes the expected state-gas cost of every state-creating operation."
+      },
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "Parameter changes",
+       "summary": "CPSB drives costs for CREATE/CREATE2, code deposit, CALL to a new account, SELFDESTRUCT, SSTORE set, and 7702 empty-account/auth-base charges."
+      },
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "System contracts and system transactions – \"SYSTEM_CALL_GAS_LIMIT = 30_000_000 + STATE_BYTES_PER_STORAGE_SET × CPSB × SYSTEM_MAX_SSTORES_PER_CALL\"",
+       "summary": "The system-call gas allotment and reservoir depend on CPSB."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting",
+       "summary": "Header gas_used, and therefore base-fee expectations, change for state-dominated blocks."
+      }
+     ],
+     "rationale": "One common change (the CPSB value, plus normalized block gas_used) alters expected gas results across distinct families: SSTORE, contract creation and code deposit, value calls to new accounts, SELFDESTRUCT, 7702 authorizations, reservoir and transaction-gas boundaries, system calls, and block gas_used/base-fee tests. This meets level 3.",
+     "confidence": "medium",
+     "uncertainty_note": "Values are TBD. If CPSB stayed equal to the baseline and SCALE = 100, the rework would largely vanish. Tests parameterized on fork constants reduce the manual effort but not the behavioral re-baselining.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract – \"No new transaction or block-header fields are introduced.\"",
+       "summary": "There is no new output to assert."
+      }
+     ],
+     "rationale": "Existing outputs only change value. That is rework, not a new assertion.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting – \"No new block header field is introduced.\"",
+       "summary": "Outputs keep the same fields. Only the computed gas_used value changes."
+      }
+     ],
+     "rationale": "The new constants are fork rules, not interface inputs. gas_used keeps its field identity. No interface change is established.",
+     "confidence": "medium",
+     "uncertainty_note": "No transition-tool documentation is supplied. If the tool reports raw state gas used separately, or normalized gas_used counts as a semantic change, level 1 applies.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction validation; Block-level gas accounting",
+       "summary": "Tests need the scaled state-gas limit and normalized gas_used computed from fork constants."
+      }
+     ],
+     "rationale": "The existing fork gas-schedule and block-gas helpers need a local extension: a scale parameter and normalized gas_used/base-fee computation. No new abstraction is needed.",
+     "confidence": "medium",
+     "uncertainty_note": "No framework is supplied. This is judged from architectural need only.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "There is no cryptographic content."
+      }
+     ],
+     "rationale": "No cryptographic change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction validation",
+       "summary": "Transaction inclusion is bounded by tx.gas <= scaled state_gas_limit - block_state_gas_used, with floor division."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting – \"assert block_output.block_state_gas_used <= state_gas_limit\"",
+       "summary": "The block state-gas assertion applies to raw state gas, and the gas_used assertion applies to the normalized, floor-divided value."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations – \"up to integer rounding\"",
+       "summary": "Rounding at the limits is acknowledged."
+      }
+     ],
+     "rationale": "Several boundary-sensitive rules change: the scaled per-transaction state-gas availability check, the raw block state-gas limit, normalized gas_used rounding against the gas limit and gas target (which flips which dimension is max and moves the base fee), and SCALE above vs below 100. The dimensions can mostly be tested one at a time, so this is level 2 rather than an elevated matrix.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether the interaction between SCALE direction, rounding and the binding dimension forms an elevated matrix is debatable.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting",
+       "summary": "The new assertions are post-execution accounting checks. Header structure is unchanged."
+      }
+     ],
+     "rationale": "No RLP decoding or structural validation rule changes. The execution-derived checks are ordinary execution-rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract",
+       "summary": "There are no new fields. The payload format is unaffected."
+      }
+     ],
+     "rationale": "No Engine API field or endpoint changes.",
+     "confidence": "medium",
+     "uncertainty_note": "A reviewer could treat the changed computation of payload gasUsed as a meaning change (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No contracts are introduced."
+      }
+     ],
+     "rationale": "None introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "System contracts and system transactions",
+       "summary": "SYSTEM_CALL_GAS_LIMIT and its reservoir share are derived from CPSB."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Parameters",
+       "summary": "CPSB is changed."
+      }
+     ],
+     "rationale": "Contract rules are unchanged. Indirectly, one input convention changes: the system call's gas allotment and state-gas reservoir follow the new CPSB. That is level 1.",
+     "confidence": "low",
+     "uncertainty_note": "The target does not mention system calls. The effect follows from EIP-8037's formula, assuming it still applies after re-parameterization.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No opcodes are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameters",
+       "summary": "Only the CPSB rate changes, which is a gas-only effect on state-creating opcodes."
+      }
+     ],
+     "rationale": "Only gas changes. Semantics are unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Precompiles are not touched."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract – \"No new transaction or block-header fields are introduced.\"",
+       "summary": "Schemas are unchanged."
+      }
+     ],
+     "rationale": "No schema or codec changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility – \"Transaction formats ... remain unchanged\"",
+       "summary": "No new transaction type."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction validation",
+       "summary": "The bound in the existing tx.gas <= state_gas_available check becomes the scaled limit."
+      },
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "Transaction validation – \"tx.gas <= state_gas_available\"",
+       "summary": "This is the existing condition being modified."
+      }
+     ],
+     "rationale": "Only an existing bound changes. No new validation dependency or sequence is added.",
+     "confidence": "high",
+     "uncertainty_note": "With SCALE < 100, transactions whose tx.gas exceeds the raw state limit cannot be included even though they fit the execution limit. Tests should cover this, but it remains a local bound change.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting – \"No new block header field is introduced.\"",
+       "summary": "No header member is added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility – \"Blocks before activation are unaffected.\"",
+       "summary": "Activation only switches constants and rules."
+      }
+     ],
+     "rationale": "Only constants are selected at activation. No state migration.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations – \"the maximum state-byte capacity remains approximately invariant across calibrations, up to integer rounding\"",
+       "summary": "Worst-case state bytes per block are tied to the scaled limit and CPSB."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale – \"baseline_cpsb = expected_block_gas_limit * blocks_per_year // (2 * target_state_growth_per_year)\"",
+       "summary": "The baseline can differ from EIP-8037's derivation, changing worst-case state-growth capacity."
+      }
+     ],
+     "rationale": "If the new CPSB/SCALE shift worst-case state bytes per block, the existing state-creation-heavy workloads need re-benchmarking. Execution and state gas already have separate limits under EIP-8037, so no new resource coupling arises. Level 1.",
+     "confidence": "low",
+     "uncertainty_note": "Depends on the TBD values. If capacity is truly invariant, this could be 0. A large SCALE could require block-level stress tests (level 2).",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations",
+       "summary": "The main risk is miscalibration. The state-byte capacity bound must hold up to rounding."
+      }
+     ],
+     "rationale": "The changed conditions are the state-capacity bound and the block validity limits under normalization, which can be checked locally. Other components' trust assumptions do not change.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Parameters – \"CPSB | TBD\", \"STATE_GAS_LIMIT_SCALE | TBD\"",
+       "summary": "Both consensus constants are unspecified."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Block-level gas accounting",
+       "summary": "The formulas are otherwise fully specified."
+      }
+     ],
+     "rationale": "Expected values cannot be fixed until the TBD constants are chosen. The rules themselves have a single interpretation, so there are no competing normative outcomes. Level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "Whether EIP-8037's system-call formula picks up the new CPSB is not stated, but the formula implies it does.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract – \"This EIP modifies EIP-8037\"",
+       "summary": "The target directly re-parameterizes EIP-8037's validation and block accounting."
+      },
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "Block-level gas accounting",
+       "summary": "EIP-8037 defines the calldata floor in the execution dimension, the base-fee delta from gas_used, and EIP-7778 integration, all of which interact with normalized state gas."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale – \"manual, one-time analogue of EIP-8075\"",
+       "summary": "EIP-7999 and EIP-8075 are cited only as motivation or analogues."
+      }
+     ],
+     "rationale": "Coordinated cases with EIP-8037 behavior are needed: the reservoir/tx.gas inclusion check against the scaled limit, the max between execution gas (including the calldata floor) and normalized state gas, base-fee updates, and system-call reservoirs under the new CPSB. EIP-7999 and EIP-8075 are cited only and do not interact. Level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Interactions with base-fee (1559), calldata-floor (7623/7976), 7825 and 7778 behavior pass through EIP-8037's text. Those EIP documents are not supplied.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 8037,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "tx.gas <= scaled state_gas_available inclusion with reservoir-funded transactions; block gas_used = max(execution gas including calldata floor, normalized state gas) at SCALE above, below and equal to 100; base-fee update from normalized gas_used; raw block_state_gas_used limit assertion; new CPSB across SSTORE, CREATE, new-account and 7702 charges; system-call reservoir sized from the new CPSB."
+     }
+    ],
+    "unidentified_interactions": [
+     "EIP-1559-style base-fee update: per EIP-8037 it uses parent.gas_used - gas_target, and gas_used now carries the normalized state value.",
+     "EIP-7623/7976 calldata floor counted in the execution dimension now competes in max() with normalized state gas.",
+     "System calls (EIP-2935/4788/7002/7251) get SYSTEM_CALL_GAS_LIMIT and reservoir derived from CPSB.",
+     "EIP-7778 refund-exclusion variant of block accounting combined with normalization."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "The CPSB and STATE_GAS_LIMIT_SCALE values are TBD, so the size of gas re-baselining and of capacity changes cannot be fixed. The formulas themselves are fully specified.",
+    "affected_criteria": [
+     {
+      "criterion": "patterns_affecting_pre_existing_tests",
+      "minimum_score": 1,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "state_gas_accounting_changes",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "performance_risks",
+      "minimum_score": 0,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "edge_boundary_conditions",
+      "minimum_score": 1,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "modified_system_contracts",
+      "minimum_score": 0,
+      "maximum_score": 1
+     }
+    ],
+    "unresolved_questions": [
+     "What are the final CPSB and STATE_GAS_LIMIT_SCALE values?",
+     "Does EIP-8037's SYSTEM_CALL_GAS_LIMIT formula apply with the new CPSB?",
+     "With SCALE < 100, is it intended that transactions with tx.gas above the raw state limit (but within the execution limit) can never be included?",
+     "Is the floor-division rounding in normalized gas_used, and its effect on base-fee updates near the target, intended?"
+    ]
+   },
+   "notable_ambiguities": [
+    "EIP-8037 checks the full tx.gas against state_gas_available. With SCALE < 100 this tightens transaction inclusion for execution-heavy transactions with large gas limits.",
+    "The two block assertions (raw state gas <= scaled limit, and normalized gas_used <= gas limit) largely overlap, with only rounding differences.",
+    "The target does not explicitly state the effect of the new CPSB on system-call gas or on EIP-8037's derived constants."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 44580,
+  "type": "result",
+  "duration_ms": 155767,
+  "uuid": "b53077ac-56fd-45ce-913a-0a6471f9b54e",
+  "ttft_stream_ms": 3137,
+  "time_to_request_ms": 419,
+  "first_content_frame_ms": 3137,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

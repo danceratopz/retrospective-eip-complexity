@@ -1,0 +1,720 @@
+{
+ "case": "hegota/7906",
+ "run_id": "assessment-run-3d9b05fc-be7c-433a-b178-274dc0c89f49",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:52:36.191877Z",
+ "finished_at": "2026-10-08T09:55:03.218824Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "32fd29883be634dd5be58a992cc752b36a6d7acfe8bff56d72d4daec85244de7",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "5b2cc6ec8ac082443dc3e1f3662c73938af376cb42bdf604447745ab70e4f5bf",
+ "output": {
+  "duration_api_ms": 144468,
+  "stop_reason": "tool_use",
+  "session_id": "78938f1e-eed6-48d0-9cc2-e6bda83ac5ac",
+  "total_cost_usd": 1.380744,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 130912,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 16672,
+   "output_tokens_details": {
+    "thinking_tokens": 6707
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 130912,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 16672,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 130912,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 130912
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 16672,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 130912,
+    "webSearchRequests": 0,
+    "costUSD": 1.380744,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 6707,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-7906 adds three opcodes: TXTRACE (0xb6), TXDIFF (0xb7) and EVENTDATACOPY (0xb8). Together they expose the transaction's net state diff (balances, storage, newly deployed code, account change flags), the logs it emitted, the gas pre-charge and the gas payer. It also amends the EIP-8141 frame transaction with a new frame mode, POST_TX (3). POST_TX frames must form a contiguous trailing suffix, execute read-only as STATICCALLs, and cannot carry the atomic-batch flag; the frame directly before them cannot carry it either. If a POST_TX frame reverts or halts, the whole execution body is unconditionally rolled back, the validation prefix and gas payment stay committed, the remaining POST_TX frames are skipped with status 2, and the receipts of the reverted body frames lose their logs and state gas. The opcodes halt exceptionally outside POST_TX frames. TXDIFF is priced with EIP-2929 cold/warm costs and records accesses in the EIP-2929 access lists and the EIP-7928 block-level access list (BAL).\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction Diff Lookup Opcode > Gas Cost\",\"summary\":\"TXDIFF storage params charge COLD_SLOAD_COST/WARM for an arbitrary (address, slot) pair, and balance/codehash params charge COLD_ACCOUNT_ACCESS_COST/WARM. The view params charge a flat 100.\"},{\"source\":\"supporting/eip-2929.md\",\"locator\":\"Storage read changes, 'Note 2'\",\"summary\":\"EIP-2929 says pricing for remote cold storage reads is undefined, and any EIP adding them must define it. TXDIFF is such a remote storage read.\"},{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'payer is fully charged for the gas consumed up to the point of the failure'\",\"summary\":\"A POST_TX failure reverts the execution body but keeps its execution gas charged. Skipped POST_TX frame budgets are refunded.\"}],\"rationale\":\"The EIP adds new accounting: remote storage-read pricing (cold SLOAD on any address, with no account-access charge), the gas schedules of the new opcodes, and gas settlement after a POST_TX-triggered body revert. Baseline operations keep their expected gas results, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Two points are unspecified and could alter baseline-like settlement expectations: whether the EIP-3529 refund counter accumulated by the body is discarded on POST_TX failure, and whether a cold storage query also warms the account.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction Diff Lookup Opcode > Gas Cost, 'added to the EIP-2929 access list after the call'\",\"summary\":\"For TXDIFF params 0x00–0x05, the accessed slot or address is added to the access list after the call and recorded in the EIP-7928 BAL. Params 0x06–0x0C and TXTRACE/EVENTDATACOPY add no accesses.\"},{\"source\":\"supporting/eip-7928.md\",\"locator\":\"Gas Validation Before State Access\",\"summary\":\"BAL inclusion depends on a pre-state gas check passing before the access. TXDIFF is not in the table.\"}],\"rationale\":\"TXDIFF is a new state-accessing operation that needs its own ordering and BAL-recording rule (cold/warm, live-state fallback versus diff-only answers, out-of-gas before access). No existing opcode class changes, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"The text does not say whether an out-of-gas TXDIFF records the access in the BAL, or whether a storage query also records or warms the account.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction Trace Opcode, 'gas_pre_charge = gas_limit × gas_price + blob_count × GAS_PER_BLOB × blob_base_fee'\",\"summary\":\"Blob fees are only reported through a read-only TXTRACE param. Blob charging is unchanged.\"}],\"rationale\":\"No blob-gas charging, pricing or limit rule changes. The blob fee is only exposed for reading.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'the state gas recorded in them is removed, as for an unrolled EIP-8141 atomic batch'\",\"summary\":\"On POST_TX failure, the state gas of every execution-body frame is rolled back, reusing the atomic-batch rollback at a new, wider boundary.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"State-gas attribution and refills\",\"summary\":\"The state-gas journal is restored at frame, call and batch boundaries, and cross-frame refills adjust earlier receipts.\"}],\"rationale\":\"The existing EIP-8141 state-gas rollback mechanism is applied at a new site: a whole-body rollback spanning several frames and batches, triggered by a later frame. No new charging mechanism is added, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Interplay of the body rollback with refills of charges owned by validation-prefix frames (for example a deploy frame) is not detailed.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'their gas is refunded at the end of the transaction'\",\"summary\":\"Unexecuted POST_TX frame budgets are returned as unused gas, in the same way as skipped atomic-batch frames.\"}],\"rationale\":\"Returning unused gas from skipped frames reuses the existing EIP-8141 settlement. No new protocol refund mechanism is introduced.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Discarding the body's EIP-3529 refund-counter contributions on POST_TX failure is implied, not stated.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'POST_TX is added to the set of mode values accepted'\",\"summary\":\"Mode 3 changes from invalid to valid, so EIP-8141 invalid-mode boundary cases need rework.\"},{\"source\":\"eip.md\",\"locator\":\"Specification, opcode table 0xb6/0xb7/0xb8\",\"summary\":\"Previously undefined opcode bytes gain defined (context-restricted) behavior.\"}],\"rationale\":\"Rework is confined to boundary cases of frame-mode static validation (mode value 3) and to any undefined-opcode cases using 0xb6–0xb8, which still halt outside POST_TX. This is level 1.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Existing opcodes, transaction types and precompiles are unchanged. No new receipt or header output is produced for baseline transactions.\"}],\"rationale\":\"Baseline tests gain no new output to assert.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode\",\"summary\":\"POST_TX is a new value of the existing frame `mode` field. The receipt shape, including status 2, is unchanged.\"}],\"rationale\":\"No new transition-tool field or mechanism is needed. Frame mode values and receipts use existing EIP-8141 schemas.\",\"confidence\":\"medium\",\"uncertainty_note\":\"No transition-tool evidence was supplied. If tools need to expose the computed diff or the payer separately for debugging, this could be level 1.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"State Difference Semantics; Results Ordering\",\"summary\":\"Expected opcode outputs depend on a net, sorted transaction state diff and on log tables with per-address and per-topic views.\"},{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode\",\"summary\":\"Tests must build frame transactions with a POST_TX suffix and check a body revert with modified receipts.\"}],\"rationale\":\"The target's suite needs a new expectation abstraction: a model computing the expected net diff and its sorted indices, event and topic views, and receipt transformations after a POST_TX failure. The frame builder also needs a local extension for the new mode. Other families are unaffected, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction Trace Opcode, param 0x0B 'codehash_after'\",\"summary\":\"Only existing code hashes are reported. No cryptographic rule is added.\"}],\"rationale\":\"No cryptographic verification, signing or hashing rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction Trace Opcode param table; Reserved Inputs\",\"summary\":\"Out-of-range indices, missing topics and non-zero reserved operands cause an exceptional halt.\"},{\"source\":\"eip.md\",\"locator\":\"Event Data Copy Opcode > Behavior\",\"summary\":\"EVENTDATACOPY halts when event_index ≥ events_count or when dataOffset+length exceeds the data length.\"},{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode\",\"summary\":\"Rules cover the contiguous suffix, the atomic flag on the preceding frame, failure ending execution, skipped frames getting status 2, and the body revert extending only up to the validation prefix.\"},{\"source\":\"eip.md\",\"locator\":\"State Difference Semantics\",\"summary\":\"Net-change inclusion rules: restored values are excluded, storage wipes are excluded, delegation designators are excluded, and EIP-6780 created-and-destroyed contracts are included.\"}],\"rationale\":\"There are many independent boundary-sensitive rules: index bounds, topic counts, reserved operands, copy bounds, suffix rules, cold/warm, and net-change inclusion. Two are elevated matrices. First, POST_TX failure × frame position × atomic-batch state × number of POST_TX frames × validation-prefix boundary, which changes receipts and committed state. Second, diff-entry inclusion × create/selfdestruct/delegation × write-then-restore. This is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode\",\"summary\":\"Changes affect frame-transaction validity and execution, not block RLP decoding or structural validation.\"}],\"rationale\":\"No block decoding or structural rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"No Engine API changes are described.\"}],\"rationale\":\"No Engine API field or endpoint changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"Only opcodes and a frame mode are defined. Assertion contracts are application contracts.\"}],\"rationale\":\"No protocol-designated contract is introduced.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract is referenced or changed.\"}],\"rationale\":\"No existing system contract is affected.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification, instruction table\",\"summary\":\"Defines TXTRACE 0xb6, TXDIFF 0xb7 and EVENTDATACOPY 0xb8.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction Diff Lookup Opcode > Gas Cost; Event Data Copy Opcode\",\"summary\":\"TXDIFF has dynamic cold/warm gas. EVENTDATACOPY has memory-expansion and copy gas.\"}],\"rationale\":\"Three instructions are added, and at least two are complex because their gas is dynamic. This is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'calling APPROVE anywhere in a POST_TX frame's call subtree is an ordinary STATICCALL violation'\",\"summary\":\"APPROVE in a POST_TX frame halts under the existing static-context rules. No new APPROVE semantics are defined.\"},{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"States that no changes are made to existing opcodes.\"}],\"rationale\":\"Existing instructions (APPROVE, FRAMEPARAM, ORIGIN) apply their existing rules in the new frame context. FRAMEPARAM can return mode 3, but that is a new value, not a new selector. No instruction's specified semantics change.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Treating APPROVE's halt in POST_TX as a change of its availability, rather than inherited STATICCALL behavior, would make this 3.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"No precompiles are added.\"}],\"rationale\":\"None added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"None modified.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Constants, 'POST_TX = 3'\",\"summary\":\"A new value goes into the existing frame `mode` field. The receipt schema is reused.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Receipt Encoding\",\"summary\":\"The frame receipt schema [status, gas_used, logs] already allows status 2.\"}],\"rationale\":\"Only new values within unchanged schemas.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode\",\"summary\":\"Amends the existing EIP-8141 frame transaction and adds no new envelope.\"}],\"rationale\":\"No new EIP-2718 type.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'A frame transaction violating this is invalid'\",\"summary\":\"New static rules: mode 3 is accepted, POST_TX frames must form a contiguous suffix, and the atomic flag is invalid on a POST_TX frame and on the frame directly before one.\"},{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'Neither a POST_TX revert nor an exceptional halt invalidates the transaction'\",\"summary\":\"A POST_TX failure is explicitly not a validity failure, unlike a VERIFY failure.\"}],\"rationale\":\"New static validity rules need dedicated cases, but they fit EIP-8141's existing static-constraint sequencing. This is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields are added.\"}],\"rationale\":\"None.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"Opcodes occupy unused slots. No state migration or code installation is mentioned.\"}],\"rationale\":\"Only rule selection at activation.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Rationale > Gas Cost, 'A client can build an index over the diff and the logs when a POST_TX frame first reads them'\",\"summary\":\"Each call is priced at a flat 100 gas on the assumption of a lazily built index whose cost grows with the touched entries and logs.\"},{\"source\":\"eip.md\",\"locator\":\"Assertion Gas Exhaustion, '~42,600 events'\",\"summary\":\"An attacker can pad a transaction with tens of thousands of events. Per-topic and per-address views must stay constant-time.\"}],\"rationale\":\"Targeted integrated benchmarks are needed for a bounded interaction. The worst case is a full-gas execution body that maximizes touched slots and logs, followed by POST_TX frames using TXTRACE/TXDIFF topic and address views, and possibly a whole-body revert. These check that index construction and flat 100-gas pricing hold. This is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'overrides the atomic-batch unrolling behavior'\",\"summary\":\"A later frame can now roll back earlier frames while the validation prefix and payment stay committed.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations > The `POST_TX` Frame Mode Not Reverting Validation Prefix\",\"summary\":\"The boundary between the committed prefix and the reverted body is safety-critical, including deploy-frame side effects.\"},{\"source\":\"eip.md\",\"locator\":\"Security Considerations > Assertion Inputs Controlled by the Transaction\",\"summary\":\"Contracts can detect POST_TX context. Introspection breaks encapsulation.\"}],\"rationale\":\"The change alters EIP-8141's rollback and commit boundaries: which frames revert, payer charging, receipts, logs and state gas. Targeted adversarial integration cases are needed, for example payment approval placed after SENDER frames, atomic batches before POST_TX, and griefing through gas exhaustion. The interaction is bounded to frame execution, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"It could be judged 3 if the body-revert boundary is considered to change trust invariants shared by mempool, settlement and BAL components.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Transaction Trace Opcode, 'gas_pre_charge = gas_limit × gas_price + ...'\",\"summary\":\"The formula uses gas_limit × gas_price, but EIP-8141 collects max_cost = max_gas × max_fee_per_gas + blob cost. The returned value is ambiguous or contradictory.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Transaction settlement, 'max_cost = (max_gas * tx.fees.max_fee_per_gas'\",\"summary\":\"Defines the amount actually deducted at APPROVE.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction Diff Lookup Opcode > Gas Cost; 'codehash_before is equal to the empty-code hash for undeployed contracts'\",\"summary\":\"The text does not say whether a remote storage query warms the account, nor how codehash is reported for nonexistent accounts (EXTCODEHASH returns 0).\"},{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode, 'the entire execution body of a transaction is reverted'\",\"summary\":\"The body revert does not address the refund counter, warm/cold sets or approval context changes (for example APPROVE_EXECUTION after payer is set).\"}],\"rationale\":\"Several localized observable outcomes have competing interpretations: the gas_pre_charge value, codehash for nonexistent accounts, warming side effects, and refund-counter and access-set handling on body revert. Clients must agree on these before expected results can be fixed, so this is level 2.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Could reach 3 if the net-diff view is considered to make previously unobservable intra-transaction bookkeeping consensus-visible across families.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"The `POST_TX` Frame Mode\",\"summary\":\"Amends EIP-8141 modes, atomic batches, receipts, default code and payer settlement.\"},{\"source\":\"eip.md\",\"locator\":\"Transaction Diff Lookup Opcode > Gas Cost\",\"summary\":\"TXDIFF uses EIP-2929 cold/warm pricing and records accesses in the EIP-7928 BAL.\"},{\"source\":\"eip.md\",\"locator\":\"State Difference Semantics\",\"summary\":\"EIP-7702 designators are excluded from contracts_deployed, EIP-6780 destroyed contracts still appear, and EIP-7708 transfer logs count as events.\"},{\"source\":\"eip.md\",\"locator\":\"Rationale > Gas Pre-Charge Parameter\",\"summary\":\"EIP-4844 blob fees are included in gas_pre_charge.\"}],\"rationale\":\"The target couples EIP-8141 frame execution with EIP-2929 access pricing, EIP-7928 BAL recording, EIP-7708 log semantics, EIP-6780 deletion timing and EIP-7702 designators. Coordinated scenarios across these interactions are needed, so this is level 3.\",\"confidence\":\"high\",\"uncertainty_note\":\"Interactions with EIP-8037, EIP-3529 and EIP-7819 are referenced through EIP-8141 but not supplied.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":8141,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Static validity of the POST_TX suffix and atomic-flag rules. Body revert extending only to the validation prefix. Skipped POST_TX frames with status 2. Body receipts keeping status and execution gas but losing logs and state gas. APPROVE halting in POST_TX. Default code in POST_TX. gas_payer_address equal to the payer. Multiple POST_TX frames.\"},{\"eip\":2929,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"TXDIFF cold/warm pricing for remote slots and accounts. The address or slot becomes warm after the call. Warm status after a POST_TX revert. TXTRACE and view params not touching access sets.\"},{\"eip\":7928,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"TXDIFF params 0x00–0x05 recorded in the BAL. TXTRACE/EVENTDATACOPY add no entries. BAL contents after a POST_TX-triggered body revert.\"},{\"eip\":7708,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Transfer logs from frame value and CALL value appear in event tables and per-topic views with the SYSTEM_ADDRESS emitter. They are discarded on body revert.\"},{\"eip\":6780,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"A contract created and selfdestructed in the same transaction still appears in contracts_deployed. Its balance, storage and flags as left by the body.\"},{\"eip\":7702,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Delegation designators set during the transaction are excluded from contracts_deployed while codehash and the flags bit still change. Delegated targets in POST_TX frames.\"},{\"eip\":4844,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"gas_pre_charge includes blob_count × GAS_PER_BLOB × blob_base_fee for a blob-carrying frame transaction.\"},{\"eip\":1559,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The opcodes halt exceptionally in EIP-1559 and legacy transactions.\"}],\"unidentified_interactions\":[\"EIP-8037 state-gas accounting reused by the body-revert state-gas removal (referenced through EIP-8141, not supplied).\",\"EIP-3529 refund counter handling on POST_TX-triggered body revert (not stated).\",\"SETDELEGATE/EIP-7819 or deploy-frame side effects in the committed validation prefix, which are surfaced by TXTRACE but not reverted.\",\"The storage-wipe exclusion for CREATE onto storage-only accounts and for removal of empty accounts.\"]},\"under_specification\":{\"present\":true,\"summary\":\"Several observable outputs are ambiguous: gas_pre_charge contradicts the max_cost that EIP-8141 actually collects, and it is unclear whether remote storage queries warm the account and what codehash_before is for nonexistent accounts. Handling of the refund counter, warm/cold sets and approval context on a whole-body revert is not stated.\",\"affected_criteria\":[{\"criterion\":\"evm_gas_rule_changes\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"state_gas_accounting_changes\",\"minimum_score\":1,\"maximum_score\":2},{\"criterion\":\"new_evm_gas_refund\",\"minimum_score\":0,\"maximum_score\":1},{\"criterion\":\"modified_opcodes\",\"minimum_score\":0,\"maximum_score\":3},{\"criterion\":\"security_risks\",\"minimum_score\":2,\"maximum_score\":3},{\"criterion\":\"transition_tool_interface_changes\",\"minimum_score\":0,\"maximum_score\":1}],\"unresolved_questions\":[\"Does gas_pre_charge use standard_gas_limit or max_gas, and max_fee_per_gas or the effective price, to match the amount EIP-8141 actually deducts?\",\"Does a TXDIFF storage query (0x00/0x01) also warm the account, or record it in the BAL separately?\",\"What does TXDIFF codehash_before/after return for a nonexistent account: the empty-code hash or 0?\",\"On POST_TX failure, are the body's EIP-3529 refund-counter contributions and warm/cold additions discarded?\",\"If a VERIFY frame after the payer is set (for example only_verify after pay) is part of the execution body, is its APPROVE_EXECUTION rolled back?\",\"Does an out-of-gas TXDIFF record its target in the BAL?\"]},\"notable_ambiguities\":[\"The gas_pre_charge formula (gas_limit × gas_price) does not match EIP-8141's max_cost collection.\",\"Remote storage reads were left unpriced by EIP-2929 Note 2. TXDIFF defines only slot pricing, not account pricing.\",\"The 'execution body' boundary relative to the validation prefix when SENDER or VERIFY frames are interleaved around payment approval.\",\"Storage wipes of never-written slots are excluded, so account_change_flags==0 is not a full invariant.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-7906 adds three opcodes: TXTRACE (0xb6), TXDIFF (0xb7) and EVENTDATACOPY (0xb8). Together they expose the transaction's net state diff (balances, storage, newly deployed code, account change flags), the logs it emitted, the gas pre-charge and the gas payer. It also amends the EIP-8141 frame transaction with a new frame mode, POST_TX (3). POST_TX frames must form a contiguous trailing suffix, execute read-only as STATICCALLs, and cannot carry the atomic-batch flag; the frame directly before them cannot carry it either. If a POST_TX frame reverts or halts, the whole execution body is unconditionally rolled back, the validation prefix and gas payment stay committed, the remaining POST_TX frames are skipped with status 2, and the receipts of the reverted body frames lose their logs and state gas. The opcodes halt exceptionally outside POST_TX frames. TXDIFF is priced with EIP-2929 cold/warm costs and records accesses in the EIP-2929 access lists and the EIP-7928 block-level access list (BAL).",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction Diff Lookup Opcode > Gas Cost",
+       "summary": "TXDIFF storage params charge COLD_SLOAD_COST/WARM for an arbitrary (address, slot) pair, and balance/codehash params charge COLD_ACCOUNT_ACCESS_COST/WARM. The view params charge a flat 100."
+      },
+      {
+       "source": "supporting/eip-2929.md",
+       "locator": "Storage read changes, 'Note 2'",
+       "summary": "EIP-2929 says pricing for remote cold storage reads is undefined, and any EIP adding them must define it. TXDIFF is such a remote storage read."
+      },
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'payer is fully charged for the gas consumed up to the point of the failure'",
+       "summary": "A POST_TX failure reverts the execution body but keeps its execution gas charged. Skipped POST_TX frame budgets are refunded."
+      }
+     ],
+     "rationale": "The EIP adds new accounting: remote storage-read pricing (cold SLOAD on any address, with no account-access charge), the gas schedules of the new opcodes, and gas settlement after a POST_TX-triggered body revert. Baseline operations keep their expected gas results, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Two points are unspecified and could alter baseline-like settlement expectations: whether the EIP-3529 refund counter accumulated by the body is discarded on POST_TX failure, and whether a cold storage query also warms the account.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction Diff Lookup Opcode > Gas Cost, 'added to the EIP-2929 access list after the call'",
+       "summary": "For TXDIFF params 0x00–0x05, the accessed slot or address is added to the access list after the call and recorded in the EIP-7928 BAL. Params 0x06–0x0C and TXTRACE/EVENTDATACOPY add no accesses."
+      },
+      {
+       "source": "supporting/eip-7928.md",
+       "locator": "Gas Validation Before State Access",
+       "summary": "BAL inclusion depends on a pre-state gas check passing before the access. TXDIFF is not in the table."
+      }
+     ],
+     "rationale": "TXDIFF is a new state-accessing operation that needs its own ordering and BAL-recording rule (cold/warm, live-state fallback versus diff-only answers, out-of-gas before access). No existing opcode class changes, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "The text does not say whether an out-of-gas TXDIFF records the access in the BAL, or whether a storage query also records or warms the account.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction Trace Opcode, 'gas_pre_charge = gas_limit × gas_price + blob_count × GAS_PER_BLOB × blob_base_fee'",
+       "summary": "Blob fees are only reported through a read-only TXTRACE param. Blob charging is unchanged."
+      }
+     ],
+     "rationale": "No blob-gas charging, pricing or limit rule changes. The blob fee is only exposed for reading.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'the state gas recorded in them is removed, as for an unrolled EIP-8141 atomic batch'",
+       "summary": "On POST_TX failure, the state gas of every execution-body frame is rolled back, reusing the atomic-batch rollback at a new, wider boundary."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "State-gas attribution and refills",
+       "summary": "The state-gas journal is restored at frame, call and batch boundaries, and cross-frame refills adjust earlier receipts."
+      }
+     ],
+     "rationale": "The existing EIP-8141 state-gas rollback mechanism is applied at a new site: a whole-body rollback spanning several frames and batches, triggered by a later frame. No new charging mechanism is added, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Interplay of the body rollback with refills of charges owned by validation-prefix frames (for example a deploy frame) is not detailed.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'their gas is refunded at the end of the transaction'",
+       "summary": "Unexecuted POST_TX frame budgets are returned as unused gas, in the same way as skipped atomic-batch frames."
+      }
+     ],
+     "rationale": "Returning unused gas from skipped frames reuses the existing EIP-8141 settlement. No new protocol refund mechanism is introduced.",
+     "confidence": "medium",
+     "uncertainty_note": "Discarding the body's EIP-3529 refund-counter contributions on POST_TX failure is implied, not stated.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'POST_TX is added to the set of mode values accepted'",
+       "summary": "Mode 3 changes from invalid to valid, so EIP-8141 invalid-mode boundary cases need rework."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification, opcode table 0xb6/0xb7/0xb8",
+       "summary": "Previously undefined opcode bytes gain defined (context-restricted) behavior."
+      }
+     ],
+     "rationale": "Rework is confined to boundary cases of frame-mode static validation (mode value 3) and to any undefined-opcode cases using 0xb6–0xb8, which still halt outside POST_TX. This is level 1.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Existing opcodes, transaction types and precompiles are unchanged. No new receipt or header output is produced for baseline transactions."
+      }
+     ],
+     "rationale": "Baseline tests gain no new output to assert.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode",
+       "summary": "POST_TX is a new value of the existing frame `mode` field. The receipt shape, including status 2, is unchanged."
+      }
+     ],
+     "rationale": "No new transition-tool field or mechanism is needed. Frame mode values and receipts use existing EIP-8141 schemas.",
+     "confidence": "medium",
+     "uncertainty_note": "No transition-tool evidence was supplied. If tools need to expose the computed diff or the payer separately for debugging, this could be level 1.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "State Difference Semantics; Results Ordering",
+       "summary": "Expected opcode outputs depend on a net, sorted transaction state diff and on log tables with per-address and per-topic views."
+      },
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode",
+       "summary": "Tests must build frame transactions with a POST_TX suffix and check a body revert with modified receipts."
+      }
+     ],
+     "rationale": "The target's suite needs a new expectation abstraction: a model computing the expected net diff and its sorted indices, event and topic views, and receipt transformations after a POST_TX failure. The frame builder also needs a local extension for the new mode. Other families are unaffected, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction Trace Opcode, param 0x0B 'codehash_after'",
+       "summary": "Only existing code hashes are reported. No cryptographic rule is added."
+      }
+     ],
+     "rationale": "No cryptographic verification, signing or hashing rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction Trace Opcode param table; Reserved Inputs",
+       "summary": "Out-of-range indices, missing topics and non-zero reserved operands cause an exceptional halt."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Event Data Copy Opcode > Behavior",
+       "summary": "EVENTDATACOPY halts when event_index ≥ events_count or when dataOffset+length exceeds the data length."
+      },
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode",
+       "summary": "Rules cover the contiguous suffix, the atomic flag on the preceding frame, failure ending execution, skipped frames getting status 2, and the body revert extending only up to the validation prefix."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Difference Semantics",
+       "summary": "Net-change inclusion rules: restored values are excluded, storage wipes are excluded, delegation designators are excluded, and EIP-6780 created-and-destroyed contracts are included."
+      }
+     ],
+     "rationale": "There are many independent boundary-sensitive rules: index bounds, topic counts, reserved operands, copy bounds, suffix rules, cold/warm, and net-change inclusion. Two are elevated matrices. First, POST_TX failure × frame position × atomic-batch state × number of POST_TX frames × validation-prefix boundary, which changes receipts and committed state. Second, diff-entry inclusion × create/selfdestruct/delegation × write-then-restore. This is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode",
+       "summary": "Changes affect frame-transaction validity and execution, not block RLP decoding or structural validation."
+      }
+     ],
+     "rationale": "No block decoding or structural rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "No Engine API changes are described."
+      }
+     ],
+     "rationale": "No Engine API field or endpoint changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "Only opcodes and a frame mode are defined. Assertion contracts are application contracts."
+      }
+     ],
+     "rationale": "No protocol-designated contract is introduced.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract is referenced or changed."
+      }
+     ],
+     "rationale": "No existing system contract is affected.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification, instruction table",
+       "summary": "Defines TXTRACE 0xb6, TXDIFF 0xb7 and EVENTDATACOPY 0xb8."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction Diff Lookup Opcode > Gas Cost; Event Data Copy Opcode",
+       "summary": "TXDIFF has dynamic cold/warm gas. EVENTDATACOPY has memory-expansion and copy gas."
+      }
+     ],
+     "rationale": "Three instructions are added, and at least two are complex because their gas is dynamic. This is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'calling APPROVE anywhere in a POST_TX frame's call subtree is an ordinary STATICCALL violation'",
+       "summary": "APPROVE in a POST_TX frame halts under the existing static-context rules. No new APPROVE semantics are defined."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "States that no changes are made to existing opcodes."
+      }
+     ],
+     "rationale": "Existing instructions (APPROVE, FRAMEPARAM, ORIGIN) apply their existing rules in the new frame context. FRAMEPARAM can return mode 3, but that is a new value, not a new selector. No instruction's specified semantics change.",
+     "confidence": "medium",
+     "uncertainty_note": "Treating APPROVE's halt in POST_TX as a change of its availability, rather than inherited STATICCALL behavior, would make this 3.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "No precompiles are added."
+      }
+     ],
+     "rationale": "None added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "None modified.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Constants, 'POST_TX = 3'",
+       "summary": "A new value goes into the existing frame `mode` field. The receipt schema is reused."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Receipt Encoding",
+       "summary": "The frame receipt schema [status, gas_used, logs] already allows status 2."
+      }
+     ],
+     "rationale": "Only new values within unchanged schemas.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode",
+       "summary": "Amends the existing EIP-8141 frame transaction and adds no new envelope."
+      }
+     ],
+     "rationale": "No new EIP-2718 type.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'A frame transaction violating this is invalid'",
+       "summary": "New static rules: mode 3 is accepted, POST_TX frames must form a contiguous suffix, and the atomic flag is invalid on a POST_TX frame and on the frame directly before one."
+      },
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'Neither a POST_TX revert nor an exceptional halt invalidates the transaction'",
+       "summary": "A POST_TX failure is explicitly not a validity failure, unlike a VERIFY failure."
+      }
+     ],
+     "rationale": "New static validity rules need dedicated cases, but they fit EIP-8141's existing static-constraint sequencing. This is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields are added."
+      }
+     ],
+     "rationale": "None.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "Opcodes occupy unused slots. No state migration or code installation is mentioned."
+      }
+     ],
+     "rationale": "Only rule selection at activation.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Rationale > Gas Cost, 'A client can build an index over the diff and the logs when a POST_TX frame first reads them'",
+       "summary": "Each call is priced at a flat 100 gas on the assumption of a lazily built index whose cost grows with the touched entries and logs."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Assertion Gas Exhaustion, '~42,600 events'",
+       "summary": "An attacker can pad a transaction with tens of thousands of events. Per-topic and per-address views must stay constant-time."
+      }
+     ],
+     "rationale": "Targeted integrated benchmarks are needed for a bounded interaction. The worst case is a full-gas execution body that maximizes touched slots and logs, followed by POST_TX frames using TXTRACE/TXDIFF topic and address views, and possibly a whole-body revert. These check that index construction and flat 100-gas pricing hold. This is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'overrides the atomic-batch unrolling behavior'",
+       "summary": "A later frame can now roll back earlier frames while the validation prefix and payment stay committed."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations > The `POST_TX` Frame Mode Not Reverting Validation Prefix",
+       "summary": "The boundary between the committed prefix and the reverted body is safety-critical, including deploy-frame side effects."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations > Assertion Inputs Controlled by the Transaction",
+       "summary": "Contracts can detect POST_TX context. Introspection breaks encapsulation."
+      }
+     ],
+     "rationale": "The change alters EIP-8141's rollback and commit boundaries: which frames revert, payer charging, receipts, logs and state gas. Targeted adversarial integration cases are needed, for example payment approval placed after SENDER frames, atomic batches before POST_TX, and griefing through gas exhaustion. The interaction is bounded to frame execution, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "It could be judged 3 if the body-revert boundary is considered to change trust invariants shared by mempool, settlement and BAL components.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Transaction Trace Opcode, 'gas_pre_charge = gas_limit × gas_price + ...'",
+       "summary": "The formula uses gas_limit × gas_price, but EIP-8141 collects max_cost = max_gas × max_fee_per_gas + blob cost. The returned value is ambiguous or contradictory."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Transaction settlement, 'max_cost = (max_gas * tx.fees.max_fee_per_gas'",
+       "summary": "Defines the amount actually deducted at APPROVE."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction Diff Lookup Opcode > Gas Cost; 'codehash_before is equal to the empty-code hash for undeployed contracts'",
+       "summary": "The text does not say whether a remote storage query warms the account, nor how codehash is reported for nonexistent accounts (EXTCODEHASH returns 0)."
+      },
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode, 'the entire execution body of a transaction is reverted'",
+       "summary": "The body revert does not address the refund counter, warm/cold sets or approval context changes (for example APPROVE_EXECUTION after payer is set)."
+      }
+     ],
+     "rationale": "Several localized observable outcomes have competing interpretations: the gas_pre_charge value, codehash for nonexistent accounts, warming side effects, and refund-counter and access-set handling on body revert. Clients must agree on these before expected results can be fixed, so this is level 2.",
+     "confidence": "medium",
+     "uncertainty_note": "Could reach 3 if the net-diff view is considered to make previously unobservable intra-transaction bookkeeping consensus-visible across families.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "The `POST_TX` Frame Mode",
+       "summary": "Amends EIP-8141 modes, atomic batches, receipts, default code and payer settlement."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Transaction Diff Lookup Opcode > Gas Cost",
+       "summary": "TXDIFF uses EIP-2929 cold/warm pricing and records accesses in the EIP-7928 BAL."
+      },
+      {
+       "source": "eip.md",
+       "locator": "State Difference Semantics",
+       "summary": "EIP-7702 designators are excluded from contracts_deployed, EIP-6780 destroyed contracts still appear, and EIP-7708 transfer logs count as events."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Rationale > Gas Pre-Charge Parameter",
+       "summary": "EIP-4844 blob fees are included in gas_pre_charge."
+      }
+     ],
+     "rationale": "The target couples EIP-8141 frame execution with EIP-2929 access pricing, EIP-7928 BAL recording, EIP-7708 log semantics, EIP-6780 deletion timing and EIP-7702 designators. Coordinated scenarios across these interactions are needed, so this is level 3.",
+     "confidence": "high",
+     "uncertainty_note": "Interactions with EIP-8037, EIP-3529 and EIP-7819 are referenced through EIP-8141 but not supplied.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 8141,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Static validity of the POST_TX suffix and atomic-flag rules. Body revert extending only to the validation prefix. Skipped POST_TX frames with status 2. Body receipts keeping status and execution gas but losing logs and state gas. APPROVE halting in POST_TX. Default code in POST_TX. gas_payer_address equal to the payer. Multiple POST_TX frames."
+     },
+     {
+      "eip": 2929,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "TXDIFF cold/warm pricing for remote slots and accounts. The address or slot becomes warm after the call. Warm status after a POST_TX revert. TXTRACE and view params not touching access sets."
+     },
+     {
+      "eip": 7928,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "TXDIFF params 0x00–0x05 recorded in the BAL. TXTRACE/EVENTDATACOPY add no entries. BAL contents after a POST_TX-triggered body revert."
+     },
+     {
+      "eip": 7708,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Transfer logs from frame value and CALL value appear in event tables and per-topic views with the SYSTEM_ADDRESS emitter. They are discarded on body revert."
+     },
+     {
+      "eip": 6780,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "A contract created and selfdestructed in the same transaction still appears in contracts_deployed. Its balance, storage and flags as left by the body."
+     },
+     {
+      "eip": 7702,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Delegation designators set during the transaction are excluded from contracts_deployed while codehash and the flags bit still change. Delegated targets in POST_TX frames."
+     },
+     {
+      "eip": 4844,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "gas_pre_charge includes blob_count × GAS_PER_BLOB × blob_base_fee for a blob-carrying frame transaction."
+     },
+     {
+      "eip": 1559,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The opcodes halt exceptionally in EIP-1559 and legacy transactions."
+     }
+    ],
+    "unidentified_interactions": [
+     "EIP-8037 state-gas accounting reused by the body-revert state-gas removal (referenced through EIP-8141, not supplied).",
+     "EIP-3529 refund counter handling on POST_TX-triggered body revert (not stated).",
+     "SETDELEGATE/EIP-7819 or deploy-frame side effects in the committed validation prefix, which are surfaced by TXTRACE but not reverted.",
+     "The storage-wipe exclusion for CREATE onto storage-only accounts and for removal of empty accounts."
+    ]
+   },
+   "under_specification": {
+    "present": true,
+    "summary": "Several observable outputs are ambiguous: gas_pre_charge contradicts the max_cost that EIP-8141 actually collects, and it is unclear whether remote storage queries warm the account and what codehash_before is for nonexistent accounts. Handling of the refund counter, warm/cold sets and approval context on a whole-body revert is not stated.",
+    "affected_criteria": [
+     {
+      "criterion": "evm_gas_rule_changes",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "state_gas_accounting_changes",
+      "minimum_score": 1,
+      "maximum_score": 2
+     },
+     {
+      "criterion": "new_evm_gas_refund",
+      "minimum_score": 0,
+      "maximum_score": 1
+     },
+     {
+      "criterion": "modified_opcodes",
+      "minimum_score": 0,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "security_risks",
+      "minimum_score": 2,
+      "maximum_score": 3
+     },
+     {
+      "criterion": "transition_tool_interface_changes",
+      "minimum_score": 0,
+      "maximum_score": 1
+     }
+    ],
+    "unresolved_questions": [
+     "Does gas_pre_charge use standard_gas_limit or max_gas, and max_fee_per_gas or the effective price, to match the amount EIP-8141 actually deducts?",
+     "Does a TXDIFF storage query (0x00/0x01) also warm the account, or record it in the BAL separately?",
+     "What does TXDIFF codehash_before/after return for a nonexistent account: the empty-code hash or 0?",
+     "On POST_TX failure, are the body's EIP-3529 refund-counter contributions and warm/cold additions discarded?",
+     "If a VERIFY frame after the payer is set (for example only_verify after pay) is part of the execution body, is its APPROVE_EXECUTION rolled back?",
+     "Does an out-of-gas TXDIFF record its target in the BAL?"
+    ]
+   },
+   "notable_ambiguities": [
+    "The gas_pre_charge formula (gas_limit × gas_price) does not match EIP-8141's max_cost collection.",
+    "Remote storage reads were left unpriced by EIP-2929 Note 2. TXDIFF defines only slot pricing, not account pricing.",
+    "The 'execution body' boundary relative to the validation prefix when SENDER or VERIFY frames are interleaved around payment approval.",
+    "Storage wipes of never-written slots are excluded, so account_change_flags==0 is not a full invariant."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 66452,
+  "type": "result",
+  "duration_ms": 144935,
+  "uuid": "48f315cf-90ab-40ee-a269-5935b4988220",
+  "ttft_stream_ms": 2313,
+  "time_to_request_ms": 462,
+  "first_content_frame_ms": 2314,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}

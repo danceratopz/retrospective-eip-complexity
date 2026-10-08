@@ -1,0 +1,704 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+fork_id: hegota
+snapshot_id: hegota-2026-10-08-6dac5e7
+eip_8081_list: PFI
+eip:
+  number: 8142
+  title: Block-in-Blobs (BiB)
+  layers:
+  - execution
+  - consensus
+assessment:
+  snapshot_scope_summary: 'EIP-8142 requires the execution-payload data (the RLP-encoded block access
+    list from EIP-7928 and the RLP-encoded transaction list) to be written into blobs. It uses a fixed
+    codec: an 8-byte length header, 31 usable bytes per field element and zero padding. The KZG commitments
+    for these payload-blobs must form the first `payload_blob_count` blob commitments of the block, ahead
+    of the type-3 transaction blobs. A new `payload_blob_count` header/ExecutionPayload field is added.
+    engine_getPayload must compute payload blobs, commitments and cell proofs, plus random-point proofs
+    in the zk variant. engine_newPayload must re-derive the payload blobs, check the count and check that
+    the expected versioned hashes are the payload hashes followed by the type-3 hashes. Payload blobs
+    consume blob gas and count toward MAX_BLOBS_PER_BLOCK without paying a per-blob fee.'
+provenance:
+  input_package:
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/packages/hegota-2026-10-08/eip-8142/manifest.yaml
+    manifest_sha256: 62321748fdd54d727cf8db852a0db79b2d93bef4ee0e09dab76fd391d9efe3d8
+  cohort_snapshot:
+    snapshot_id: hegota-2026-10-08-6dac5e7
+    manifest_path: research/tasks/10-opus-v3-reassessment/prospective/inputs/cohort.yaml
+    manifest_sha256: 6fa7b2fb6b0fcd2304a354e17b8952099a5e6e39707d7a136bc1e595ca1c96da
+    pulled_at: '2026-10-08T09:12:50Z'
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    committed_at: '2026-10-07T22:23:55Z'
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+    eip_8081_list: PFI
+  snapshot_eip:
+    package_path: eip.md
+    repository: ethereum/EIPs
+    commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+    path: EIPS/eip-8142.md
+    committed_at: '2026-10-07T22:23:55Z'
+    git_blob_sha: 79289ef1bbac51daf973cf8ec8126d4fd07681c3
+    content_sha256: 8153607a02e4e06b9ced70860b8f6400a68d9728a86e59c61321bb78449fe3fa
+    immutable_url: https://github.com/ethereum/EIPs/blob/6dac5e74918b54511298fdbff79650e8f8d27d78/EIPS/eip-8142.md
+    information_cutoff_at: '2026-10-07T22:23:55Z'
+  rubric_source:
+    repository: ethspecs/pm
+    commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+    path: Templates/EIP-Complexity-Assessment.md
+    git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+    content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+    immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+    checklist_revision: 3
+  assessor_view:
+    path: rubric.md
+    content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+    transformation: remove_revision_notes_v1
+  task_contract:
+    path: research/tasks/10-opus-v3-reassessment/TASK.md
+    content_sha256: b2da8303696fdd5d5583e9c04dafea753682ecfebd03d2a9ece26d341bb8464f
+  assessment_contract: &id001
+    path: research/tasks/10-opus-v3-reassessment/prompts/assessment-contract.md
+    content_sha256: a8bba6841aceb678e1b15b6c772cdfd57bb15f5c54c3a826ac4dbb0acc1a35e2
+  session_prompt: *id001
+  system_prompt:
+    path: research/tasks/10-opus-v3-reassessment/prompts/system.md
+    content_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+  assessor:
+    model: claude-opus-5-5
+    reasoning_effort: high
+    run_at: '2026-10-08T09:55:30.475882Z'
+    session_id: assessment-run-6133b600-b37d-4ac6-b1f6-a3f4f1628c47
+    session_id_source: isolated_launcher_run_id
+    isolation_method: bubblewrap_claude_p_no_tools_v1
+    agent_identity: Claude Code 2.1.292 (Claude Code) headless (claude -p, no tools)
+    skills_used: []
+    prohibited_skill_exposure: false
+  sources_consulted:
+  - eip.md
+  - rubric.md
+  - supporting/eip-4844.md
+  - supporting/eip-7594.md
+  - supporting/eip-7732.md
+  - supporting/eip-7892.md
+  - supporting/eip-7928.md
+  operational_files_read:
+  - prompts/system.md
+  - prompts/assessment-contract.md
+  engine:
+    claude_code_version: 2.1.292 (Claude Code)
+    claude_flags:
+    - -p
+    - --tools
+    - ''
+    - --strict-mcp-config
+    - --disable-slash-commands
+    - --no-session-persistence
+    - --output-format
+    - json
+    model: claude-opus-5-5
+    effort: high
+    advisor_model: null
+    fallback_model: null
+    system_prompt_sha256: 582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb
+    prompt_sha256: ef3e0674abf5622a3e1911ff220162f4f2eae0317362c918de8bc5a1e886d9c5
+    schema_sha256: 2b48f6ada66e2ca1c2fc454da14a0d87d645a1ae00d01aee459b2643d0dd9ff2
+    started_at: '2026-10-08T09:55:30.475882Z'
+    finished_at: '2026-10-08T09:57:30.703718Z'
+    duration_ms: 118284
+    num_turns: 2
+    usage:
+      input_tokens: 2
+      cache_creation_input_tokens: 78096
+      cache_read_input_tokens: 0
+      output_tokens: 13730
+      output_tokens_details:
+        thinking_tokens: 5040
+      server_tool_use:
+        web_search_requests: 0
+        web_fetch_requests: 0
+      service_tier: standard
+      cache_creation:
+        ephemeral_1h_input_tokens: 78096
+        ephemeral_5m_input_tokens: 0
+      inference_geo: global
+      iterations:
+      - input_tokens: 2
+        output_tokens: 13730
+        cache_read_input_tokens: 0
+        cache_creation_input_tokens: 78096
+        cache_creation:
+          ephemeral_5m_input_tokens: 0
+          ephemeral_1h_input_tokens: 78096
+        type: message
+      speed: standard
+      fallback_credit: null
+    model_usage:
+      claude-opus-5-5:
+        inputTokens: 2
+        outputTokens: 13730
+        cacheReadInputTokens: 0
+        cacheCreationInputTokens: 78096
+        webSearchRequests: 0
+        costUSD: 0.899376
+        contextWindow: 1000000
+        maxOutputTokens: 128000
+        thinkingTokens: 5040
+        canonicalModel: claude-opus-5-5
+        provider: firstParty
+        costBasis: list
+    total_cost_usd: 0.899376
+  assessor_raw_output:
+    path: prospective/outputs/raw/hegota-2026-10-08/eip-8142.json
+    content_sha256: f8231c7b8ef3563c23a4bd8091b8f724a7e611a2cfd4cf4bb3b20aecf667e6c6
+  postprocessing:
+  - Mapped the schema-constrained structured_output onto the sealed output template without changing any
+    level, evidence entry or rationale; whitespace was trimmed.
+  - 'Cross-EIP interactions: score = model base level + mechanical bonus (+1 per 3 coordinated-case EIPs
+    beyond the first 3, from the rubric); interacting EIPs are limited to the sealed candidate list and
+    deduplicated.'
+  - Totals, tier and plausible total range were computed from criterion levels and per-criterion ranges;
+    a stated range is widened to include the primary level.
+criteria:
+- id: evm_gas_rule_changes
+  label: EVM Gas rule changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Fee Accounting / Can a builder artificially inflate blob gas usage?
+    summary: Calldata stays priced by the normal execution gas mechanism; no execution-gas rule changes
+      are stated.
+  rationale: No execution-gas charging, metering or settlement rule changes. Only blob-related accounting
+    is touched.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: state_access_ordering_within_opcode_execution
+  label: State-access ordering within opcode execution
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Execution Layer / Summary
+    summary: Changes are confined to the header field and the Engine API blob derivation and checks; no
+      opcode access ordering is changed.
+  rationale: No instruction's state-access or gas-charge ordering changes, and BAL recording rules are
+    untouched.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: blob_gas_accounting_changes
+  label: Blob gas accounting changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Fee Accounting / Do payload-blobs compete with transaction blobs for capacity?
+    summary: '"Because payload blobs consume blob gas, they directly influence blob congestion and the
+      blob base fee."'
+  - source: eip.md
+    locator: Fee Accounting / Who pays?
+    summary: Payload-blobs do not pay a per-blob fee; their blob gas usage is a protocol-accepted cost.
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation
+    summary: In the baseline, blob_gas_used is the sum of get_total_blob_gas over type-3 transactions
+      only, and that sum feeds calc_excess_blob_gas.
+  - source: eip.md
+    locator: Security Considerations / Interaction with blob congestion
+    summary: Payload-blobs are subject to the same congestion control and blob limits as transaction blobs.
+  rationale: 'This adds a new mechanism: protocol-mandated, unpaid blob-gas consumption by payload blobs.
+    It also changes existing accounting. blob_gas_used, excess_blob_gas and the blob base fee now include
+    payload blobs, which matters because every block has at least one payload blob (even an empty BAL
+    plus an empty tx list encodes to 10 bytes). Baseline blob gas expectations therefore change.'
+  confidence: medium
+  uncertainty_note: The EIP gives no formula for including payload blobs in blob_gas_used or in the limit
+    check; it states the effect only in prose. If blob_gas_used were unchanged and only the capacity limit
+    applied, the level would be lower.
+  exceptional_score_justification: null
+- id: state_gas_accounting_changes
+  label: State gas accounting changes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No state-write cost, state-gas budget or spill rule is introduced.
+  rationale: No state-gas accounting changes.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_evm_gas_refund
+  label: New EVM gas refund
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Fee Accounting
+    summary: No refund mechanism is introduced; fee discussion covers blob gas only.
+  rationale: No new refund mechanism.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: patterns_affecting_pre_existing_tests
+  label: Patterns affecting pre-existing tests
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: engine_newPayload - Native Execution Variant
+    summary: '"assert expected_blob_versioned_hashes == payload_versioned_hashes + type3_versioned_hashes":
+      every newPayload call now needs payload-blob versioned hashes first.'
+  - source: eip.md
+    locator: engine_getPayload - Native Variant / Note
+    summary: Payload blob usage counts toward MAX_BLOBS_PER_BLOCK, which shrinks the capacity left for
+      type-3 blobs.
+  - source: eip.md
+    locator: Fee Accounting
+    summary: Payload blobs consume blob gas and influence the blob base fee.
+  rationale: One common change, mandatory payload blobs in every block, forces rework across distinct
+    families. Every engine-format blockchain test needs different expected_blob_versioned_hashes inputs.
+    EIP-4844 max-blobs-per-block validity tests and excess-blob-gas/blob-base-fee/BLOBBASEFEE expectations
+    must be re-derived, because blob gas used is never zero after the fork.
+  confidence: medium
+  uncertainty_note: How far the blob-accounting families change depends on the unspecified blob_gas_used
+    formula.
+  exceptional_score_justification: null
+- id: new_invariant_on_pre_existing_tests
+  label: New invariant on pre-existing tests
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Data structures / Header
+    summary: 'New header field `payload_blob_count`: uint64.'
+  - source: eip.md
+    locator: engine_newPayload - Native Execution Variant
+    summary: '"assert payload_blob_count == payload.payload_blob_count"'
+  rationale: Every post-fork block in every test must carry and check the correct payload_blob_count.
+    The assertion is universal within the target fork, but nothing shows that pre-fork vectors must be
+    re-derived, so the level is 2.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: transition_tool_interface_changes
+  label: Transition-tool interface changes
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Execution Layer / Summary
+    summary: The header gains payload_blob_count, which is computed from the transactions and BAL.
+  - source: eip.md
+    locator: Fee Accounting
+    summary: Payload blobs consume blob gas, which changes what blob gas used / excess blob gas mean.
+  rationale: The tool must output payload_blob_count and include payload blobs in blob-gas results, and
+    it likely needs the parent payload blob count for the excess calculation. That is multiple field changes
+    without a clearly required new exchange mechanism.
+  confidence: low
+  uncertainty_note: No t8n evidence is supplied. If KZG commitment and versioned-hash computation for
+    payload blobs had to live in the tool, this would reach 3.
+  exceptional_score_justification: null
+- id: new_test_framework_primitives
+  label: New test-framework primitives
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: execution_payload_data_to_blobs
+    summary: Payload bytes must be canonically encoded into blobs (8-byte header, 31-byte packing).
+  - source: eip.md
+    locator: engine_newPayload - Native Execution Variant
+    summary: Expected versioned hashes must be payload KZG versioned hashes followed by type-3 hashes.
+  rationale: The framework needs a shared facility to derive payload blobs from each block's BAL and transactions,
+    compute KZG commitments and versioned hashes, prepend them to expected blob hashes, and account for
+    payload blobs in blob limits. This changes how every engine-format fixture across families is constructed
+    and checked. It also needs modifiers to forge mismatched counts or ordering.
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: cryptography
+  label: Cryptography
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Referenced Helpers
+    summary: Uses blob_to_kzg_commitment, verify_blob_kzg_proof_batch, compute_blob_kzg_proof, compute_cells_and_kzg_proofs
+      and kzg_commitment_to_versioned_hash from the consensus specs.
+  - source: eip.md
+    locator: engine_newPayload - zkEVM-Optimized Variant
+    summary: Blob–commitment consistency is checked with verify_blob_kzg_proof_batch.
+  - source: supporting/eip-4844.md
+    locator: Cryptographic Helpers / Test Cases
+    summary: KZG helpers are defined in the consensus specs, and consensus-layer test cases are referenced.
+  rationale: Several established KZG mechanisms enter EL validation and building. Payload validity now
+    depends on commitment computation, the zk variant uses batch proof verification, and getPayload computes
+    cell and blob proofs. Specs exist for all of them, so this is multiple established mechanisms.
+  confidence: medium
+  uncertainty_note: Applicability of existing KZG test vectors to EL payload validation is not directly
+    evidenced.
+  exceptional_score_justification: null
+- id: edge_boundary_conditions
+  label: Edge/boundary conditions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: bytes_to_blobs / chunk_to_blob
+    summary: Blob count steps at multiples of USABLE_BYTES_PER_BLOB, and the final blob is zero-padded.
+  - source: eip.md
+    locator: blobs_to_execution_payload_data
+    summary: 4-byte length headers, the declared-length bound and the trailing-zero checks are boundary
+      rules.
+  - source: eip.md
+    locator: Parameters / Note on MAX_BLOBS_PER_BLOCK
+    summary: MAX_BLOBS_PER_BLOCK covers payload blobs plus type-3 blobs and varies by fork per EIP-7892.
+  rationale: 'There are multiple boundary-sensitive mechanisms: blob-packing thresholds, length-header
+    bounds and the combined blob limit. The limit forms an elevated matrix in which payload size (BAL
+    plus tx bytes), type-3 blob count and the active blob-schedule max together determine validity. Adding
+    transactions also changes payload size.'
+  confidence: medium
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: block_syncing_changes
+  label: Block syncing changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Data structures / Header
+    summary: A new execution header field changes header RLP decoding.
+  - source: eip.md
+    locator: engine_newPayload - Native Execution Variant
+    summary: payload_blob_count must equal the number of blobs derived from the transactions and BAL.
+  rationale: Header decoding gains a field (a simple rule). payload_blob_count must also match a value
+    derived from the block body and BAL (a complex rule), and blob gas checks change.
+  confidence: low
+  uncertainty_note: The count check is specified only at the Engine API boundary. Whether it applies on
+    devp2p import, where the BAL is stored separately, is unspecified, and the header RLP position is
+    not given.
+  exceptional_score_justification: null
+- id: engine_api_changes
+  label: Engine API changes
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: engine_getPayload - Native Variant
+    summary: BlobsBundle now returns payload blobs, commitments and cell proofs ahead of type-3 blobs.
+  - source: eip.md
+    locator: BlobsBundle
+    summary: New payload_kzg_proofs field in the zk variant.
+  - source: eip.md
+    locator: engine_newPayload - zkEVM-Optimized Variant
+    summary: New payload_kzg_commitments and payload_kzg_proofs inputs, plus changed versioned-hash validation.
+  rationale: Both endpoint behavior and multiple fields change. getPayload and newPayload validation change,
+    and ExecutionPayload.payloadBlobCount, payload_kzg_proofs and payload_kzg_commitments are added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_system_contracts
+  label: Added system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contract is introduced.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_system_contracts
+  label: Modified system contracts
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No system contract behavior is referenced or changed.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_opcodes
+  label: Added opcodes
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No new instructions.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_opcodes
+  label: Modified opcodes
+  score: 0
+  evidence:
+  - source: supporting/eip-4844.md
+    locator: Opcode to get versioned hashes
+    summary: BLOBHASH indexes tx.blob_versioned_hashes, which this EIP leaves unchanged.
+  rationale: No instruction semantics change. Blob base fee values may shift through accounting, but that
+    is not a semantic change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: added_precompiles
+  label: Added precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: No precompile is added.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: modified_precompiles
+  label: Modified precompiles
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Specification
+    summary: The point evaluation precompile is untouched.
+  rationale: None.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: encoding_changes_rlp_ssz
+  label: Encoding changes (RLP/SSZ)
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Data structures / Header
+    summary: payload_blob_count is added to the execution header.
+  - source: eip.md
+    locator: Consensus Layer / ExecutionPayload
+    summary: payload_blob_count is added to the SSZ ExecutionPayload.
+  - source: eip.md
+    locator: execution_payload_data_to_blobs
+    summary: 'New canonical blob codec: 8-byte big-endian lengths, BAL bytes, RLP tx list, 31-byte field-element
+      packing.'
+  rationale: The header schema, the ExecutionPayload/Engine schema and a new payload-to-blob codec all
+    change.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_transaction_types
+  label: New transaction types
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Terminology
+    summary: Only the existing type-3 transactions are referenced.
+  rationale: No new transaction envelope.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_or_modified_transaction_validity_mechanisms
+  label: New or modified transaction validity mechanisms
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: engine_getPayload - Native Variant / Note
+    summary: Builders must account for payload blob usage so total blobs do not exceed MAX_BLOBS_PER_BLOCK.
+  - source: supporting/eip-4844.md
+    locator: Execution layer validation
+    summary: Type-3 inclusion is bounded by the block blob gas limit and the blob base fee.
+  rationale: Whether type-3 transactions are eligible now depends on the remaining blob capacity after
+    payload blobs, and that capacity depends on the size of all transactions and the BAL. Dedicated cases
+    are needed, but baseline validation sequencing remains usable.
+  confidence: low
+  uncertainty_note: The EIP gives no explicit consensus validity rule combining payload and type-3 blobs;
+    it gives only a builder note and prose.
+  exceptional_score_justification: null
+- id: new_block_header_fields
+  label: New block / header fields
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Data structures / Header
+    summary: '"This EIP adds a new field to the header: payload_blob_count : uint64"'
+  rationale: An execution header member is added.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: new_fork_activation_mechanism
+  label: New fork activation mechanism
+  score: 0
+  evidence:
+  - source: eip.md
+    locator: Backwards Compatibility
+    summary: Requires a fork for header and STF changes; no state migration is described.
+  rationale: There is no one-time state transition or code installation.
+  confidence: high
+  uncertainty_note: None identified.
+  exceptional_score_justification: null
+- id: performance_risks
+  label: Performance risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: engine_newPayload - Native Execution Variant
+    summary: newPayload computes blob_to_kzg_commitment (an MSM) for every payload blob before execution.
+  - source: eip.md
+    locator: engine_getPayload - Native Variant
+    summary: getPayload computes cell proofs for every payload blob on the build path.
+  - source: supporting/eip-7594.md
+    locator: Networking
+    summary: '"computing the cell proofs for a blob is an expensive operation"'
+  rationale: Payload validation and block building gain KZG work that scales with payload size, which
+    is bounded by the gas limit and the blob max. Targeted integrated benchmarks are needed on the newPayload/getPayload
+    critical paths.
+  confidence: medium
+  uncertainty_note: The builder bandwidth concerns are CL/networking and are not scored here.
+  exceptional_score_justification: null
+- id: security_risks
+  label: Security risks
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Overview and Invariants / Payload availability invariant
+    summary: The KZG commitments of the derived blobs must match the first payload_blob_count block commitments.
+  - source: eip.md
+    locator: Consensus Layer / Validation
+    summary: The CL relies on payload_blob_count to interpret commitment ordering.
+  - source: eip.md
+    locator: Engine API
+    summary: The two newPayload variants must enforce identical validity conditions.
+  rationale: 'The EL newPayload check now carries the data-availability binding the CL relies on. Targeted
+    adversarial integration cases are needed: wrong count, reordered or misplaced commitments, mismatched
+    blobs, and native/zk variant divergence.'
+  confidence: medium
+  uncertainty_note: This could be judged 3 if the CL/zk-prover trust assumptions are counted as a shared
+    invariant across multiple components.
+  exceptional_score_justification: null
+- id: unspecified_behavior_requiring_cross_client_consensus
+  label: Unspecified behavior requiring cross-client consensus
+  score: 2
+  evidence:
+  - source: eip.md
+    locator: Fee Accounting
+    summary: Payload blobs "consume blob gas", but no formula updates blob_gas_used, excess_blob_gas or
+      the limit check, and explicit pricing is an open TODO.
+  - source: eip.md
+    locator: Data structures / Header
+    summary: The header field is added without an RLP position.
+  - source: eip.md
+    locator: Consensus Layer / ExecutionPayload
+    summary: The listed ExecutionPayload omits blockAccessList, although EIP-7928 adds it and get_execution_payload_data
+      reads it.
+  rationale: Several consensus-visible outcomes admit competing interpretations. Header blob_gas_used
+    could include or exclude payload blobs, the header field order is unspecified, and whether the count
+    check applies outside the Engine API is unstated. These must be agreed before expected results can
+    be fixed.
+  confidence: medium
+  uncertainty_note: If the blob-accounting ambiguity is read as re-baselining across families, the level
+    could be 3.
+  exceptional_score_justification: null
+- id: cross_eip_interactions
+  label: Cross-EIP interactions
+  score: 3
+  evidence:
+  - source: eip.md
+    locator: Parameters / Note on MAX_BLOBS_PER_BLOCK
+    summary: The payload plus type-3 blob limit follows the EIP-7892 schedule.
+  - source: eip.md
+    locator: execution_payload_data_to_blobs
+    summary: EIP-7928 BAL bytes are part of the encoded payload data.
+  - source: eip.md
+    locator: engine_getPayload - Native Variant
+    summary: Payload blobs are combined with EIP-4844 type-3 blobs and EIP-7594 cell proofs.
+  rationale: The target couples EIP-4844 blob accounting and ordering, EIP-7928 BAL size, EIP-7892 schedule
+    limits and EIP-7594 cell proofs. Coordinated scenarios are needed across these interactions.
+  confidence: medium
+  uncertainty_note: EIP-7732 compatibility (ExecutionPayload in the envelope, commitments in the bid)
+    is only partially described.
+  exceptional_score_justification: null
+  interacting_eips:
+  - 4844
+  - 7928
+  - 7892
+  - 7594
+  - 7732
+  unidentified_interactions: []
+  base_score: 3
+  bonus: 0
+  bonus_qualifying_eips:
+  - 4844
+  - 7928
+  - 7892
+  - 7594
+  interaction_details:
+  - eip: 4844
+    interaction: coordinated_cases
+    cases: Blocks mixing payload and type-3 blobs. Versioned-hash ordering (payload first). blob_gas_used,
+      excess_blob_gas and base fee including payload blobs. max_fee_per_blob_gas eligibility under the
+      changed base fee.
+  - eip: 7928
+    interaction: coordinated_cases
+    cases: 'BAL bytes in the encoding: empty BAL (0xc0), large BALs crossing blob boundaries, BAL size
+      changing payload_blob_count.'
+  - eip: 7892
+    interaction: coordinated_cases
+    cases: Combined payload plus type-3 blob count against the blob schedule max, including across BPO
+      transitions and changed target/update fraction.
+  - eip: 7594
+    interaction: coordinated_cases
+    cases: getPayload returns cell proofs (CELLS_PER_EXT_BLOB per blob) for payload blobs combined with
+      type-3 cell proofs in a consistent order.
+  - eip: 7732
+    interaction: local_compatibility_check
+    cases: ExecutionPayload/commitment placement in the envelope/bid structure. The payload_blob_count
+      prefix interpretation is compatible.
+totals:
+  primary_score: 41
+  complexity_tier: high
+under_specification:
+  present: true
+  summary: The blob-gas accounting of payload blobs is described only in prose. The header RLP layout
+    and the scope of block-import validation are unspecified, and the ExecutionPayload listing conflicts
+    with EIP-7928's blockAccessList field.
+  affected_criteria:
+  - blob_gas_accounting_changes
+  - patterns_affecting_pre_existing_tests
+  - transition_tool_interface_changes
+  - block_syncing_changes
+  - new_or_modified_transaction_validity_mechanisms
+  criterion_ranges:
+  - criterion: blob_gas_accounting_changes
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: patterns_affecting_pre_existing_tests
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: transition_tool_interface_changes
+    minimum_score: 1
+    maximum_score: 3
+  - criterion: block_syncing_changes
+    minimum_score: 2
+    maximum_score: 3
+  - criterion: new_or_modified_transaction_validity_mechanisms
+    minimum_score: 1
+    maximum_score: 2
+  plausible_total_range:
+    minimum: 35
+    maximum: 42
+  plausible_tiers:
+  - high
+  unresolved_questions:
+  - Is header blob_gas_used computed as payload_blob_count*GAS_PER_BLOB plus type-3 blob gas, and does
+    excess_blob_gas use it?
+  - Is the combined payload plus type-3 blob limit a consensus validity rule in EL block validation, or
+    only a builder obligation?
+  - Where is payload_blob_count placed in the header RLP, and how is it handled for the first post-fork
+    block?
+  - Is payload_blob_count validated on devp2p block import, given that BALs are stored separately?
+  - Does ExecutionPayload include blockAccessList, given that the listed container omits it?
+  - Is any fee charged or burned for payload blob gas?
+notable_ambiguities:
+- Every block has at least one payload blob, even an empty one (10 bytes), so blob gas is never zero if
+  payload blobs are counted.
+- The two newPayload variants (native and zk) are claimed equivalent, but zk-variant inputs are private,
+  so EL testing scope for the zk variant is unclear.
+- The ExecutionPayload listing omits blockAccessList and EIP-7732 envelope details.
+- RLP.decode in the decoder has no explicit canonicality rule; validation re-encodes from the payload
+  instead.
+overall_confidence: medium
+information_control:
+  internet_access_attempted: false
+  post_snapshot_information_exposure: false
+  prohibited_source_exposure: false
+  exposure_details: []
+  contaminated: false
+  attestation: 'Launcher attestation: one tool-less claude -p call in a bubblewrap capsule with no tools,
+    MCP servers, skills or project files; the prompt contained only the sealed package documents. The
+    model was instructed not to use remembered facts; recall itself cannot be technically excluded.'

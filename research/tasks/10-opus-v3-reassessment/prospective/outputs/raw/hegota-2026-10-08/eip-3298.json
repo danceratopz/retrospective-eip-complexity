@@ -1,0 +1,623 @@
+{
+ "case": "hegota/3298",
+ "run_id": "assessment-run-151fa81c-25b0-4363-b311-740e4b8cadfe",
+ "claude_code_version": "2.1.292 (Claude Code)",
+ "started_at": "2026-10-08T09:49:53.586602Z",
+ "finished_at": "2026-10-08T09:51:34.347665Z",
+ "exit_code": 0,
+ "stderr": "",
+ "prompt_sha256": "303d2a9e7f61728b0c8e06b1ee94e079ba1175aa264381b8431ec3028b2d4e3f",
+ "system_prompt_sha256": "582b4441505c7b0dc6183603428c7125e4ee4d92e67a2771b9fd40f8cfc6efdb",
+ "schema_sha256": "7b062e8eba27fcd8264a7f7fba59e746a06e82d2e2db4fab2325bb252278c585",
+ "output": {
+  "duration_api_ms": 98124,
+  "stop_reason": "tool_use",
+  "session_id": "8e556d59-4d0b-4c7a-906a-5582d826c5fe",
+  "total_cost_usd": 1.39466,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 146959,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 10949,
+   "output_tokens_details": {
+    "thinking_tokens": 4006
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 146959,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 10949,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 146959,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 146959
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 10949,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 146959,
+    "webSearchRequests": 0,
+    "costUSD": 1.39466,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 4006,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 2,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"scope_summary\":\"EIP-3298, as supplied, is a delta on EIP-8037 and EIP-8038. It removes the SSTORE storage-clearing refund (STORAGE_CLEAR_REFUND = 11,616) and the two EIP-8038 refund rules that grant and reverse it. It also removes the EIP-3529 20% refund cap from transaction settlement. The only refund rule left is EIP-8038's net-metered STORAGE_WRITE reversal, applied when a slot returns to its original value. The refund counter keeps its journaling, the EIP-7623/7976 calldata floor still applies after refunds, and block-level execution-gas accounting stays pre-refund under EIP-7778. When EIP-8141 is active, frame-transaction settlement also applies the full refund counter, with no MAX_REFUND_QUOTIENT.\",\"criteria\":{\"evm_gas_rule_changes\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / SSTORE refund rules\",\"summary\":\"STORAGE_CLEAR_REFUND and the two EIP-8038 refund rules that use it are removed. The STORAGE_WRITE reversal rule is unchanged.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"In settlement, tx_gas_refund = min(tx_gas_used_before_refund // 5, refund_counter) becomes refund_counter. The calldata floor still applies after refunds.\"},{\"source\":\"supporting/eip-8037.md\",\"locator\":\"Transaction gas used\",\"summary\":\"The baseline settlement applies the 20% refund cap.\"}],\"rationale\":\"Existing refund and settlement rules are removed or simplified. No new accounting mechanism is introduced, which matches level 1. Expected gas results of baseline operations change, but level 3 requires a new mechanism, and there is none.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_access_ordering_within_opcode_execution\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / SSTORE refund rules\",\"summary\":\"The SSTORE charging rules are untouched. Only refund-counter adjustments change.\"}],\"rationale\":\"No instruction's state-access or gas-charge ordering changes, and no access-list recording changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"blob_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"The changes are limited to SSTORE refunds and refund-cap settlement. Blob gas is not mentioned.\"}],\"rationale\":\"Blob-gas accounting does not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"state_gas_accounting_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / SSTORE refund rules\",\"summary\":\"\\\"the state-gas charges and refills of EIP-8037 are untouched; state-gas refills are not refunds and do not enter the counter\\\"\"}],\"rationale\":\"State-gas charges, refills and reservoir rules do not change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_evm_gas_refund\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Abstract\",\"summary\":\"The EIP removes a refund and the cap. The remaining STORAGE_WRITE reversal is inherited unchanged from EIP-8038.\"}],\"rationale\":\"No new refund mechanism is introduced. Removing an existing refund belongs under GAS.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"patterns_affecting_pre_existing_tests\":{\"score\":2,\"evidence\":[{\"source\":\"supporting/eip-8038.md\",\"locator\":\"SSTORE pricing / case table\",\"summary\":\"Several baseline case rows include STORAGE_CLEAR_REFUND grants or reversals (x→x→0, x→y→0, x→0→x, x→0→y). Their expected refunds change.\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"Any baseline case where the 20% cap bound the refund now produces a different gas_used and fee result.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"The EIP's own test table re-derives expected refunds for the canonical SSTORE sequences.\"}],\"rationale\":\"Expected values change in ordinary SSTORE net-metering cases (any clear of a slot with a non-zero original value). They also change in localized cap-binding cases in settlement, calldata-floor, EIP-7778 and frame-transaction settlement tests. That matches level 2: several families are affected, but the inputs and construction of those tests do not need a common rewrite.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Clearing storage and short transactions with net-metered round trips are common. If cap-binding refunds turn out to be ubiquitous in baseline vectors, this could reach level 3.\",\"exceptional_score_justification\":\"\"},\"new_invariant_on_pre_existing_tests\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"No new output, field or log is introduced. Only existing gas values change.\"}],\"rationale\":\"No new assertion is needed. Changed gas values count as rework under PAT.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"transition_tool_interface_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"Receipt cumulative_gas_used and the block accounting fields keep their existing semantics. Only their computed values change.\"}],\"rationale\":\"No input, output or invocation change is needed in the transition tool.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_test_framework_primitives\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"The settlement formula is simplified. The fork's gas-cost and refund calculation drops the cap and one refund constant.\"}],\"rationale\":\"Fork gas-calculation logic needs to drop a parameter and the cap, but no new abstraction is required.\",\"confidence\":\"medium\",\"uncertainty_note\":\"A framework-side refund-calculator toggle per fork could be read as a local extension (level 1).\",\"exceptional_score_justification\":\"\"},\"cryptography\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"There is no cryptographic content.\"}],\"rationale\":\"No cryptographic mechanism changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"edge_boundary_conditions\":{\"score\":1,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"Tests should cover a refund counter above 20% of pre-refund gas (uncapped) and a refund that pushes tx_gas_used_after_refund below the floor (the floor binds).\"}],\"rationale\":\"One boundary-sensitive mechanism changes: refund application at settlement, now uncapped, with the floor still applied afterwards. The cap boundary and the floor boundary both test this same settlement rule.\",\"confidence\":\"medium\",\"uncertainty_note\":\"Counting the floor interaction as a separate boundary mechanism would give level 2.\",\"exceptional_score_justification\":\"\"},\"block_syncing_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"\\\"Block-level accounting is unchanged\\\". Under EIP-7778 and EIP-8037, the execution dimension counts the pre-refund value.\"}],\"rationale\":\"No block decoding or structural validation rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"engine_api_changes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No Engine API change is described.\"}],\"rationale\":\"No Engine API field or endpoint changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No contract deployment is specified.\"}],\"rationale\":\"No system contract is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_system_contracts\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No system contract rules change. Settlement refunds do not apply to system calls.\"}],\"rationale\":\"No existing system contract or its surrounding protocol behavior changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new instructions.\"}],\"rationale\":\"No opcodes are added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_opcodes\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"\\\"Refunds are applied only in the end-of-transaction settlement, so removing one cannot affect execution\\\"\"}],\"rationale\":\"Only SSTORE's refund contribution changes, which is a gas-only change. Its semantics are unchanged.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"added_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompiles.\"}],\"rationale\":\"No precompiles are added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"modified_precompiles\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No precompile changes.\"}],\"rationale\":\"No existing precompile changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"encoding_changes_rlp_ssz\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No serialized schema changes. Receipt fields keep their existing meaning.\"}],\"rationale\":\"No codec or schema change.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_transaction_types\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No new transaction envelope. The EIP-8141 settlement change modifies an existing type.\"}],\"rationale\":\"No new transaction type.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_or_modified_transaction_validity_mechanisms\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"Only post-execution settlement changes. Intrinsic gas and inclusion checks are unchanged, and block accounting is unchanged.\"}],\"rationale\":\"No consensus validity or intrinsic-gas rule changes.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_block_header_fields\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"No header fields.\"}],\"rationale\":\"No header or block field is added.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"new_fork_activation_mechanism\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Backwards Compatibility\",\"summary\":\"A gas repricing activated at a scheduled upgrade, with no state migration.\"}],\"rationale\":\"Activation only selects different rules. There is no state transition at the fork.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"performance_risks\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations\",\"summary\":\"\\\"this EIP does not change worst-case block resource consumption\\\" because EIP-7778 excludes refunds from block accounting.\"}],\"rationale\":\"No workload capacity or resource bound changes, so no new performance validation is needed.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"security_risks\":{\"score\":2,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Security Considerations\",\"summary\":\"\\\"Removing the cap is safe only because the remaining refund is self-bounded and the counter is journaled across reverts; both properties are load-bearing.\\\"\"},{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"For EIP-8141, the counter is transaction-scoped and discards reverted frames' changes, so the bound is claimed to hold.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Transaction settlement\",\"summary\":\"The refund counter accumulates across frames and is discarded for reverted frames and unrolled atomic batches.\"}],\"rationale\":\"Removing the cap takes away a defensive bound on what the sender pays. Safety now depends on the refund counter never exceeding STORAGE_WRITE charges paid in the same transaction. That property depends on journaling across call-frame reverts, frame-transaction frames and atomic batches, and on its interaction with state-gas refills and the floor. This is a bounded interaction that needs targeted adversarial cases (level 2).\",\"confidence\":\"medium\",\"uncertainty_note\":\"This could be viewed as a local check (level 1) if the journaling semantics are considered already covered by the prerequisites.\",\"exceptional_score_justification\":\"\"},\"unspecified_behavior_requiring_cross_client_consensus\":{\"score\":0,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification / Removal of the refund cap\",\"summary\":\"Explicit settlement pseudocode is given, along with the block-accounting rule and the EIP-8141 settlement change.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"Explicit expected refund-counter values for the canonical SSTORE sequences.\"}],\"rationale\":\"The supplied rules settle every observable outcome. The struck table entries and the remaining rule are stated precisely.\",\"confidence\":\"high\",\"uncertainty_note\":\"None identified.\",\"exceptional_score_justification\":\"\"},\"cross_eip_interactions\":{\"score\":3,\"evidence\":[{\"source\":\"eip.md\",\"locator\":\"Specification\",\"summary\":\"A delta against EIP-8037 and EIP-8038. It assumes EIP-2780 and EIP-7778, and also modifies EIP-8141 settlement.\"},{\"source\":\"eip.md\",\"locator\":\"Test Cases\",\"summary\":\"Requires tests for the EIP-7623 floor binding after an uncapped refund and for EIP-7778 block accounting with refunds.\"},{\"source\":\"supporting/eip-8037.md\",\"locator\":\"Integration with EIP-7778\",\"summary\":\"Block execution gas is counted before refunds. State-gas refills are separate from refunds.\"},{\"source\":\"supporting/eip-8141.md\",\"locator\":\"Transaction settlement\",\"summary\":\"The baseline applied_refund uses MAX_REFUND_QUOTIENT. The target removes it.\"}],\"rationale\":\"The change couples the EIP-8038 SSTORE refund table, EIP-8037 settlement and state-gas refills, EIP-7778 pre-refund block accounting, the EIP-7623/7976 calldata floor, and EIP-8141 frame settlement. That requires coordinated scenarios across these EIPs (level 3).\",\"confidence\":\"medium\",\"uncertainty_note\":\"EIP-8141 is conditional (\\\"When EIP-8141 is active\\\"). Its coordinated cases apply only in a scenario where EIP-8141 is in the same fork.\",\"exceptional_score_justification\":\"\"}},\"cross_eip\":{\"interacting_eips\":[{\"eip\":8038,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Re-derive every SSTORE case-table row with the STORAGE_CLEAR_REFUND entries struck (x→x→0, x→y→0, x→0→x, x→0→y), cold and warm. Confirm the STORAGE_WRITE reversal is unchanged and that the counter never exceeds the W charges paid.\"},{\"eip\":8037,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Uncapped settlement with the reservoir model (tx_gas_used_before_refund includes the state_gas_reservoir term). Run 0→x→0 sequences where the state-gas refill and the uncapped W refund apply together, and confirm refills stay out of the counter.\"},{\"eip\":7778,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Blocks with large uncapped refunds: block execution gas uses the pre-refund value, the sender payment uses the post-refund value, and receipt cumulative_gas_used uses the post-floor value.\"},{\"eip\":7623,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Data-heavy transactions whose uncapped refund pushes tx_gas_used_after_refund below calldata_floor_gas_cost; the floor binds.\"},{\"eip\":7976,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"The same floor-binding cases at the 64/64 floor rate, with uncapped refunds.\"},{\"eip\":8141,\"interaction\":\"coordinated_cases\",\"coordinated_cases\":\"Frame-transaction settlement with applied_refund = refund_counter: refunds accumulated across frames, discarded for a reverted frame and an unrolled atomic batch, and interacting with calldata_floor_gas and tx_state_gas.\"},{\"eip\":3529,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Confirm MAX_REFUND_QUOTIENT is no longer applied: a refund above 20% of gas used is applied in full.\"},{\"eip\":2200,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"Original and current value definitions used by the remaining reversal rule are unchanged.\"},{\"eip\":2780,\"interaction\":\"local_compatibility_check\",\"coordinated_cases\":\"The decomposed intrinsic base enters gas_used before refund. Without the cap, its size no longer bounds the refund.\"}],\"unidentified_interactions\":[\"Refund-counter journaling across reverting call frames is load-bearing for removing the cap. This is a general EVM rule not tied to a single supplied EIP.\"]},\"under_specification\":{\"present\":false,\"summary\":\"The supplied text gives explicit settlement pseudocode, the struck refund rules, the block-accounting treatment and expected refund-counter values. No unresolved observable outcome was identified.\",\"affected_criteria\":[],\"unresolved_questions\":[]},\"notable_ambiguities\":[\"The EIP-8141 settlement change applies only \\\"When EIP-8141 is active\\\", and EIP-8141 is not in `requires`. Its testing scope depends on whether frame transactions ship in the same fork.\",\"EIP-8037 gives both a non-EIP-7778 and an EIP-7778 block-accounting formula. The target explicitly selects the pre-refund (EIP-7778) variant.\",\"The PAT score depends on how often baseline vectors hit the 20% cap or clear slots with a non-zero original value. These are likely common (e.g., short transactions with net-metered round trips), which could push PAT toward level 3.\"],\"overall_confidence\":\"medium\"}",
+  "structured_output": {
+   "scope_summary": "EIP-3298, as supplied, is a delta on EIP-8037 and EIP-8038. It removes the SSTORE storage-clearing refund (STORAGE_CLEAR_REFUND = 11,616) and the two EIP-8038 refund rules that grant and reverse it. It also removes the EIP-3529 20% refund cap from transaction settlement. The only refund rule left is EIP-8038's net-metered STORAGE_WRITE reversal, applied when a slot returns to its original value. The refund counter keeps its journaling, the EIP-7623/7976 calldata floor still applies after refunds, and block-level execution-gas accounting stays pre-refund under EIP-7778. When EIP-8141 is active, frame-transaction settlement also applies the full refund counter, with no MAX_REFUND_QUOTIENT.",
+   "criteria": {
+    "evm_gas_rule_changes": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / SSTORE refund rules",
+       "summary": "STORAGE_CLEAR_REFUND and the two EIP-8038 refund rules that use it are removed. The STORAGE_WRITE reversal rule is unchanged."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "In settlement, tx_gas_refund = min(tx_gas_used_before_refund // 5, refund_counter) becomes refund_counter. The calldata floor still applies after refunds."
+      },
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "Transaction gas used",
+       "summary": "The baseline settlement applies the 20% refund cap."
+      }
+     ],
+     "rationale": "Existing refund and settlement rules are removed or simplified. No new accounting mechanism is introduced, which matches level 1. Expected gas results of baseline operations change, but level 3 requires a new mechanism, and there is none.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_access_ordering_within_opcode_execution": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / SSTORE refund rules",
+       "summary": "The SSTORE charging rules are untouched. Only refund-counter adjustments change."
+      }
+     ],
+     "rationale": "No instruction's state-access or gas-charge ordering changes, and no access-list recording changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "blob_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "The changes are limited to SSTORE refunds and refund-cap settlement. Blob gas is not mentioned."
+      }
+     ],
+     "rationale": "Blob-gas accounting does not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "state_gas_accounting_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / SSTORE refund rules",
+       "summary": "\"the state-gas charges and refills of EIP-8037 are untouched; state-gas refills are not refunds and do not enter the counter\""
+      }
+     ],
+     "rationale": "State-gas charges, refills and reservoir rules do not change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_evm_gas_refund": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Abstract",
+       "summary": "The EIP removes a refund and the cap. The remaining STORAGE_WRITE reversal is inherited unchanged from EIP-8038."
+      }
+     ],
+     "rationale": "No new refund mechanism is introduced. Removing an existing refund belongs under GAS.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "patterns_affecting_pre_existing_tests": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "supporting/eip-8038.md",
+       "locator": "SSTORE pricing / case table",
+       "summary": "Several baseline case rows include STORAGE_CLEAR_REFUND grants or reversals (x→x→0, x→y→0, x→0→x, x→0→y). Their expected refunds change."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "Any baseline case where the 20% cap bound the refund now produces a different gas_used and fee result."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "The EIP's own test table re-derives expected refunds for the canonical SSTORE sequences."
+      }
+     ],
+     "rationale": "Expected values change in ordinary SSTORE net-metering cases (any clear of a slot with a non-zero original value). They also change in localized cap-binding cases in settlement, calldata-floor, EIP-7778 and frame-transaction settlement tests. That matches level 2: several families are affected, but the inputs and construction of those tests do not need a common rewrite.",
+     "confidence": "medium",
+     "uncertainty_note": "Clearing storage and short transactions with net-metered round trips are common. If cap-binding refunds turn out to be ubiquitous in baseline vectors, this could reach level 3.",
+     "exceptional_score_justification": ""
+    },
+    "new_invariant_on_pre_existing_tests": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "No new output, field or log is introduced. Only existing gas values change."
+      }
+     ],
+     "rationale": "No new assertion is needed. Changed gas values count as rework under PAT.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "transition_tool_interface_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "Receipt cumulative_gas_used and the block accounting fields keep their existing semantics. Only their computed values change."
+      }
+     ],
+     "rationale": "No input, output or invocation change is needed in the transition tool.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_test_framework_primitives": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "The settlement formula is simplified. The fork's gas-cost and refund calculation drops the cap and one refund constant."
+      }
+     ],
+     "rationale": "Fork gas-calculation logic needs to drop a parameter and the cap, but no new abstraction is required.",
+     "confidence": "medium",
+     "uncertainty_note": "A framework-side refund-calculator toggle per fork could be read as a local extension (level 1).",
+     "exceptional_score_justification": ""
+    },
+    "cryptography": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "There is no cryptographic content."
+      }
+     ],
+     "rationale": "No cryptographic mechanism changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "edge_boundary_conditions": {
+     "score": 1,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "Tests should cover a refund counter above 20% of pre-refund gas (uncapped) and a refund that pushes tx_gas_used_after_refund below the floor (the floor binds)."
+      }
+     ],
+     "rationale": "One boundary-sensitive mechanism changes: refund application at settlement, now uncapped, with the floor still applied afterwards. The cap boundary and the floor boundary both test this same settlement rule.",
+     "confidence": "medium",
+     "uncertainty_note": "Counting the floor interaction as a separate boundary mechanism would give level 2.",
+     "exceptional_score_justification": ""
+    },
+    "block_syncing_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "\"Block-level accounting is unchanged\". Under EIP-7778 and EIP-8037, the execution dimension counts the pre-refund value."
+      }
+     ],
+     "rationale": "No block decoding or structural validation rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "engine_api_changes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No Engine API change is described."
+      }
+     ],
+     "rationale": "No Engine API field or endpoint changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No contract deployment is specified."
+      }
+     ],
+     "rationale": "No system contract is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_system_contracts": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No system contract rules change. Settlement refunds do not apply to system calls."
+      }
+     ],
+     "rationale": "No existing system contract or its surrounding protocol behavior changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new instructions."
+      }
+     ],
+     "rationale": "No opcodes are added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_opcodes": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "\"Refunds are applied only in the end-of-transaction settlement, so removing one cannot affect execution\""
+      }
+     ],
+     "rationale": "Only SSTORE's refund contribution changes, which is a gas-only change. Its semantics are unchanged.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "added_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompiles."
+      }
+     ],
+     "rationale": "No precompiles are added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "modified_precompiles": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No precompile changes."
+      }
+     ],
+     "rationale": "No existing precompile changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "encoding_changes_rlp_ssz": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No serialized schema changes. Receipt fields keep their existing meaning."
+      }
+     ],
+     "rationale": "No codec or schema change.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_transaction_types": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No new transaction envelope. The EIP-8141 settlement change modifies an existing type."
+      }
+     ],
+     "rationale": "No new transaction type.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_or_modified_transaction_validity_mechanisms": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "Only post-execution settlement changes. Intrinsic gas and inclusion checks are unchanged, and block accounting is unchanged."
+      }
+     ],
+     "rationale": "No consensus validity or intrinsic-gas rule changes.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_block_header_fields": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "No header fields."
+      }
+     ],
+     "rationale": "No header or block field is added.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "new_fork_activation_mechanism": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Backwards Compatibility",
+       "summary": "A gas repricing activated at a scheduled upgrade, with no state migration."
+      }
+     ],
+     "rationale": "Activation only selects different rules. There is no state transition at the fork.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "performance_risks": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations",
+       "summary": "\"this EIP does not change worst-case block resource consumption\" because EIP-7778 excludes refunds from block accounting."
+      }
+     ],
+     "rationale": "No workload capacity or resource bound changes, so no new performance validation is needed.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "security_risks": {
+     "score": 2,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Security Considerations",
+       "summary": "\"Removing the cap is safe only because the remaining refund is self-bounded and the counter is journaled across reverts; both properties are load-bearing.\""
+      },
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "For EIP-8141, the counter is transaction-scoped and discards reverted frames' changes, so the bound is claimed to hold."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Transaction settlement",
+       "summary": "The refund counter accumulates across frames and is discarded for reverted frames and unrolled atomic batches."
+      }
+     ],
+     "rationale": "Removing the cap takes away a defensive bound on what the sender pays. Safety now depends on the refund counter never exceeding STORAGE_WRITE charges paid in the same transaction. That property depends on journaling across call-frame reverts, frame-transaction frames and atomic batches, and on its interaction with state-gas refills and the floor. This is a bounded interaction that needs targeted adversarial cases (level 2).",
+     "confidence": "medium",
+     "uncertainty_note": "This could be viewed as a local check (level 1) if the journaling semantics are considered already covered by the prerequisites.",
+     "exceptional_score_justification": ""
+    },
+    "unspecified_behavior_requiring_cross_client_consensus": {
+     "score": 0,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification / Removal of the refund cap",
+       "summary": "Explicit settlement pseudocode is given, along with the block-accounting rule and the EIP-8141 settlement change."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "Explicit expected refund-counter values for the canonical SSTORE sequences."
+      }
+     ],
+     "rationale": "The supplied rules settle every observable outcome. The struck table entries and the remaining rule are stated precisely.",
+     "confidence": "high",
+     "uncertainty_note": "None identified.",
+     "exceptional_score_justification": ""
+    },
+    "cross_eip_interactions": {
+     "score": 3,
+     "evidence": [
+      {
+       "source": "eip.md",
+       "locator": "Specification",
+       "summary": "A delta against EIP-8037 and EIP-8038. It assumes EIP-2780 and EIP-7778, and also modifies EIP-8141 settlement."
+      },
+      {
+       "source": "eip.md",
+       "locator": "Test Cases",
+       "summary": "Requires tests for the EIP-7623 floor binding after an uncapped refund and for EIP-7778 block accounting with refunds."
+      },
+      {
+       "source": "supporting/eip-8037.md",
+       "locator": "Integration with EIP-7778",
+       "summary": "Block execution gas is counted before refunds. State-gas refills are separate from refunds."
+      },
+      {
+       "source": "supporting/eip-8141.md",
+       "locator": "Transaction settlement",
+       "summary": "The baseline applied_refund uses MAX_REFUND_QUOTIENT. The target removes it."
+      }
+     ],
+     "rationale": "The change couples the EIP-8038 SSTORE refund table, EIP-8037 settlement and state-gas refills, EIP-7778 pre-refund block accounting, the EIP-7623/7976 calldata floor, and EIP-8141 frame settlement. That requires coordinated scenarios across these EIPs (level 3).",
+     "confidence": "medium",
+     "uncertainty_note": "EIP-8141 is conditional (\"When EIP-8141 is active\"). Its coordinated cases apply only in a scenario where EIP-8141 is in the same fork.",
+     "exceptional_score_justification": ""
+    }
+   },
+   "cross_eip": {
+    "interacting_eips": [
+     {
+      "eip": 8038,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Re-derive every SSTORE case-table row with the STORAGE_CLEAR_REFUND entries struck (x→x→0, x→y→0, x→0→x, x→0→y), cold and warm. Confirm the STORAGE_WRITE reversal is unchanged and that the counter never exceeds the W charges paid."
+     },
+     {
+      "eip": 8037,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Uncapped settlement with the reservoir model (tx_gas_used_before_refund includes the state_gas_reservoir term). Run 0→x→0 sequences where the state-gas refill and the uncapped W refund apply together, and confirm refills stay out of the counter."
+     },
+     {
+      "eip": 7778,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Blocks with large uncapped refunds: block execution gas uses the pre-refund value, the sender payment uses the post-refund value, and receipt cumulative_gas_used uses the post-floor value."
+     },
+     {
+      "eip": 7623,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Data-heavy transactions whose uncapped refund pushes tx_gas_used_after_refund below calldata_floor_gas_cost; the floor binds."
+     },
+     {
+      "eip": 7976,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "The same floor-binding cases at the 64/64 floor rate, with uncapped refunds."
+     },
+     {
+      "eip": 8141,
+      "interaction": "coordinated_cases",
+      "coordinated_cases": "Frame-transaction settlement with applied_refund = refund_counter: refunds accumulated across frames, discarded for a reverted frame and an unrolled atomic batch, and interacting with calldata_floor_gas and tx_state_gas."
+     },
+     {
+      "eip": 3529,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Confirm MAX_REFUND_QUOTIENT is no longer applied: a refund above 20% of gas used is applied in full."
+     },
+     {
+      "eip": 2200,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "Original and current value definitions used by the remaining reversal rule are unchanged."
+     },
+     {
+      "eip": 2780,
+      "interaction": "local_compatibility_check",
+      "coordinated_cases": "The decomposed intrinsic base enters gas_used before refund. Without the cap, its size no longer bounds the refund."
+     }
+    ],
+    "unidentified_interactions": [
+     "Refund-counter journaling across reverting call frames is load-bearing for removing the cap. This is a general EVM rule not tied to a single supplied EIP."
+    ]
+   },
+   "under_specification": {
+    "present": false,
+    "summary": "The supplied text gives explicit settlement pseudocode, the struck refund rules, the block-accounting treatment and expected refund-counter values. No unresolved observable outcome was identified.",
+    "affected_criteria": [],
+    "unresolved_questions": []
+   },
+   "notable_ambiguities": [
+    "The EIP-8141 settlement change applies only \"When EIP-8141 is active\", and EIP-8141 is not in `requires`. Its testing scope depends on whether frame transactions ship in the same fork.",
+    "EIP-8037 gives both a non-EIP-7778 and an EIP-7778 block-accounting formula. The target explicitly selects the pre-refund (EIP-7778) variant.",
+    "The PAT score depends on how often baseline vectors hit the 20% cap or clear slots with a non-zero original value. These are likely common (e.g., short transactions with net-metered round trips), which could push PAT toward level 3."
+   ],
+   "overall_confidence": "medium"
+  },
+  "ttft_ms": 44966,
+  "type": "result",
+  "duration_ms": 98580,
+  "uuid": "7b3fe2f0-4ef5-42f5-85a7-1d64fc57acb9",
+  "ttft_stream_ms": 4242,
+  "time_to_request_ms": 452,
+  "first_content_frame_ms": 4243,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "ok": true
+}
