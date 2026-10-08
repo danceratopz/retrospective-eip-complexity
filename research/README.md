@@ -50,11 +50,18 @@ research/
         ├── scripts/      # Shared-engine adapter, isolation, validation, and aggregation
         ├── extensions/   # Append-only same-snapshot SFI/CFI assessment
         └── outputs/      # PFI freeze plus original and combined summaries
-    └── 09-hegota-human-assessment-snapshot/
+    ├── 09-hegota-human-assessment-snapshot/
+    │   ├── TASK.md
+    │   ├── scripts/      # Network capture and offline checklist parsing
+    │   ├── raw/          # Archived CC0 checklist bodies per snapshot
+    │   └── outputs/      # Per-EIP human-assessment status and parsed checklists
+    └── 10-opus-v3-reassessment/
         ├── TASK.md
-        ├── scripts/      # Network capture and offline checklist parsing
-        ├── raw/          # Archived CC0 checklist bodies per snapshot
-        └── outputs/      # Per-EIP human-assessment status and parsed checklists
+        ├── inputs/       # Pinned checklist revision 3 and its assessor view
+        ├── prompts/      # System prompt and assessment contract for the tool-less model
+        ├── scripts/      # Package builder, sandboxed claude -p runner, validator, summaries
+        ├── retrospective/ # 49 v3 package variants of the Task 05 packages, assessments, raw output
+        └── prospective/  # Hegotá EIP-8081 SFI/CFI/PFI snapshot, layer gate, assessments, raw output
 ```
 
 YAML is the canonical research format because the records require human review, evidence notes, and occasional uncertainty. Dates must use quoted ISO 8601 values (`"YYYY-MM-DD"` or a full timestamp). Every factual claim must carry a primary-source reference.
@@ -76,3 +83,5 @@ Task 07 derives per-relationship observed-effort metrics from Tasks 01, 03, 04, 
 Task 08 freezes a separate prospective Hegotá PFI snapshot and reuses Task 05's execution-layer rubric and isolated one-EIP engine. An append-only extension evaluates the EIPs that were SFI'd and CFI'd at the same 2026-08-26 snapshot, without rewriting the original PFI result. The combined overview status-labels all rows for visibility. Its common snapshot, layer-applicability gate, packages, assessments, freezes, and aggregates remain separate from the retrospective dataset. Consensus-only PFI entries receive explicit not-applicable records unless a future study adopts a dedicated consensus-layer rubric.
 
 Task 09 records where each Hegotá candidate's STEEL human checklist lives in `ethspecs/pm` (merged, open pull request, draft, incomplete, or not yet available) and parses the published cells without scoring anything. It exists so the publication site can attribute human and LLM sources for Hegotá honestly; Task 08 never reads it.
+
+Task 10 re-assesses the 49 retrospective EIPs and the current Hegotá candidates with Claude Opus 5.5 and checklist revision 3 through a tool-less, sandboxed `claude -p` engine. It reuses the Task 05 package documents and validation helpers without editing Task 05 or Task 08, keeps retrospective and prospective records in separate trees, and is the site's primary evaluation; the GPT-5.6 · revision-2 results remain published and selectable.

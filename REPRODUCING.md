@@ -217,6 +217,20 @@ Re-running `parse` on the archived snapshot must reproduce `outputs/` byte-for-b
 
 The original PFI aggregate remains 776 across 37 scored EIPs. The extension adds 80 across two scored EIPs, for a combined visibility view of 856 across 39 scored EIPs. The combined table, including all 46 entries and their snapshot statuses, is `research/tasks/08-hegota-prospective-complexity-assessment/outputs/summary-all-candidates.md`.
 
+## Task 10: Opus 5.5 · checklist revision 3 reassessment
+
+Read `research/tasks/10-opus-v3-reassessment/TASK.md`. It needs complete clones of `ethereum/EIPs`, `ethereum/ERCs` and `ethspecs/pm`, a logged-in `claude` CLI and `bwrap`:
+
+```bash
+P=research/tasks/05-retrospective-complexity-assignment
+T=research/tasks/10-opus-v3-reassessment/scripts
+uv run --project $P --locked python $T/prepare.py --eips-repo ../EIPs --ercs-repo ../ERCs --pm-repo ../pm --check
+uv run --project $P --locked python $T/validate.py --complete
+uv run --project $P --locked python $T/summarize.py
+```
+
+`run.py` performs the model calls; it refuses to start with uncommitted Task 10 inputs and keeps every raw response, so a rerun only retries failed calls.
+
 ## Deterministic rerender check
 
 For a configured fork, hash the output directory, rerender from unchanged inputs, and require an empty diff. For example:
