@@ -39,8 +39,15 @@ const payload = {
   labels,
   ai: shipping.ai_capability,
 };
-const ai = shipping.ai_capability;
+const ai = {
+  metric_url: 'https://metr.org/blog/2026-1-29-time-horizon-1-1/',
+  paper_url: 'https://arxiv.org/abs/2503.14499',
+  ...shipping.ai_capability,
+};
 const primaryRows = shipping.rows as any[];
+const referenceRows = primaryRows.filter((row) => row.ai_horizon_minutes === ai.reference_horizon_minutes);
+const referenceNames = referenceRows.map((row) => row.fork_short).join(' and ');
+const referenceDetails = referenceRows.map((row) => `${row.fork_short}’s first two-client devnet launched on ${row.first_multi_el_devnet_at}`).join('; ') + '.';
 const scenarios = Object.entries(builder.scenarios) as [string, any][];
 const listCount = (list: string) => builder.entries.filter((item: any) => item.list === list).length;
 const listScored = (list: string) => scored.filter((item: any) => item.list === list);
@@ -80,12 +87,28 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       <p><button type="button" class="button-secondary" data-copy-scenario>Copy link to this view</button> <span class="muted" data-copy-status aria-live="polite"></span></p>
     </fieldset>
 
-    <fieldset class="ai-scaling">
-      <legend>Exploratory: scale complexity by frontier AI capability</legend>
-      <label><input type="checkbox" data-ai-toggle /> Divide each fork’s complexity by 1 + α · log₂(H ÷ H₀)</label>
-      <label class="ai-alpha">α, share of effort saved per doubling of AI capability <input type="range" min="0.01" max="0.3" step="0.01" value="0.1" data-ai-alpha disabled /> <output data-ai-alpha-value>0.10</output></label>
-      <p class="muted">H is METR’s 50% time horizon of the best model released by the fork’s first ≥2-client devnet; H₀ is the earliest fork’s ({ai.reference_horizon_minutes} min). Off by default and display-only: α is chosen, not estimated, and the line is refitted on the scaled values. Hegotá uses the latest measured model, a lower bound for its eventual devnet, so its scaled total is an upper bound.</p>
-    </fieldset>
+    <details class="ai-scaling" data-ai-panel>
+      <summary>Exploratory: scale complexity by frontier AI capability</summary>
+      <div class="ai-body">
+        <label><input type="checkbox" data-ai-toggle /> Divide each fork’s complexity by 1 + α · log₂(H ÷ H₀)</label>
+        <label class="ai-alpha">α, share of effort saved per doubling of AI capability <input type="range" min="0.01" max="0.3" step="0.01" value="0.1" data-ai-alpha disabled /> <output data-ai-alpha-value>0.10</output></label>
+        <details class="ai-more">
+          <summary>More info</summary>
+          <div class="ai-info">
+            <p><strong>In short:</strong> each fork’s complexity is divided by a factor that grows with the AI coding capability available when its client development began. {referenceNames} are the reference, so the slider never moves them; later forks shrink as α grows. This view is off by default, display-only, and never a study result.</p>
+            <h4>What H measures</h4>
+            <p>H is <a href={ai.metric_url}>METR’s 50% task-completion time horizon</a>: the length of software task, in human working minutes, that a model completes with 50% success on METR’s task suite. For each fork, H is the horizon of the best model released on or before the fork’s first devnet with at least two independent execution-layer clients, the point where implementation work begins in earnest. The values come from METR’s <a href={ai.source_url}>published results file</a>, retrieved {ai.retrieved_at.slice(0, 10)}; the <a href="#ai-capability-table">table below the chart</a> lists the model and horizon used for every fork.</p>
+            <h4>Why {referenceNames} do not move</h4>
+            <p>H₀ is the horizon at the earliest fork’s devnet, {ai.reference_horizon_minutes} min, and every fork at that level has H ÷ H₀ = 1, so log₂(1) = 0 and its divisor is 1 for any α. {referenceDetails} METR measured gpt-3.5-turbo-instruct (released March 2022) and next GPT-4 (released 14 March 2023), with nothing in between; ChatGPT, released on 30 November 2022, has no METR score. Both devnets fall in that gap, so both get the same model and the same horizon. Cancun’s tie is partly an artefact of that gap: most of its 415-day implementation window came after GPT-4.</p>
+            <h4>What α means</h4>
+            <p>α is the share of testing and implementation effort assumed to be saved for every doubling of the horizon. It is chosen by the reader, not estimated: five forks cannot separate it from everything else that changed between them. The fit line and its 50/80/95% bands are recomputed on the scaled values for display. Hegotá has no devnet yet, so it uses the latest measured model ({ai.hegota.model}, {ai.hegota.horizon_minutes} min); its eventual horizon will be at least that, so its scaled total is an upper bound.</p>
+            <h4>Limitations</h4>
+            <p>The horizon is measured on METR’s tasks, not Ethereum client work; the newest model is not necessarily the one client teams used; and teams adopted AI tools with a lag the measure ignores. Treat the view as a what-if, not an adjustment the study endorses.</p>
+            <p class="muted">Sources: <a href={ai.metric_url}>METR, Time Horizon 1.1</a> · <a href={ai.paper_url}>METR, Measuring AI Ability to Complete Long Tasks</a> · <a href={ai.source_url}>METR results file</a></p>
+          </div>
+        </details>
+      </div>
+    </details>
   </div>
 
   <figure class="chart-figure">
@@ -110,13 +133,13 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       <tbody>{scenarios.map(([name, item]) => <tr><td>{name}</td><td class="number">{item.scored_eips}</td><td class="number">{item.not_applicable_eips}</td><td class="number">{item.score_sum}</td></tr>)}</tbody>
     </table>
   </div>
-  <div class="table-region" role="region" aria-label="AI capability by fork" tabindex="0">
+  <div class="table-region" id="ai-capability-table" role="region" aria-label="AI capability by fork" tabindex="0">
     <table>
-      <caption>Frontier AI capability at each fork’s first ≥2-client devnet (METR 50% time horizon; <a href={ai.source_url}>source</a>, retrieved {ai.retrieved_at.slice(0, 10)})</caption>
-      <thead><tr><th scope="col">Fork</th><th scope="col">First ≥2-EL devnet</th><th scope="col">Frontier model then</th><th scope="col" class="number">50% horizon (min)</th></tr></thead>
+      <caption>Frontier AI capability at each fork’s first ≥2-client devnet: METR’s 50% time horizon, <a href={ai.metric_url}>measured by METR (Time Horizon 1.1)</a>, values from METR’s <a href={ai.source_url}>published results file</a> retrieved {ai.retrieved_at.slice(0, 10)}</caption>
+      <thead><tr><th scope="col">Fork</th><th scope="col">First ≥2-EL devnet</th><th scope="col">Frontier model then</th><th scope="col" class="number">50% horizon, min [METR CI]</th><th scope="col">METR measurement</th></tr></thead>
       <tbody>
-        {primaryRows.map((row) => <tr><td>{row.fork_name}</td><td>{row.first_multi_el_devnet_at}</td><td>{row.ai_model} <span class="muted">({row.ai_model_released})</span></td><td class="number">{row.ai_horizon_minutes}</td></tr>)}
-        <tr><td>Hegotá</td><td><span class="muted">not yet</span></td><td>{ai.hegota.model} <span class="muted">({ai.hegota.released}; latest measured, lower bound)</span></td><td class="number">≥ {ai.hegota.horizon_minutes}</td></tr>
+        {primaryRows.map((row) => <tr><td>{row.fork_name}</td><td>{row.first_multi_el_devnet_at}</td><td>{row.ai_model} <span class="muted">({row.ai_model_released})</span></td><td class="number">{row.ai_horizon_minutes} <span class="muted">[{row.ai_horizon_ci[0]}–{row.ai_horizon_ci[1]}]</span></td><td><a href={ai.source_url}><code>{row.ai_metr_key}</code></a></td></tr>)}
+        <tr><td>Hegotá</td><td><span class="muted">not yet</span></td><td>{ai.hegota.model} <span class="muted">({ai.hegota.released}; latest measured, lower bound)</span></td><td class="number">≥ {ai.hegota.horizon_minutes} <span class="muted">[{ai.hegota.horizon_ci[0]}–{ai.hegota.horizon_ci[1]}]</span></td><td><a href={ai.source_url}><code>{ai.hegota.metr_key}</code></a></td></tr>
       </tbody>
     </table>
   </div>
@@ -133,7 +156,15 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
   .hegota-eip-group { border: 0; padding: 0; margin: 0.75rem 0 0; }
   .hegota-eip { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: baseline; padding: 0.15rem 0; }
   .hegota-eip.is-na { opacity: 0.7; }
+  .ai-scaling { border: 1px solid var(--line); border-radius: 8px; padding: 0.6rem 1rem; }
+  .ai-scaling > summary { cursor: pointer; font-weight: 600; }
+  .ai-body { margin-top: 0.5rem; }
   .ai-scaling label { display: block; margin-block: .35rem; }
+  .ai-more { margin-top: 0.5rem; }
+  .ai-more > summary { cursor: pointer; color: var(--accent-dark); font-weight: 600; }
+  .ai-info { background: var(--soft); border-left: 0.3rem solid var(--accent); border-radius: 0 6px 6px 0; margin-top: 0.5rem; padding: 0.75rem 1rem; }
+  .ai-info h4 { font-size: 0.95rem; margin: 0.9rem 0 0.25rem; }
+  .ai-info p { margin: 0.25rem 0; max-width: 78ch; }
   .ai-alpha input { vertical-align: middle; width: min(14rem, 60vw); }
   .band-legend { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: .85rem; gap: .35rem .5rem; margin: .5rem 0 0; }
   .band-swatch { background: var(--chart-band); border-radius: 2px; display: inline-block; height: .8rem; width: 1.4rem; }
@@ -278,6 +309,7 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
         if (box.disabled) continue;
         box.checked = chosen.some((item) => item.eip === Number(box.dataset.hegotaEip));
       }
+      if (state.ai !== null) root!.querySelector<HTMLDetailsElement>('[data-ai-panel]')!.open = true;
       aiToggle.checked = state.ai !== null;
       aiAlpha.disabled = state.ai === null;
       if (state.ai !== null) aiAlpha.value = String(state.ai);

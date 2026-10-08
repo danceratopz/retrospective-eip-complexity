@@ -112,6 +112,8 @@ def ai_capability(rows: list[dict[str, Any]]) -> tuple[dict[str, Any], list[dict
     for row in rows:
         item = at(row["first_multi_el_devnet_at"])
         row["ai_model"] = label(item["model"])
+        row["ai_metr_key"] = item["model"]
+        row["ai_horizon_ci"] = [item["p50_ci_low_minutes"], item["p50_ci_high_minutes"]]
         row["ai_model_released"] = item["release_date"]
         row["ai_horizon_minutes"] = item["p50_minutes"]
     latest = frontier[-1]
@@ -123,7 +125,7 @@ def ai_capability(rows: list[dict[str, Any]]) -> tuple[dict[str, Any], list[dict
         "retrieved_at": record["source"]["retrieved_at"],
         "source_sha256": record["source"]["content_sha256"],
         "reference_horizon_minutes": min(row["ai_horizon_minutes"] for row in rows),
-        "hegota": {"model": label(latest["model"]), "released": latest["release_date"], "horizon_minutes": latest["p50_minutes"], "lower_bound": True},
+        "hegota": {"model": label(latest["model"]), "metr_key": latest["model"], "released": latest["release_date"], "horizon_minutes": latest["p50_minutes"], "horizon_ci": [latest["p50_ci_low_minutes"], latest["p50_ci_high_minutes"]], "lower_bound": True},
     }, [source(TASK11_FRONTIER)]
 
 
