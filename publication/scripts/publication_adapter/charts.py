@@ -51,7 +51,7 @@ BAND_STEPS = 60
 
 
 def least_squares(rows: list[dict[str, Any]], x_max: float) -> dict[str, Any]:
-    """Ordinary least squares of shipping days on at-cutoff score, with nested 50/80/95% prediction bands."""
+    """Ordinary least squares of shipping days on initial-scope score, with nested 50/80/95% prediction bands."""
     xs = [row["total_score"] for row in rows]
     ys = [row["shipping_days"] for row in rows]
     n = len(xs)
@@ -152,9 +152,9 @@ def fork_shipping_specs(analysis: dict[str, Any]) -> list[dict[str, Any]]:
     domains = [row["fork_name"] for row in analysis["rows"]]
     specs = []
     for field, x_title in [
-        ("total_score", "Complexity score sum at cutoff"),
-        ("high_tier_score_sum", "High-tier score sum at cutoff"),
-        ("max_score", "Hardest EIP score at cutoff"),
+        ("total_score", "Complexity score sum of the initial fork scope"),
+        ("high_tier_score_sum", "High-tier score sum of the initial fork scope"),
+        ("max_score", "Hardest EIP in the initial fork scope"),
     ]:
         shared_encoding = {
             "color": {
@@ -165,14 +165,14 @@ def fork_shipping_specs(analysis: dict[str, Any]) -> list[dict[str, Any]]:
             },
             "tooltip": [
                 {"field": "fork_name", "title": "Fork", "type": "nominal"},
-                {"field": "total_score", "title": "Score at cutoff", "type": "quantitative"},
-                {"field": "at_cutoff_eips", "title": "EIPs at cutoff", "type": "quantitative"},
+                {"field": "total_score", "title": "Initial-scope score", "type": "quantitative"},
+                {"field": "at_cutoff_eips", "title": "EIPs in initial scope", "type": "quantitative"},
                 {"field": "late_addition_score_sum", "title": "Added-later score", "type": "quantitative"},
                 {"field": "late_addition_eips", "title": "EIPs added later", "type": "quantitative"},
                 {"field": "final_scope_score_sum", "title": "Final-scope score", "type": "quantitative"},
-                {"field": "high_tier_score_sum", "title": "High-tier sum at cutoff", "type": "quantitative"},
-                {"field": "max_score", "title": "Hardest EIP score at cutoff", "type": "quantitative"},
-                {"field": "hardest_eip", "title": "Hardest EIP at cutoff", "type": "nominal"},
+                {"field": "high_tier_score_sum", "title": "Initial-scope High-tier sum", "type": "quantitative"},
+                {"field": "max_score", "title": "Hardest initial-scope EIP score", "type": "quantitative"},
+                {"field": "hardest_eip", "title": "Hardest initial-scope EIP", "type": "nominal"},
                 {"field": "shipping_days", "title": "Shipping span (days)", "type": "quantitative"},
                 {"field": "first_multi_el_devnet", "title": "First ≥2-EL devnet", "type": "nominal"},
                 {"field": "first_multi_el_devnet_at", "title": "Development start", "type": "temporal"},

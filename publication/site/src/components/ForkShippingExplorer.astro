@@ -1,6 +1,6 @@
 ---
 /**
- * Fork shipping time against at-cutoff complexity, with a least-squares fit and nested 50/80/95% prediction bands, an
+ * Fork shipping time against initial-scope complexity, with a least-squares fit and nested 50/80/95% prediction bands, an
  * evaluation selector, and a Hegotá scope builder whose total is drawn as a position on the complexity axis.
  *
  * All view state is in the URL: `eval` (evaluation key, omitted for the primary), `lists` (EIP-8081 lists),
@@ -93,11 +93,11 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
   </div>
 
   <figure class="chart-figure">
-    <div class="chart" data-shipping-chart role="img" aria-label="Fork shipping span against at-cutoff complexity, with a least-squares fit, its nested 50%, 80% and 95% prediction bands and the selected Hegotá scenario total">
+    <div class="chart" data-shipping-chart role="img" aria-label="Fork shipping span against the complexity of each fork’s initial scope, with a least-squares fit, its nested 50%, 80% and 95% prediction bands and the selected Hegotá scenario total">
       <p class="chart-status">Loading interactive chart…</p>
     </div>
     <p class="band-legend" aria-hidden="true"><span class="band-swatch band-50"></span>50% <span class="band-swatch band-80"></span>80% <span class="band-swatch band-95"></span>95% prediction interval <span class="fit-swatch"></span>least-squares fit <span class="hegota-swatch"></span>Hegotá scenario</p>
-    <figcaption class="muted" data-shipping-caption>Calendar days from each fork’s first devnet with at least two independent EL clients to mainnet, against the complexity score sum of EIPs included by its evaluation cutoff. Open point: Amsterdam, projected mainnet 15 December 2026. Shaded bands: central 50% (strongest shading), 80% and 95% prediction intervals around the dashed least-squares line.</figcaption>
+    <figcaption class="muted" data-shipping-caption>Calendar days from each fork’s first devnet with at least two independent EL clients to mainnet, against the complexity score sum of its initial scope: the EIPs in scope at the fork’s last initial scope-setting decision before its main implementation cycle (Task 04b, provisional). EIPs added later are excluded. Open point: Amsterdam, projected mainnet 15 December 2026. Shaded bands: central 50% (strongest shading), 80% and 95% prediction intervals around the dashed least-squares line.</figcaption>
   </figure>
 
   <div class="table-region" role="region" aria-label="Fit summary" tabindex="0">
@@ -189,13 +189,16 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
       const band = evaluation.fit.band
         .filter((point: any) => point.x <= domainMax + 1e-9)
         .map((point: any) => ({ ...point, lower_50: Math.max(0, point.lower_50), lower_80: Math.max(0, point.lower_80), lower_95: Math.max(0, point.lower_95) }));
-      const x = { field: 'x', type: 'quantitative', title: `Complexity score sum at cutoff (${evaluation.label})`, scale: { zero: true, domain: [0, domainMax], nice: false } };
+      const narrow = chart.clientWidth < 480;
+      const subject = narrow ? 'initial-scope complexity' : 'complexity score sum of the initial fork scope';
+      const title = `${subject[0].toUpperCase()}${subject.slice(1)} (${evaluation.label})`;
+      const x = { field: 'x', type: 'quantitative', title, scale: { zero: true, domain: [0, domainMax], nice: false } };
       const y = { type: 'quantitative', title: 'Days: first ≥2-EL devnet → mainnet', scale: { zero: true } };
       const width = Math.max(180, Math.min(620, chart.clientWidth - 110));
       const points = evaluation.rows.map((row: any) => ({ ...row, x: row.total_score }));
       const tooltip = [
         { field: 'fork_name', title: 'Fork', type: 'nominal' },
-        { field: 'total_score', title: 'Score at cutoff', type: 'quantitative' },
+        { field: 'total_score', title: 'Initial-scope score', type: 'quantitative' },
         { field: 'shipping_days', title: 'Shipping span (days)', type: 'quantitative' },
         { field: 'mainnet_at', title: 'Mainnet', type: 'nominal' },
         { field: 'projected', title: 'Projected', type: 'nominal' },
