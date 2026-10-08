@@ -55,6 +55,10 @@ research/
     │   ├── scripts/      # Network capture and offline checklist parsing
     │   ├── raw/          # Archived CC0 checklist bodies per snapshot
     │   └── outputs/      # Per-EIP human-assessment status and parsed checklists
+    ├── 11-ai-capability-context/
+    │   ├── TASK.md
+    │   ├── scripts/      # Extract METR's frontier time-horizon series from a downloaded file
+    │   └── outputs/      # Extracted, reference-only frontier series with source hash
     └── 10-opus-v3-reassessment/
         ├── TASK.md
         ├── inputs/       # Pinned checklist revision 3 and its assessor view
@@ -85,3 +89,5 @@ Task 08 freezes a separate prospective Hegotá PFI snapshot and reuses Task 05's
 Task 09 records where each Hegotá candidate's STEEL human checklist lives in `ethspecs/pm` (merged, open pull request, draft, incomplete, or not yet available) and parses the published cells without scoring anything. It exists so the publication site can attribute human and LLM sources for Hegotá honestly; Task 08 never reads it.
 
 Task 10 re-assesses the 49 retrospective EIPs and the current Hegotá candidates with Claude Opus 5.5 and checklist revision 3 through a tool-less, sandboxed `claude -p` engine. It reuses the Task 05 package documents and validation helpers without editing Task 05 or Task 08, keeps retrospective and prospective records in separate trees, and is the site's primary evaluation; the GPT-5.6 · revision-2 results remain published and selectable.
+
+Task 11 records METR's frontier 50% time horizon by model release date, extracted from METR's published results with the source URL, retrieval time and hash. It supports an optional, display-only view that scales fork complexity by the AI capability available when each fork's client development began; it is not part of any study result.
