@@ -1,9 +1,10 @@
 ---
 /**
  * Fork shipping time against initial-scope complexity, with a least-squares fit and nested 50/80/95% prediction bands, an
- * evaluation selector, and a Hegotá scope builder whose total is drawn as a position on the complexity axis.
+ * and a Hegotá scope builder whose total is drawn as a position on the complexity axis.
  *
- * All view state is in the URL: `eval` (evaluation key, omitted for the primary), `lists` (EIP-8081 lists),
+ * Only the primary evaluation is shown; other evaluations use different checklist revisions and are not comparable.
+ * All view state is in the URL: `lists` (EIP-8081 lists),
  * `add` and `drop` (per-EIP overrides). Without JavaScript the semantic tables below carry the same values.
  */
 import type { Publication } from '../lib/domain';
@@ -17,7 +18,7 @@ const { data } = Astro.props as Props;
 const shipping = data.fork_shipping;
 const builder = data.hegota_builder;
 const primary = data.primary_evaluation;
-const evaluations = Object.entries(shipping.evaluations as Record<string, any>).map(([key, value]) => ({ key, ...value }));
+const evaluation = { key: primary, ...(shipping.evaluations as Record<string, any>)[primary] };
 const labels: Record<string, string> = Object.fromEntries(data.criteria.map((item) => [item.id, item.label]));
 const DEFAULT_LISTS = ['SFI', 'CFI'];
 const scored = builder.entries.filter((item: any) => item.status === 'scored');
@@ -32,9 +33,8 @@ const initial = inLists(DEFAULT_LISTS);
 const initialBar = stackedBarHtml({ segments: profile(initial), labels, total: total(initial), size: 'large', label: 'Hegotá scenario EL-rubric complexity', showTotal: true });
 const payload = {
   primary,
-  builder_evaluation: builder.evaluation,
   x_max: shipping.x_max,
-  evaluations: Object.fromEntries(evaluations.map((item) => [item.key, { label: item.label, rows: item.rows, fit: item.fit }])),
+  evaluation: { label: evaluation.label, rows: evaluation.rows, fit: evaluation.fit },
   builder: { lists: builder.lists, list_labels: builder.list_labels, entries: builder.entries, default_lists: DEFAULT_LISTS },
   labels,
 };
@@ -48,20 +48,6 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
   <div class="caveat"><strong>Very uncertain: five forks, and the Hegotá scope is still changing.</strong> The line is a least-squares fit over five points, one of them projected (Amsterdam). The nested shaded bands are its central 50%, 80% and 95% prediction intervals for one new fork, the innermost most strongly shaded; they assume the straight-line model is right, which five points cannot confirm. Hegotá is shown only as a position on the complexity axis. Read where it lands against earlier forks, not a ship date.</div>
 
   <div class="explorer-controls">
-    <fieldset class="evaluation-picker">
-      <legend>Evaluation</legend>
-      {evaluations.filter((item) => item.key === primary).map((item) => (
-        <label><input type="radio" name="shipping-evaluation" value={item.key} checked /> {item.label} <span class="muted">(primary)</span></label>
-      ))}
-      <details data-other-evaluations>
-        <summary>Other evaluations</summary>
-        {evaluations.filter((item) => item.key !== primary).map((item) => (
-          <label><input type="radio" name="shipping-evaluation" value={item.key} /> {item.label}</label>
-        ))}
-        <p class="muted">Checklist revisions are not interchangeable; revision 3 totals run lower than revision 2. The Hegotá builder uses Opus 5.5 · v3 only, so its marker is hidden for other evaluations.</p>
-      </details>
-    </fieldset>
-
     <fieldset class="hegota-lists">
       <legend>Hegotá scope from EIP-8081 at EIPs <code>{builder.eips_commit.slice(0, 7)}</code></legend>
       <div class="chip-row">
@@ -102,9 +88,9 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
 
   <div class="table-region" role="region" aria-label="Fit summary" tabindex="0">
     <table>
-      <caption>Least-squares fit by evaluation (five forks)</caption>
+      <caption>Least-squares fit over the five forks ({evaluation.label})</caption>
       <thead><tr><th scope="col">Evaluation</th><th scope="col" class="number">Days per point</th><th scope="col" class="number">Intercept (days)</th><th scope="col" class="number">Residual SE (days)</th><th scope="col" class="number">R²</th></tr></thead>
-      <tbody>{evaluations.map((item) => <tr><td>{item.label}</td><td class="number">{item.fit.slope_days_per_point}</td><td class="number">{item.fit.intercept_days}</td><td class="number">{item.fit.residual_standard_error_days}</td><td class="number">{item.fit.r_squared}</td></tr>)}</tbody>
+      <tbody>{[evaluation].map((item) => <tr><td>{item.label}</td><td class="number">{item.fit.slope_days_per_point}</td><td class="number">{item.fit.intercept_days}</td><td class="number">{item.fit.residual_standard_error_days}</td><td class="number">{item.fit.r_squared}</td></tr>)}</tbody>
     </table>
   </div>
   <div class="table-region" role="region" aria-label="Hegotá scenarios" tabindex="0">
@@ -119,8 +105,6 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
 <style>
   .explorer-controls { display: grid; gap: 1rem; margin-block: 1rem; }
   .explorer-controls fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 0.75rem 1rem; min-width: 0; }
-  .evaluation-picker label { display: inline-flex; gap: 0.35rem; align-items: center; margin-inline-end: 1rem; }
-  .evaluation-picker details { margin-top: 0.5rem; }
   .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
   .chip { border: 1px solid var(--field-line); border-radius: 999px; padding: 0.35rem 0.9rem; background: transparent; color: inherit; cursor: pointer; font: inherit; }
   .chip[aria-pressed='true'] { background: var(--button-bg); border-color: var(--button-bg); color: var(--on-accent); }
@@ -156,7 +140,6 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
     const params = new URLSearchParams(location.search);
     const numbers = (value: string | null) => new Set((value ?? '').split(',').map(Number).filter((item) => Number.isInteger(item) && item > 0));
     const state = {
-      evaluation: payload.evaluations[params.get('eval') ?? ''] ? params.get('eval')! : payload.primary,
       lists: new Set(params.has('lists') ? (params.get('lists') ?? '').split(',').filter((item) => payload.builder.lists.includes(item)) : payload.builder.default_lists),
       add: numbers(params.get('add')),
       drop: numbers(params.get('drop')),
@@ -167,7 +150,6 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
     function writeUrl() {
       const next = new URLSearchParams(location.search);
       for (const key of ['eval', 'lists', 'add', 'drop']) next.delete(key);
-      if (state.evaluation !== payload.primary) next.set('eval', state.evaluation);
       const lists = payload.builder.lists.filter((item: string) => state.lists.has(item));
       if (lists.join(',') !== payload.builder.default_lists.join(',')) next.set('lists', lists.join(','));
       const add = [...state.add].filter((eip) => !state.lists.has(scored.find((item) => item.eip === eip)?.list)).sort((a, b) => a - b);
@@ -181,8 +163,8 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
     }
 
     function spec(total: number, count: number) {
-      const evaluation = payload.evaluations[state.evaluation];
-      const showHegota = state.evaluation === payload.builder_evaluation && count > 0;
+      const evaluation = payload.evaluation;
+      const showHegota = count > 0;
       const c = chartColors();
       const forkMax = Math.max(...evaluation.rows.map((row: any) => row.total_score));
       const domainMax = Math.ceil((Math.max(forkMax, showHegota ? total : 0) * 1.15) / 50) * 50;
@@ -242,8 +224,6 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
         if (box.disabled) continue;
         box.checked = chosen.some((item) => item.eip === Number(box.dataset.hegotaEip));
       }
-      for (const radio of root!.querySelectorAll<HTMLInputElement>('input[name="shipping-evaluation"]')) radio.checked = radio.value === state.evaluation;
-      if (state.evaluation !== payload.primary) root!.querySelector<HTMLDetailsElement>('[data-other-evaluations]')!.open = true;
       const ticket = ++pending;
       embed(chart, spec(total, chosen.length) as any, { actions: false, renderer: 'svg' })
         .then(() => { if (ticket === pending) chart.querySelector('.chart-status')?.remove(); })
@@ -270,7 +250,6 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
     });
     root.addEventListener('change', (event) => {
       const target = event.target as HTMLInputElement;
-      if (target.name === 'shipping-evaluation') state.evaluation = target.value;
       if (target.dataset.hegotaEip) {
         const eip = Number(target.dataset.hegotaEip);
         const listed = state.lists.has(target.dataset.list!);
