@@ -71,6 +71,8 @@ The comparison view at `/eips/compare/` is reconstructed entirely from its URL (
 
 The Hegotá route accepts the owner-approved `hegota-candidates-2026-08-26-ac450a4` combined view only: the unchanged 44-entry PFI freeze plus the append-only SFI/CFI extension from the same source snapshot. It contains 46 status-labelled entries, 39 validated assessments, 7 not-applicable dispositions, and an EL-rubric score sum of 856. The page must retain the original PFI subtotal of 776 across 37 assessments and identify EIP-7805 and EIP-8141 as Hegotá SFI'd/CFI'd EIPs at the time of the 2026-08-26 snapshot. `prospective_cohort_summary` owns the page and `prospective_eip_assessment` owns its table rows. These records remain structurally separate from Task 05 and never enter Task 07 correlations or observed-effort plots.
 
+The Results page additionally carries a Hegotá scope builder from Task 10's separate prospective snapshot `hegota-2026-10-08-6dac5e7`: the EIP-8081 Scheduled, Considered and Proposed for Inclusion entries at EIPs `6dac5e7`, assessed with Opus 5.5 · revision 3. The builder's lists and per-EIP toggles, together with the selected evaluation, are encoded in the URL (`eval`, `lists`, `add`, `drop`). Its total is drawn only as a position on the complexity axis of the fork shipping chart, never as a predicted ship date, and consensus-only or informational entries remain not applicable rather than zero.
+
 ## Terminology and labels
 
 Exact display text, applicability, minimum caveats, allowed chart/table treatments, mutual exclusions, and prohibited substitutions are machine-owned by [`contract/labels.json`](contract/labels.json).
@@ -89,7 +91,7 @@ Exact display text, applicability, minimum caveats, allowed chart/table treatmen
 - **Human** and **LLM** are the two evaluators and are shown as first-class badges wherever a score appears; the reader-facing term is always *Evaluator*. A Human checklist is the STEEL team's published `ethspecs/pm` checklist; an LLM assessment is the study's isolated automated assessment.
 - **Assessment status** takes exactly one of `Complete`, `Available in open PR`, `In progress`, `Incomplete`, `Not applicable to EL rubric`, or `Not available` (`Not yet available` for prospective data). Zero complexity, an unavailable assessment, and an incomplete assessment must always look different.
 - **Under-specified at assessment cutoff** is the required long form of the under-specification indicator; it must link to the affected criteria, the uncertainty summary, and the plausible score range.
-- **Checklist revision** names the rubric revision (1 or 2) an assessment applied. Human and LLM totals are compared per criterion only under the same revision.
+- **Checklist revision** names the rubric revision (1, 2 or 3) an assessment applied. Human and LLM totals are compared per criterion only under the same revision.
 
 Labels are structured data, not prose decoration. The adapter fails if a mandatory label is absent, if mutually exclusive labels coexist, if consensus-only work receives a numeric EL score, if a proposed Task 04b cohort loses `provisional`, or if an Amsterdam observed-effort record loses `right_censored` or `potentially_in_sample` where its source requires them.
 
@@ -131,12 +133,12 @@ The record types are study metadata, fork, global EIP, retrospective fork–EIP 
 The adapter projects research records into one domain model that every page consumes:
 
 - an **EIP** has one or more **occurrences**, one per fork context;
-- an occurrence has zero or more **assessments**, each identified by its **evaluator** (`llm` or `human`, stored as `source`) and its **rubric checklist revision** (1 or 2);
+- an occurrence has zero or more **assessments**, each identified by its **evaluator** (`llm` or `human`, stored as `source`) and its **rubric checklist revision** (1, 2 or 3);
 - an assessment has an explicit **status** (`complete`, `available_in_open_pr`, `in_progress`, `incomplete`, `not_applicable`, `not_available`) and a `scored` flag; an unscored assessment never carries a total or tier;
 - a **comparison** exists only for a Human and an LLM assessment of the same occurrence under the same rubric revision, and stores per-criterion deltas;
 - one **criterion registry** (29 identifiers across both revisions) and per-revision **tier thresholds** are emitted once and shared by every page.
 
-The evaluator is first-class presentation state, not collapsed metadata: every table row, badge, and tab names it. The primary study score remains the revision-2 LLM assessment; the Amsterdam revision-1 LLM re-run from Task 05c is published only as the like-for-like counterpart of the published human checklist. Payload `schema_version` is `2.0.0`.
+The evaluator is first-class presentation state, not collapsed metadata: every table row, badge, and tab names it. An LLM evaluation is a (model, checklist revision) pair. Since 8 October 2026 the primary study score is the Task 10 Opus 5.5 · revision-3 assessment; the Task 05 GPT-5.6 · revision-2 assessment stays published as the previous primary evaluation and remains selectable, and the Amsterdam revision-1 LLM re-run from Task 05c is published only as the like-for-like counterpart of the published human checklist. Task 07's EIP-level observed-effort join still uses the revision-2 scores and is labelled as such. Payload `schema_version` is `2.0.0`.
 
 Human checklists are STEEL-authored content from `ethspecs/pm`, which is licensed CC0-1.0. Their published score cells and rationale text are projected verbatim with an immutable permalink to the source blob. Hegotá human checklists come from the Task 09 snapshot, which distinguishes merged files, open pull requests, draft pull requests, and inconsistent checklists; the site must never render a missing or incomplete human checklist as a zero.
 
