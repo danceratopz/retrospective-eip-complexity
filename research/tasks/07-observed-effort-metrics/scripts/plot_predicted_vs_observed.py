@@ -15,7 +15,10 @@ THIS SCRIPT READS TASK 05 PREDICTED SCORES. It is the prediction-outcome join
 and must only run once all 49 original assessments exist. It refuses to run on
 a partial assessment set unless --allow-partial is given.
 
-Outputs (all under outputs/join/):
+With --predictions task10 it reads the Task 10 Opus 5.5 · checklist revision 3
+assessments instead and writes the same files under outputs/join-opus-v3/.
+
+Outputs (all under outputs/join/ by default):
   predicted-vs-observed.csv    joined analysis table
   rank-correlations.csv        Spearman/Kendall per metric
   dashboard.html               all six panels on one page
@@ -44,6 +47,7 @@ from scipy import stats
 TASK_DIR = Path(__file__).resolve().parent.parent
 TASKS = TASK_DIR.parent
 T05 = TASKS / "05-retrospective-complexity-assignment" / "outputs" / "fork-eips"
+T10 = TASKS / "10-opus-v3-reassessment" / "retrospective" / "outputs" / "assessments"
 T03 = TASKS / "03-fork-development-timelines" / "inputs" / "forks"
 OUT = TASK_DIR / "outputs"
 JOIN = OUT / "join"
@@ -607,7 +611,14 @@ def write_table(df: pd.DataFrame) -> None:
 
 
 def main() -> None:
+    global T05, JOIN
     allow_partial = "--allow-partial" in sys.argv
+    if "--predictions" in sys.argv:
+        choice = sys.argv[sys.argv.index("--predictions") + 1]
+        if choice == "task10":
+            T05, JOIN = T10, OUT / "join-opus-v3"
+        elif choice != "task05":
+            raise SystemExit(f"Unknown --predictions value: {choice}")
     pred = load_predictions()
     if len(pred) != EXPECTED_ROWS and not allow_partial:
         raise SystemExit(
