@@ -1,0 +1,9 @@
+Apply the assessment template in `rubric.md` to the target EIP and return the structured result.
+
+1. Read `rubric.md` completely, then the target EIP and every supplied document completely.
+2. Summarize the assessed proposal's scope in two to five sentences, using only the supplied text.
+3. Score all 28 criteria. Use only the levels the template lists for each criterion. Use 4 only under the template's exceptional rule and justify it in `exceptional_score_justification`; otherwise leave that field empty.
+4. For every criterion, including those scored 0, give one or more evidence entries: `source` is the document path, `locator` is the Markdown section heading, optionally with a short verbatim phrase, and `summary` states what the passage establishes. Then give a concise rationale tied to the chosen level's definition, a confidence, and an uncertainty note (`None identified.` when there is none).
+5. Cross-EIP interactions: choose the criterion level from its definition. List each interacting EIP from the candidate list once, state whether it needs target-specific coordinated cases or only local compatibility checks, and name those cases. Describe interactions the documents state without an EIP number under `unidentified_interactions`, and leave both lists empty when the level is 0. Do not compute the bonus for additional interacting EIPs.
+6. Record under-specification separately from scoring. Judge the EIP as written and do not repair gaps from memory or assume a later design. Score unspecified behavior directly only under the criterion that calls for it; for any other criterion whose level depends on unresolved behavior, keep the best-supported score and give the plausible minimum and maximum level. Do not convert one missing detail into high scores across several criteria.
+7. Do not compute totals, bonuses or tiers. They are computed mechanically from your criterion levels.

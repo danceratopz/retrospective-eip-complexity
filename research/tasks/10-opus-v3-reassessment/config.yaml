@@ -1,0 +1,60 @@
+schema_version: 1
+task_id: 10-opus-v3-reassessment
+runtime:
+  model: claude-opus-5-5
+  effort: high
+  runs_per_eip: 1
+  advisor_model: null
+  fallback_model: null
+  maximum_concurrency: 4
+  timeout_seconds: 3600
+  claude_flags:
+  - -p
+  - --tools
+  - ''
+  - --strict-mcp-config
+  - --disable-slash-commands
+  - --no-session-persistence
+  - --output-format
+  - json
+engine:
+  runner: claude -p (Claude Code headless) with no tools, inside a bubblewrap capsule whose home holds only the login credential
+  claude_code_version_at_preparation: 2.1.292 (Claude Code)
+  isolation_method: bubblewrap_claude_p_no_tools_v1
+  known_context_injection: Claude Code adds the account email as context; no EIP-related context was visible in a probe on 2026-10-08.
+  procedure: score only; no spec-quality review stage and no refutation call
+rubric:
+  repository: ethspecs/pm
+  repository_commit: fe2f793b031adbb17826cfebd5bd2b502d1885c1
+  path: Templates/EIP-Complexity-Assessment.md
+  git_blob_sha: b7c22e624c7908580a9274a8c7139ab398155dbb
+  content_sha256: 70cf300b6f54a61387e4c83ae10cc718cbceec951bd08015035327aa45f6b108
+  checklist_revision: 3
+  immutable_url: https://github.com/ethspecs/pm/blob/fe2f793b031adbb17826cfebd5bd2b502d1885c1/Templates/EIP-Complexity-Assessment.md
+  pull_request: https://github.com/ethspecs/pm/pull/147
+  verified_at: '2026-10-08'
+assessor_view:
+  transformation: remove_revision_notes_v1
+  content_sha256: b20f631995dc4fee12db97c1ca1c765a731daf31545e4f9cfd27bffc02851cfc
+retrospective:
+  source_task: 05-retrospective-complexity-assignment
+  forks: [shanghai, cancun, prague, osaka, amsterdam]
+  base_forks:
+    shanghai: paris
+    cancun: shanghai
+    prague: cancun
+    osaka: prague
+    amsterdam: osaka
+prospective:
+  fork_id: hegota
+  base_fork: amsterdam
+  snapshot_id: hegota-2026-10-08-6dac5e7
+  namespace: hegota-2026-10-08
+  meta_eip: 8081
+  lists: [SFI, CFI, PFI]
+  excluded_lists: [DFI]
+  eips_repository: ethereum/EIPs
+  eips_commit: 6dac5e74918b54511298fdbff79650e8f8d27d78
+  eips_committed_at: '2026-10-07T22:23:55Z'
+  eips_pulled_at: '2026-10-08T09:12:50Z'
+  layer_gate_source: research/tasks/08-hegota-prospective-complexity-assessment/outputs/cohort-review.yaml
