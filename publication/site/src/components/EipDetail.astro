@@ -5,7 +5,7 @@
  */
 import type { Eip, Publication } from '../lib/domain';
 import { assessmentsFor, comparisonsFor, defaultView, humanAssessment, primaryAssessment, rubricFor, viewModes } from '../lib/domain';
-import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, EVALUATOR_LABELS, VIEW_LABELS, forkContextLabel, rubricLabel, statusLabel } from '../lib/labels';
+import { MODE_LABELS, SCOPE_TIMING_LABELS, SNAPSHOT_STATUS_LABELS, EVALUATOR_LABELS, VIEW_LABELS, forkContextLabel, rubricLabel, statusLabel, llmRoleLabel } from '../lib/labels';
 import { compareRoute, eipRoute, forkRoute } from '../lib/routes';
 import { domId, isoDate } from '../lib/format';
 import AssessmentCompare from './AssessmentCompare.astro';
@@ -130,7 +130,7 @@ const contextLine = (panel) => {
                 data-rubric-tab={panel.llm.length > 1 ? String(assessment.rubric_revision) : undefined}
               >
                 <span class="tab-title">{EVALUATOR_LABELS.llm} · {rubricLabel(assessment.rubric_revision)}</span>
-                <span class="tab-meta">{assessment.role === 'primary' ? 'Primary study score' : 'Re-run for the human comparison'} · {assessment.score}</span>
+                <span class="tab-meta">{llmRoleLabel(assessment.role, assessment.provenance.assessor?.model)} · {assessment.score}</span>
               </a>
             ))}
             {panel.human && (

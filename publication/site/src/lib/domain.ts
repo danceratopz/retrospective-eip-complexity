@@ -9,7 +9,7 @@ export type Source = 'llm' | 'human';
 export type Mode = 'retrospective' | 'prospective';
 export type Tier = 'low' | 'medium' | 'high';
 export type Confidence = 'low' | 'medium' | 'high';
-export type RubricRevision = 1 | 2;
+export type RubricRevision = 1 | 2 | 3;
 export type Status =
   | 'complete'
   | 'available_in_open_pr'
@@ -93,7 +93,7 @@ export interface Assessment {
   mode: Mode;
   source: Source;
   rubric_revision: RubricRevision;
-  role: 'primary' | 'historical_rubric_rerun' | 'published_checklist';
+  role: 'primary' | 'previous_evaluation' | 'historical_rubric_rerun' | 'published_checklist';
   status: Status;
   scored: boolean;
   score: number | null;
@@ -284,6 +284,9 @@ export interface Publication {
   forks: ForkSummary[];
   hegota: any;
   fork_shipping: any;
+  evaluations: Record<string, { label: string; model: string; revision: RubricRevision; task: string }>;
+  primary_evaluation: string;
+  hegota_builder: any;
   human_llm: {
     fork: string;
     rubric_revision: RubricRevision;

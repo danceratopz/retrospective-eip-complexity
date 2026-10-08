@@ -52,12 +52,14 @@ const occurrences = given ?? allOccurrences(data);
 const rows: Row[] = [];
 for (const occurrence of occurrences) {
   const assessments = occurrence.assessment_ids.map((id) => data.assessments[id]);
-  const llm = assessments.filter((item) => item.source === 'llm').sort((a, b) => b.rubric_revision - a.rubric_revision);
+  // The previous primary evaluation stays on the EIP page; fork and index tables show the primary and same-rubric re-runs.
+  const llm = assessments.filter((item) => item.source === 'llm' && item.role !== 'previous_evaluation').sort((a, b) => b.rubric_revision - a.rubric_revision);
+  const tabs = assessments.filter((item) => item.source === 'llm').length;
   if (!llm.length) {
     rows.push({ occurrence, assessment: null, evaluator: 'llm', status: occurrence.llm.status, rerun: false, statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork }) });
   }
   for (const assessment of llm) {
-    rows.push({ occurrence, assessment, evaluator: 'llm', status: assessment.status, rerun: assessment.role === 'historical_rubric_rerun', statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork, view: 'llm', rubric: llm.length > 1 ? assessment.rubric_revision : null }) });
+    rows.push({ occurrence, assessment, evaluator: 'llm', status: assessment.status, rerun: assessment.role === 'historical_rubric_rerun', statusHref: eipRoute(occurrence.eip, { fork: occurrence.fork, view: 'llm', rubric: tabs > 1 ? assessment.rubric_revision : null }) });
   }
   for (const assessment of assessments.filter((item) => item.source === 'human')) {
     const record = assessment.provenance.source_record;
@@ -65,7 +67,6 @@ for (const occurrence of occurrences) {
   }
 }
 const maxScore = Math.max(...rows.map((row) => row.assessment?.score ?? 0));
-const thresholds = data.rubrics['2'].tier_thresholds;
 const levelSort = (value: string | null) => ({ low: '1', medium: '2', high: '3' })[value ?? ''] ?? '4';
 const statusOrder = ['complete', 'available_in_open_pr', 'in_progress', 'incomplete', 'not_applicable', 'not_available'];
 const statusSort = (value: string) => statusOrder.indexOf(value);
@@ -204,7 +205,7 @@ const forkIndex = (fork: string) => String(data.forks.findIndex((item) => item.f
                   ? <span class="score-inconsistent" title={`The checklist publishes a total of ${assessment.checklist.published_total}, but its cells sum to ${assessment.checklist.recomputed_total ?? 'an unresolved value'}. No score is used until they agree.`}><span class="muted">published</span> {assessment.checklist.published_total}<br /><span class="flag flag-unresolved">cells sum to {assessment.checklist.recomputed_total ?? '?'}</span></span>
                   : <span class="muted">—</span>}
             </td>
-            <td>{scored ? <TierBadge tier={assessment.tier} thresholds={assessment.rubric_revision === 2 ? thresholds : data.rubrics['1'].tier_thresholds} size="small" /> : <span class="muted">—</span>}</td>
+            <td>{scored ? <TierBadge tier={assessment.tier} thresholds={data.rubrics[String(assessment.rubric_revision)].tier_thresholds} size="small" /> : <span class="muted">—</span>}</td>
             <td class="profile-col">
               {scored
                 ? <StackedBar segments={assessment.criteria.filter((criterion) => (criterion.score ?? 0) > 0).map((criterion) => ({ id: criterion.id, score: criterion.score, detail: truncate(criterion.rationale, 140) }))} definitions={definitions} total={assessment.score} max={maxScore} size="compact" label={`EIP-${occurrence.eip} ${occurrence.fork_name} ${EVALUATOR_LABELS[evaluator]} complexity`} />

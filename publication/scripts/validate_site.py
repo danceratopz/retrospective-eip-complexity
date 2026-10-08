@@ -120,10 +120,10 @@ def occurrence_rows(data: dict) -> list[dict]:
 def validate_domain_model(data: dict, rows: list[dict]) -> None:
     """Invariants of the schema 2.0.0 domain model that the pages depend on."""
     assessments = data["assessments"]
-    require(len(assessments) == 137, f"expected 137 assessments, found {len(assessments)}")
+    require(len(assessments) == 186, f"expected 186 assessments, found {len(assessments)}")
     require(len(data["comparisons"]) == 34, "expected 34 same-rubric Human/LLM comparisons")
     require(len(data["criteria"]) == 29, "criterion registry must contain 29 criteria")
-    require(set(data["rubrics"]) == {"1", "2"}, "both rubric revisions must be published")
+    require(set(data["rubrics"]) == {"1", "2", "3"}, "all three rubric revisions must be published")
     for assessment in assessments.values():
         order = data["rubrics"][str(assessment["rubric_revision"])]["criteria"]
         require([item["id"] for item in assessment["criteria"]] == order, f"{assessment['id']}: criterion order")
@@ -227,11 +227,11 @@ def validate() -> dict[str, int]:
         "Hegotá original PFI subtotal changed",
     )
     expected_scope_totals = {
-        "shanghai": {"included_at_cutoff": (4, 65), "added_after_cutoff": (1, 3)},
-        "cancun": {"included_at_cutoff": (5, 126), "added_after_cutoff": (1, 9)},
-        "prague": {"included_at_cutoff": (8, 216), "added_after_cutoff": (3, 38)},
-        "osaka": {"included_at_cutoff": (8, 105), "added_after_cutoff": (4, 35)},
-        "amsterdam": {"included_at_cutoff": (13, 243), "added_after_cutoff": (2, 44)},
+        "shanghai": {"included_at_cutoff": (4, 58), "added_after_cutoff": (1, 3)},
+        "cancun": {"included_at_cutoff": (5, 109), "added_after_cutoff": (1, 5)},
+        "prague": {"included_at_cutoff": (8, 159), "added_after_cutoff": (3, 29)},
+        "osaka": {"included_at_cutoff": (8, 72), "added_after_cutoff": (4, 24)},
+        "amsterdam": {"included_at_cutoff": (13, 238), "added_after_cutoff": (2, 33)},
     }
     for fork, expected_scopes in expected_scope_totals.items():
         for scope_timing, expected in expected_scopes.items():
@@ -299,11 +299,11 @@ def validate() -> dict[str, int]:
             for fork, row in shipping_by_fork.items()
         }
         == {
-            "shanghai": (4, 65, 1, 3, 68),
-            "cancun": (5, 126, 1, 9, 135),
-            "prague": (8, 216, 3, 38, 254),
-            "osaka": (8, 105, 4, 35, 140),
-            "amsterdam": (13, 243, 2, 44, 287),
+            "shanghai": (4, 58, 1, 3, 61),
+            "cancun": (5, 109, 1, 5, 114),
+            "prague": (8, 159, 3, 29, 188),
+            "osaka": (8, 72, 4, 24, 96),
+            "amsterdam": (13, 238, 2, 33, 271),
         },
         "fork-shipping scores must use the at-cutoff prediction and retain later additions separately",
     )
@@ -317,9 +317,9 @@ def validate() -> dict[str, int]:
         "Amsterdam projection changed",
     )
     require(
-        shipping_by_fork["amsterdam"]["high_tier_score_sum"] == 123
-        and shipping_by_fork["amsterdam"]["hardest_eip"] == "EIP-7928"
-        and shipping_by_fork["amsterdam"]["max_score"] == 40,
+        shipping_by_fork["amsterdam"]["high_tier_score_sum"] == 109
+        and shipping_by_fork["amsterdam"]["hardest_eip"] == "EIP-8037"
+        and shipping_by_fork["amsterdam"]["max_score"] == 43,
         "Amsterdam shipping summaries include a late-scope EIP",
     )
 
@@ -379,7 +379,7 @@ def validate() -> dict[str, int]:
     association_html = (DIST / "results/predicted-vs-observed/index.html").read_text(encoding="utf-8")
     home_html = (DIST / "index.html").read_text(encoding="utf-8")
     eip_index_html = (DIST / "eips/index.html").read_text(encoding="utf-8")
-    scored_rows = sum(1 for item in data["assessments"].values() if item["scored"])
+    scored_rows = sum(1 for item in data["assessments"].values() if item["scored"] and item["role"] != "previous_evaluation")
     hegota_html = (DIST / "prospective/hegota/index.html").read_text(encoding="utf-8")
     human_llm_html = (DIST / "human-vs-llm/index.html").read_text(encoding="utf-8")
     osaka_html = (DIST / "forks/osaka/index.html").read_text(encoding="utf-8")
@@ -441,7 +441,9 @@ def validate() -> dict[str, int]:
             f"scope-timing bars omit the {fork} split",
         )
     require("Which Kinds of Complexity Made Each Fork Heavy?" in association_html, "results fork composition section is missing")
-    require(association_html.count('class="stack stack-large') == 15, "results must show five scope-timing bars plus five composition bars in each of two views")
+    require(association_html.count('class="stack stack-large') == 16, "results must show five scope-timing bars, five composition bars in each of two views, and the Hegotá scenario profile")
+    require('data-hegota-profile' in association_html and association_html.count('data-hegota-list=') == 3, "Hegotá builder must offer the SFI, CFI and PFI lists")
+    require("Very uncertain: five forks, and the Hegotá scope is still changing." in association_html, "Hegotá builder lacks its uncertainty disclaimer")
     require(association_html.count("Contributed by ") >= 10, "results composition tooltips must name contributing EIP counts")
     composition_start = association_html.index("Which Kinds of Complexity Made Each Fork Heavy?")
     require(association_html.index("Composition table") > composition_start, "results composition must carry a semantic table")
@@ -456,7 +458,8 @@ def validate() -> dict[str, int]:
         "study/workflow",
     ]:
         require(not (DIST / removed_route / "index.html").exists(), f"obsolete route remains: {removed_route}")
-    require(eip_index_html.count('data-mode="') == len(data["assessments"]) + 7, "EIP index must show one row per assessment plus the seven N/A dispositions")
+    shown = [item for item in data["assessments"].values() if item["role"] != "previous_evaluation"]
+    require(eip_index_html.count('data-mode="') == len(shown) + 7, "EIP index must show one row per displayed assessment plus the seven N/A dispositions")
     for control in ["q", "fork", "band", "status", "evaluator", "under", "mode", "reruns"]:
         require(f'data-filter="{control}"' in eip_index_html, f"EIP index filter {control} is missing")
     require(eip_index_html.count('data-sort-key="') == 7, "EIP index sortable columns changed")
@@ -506,11 +509,12 @@ def validate() -> dict[str, int]:
     require("data-ranked-search" in hegota_html and 'data-filter="q"' in hegota_html, "Hegotá page must offer search on the ranked bars and the table")
     require('data-filter="q"' in osaka_html, "fork pages must offer table search")
     require(
-        association_html.index('class="scope-timing"') < association_html.index("generated/charts/fork-shipping.json"),
+        association_html.index('class="scope-timing"') < association_html.index("data-shipping-explorer"),
         "scope-timing bars must be the first Results visual",
     )
     for chart in ["fork-shipping", "fork-shipping-high-tier", "fork-shipping-hardest-eip"]:
-        require(f"generated/charts/{chart}.json" in association_html, f"{chart} chart is missing")
+        if chart != "fork-shipping":
+            require(f"generated/charts/{chart}.json" in association_html, f"{chart} chart is missing")
         chart_text = (DIST / f"generated/charts/{chart}.json").read_text(encoding="utf-8")
         require("Spearman" not in chart_text and "Pearson" not in chart_text, f"{chart} publishes unstable correlations")
         chart_spec = json.loads(chart_text)

@@ -1,0 +1,276 @@
+---
+/**
+ * Fork shipping time against at-cutoff complexity, with a least-squares fit and 95% prediction band, an
+ * evaluation selector, and a Hegotá scope builder whose total is drawn as a position on the complexity axis.
+ *
+ * All view state is in the URL: `eval` (evaluation key, omitted for the primary), `lists` (EIP-8081 lists),
+ * `add` and `drop` (per-EIP overrides). Without JavaScript the semantic tables below carry the same values.
+ */
+import type { Publication } from '../lib/domain';
+import { stackedBarHtml } from '../lib/stacked-bar';
+
+interface Props {
+  data: Publication;
+}
+
+const { data } = Astro.props as Props;
+const shipping = data.fork_shipping;
+const builder = data.hegota_builder;
+const primary = data.primary_evaluation;
+const evaluations = Object.entries(shipping.evaluations as Record<string, any>).map(([key, value]) => ({ key, ...value }));
+const labels: Record<string, string> = Object.fromEntries(data.criteria.map((item) => [item.id, item.label]));
+const DEFAULT_LISTS = ['SFI', 'CFI'];
+const scored = builder.entries.filter((item: any) => item.status === 'scored');
+const inLists = (lists: string[]) => scored.filter((item: any) => lists.includes(item.list));
+const total = (items: any[]) => items.reduce((sum: number, item: any) => sum + item.score, 0);
+const profile = (items: any[]) => {
+  const sums = new Map<string, number>();
+  for (const item of items) for (const criterion of item.criteria) sums.set(criterion.id, (sums.get(criterion.id) ?? 0) + criterion.score);
+  return [...sums].map(([id, score]) => ({ id, score }));
+};
+const initial = inLists(DEFAULT_LISTS);
+const initialBar = stackedBarHtml({ segments: profile(initial), labels, total: total(initial), size: 'large', label: 'Hegotá scenario EL-rubric complexity', showTotal: true });
+const payload = {
+  primary,
+  builder_evaluation: builder.evaluation,
+  x_max: shipping.x_max,
+  evaluations: Object.fromEntries(evaluations.map((item) => [item.key, { label: item.label, rows: item.rows, fit: item.fit }])),
+  builder: { lists: builder.lists, list_labels: builder.list_labels, entries: builder.entries, default_lists: DEFAULT_LISTS },
+  labels,
+};
+const scenarios = Object.entries(builder.scenarios) as [string, any][];
+const listCount = (list: string) => builder.entries.filter((item: any) => item.list === list).length;
+const listScored = (list: string) => scored.filter((item: any) => item.list === list);
+---
+<section class="shipping-explorer" data-shipping-explorer aria-labelledby="shipping-explorer-heading">
+  <script type="application/json" data-shipping-payload set:html={JSON.stringify(payload)}></script>
+  <h2 id="shipping-explorer-heading">Fork Shipping Time Versus Predicted Complexity, With Hegotá</h2>
+  <div class="caveat"><strong>Very uncertain: five forks, and the Hegotá scope is still changing.</strong> The line is a least-squares fit over five points, one of them projected (Amsterdam), and the shaded band is its 95% prediction interval for one new fork. Hegotá is shown only as a position on the complexity axis. Read where it lands against earlier forks, not a ship date.</div>
+
+  <div class="explorer-controls">
+    <fieldset class="evaluation-picker">
+      <legend>Evaluation</legend>
+      {evaluations.filter((item) => item.key === primary).map((item) => (
+        <label><input type="radio" name="shipping-evaluation" value={item.key} checked /> {item.label} <span class="muted">(primary)</span></label>
+      ))}
+      <details data-other-evaluations>
+        <summary>Other evaluations</summary>
+        {evaluations.filter((item) => item.key !== primary).map((item) => (
+          <label><input type="radio" name="shipping-evaluation" value={item.key} /> {item.label}</label>
+        ))}
+        <p class="muted">Checklist revisions are not interchangeable; revision 3 totals run lower than revision 2. The Hegotá builder uses Opus 5.5 · v3 only, so its marker is hidden for other evaluations.</p>
+      </details>
+    </fieldset>
+
+    <fieldset class="hegota-lists">
+      <legend>Hegotá scope from EIP-8081 at EIPs <code>{builder.eips_commit.slice(0, 7)}</code></legend>
+      <div class="chip-row">
+        {builder.lists.map((list: string) => (
+          <button type="button" class="chip" data-hegota-list={list} aria-pressed={DEFAULT_LISTS.includes(list) ? 'true' : 'false'} title={builder.list_labels[list]}>
+            {list} <span class="chip-meta">{listCount(list)} EIPs · {total(listScored(list))} pts</span>
+          </button>
+        ))}
+      </div>
+      <p class="hegota-readout" aria-live="polite" data-hegota-readout>EL-rubric total {total(initial)} across {initial.length} scored EIPs</p>
+      <div data-hegota-profile set:html={initialBar} />
+      <details class="hegota-eips">
+        <summary>Choose individual EIPs</summary>
+        {builder.lists.map((list: string) => (
+          <fieldset class="hegota-eip-group">
+            <legend>{list}: {builder.list_labels[list]}</legend>
+            {builder.entries.filter((item: any) => item.list === list).map((item: any) => (
+              <label class:list={['hegota-eip', item.status !== 'scored' && 'is-na']}>
+                <input type="checkbox" data-hegota-eip={item.eip} data-list={item.list} checked={item.status === 'scored' && DEFAULT_LISTS.includes(item.list)} disabled={item.status !== 'scored'} />
+                <span>EIP-{item.eip} {item.title}</span>
+                <span class="muted">{item.status === 'scored' ? `${item.score} · ${item.tier}` : 'Not applicable to EL rubric'}{item.disposition_review === 'proposed_pending_owner_review' ? ' · disposition pending review' : ''}</span>
+              </label>
+            ))}
+          </fieldset>
+        ))}
+      </details>
+      <p><button type="button" class="button-secondary" data-copy-scenario>Copy link to this view</button> <span class="muted" data-copy-status aria-live="polite"></span></p>
+    </fieldset>
+  </div>
+
+  <figure class="chart-figure">
+    <div class="chart" data-shipping-chart role="img" aria-label="Fork shipping span against at-cutoff complexity, with a least-squares fit, its 95% prediction band and the selected Hegotá scenario total">
+      <p class="chart-status">Loading interactive chart…</p>
+    </div>
+    <figcaption class="muted" data-shipping-caption>Calendar days from each fork’s first devnet with at least two independent EL clients to mainnet, against the complexity score sum of EIPs included by its evaluation cutoff. Open point: Amsterdam, projected mainnet 15 December 2026.</figcaption>
+  </figure>
+
+  <div class="table-region" role="region" aria-label="Fit summary" tabindex="0">
+    <table>
+      <caption>Least-squares fit by evaluation (five forks)</caption>
+      <thead><tr><th scope="col">Evaluation</th><th scope="col" class="number">Days per point</th><th scope="col" class="number">Intercept (days)</th><th scope="col" class="number">Residual SE (days)</th><th scope="col" class="number">R²</th></tr></thead>
+      <tbody>{evaluations.map((item) => <tr><td>{item.label}</td><td class="number">{item.fit.slope_days_per_point}</td><td class="number">{item.fit.intercept_days}</td><td class="number">{item.fit.residual_standard_error_days}</td><td class="number">{item.fit.r_squared}</td></tr>)}</tbody>
+    </table>
+  </div>
+  <div class="table-region" role="region" aria-label="Hegotá scenarios" tabindex="0">
+    <table>
+      <caption>Hegotá EL-rubric totals by EIP-8081 list (Opus 5.5 · v3)</caption>
+      <thead><tr><th scope="col">Scenario</th><th scope="col" class="number">Scored EIPs</th><th scope="col" class="number">Not applicable</th><th scope="col" class="number">EL-rubric total</th></tr></thead>
+      <tbody>{scenarios.map(([name, item]) => <tr><td>{name}</td><td class="number">{item.scored_eips}</td><td class="number">{item.not_applicable_eips}</td><td class="number">{item.score_sum}</td></tr>)}</tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .explorer-controls { display: grid; gap: 1rem; margin-block: 1rem; }
+  .explorer-controls fieldset { border: 1px solid var(--border, #cbd5e1); border-radius: 8px; padding: 0.75rem 1rem; min-width: 0; }
+  .evaluation-picker label { display: inline-flex; gap: 0.35rem; align-items: center; margin-inline-end: 1rem; }
+  .evaluation-picker details { margin-top: 0.5rem; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .chip { border: 1px solid var(--border, #94a3b8); border-radius: 999px; padding: 0.35rem 0.9rem; background: transparent; color: inherit; cursor: pointer; font: inherit; }
+  .chip[aria-pressed='true'] { background: var(--accent, #3457d5); border-color: var(--accent, #3457d5); color: #fff; }
+  .chip-meta { font-size: 0.8em; opacity: 0.85; }
+  .hegota-readout { font-weight: 600; margin: 0.25rem 0 0.5rem; }
+  .hegota-eip-group { border: 0; padding: 0; margin: 0.75rem 0 0; }
+  .hegota-eip { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: baseline; padding: 0.15rem 0; }
+  .hegota-eip.is-na { opacity: 0.7; }
+  @media (max-width: 600px) { .hegota-eip { grid-template-columns: auto 1fr; } .hegota-eip .muted { grid-column: 2; } }
+</style>
+
+<script>
+  import embed from 'vega-embed';
+  import { stackedBarHtml } from '../lib/stacked-bar';
+
+  const root = document.querySelector<HTMLElement>('[data-shipping-explorer]');
+  if (root) {
+    const payload = JSON.parse(root.querySelector('[data-shipping-payload]')!.textContent!);
+    const entries: any[] = payload.builder.entries;
+    const scored = entries.filter((item) => item.status === 'scored');
+    const chart = root.querySelector<HTMLElement>('[data-shipping-chart]')!;
+    const readout = root.querySelector<HTMLElement>('[data-hegota-readout]')!;
+    const profileHost = root.querySelector<HTMLElement>('[data-hegota-profile]')!;
+
+    const params = new URLSearchParams(location.search);
+    const numbers = (value: string | null) => new Set((value ?? '').split(',').map(Number).filter((item) => Number.isInteger(item) && item > 0));
+    const state = {
+      evaluation: payload.evaluations[params.get('eval') ?? ''] ? params.get('eval')! : payload.primary,
+      lists: new Set(params.has('lists') ? (params.get('lists') ?? '').split(',').filter((item) => payload.builder.lists.includes(item)) : payload.builder.default_lists),
+      add: numbers(params.get('add')),
+      drop: numbers(params.get('drop')),
+    };
+
+    const selected = () => scored.filter((item) => (state.lists.has(item.list) && !state.drop.has(item.eip)) || state.add.has(item.eip));
+
+    function writeUrl() {
+      const next = new URLSearchParams(location.search);
+      for (const key of ['eval', 'lists', 'add', 'drop']) next.delete(key);
+      if (state.evaluation !== payload.primary) next.set('eval', state.evaluation);
+      const lists = payload.builder.lists.filter((item: string) => state.lists.has(item));
+      if (lists.join(',') !== payload.builder.default_lists.join(',')) next.set('lists', lists.join(','));
+      const add = [...state.add].filter((eip) => !state.lists.has(scored.find((item) => item.eip === eip)?.list)).sort((a, b) => a - b);
+      const drop = [...state.drop].filter((eip) => state.lists.has(scored.find((item) => item.eip === eip)?.list)).sort((a, b) => a - b);
+      state.add = new Set(add);
+      state.drop = new Set(drop);
+      if (add.length) next.set('add', add.join(','));
+      if (drop.length) next.set('drop', drop.join(','));
+      const query = next.toString();
+      history.replaceState(null, '', `${location.pathname}${query ? `?${query}` : ''}${location.hash}`);
+    }
+
+    function spec(total: number, count: number) {
+      const evaluation = payload.evaluations[state.evaluation];
+      const showHegota = state.evaluation === payload.builder_evaluation && count > 0;
+      const forkMax = Math.max(...evaluation.rows.map((row: any) => row.total_score));
+      const domainMax = Math.ceil((Math.max(forkMax, showHegota ? total : 0) * 1.15) / 50) * 50;
+      const band = evaluation.fit.band
+        .filter((point: any) => point.x <= domainMax + 1e-9)
+        .map((point: any) => ({ ...point, lower: Math.max(0, point.lower) }));
+      const x = { field: 'x', type: 'quantitative', title: `Complexity score sum at cutoff (${evaluation.label})`, scale: { zero: true, domain: [0, domainMax], nice: false } };
+      const y = { type: 'quantitative', title: 'Days: first ≥2-EL devnet → mainnet', scale: { zero: true } };
+      const width = Math.max(180, Math.min(620, chart.clientWidth - 110));
+      const points = evaluation.rows.map((row: any) => ({ ...row, x: row.total_score }));
+      const tooltip = [
+        { field: 'fork_name', title: 'Fork', type: 'nominal' },
+        { field: 'total_score', title: 'Score at cutoff', type: 'quantitative' },
+        { field: 'shipping_days', title: 'Shipping span (days)', type: 'quantitative' },
+        { field: 'mainnet_at', title: 'Mainnet', type: 'nominal' },
+        { field: 'projected', title: 'Projected', type: 'nominal' },
+      ];
+      return {
+        $schema: 'https://vega.github.io/schema/vega-lite/v6.json',
+        width,
+        height: Math.round(width * 0.8),
+        layer: [
+          { data: { values: band }, mark: { type: 'area', color: '#94a3b8', opacity: 0.22 }, encoding: { x, y: { ...y, field: 'lower' }, y2: { field: 'upper' } } },
+          { data: { values: band }, mark: { type: 'line', color: '#64748b', strokeDash: [6, 4], strokeWidth: 1.5 }, encoding: { x, y: { ...y, field: 'fit' } } },
+          { data: { values: points.filter((row: any) => !row.projected) }, mark: { type: 'point', filled: true, size: 130, color: '#3457d5', stroke: 'white', strokeWidth: 1 }, encoding: { x, y: { ...y, field: 'shipping_days' }, tooltip } },
+          { data: { values: points.filter((row: any) => row.projected) }, mark: { type: 'point', filled: false, size: 150, strokeWidth: 2.5, color: '#3457d5' }, encoding: { x, y: { ...y, field: 'shipping_days' }, tooltip } },
+          { data: { values: points }, mark: { type: 'text', align: 'left', dx: 8, fontSize: 11 }, encoding: { x, y: { ...y, field: 'shipping_days' }, text: { field: 'fork_short' } } },
+          ...(showHegota
+            ? [
+                { data: { values: [{ x: total }] }, mark: { type: 'rule', color: '#b45309', strokeWidth: 2.5, strokeDash: [2, 3] }, encoding: { x, tooltip: [{ field: 'x', title: 'Hegotá scenario total', type: 'quantitative' }] } },
+                { data: { values: [{ x: total, label: `Hegotá scenario: ${total}` }] }, mark: { type: 'text', color: '#b45309', align: total > domainMax * 0.7 ? 'right' : 'left', dx: total > domainMax * 0.7 ? -6 : 6, dy: 8, baseline: 'top', fontWeight: 'bold', fontSize: 12 }, encoding: { x, y: { value: 0 }, text: { field: 'label' } } },
+              ]
+            : []),
+        ],
+        config: { axis: { labelColor: '#475569', titleColor: '#334155', gridColor: '#e2e8f0' }, view: { stroke: null }, background: null },
+      };
+    }
+
+    let pending = 0;
+    function render() {
+      const chosen = selected();
+      const total = chosen.reduce((sum, item) => sum + item.score, 0);
+      const na = entries.filter((item) => item.status !== 'scored' && state.lists.has(item.list)).length;
+      readout.textContent = `EL-rubric total ${total} across ${chosen.length} scored EIP${chosen.length === 1 ? '' : 's'}` + (na ? `; ${na} not applicable to the EL rubric` : '');
+      const sums = new Map<string, number>();
+      for (const item of chosen) for (const criterion of item.criteria) sums.set(criterion.id, (sums.get(criterion.id) ?? 0) + criterion.score);
+      profileHost.innerHTML = stackedBarHtml({ segments: [...sums].map(([id, score]) => ({ id, score })), labels: payload.labels, total, size: 'large', label: 'Hegotá scenario EL-rubric complexity', showTotal: true });
+      for (const button of root!.querySelectorAll<HTMLButtonElement>('[data-hegota-list]')) button.setAttribute('aria-pressed', String(state.lists.has(button.dataset.hegotaList!)));
+      for (const box of root!.querySelectorAll<HTMLInputElement>('[data-hegota-eip]')) {
+        if (box.disabled) continue;
+        box.checked = chosen.some((item) => item.eip === Number(box.dataset.hegotaEip));
+      }
+      for (const radio of root!.querySelectorAll<HTMLInputElement>('input[name="shipping-evaluation"]')) radio.checked = radio.value === state.evaluation;
+      if (state.evaluation !== payload.primary) root!.querySelector<HTMLDetailsElement>('[data-other-evaluations]')!.open = true;
+      const ticket = ++pending;
+      embed(chart, spec(total, chosen.length) as any, { actions: false, renderer: 'svg' })
+        .then(() => { if (ticket === pending) chart.querySelector('.chart-status')?.remove(); })
+        .catch((error) => { chart.textContent = `Chart unavailable: ${error.message}`; });
+    }
+
+    root.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-hegota-list]');
+      if (button) {
+        const list = button.dataset.hegotaList!;
+        if (state.lists.has(list)) state.lists.delete(list);
+        else state.lists.add(list);
+        for (const item of scored.filter((entry) => entry.list === list)) { state.add.delete(item.eip); state.drop.delete(item.eip); }
+        writeUrl();
+        render();
+      }
+      if ((event.target as HTMLElement).closest('[data-copy-scenario]')) {
+        const status = root!.querySelector<HTMLElement>('[data-copy-status]')!;
+        navigator.clipboard?.writeText(location.href).then(
+          () => { status.textContent = 'Link copied.'; },
+          () => { status.textContent = location.href; },
+        );
+      }
+    });
+    root.addEventListener('change', (event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.name === 'shipping-evaluation') state.evaluation = target.value;
+      if (target.dataset.hegotaEip) {
+        const eip = Number(target.dataset.hegotaEip);
+        const listed = state.lists.has(target.dataset.list!);
+        if (target.checked) { state.drop.delete(eip); if (!listed) state.add.add(eip); }
+        else { state.add.delete(eip); if (listed) state.drop.add(eip); }
+      }
+      writeUrl();
+      render();
+    });
+    let resizeTimer = 0;
+    let lastWidth = chart.clientWidth;
+    new ResizeObserver(() => {
+      if (Math.abs(chart.clientWidth - lastWidth) < 8) return;
+      lastWidth = chart.clientWidth;
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(render, 150);
+    }).observe(chart);
+    render();
+  }
+</script>

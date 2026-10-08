@@ -65,6 +65,7 @@ export const MODE_LABELS: Record<Mode, string> = { retrospective: 'Retrospective
 
 export const ROLE_LABELS = {
   primary: 'Primary study assessment',
+  previous_evaluation: 'Previous primary evaluation',
   historical_rubric_rerun: 'Same-rubric re-run for the human comparison',
   published_checklist: 'Published checklist',
 } as const;
@@ -77,4 +78,18 @@ export function rubricLabel(revision: number): string {
 
 export function forkContextLabel(mode: Mode): string {
   return mode === 'prospective' ? 'Snapshot' : 'Assessment cutoff';
+}
+
+export const MODEL_LABELS: Record<string, string> = { 'claude-opus-5-5': 'Opus 5.5', 'gpt-5.6-sol': 'GPT-5.6' };
+
+export function modelLabel(model: string | null | undefined): string {
+  return (model && MODEL_LABELS[model]) || model || 'LLM';
+}
+
+/** Tab and badge detail for one LLM assessment: model, role, and score. */
+export function llmRoleLabel(role: string, model: string | null | undefined): string {
+  const name = modelLabel(model);
+  if (role === 'primary') return `${name} · primary`;
+  if (role === 'previous_evaluation') return `${name} · previous primary`;
+  return `${name} · re-run for the human comparison`;
 }

@@ -9,7 +9,7 @@ import { rubricLabel } from '../lib/labels';
 interface Props {
   criteria: CriterionDefinition[];
   /** Restrict to criteria of one rubric revision; omit to show every registered criterion. */
-  revision?: 1 | 2 | null;
+  revision?: 1 | 2 | 3 | null;
   /** Emphasize criteria present in the current view. */
   highlight?: Set<string> | string[] | null;
   compact?: boolean;
@@ -40,7 +40,7 @@ const groups = CRITERION_GROUPS.map((group) => ({
               <span class="swatch" style={`--fill:var(--criterion-${criterion.id});--ink:var(--criterion-ink-${criterion.id})`} aria-hidden="true">{CRITERION_PRESENTATION[criterion.id].abbreviation}</span>
               <div>
                 <strong>{criterion.label}</strong>
-                {criterion.rubric_revisions.length === 1 && <span class="muted"> · {rubricLabel(criterion.rubric_revisions[0])} only</span>}
+                {criterion.rubric_revisions.length === 1 ? <span class="muted"> · {rubricLabel(criterion.rubric_revisions[0])} only</span> : !criterion.rubric_revisions.includes(1) && <span class="muted"> · not in {rubricLabel(1).toLowerCase()}</span>}
                 <div class="muted">{criterion.short_definition}</div>
                 {!compact && Object.keys(criterion.anchors).length > 0 && (
                   <details class="anchors">
