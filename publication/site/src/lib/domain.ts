@@ -96,7 +96,7 @@ export interface Assessment {
   role: 'primary' | 'previous_evaluation' | 'historical_rubric_rerun' | 'published_checklist' | 'reevaluation';
   evaluation_date?: string | null;
   snapshot_id?: string | null;
-  snapshot_status?: 'PFI' | 'CFI' | 'SFI' | null;
+  snapshot_status?: 'PFI' | 'CFI' | 'SFI' | 'DFI' | null;
   status: Status;
   scored: boolean;
   score: number | null;
@@ -168,7 +168,7 @@ export interface Occurrence {
   fork_name: string;
   mode: Mode;
   layers: string[];
-  snapshot_status: 'PFI' | 'SFI' | 'CFI' | null;
+  snapshot_status: 'PFI' | 'SFI' | 'CFI' | 'DFI' | null;
   scope_timing: 'included_at_cutoff' | 'added_after_cutoff' | null;
   llm: LlmSummary;
   human: HumanSummary;
@@ -267,6 +267,8 @@ export interface ForkSummary {
   short_name: string;
   mode: Mode;
   eip_count: number;
+  /** Hegotá only: candidates declined (DFI) since the snapshot, listed but excluded from totals. */
+  declined_count?: number;
   scored_count: number;
   not_applicable_count: number;
   final_scope_score_sum: number;

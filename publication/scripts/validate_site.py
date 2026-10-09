@@ -223,7 +223,7 @@ def validate() -> dict[str, int]:
     require(len(not_applicable) == 8, "Hegotá N/A population mismatch")
     require(all(row["score"] is None and row["tier"] is None for row in not_applicable), "N/A rows must not have score or tier")
     require(
-        {row["snapshot_status"] for row in prospective} == {"PFI", "SFI", "CFI"},
+        {row["snapshot_status"] for row in prospective} == {"PFI", "SFI", "CFI", "DFI"},
         "Hegotá snapshot statuses are incomplete",
     )
     require(
@@ -231,8 +231,12 @@ def validate() -> dict[str, int]:
         "Hegotá SFI membership mismatch",
     )
     require(
-        sum(row["score"] for row in scored_hegota if row["snapshot_status"] in {"SFI", "CFI"}) == 273,
+        sum(row["score"] for row in scored_hegota if row["snapshot_status"] in {"SFI", "CFI"}) == 385,
         "Hegotá SFI+CFI subtotal changed",
+    )
+    require(
+        {row["eip"] for row in prospective if row["snapshot_status"] == "DFI"} == {7666, 8355},
+        "declined Hegotá EIPs must stay listed as DFI",
     )
     expected_scope_totals = {
         "shanghai": {"included_at_cutoff": (4, 58), "added_after_cutoff": (1, 3)},
@@ -503,7 +507,7 @@ def validate() -> dict[str, int]:
     require(hegota_html.count('data-status="in_progress"') == 5, "Hegotá page must list the five draft-PR checklists as rows")
     require("published 20" in hegota_html, "a checklist scored from its cells must still show its differing published total")
     require("ethspecs/pm/pull/118" in hegota_html, "Hegotá page must link the open pull-request sources")
-    require("Inclusion status at snapshot" in hegota_html and "Evaluated on" in hegota_html, "Hegotá snapshot-status column is missing")
+    require("EIP-8081 list" in hegota_html and "Evaluated on" in hegota_html, "Hegotá snapshot-status column is missing")
     require(
         "EL-rubric total by EIP-8081 list: Scheduled 77" in hegota_html
         and hegota_html.count(">SFI</span>") >= 1
@@ -618,7 +622,7 @@ def validate() -> dict[str, int]:
 
     forks_index_html = (DIST / "forks/index.html").read_text(encoding="utf-8")
     require(forks_index_html.count('class="stack stack-regular') == 5, "forks index must show one composition bar per retrospective fork only")
-    require("EL-rubric total <strong>543</strong>" in forks_index_html and "856" not in forks_index_html, "forks index must present the current Hegotá EL-rubric total")
+    require("EL-rubric total <strong>513</strong>" in forks_index_html and "856" not in forks_index_html, "forks index must present the current Hegotá EL-rubric total")
     require(">In progress</span>" in forks_index_html, "forks index must mark Hegotá human checklists as in progress")
     require(
         'href="https://github.com/ethspecs/pm/pulls?q=is%3Apr+state%3Aopen+complexity+assessment"' in forks_index_html,

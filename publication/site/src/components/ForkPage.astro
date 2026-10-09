@@ -36,7 +36,7 @@ const snapshot = hegota.human_snapshot;
 <p class:list={['eyebrow', prospective && 'prospective-text']}>{prospective ? `Prospective · frozen ${hegota.captured_on} snapshot` : 'Retrospective Fork Evaluation'}</p>
 <h1>{prospective ? 'Hegotá candidate complexity assessment' : fork.name}</h1>
 {prospective ? (
-  <p class="lede">EL-rubric total by EIP-8081 list: Scheduled {hegota.scenarios['SFI'].score_sum} ({hegota.scenarios['SFI'].scored_eips} EIPs); with Considered {hegota.scenarios['SFI+CFI'].score_sum} ({hegota.scenarios['SFI+CFI'].scored_eips}); with Proposed {hegota.score_sum} across {hegota.scored} scored EIPs. {hegota.not_applicable} entries are not applicable to the Execution Layer rubric.</p>
+  <p class="lede">EL-rubric total by EIP-8081 list: Scheduled {hegota.scenarios['SFI'].score_sum} ({hegota.scenarios['SFI'].scored_eips} EIPs); with Considered {hegota.scenarios['SFI+CFI'].score_sum} ({hegota.scenarios['SFI+CFI'].scored_eips}); with Proposed {hegota.score_sum} across {hegota.scored} scored EIPs, using the lists after {hegota.lists_as_of.label}. {hegota.not_applicable} entries are not applicable to the Execution Layer rubric.{hegota.declined.length > 0 && ` ${hegota.declined.map((item) => `EIP-${item.eip}`).join(' and ')} ${hegota.declined.length === 1 ? 'was' : 'were'} declined (DFI) and ${hegota.declined.length === 1 ? 'remains' : 'remain'} listed below, excluded from every total.`}</p>
 ) : (
   <p class="lede">{fork.at_cutoff_count} Execution Layer EIPs were included by the evaluation cutoff, with a predicted complexity score sum of {fork.at_cutoff_score_sum}. Another {fork.late_addition_count} EIP{fork.late_addition_count === 1 ? ' was' : 's were'} added later, contributing {fork.late_addition_score_sum} to the final-scope total of {fork.final_scope_score_sum}.</p>
 )}
@@ -48,6 +48,7 @@ const snapshot = hegota.human_snapshot;
 {prospective && (
   <>
     <div class="notice"><strong>Independent LLM Evaluation.</strong> These scores were produced with Claude Opus 5.5 under checklist revision 3, the same LLM and rubric as the retrospective study, independently of the STEEL team’s ongoing manual assessment work. The Human column below records where that manual work stands for each candidate.</div>
+    <div class="notice"><strong>EIP-8081 lists as of {hegota.lists_as_of.label}</strong> (<a href={`https://github.com/ethereum/EIPs/blob/${hegota.lists_as_of.commit}/EIPS/eip-8081.md`}>EIPs <code>{hegota.lists_as_of.commit.slice(0, 7)}</code></a>, {hegota.lists_as_of.committed_at.slice(0, 10)}). Scores are unchanged from the assessment at <code>{hegota.source_commit.slice(0, 7)}</code>.{hegota.not_yet_assessed.length > 0 && <> Not yet assessed, so not shown or counted: {hegota.not_yet_assessed.map((item, index) => <>{index > 0 && ', '}EIP-{item.eip} {item.title} ({item.list})</>)}.</>}</div>
     <div class="notice"><strong>Common information cutoff:</strong> {hegota.information_cutoff_at}. The assessment covers Execution Layer and execution-client networking surfaces only. It does not predict final fork scope or include observed outcomes. Combine the lists into a scope in the <a href={`${basePath('results/predicted-vs-observed/')}#shipping-explorer-heading`}>Hegotá scope builder</a>.</div>
   </>
 )}

@@ -60,7 +60,7 @@ export const SCOPE_TIMING_LABELS = {
   added_after_cutoff: 'Added after cutoff',
 } as const;
 
-export const SNAPSHOT_STATUS_LABELS = { PFI: 'Proposed for inclusion', SFI: 'Scheduled for inclusion', CFI: 'Considered for inclusion' } as const;
+export const SNAPSHOT_STATUS_LABELS = { PFI: 'Proposed for inclusion', SFI: 'Scheduled for inclusion', CFI: 'Considered for inclusion', DFI: 'Declined for inclusion; excluded from totals' } as const;
 
 export const MODE_LABELS: Record<Mode, string> = { retrospective: 'Retrospective', prospective: 'Prospective' };
 

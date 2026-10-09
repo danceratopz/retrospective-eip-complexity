@@ -318,7 +318,7 @@ class GeneratedPayloadTests(unittest.TestCase):
         self.assertTrue(7666 not in entries and 8355 not in entries)
         self.assertEqual({eip: (entries[eip]["list"], entries[eip]["status"], entries[eip]["score"]) for eip in (7907, 8360)}, {7907: ("PFI", "not_assessed", None), 8360: ("CFI", "not_assessed", None)})
         self.assertTrue(all(item["score"] is None for item in builder["entries"] if item["status"] == STATUS_NOT_APPLICABLE))
-        self.assertEqual(forks["hegota"]["score_sum"], 543)
+        self.assertEqual((forks["hegota"]["score_sum"], forks["hegota"]["declined_count"]), (513, 2))
         for fork in forks.values():
             for name, block in fork["composition"].items():
                 self.assertEqual(sum(item["score_sum"] for item in block["criteria"]), block["score_sum"], f"{fork['fork']} {name}")

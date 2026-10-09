@@ -78,16 +78,20 @@ def fork_summaries(
             },
         }
         if fork == PROSPECTIVE_FORK:
-            pfi = [item for item in primary if occurrence_status(fork_occurrences, item["eip"]) == "PFI"]
+            # Declined (DFI) candidates stay listed with their scores but leave every total.
+            listed = [item for item in primary if occurrence_status(fork_occurrences, item["eip"]) in {"SFI", "CFI", "PFI"}]
+            pfi = [item for item in listed if occurrence_status(fork_occurrences, item["eip"]) == "PFI"]
             summary.update(
                 {
                     "at_cutoff_count": None,
                     "at_cutoff_score_sum": None,
                     "late_addition_count": None,
                     "late_addition_score_sum": None,
-                    "score_sum": sum(item["score"] for item in primary),
+                    "score_sum": sum(item["score"] for item in listed),
+                    "final_scope_score_sum": sum(item["score"] for item in listed),
+                    "declined_count": sum(1 for item in fork_occurrences if item["snapshot_status"] == "DFI"),
                     "composition": {
-                        "all_scored": composition(primary),
+                        "all_scored": composition(listed),
                         "pfi_only": composition(pfi),
                     },
                 }

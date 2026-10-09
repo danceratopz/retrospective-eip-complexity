@@ -348,20 +348,37 @@ def load_task10_hegota() -> tuple[dict[str, Any], list[dict[str, str]]]:
     return builder, sources
 
 
+def _latest_list_update(summary: dict[str, Any]) -> tuple[dict[str, Any] | None, list[dict[str, str]]]:
+    """The newest recorded EIP-8081 list state for the Task 10 snapshot, if any."""
+    updates = sorted((TASK10_PROSPECTIVE / "list-updates").glob("*.yaml"))
+    if not updates:
+        return None, []
+    record = load_yaml(updates[-1])
+    if record.get("snapshot_id") != summary["snapshot_id"] or record.get("assessments_unchanged") is not True:
+        raise BuildError("List update does not belong to the Task 10 Hegotá snapshot")
+    return record, [source(updates[-1])]
+
+
+def _lists_as_of(record: dict[str, Any] | None, summary: dict[str, Any]) -> dict[str, Any]:
+    if record is None:
+        return {"label": "Task 10 snapshot", "commit": summary["eips_commit"], "committed_at": summary["information_cutoff_at"], "changes": []}
+    return {
+        "label": record["label"],
+        "commit": record["source"]["repository_commit"],
+        "committed_at": record["source"]["committed_at"],
+        "changes": record["changes"],
+    }
+
+
 def _apply_list_update(entries: list[dict[str, Any]], summary: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, str]]]:
     """Move builder entries to the newest recorded EIP-8081 lists; scores stay those of the snapshot.
 
     Entries that left the SFI/CFI/PFI lists are removed; EIPs that joined after the snapshot are added as
     not assessed, never as zero.
     """
-    updates = sorted((TASK10_PROSPECTIVE / "list-updates").glob("*.yaml"))
-    snapshot = {"label": "Task 10 snapshot", "commit": summary["eips_commit"], "committed_at": summary["information_cutoff_at"], "changes": []}
-    if not updates:
-        return snapshot, []
-    path = updates[-1]
-    record = load_yaml(path)
-    if record.get("snapshot_id") != summary["snapshot_id"] or record.get("assessments_unchanged") is not True:
-        raise BuildError("List update does not belong to the Task 10 Hegotá snapshot")
+    record, sources = _latest_list_update(summary)
+    if record is None:
+        return _lists_as_of(None, summary), []
     current = {eip: name for name, eips in record["lists"].items() for eip in eips}
     for entry in list(entries):
         list_name = current.get(entry["eip"])
@@ -386,12 +403,7 @@ def _apply_list_update(entries: list[dict[str, Any]], summary: dict[str, Any]) -
                     "immutable_url": f"https://github.com/ethereum/EIPs/blob/{record['source']['repository_commit']}/EIPS/eip-{change['eip']}.md",
                 }
             )
-    return {
-        "label": record["label"],
-        "commit": record["source"]["repository_commit"],
-        "committed_at": record["source"]["committed_at"],
-        "changes": record["changes"],
-    }, [source(path)]
+    return _lists_as_of(record, summary), sources
 
 
 TASK10_HEGOTA_GATE = {"snapshot": "hegota-2026-10-08-6dac5e7", "population": 35, "scored": 27, "not_applicable": 8, "total": 543}
@@ -409,9 +421,14 @@ def load_task10_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]
     }
     if observed != TASK10_HEGOTA_GATE:
         raise BuildError(f"Task 10 Hegotá publication gate mismatch: {observed!r}")
+    list_update, update_sources = _latest_list_update(summary)
+    sources.extend(update_sources)
+    current = {eip: name for name, eips in (list_update or {}).get("lists", {}).items() for eip in eips}
+    list_of = lambda row: current.get(row["eip"], "DFI") if list_update else row["eip_8081_list"]
     occurrences: list[dict[str, Any]] = []
     assessments: list[dict[str, Any]] = []
     for row in summary["scored_eips"]:
+        row = {**row, "eip_8081_list": list_of(row)}
         path = TASK10_PROSPECTIVE / "assessments" / "hegota-2026-10-08" / f"eip-{row['eip']}.yaml"
         record = load_yaml(path)
         assessment = llm_assessment(
@@ -436,6 +453,7 @@ def load_task10_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]
         occurrence["llm"] = _llm_summary(assessment)
         occurrences.append(occurrence)
     for row in summary["not_applicable_eips"]:
+        row = {**row, "eip_8081_list": list_of(row)}
         occurrence = _base_occurrence(fork=PROSPECTIVE_FORK, eip=row["eip"], title=row["title"], layers=row["affected_layers"], mode="prospective")
         occurrence["snapshot_status"] = row["eip_8081_list"]
         occurrence["llm"] = {
@@ -451,7 +469,19 @@ def load_task10_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]
             "assessed_revision_at": None,
         }
         occurrences.append(occurrence)
-    scored = summary["scored_eips"]
+    lists = {item["eip"]: item["snapshot_status"] for item in occurrences}
+    in_scope = [item for item in assessments if lists[item["eip"]] in {"SFI", "CFI", "PFI"}]
+    declined = [item for item in assessments if lists[item["eip"]] == "DFI"]
+    scenarios = {}
+    for name, members in (("SFI", {"SFI"}), ("SFI+CFI", {"SFI", "CFI"}), ("SFI+CFI+PFI", {"SFI", "CFI", "PFI"})):
+        chosen = [item for item in assessments if lists[item["eip"]] in members]
+        scenarios[name] = {
+            "scored_eips": len(chosen),
+            "not_applicable_eips": sum(1 for item in occurrences if item["snapshot_status"] in members and item["llm"]["assessment_id"] is None),
+            "score_sum": sum(item["score"] for item in chosen),
+        }
+    lists_as_of = _lists_as_of(list_update, summary)
+    scored = [row for row in summary["scored_eips"] if lists[row["eip"]] != "DFI"]
     distribution = lambda key: {value: sum(1 for item in scored if item[key] == value) for value in sorted({item[key] for item in scored})}
     public_summary = {
         # Task-internal wording is rephrased for readers; the research summary stays unchanged.
@@ -462,10 +492,18 @@ def load_task10_prospective() -> tuple[list[dict[str, Any]], list[dict[str, Any]
         "captured_on": TASK10_HEGOTA_GATE["snapshot"].split("-", 1)[1][:10],
         "confidence_distribution": distribution("overall_confidence"),
         "information_cutoff_at": summary["information_cutoff_at"],
-        "not_applicable": TASK10_HEGOTA_GATE["not_applicable"],
-        "scenarios": summary["scenarios"],
-        "score_sum": TASK10_HEGOTA_GATE["total"],
-        "scored": TASK10_HEGOTA_GATE["scored"],
+        "not_applicable": sum(1 for item in occurrences if item["llm"]["assessment_id"] is None and item["snapshot_status"] != "DFI"),
+        "scenarios": scenarios,
+        "score_sum": sum(item["score"] for item in in_scope),
+        "scored": len(in_scope),
+        "lists_as_of": lists_as_of,
+        "declined": [{"eip": item["eip"], "title": item["title"], "score": item["score"]} for item in declined],
+        "declined_score_sum": sum(item["score"] for item in declined),
+        "not_yet_assessed": [
+            {"eip": change["eip"], "title": change["listed_title"], "list": change["to"]}
+            for change in lists_as_of["changes"]
+            if not change["assessed"] and change["to"] in {"SFI", "CFI", "PFI"}
+        ],
         "snapshot_id": TASK10_HEGOTA_GATE["snapshot"],
         "source_commit": summary["eips_commit"],
         "tier_distribution": distribution("tier"),
