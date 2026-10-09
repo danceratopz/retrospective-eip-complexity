@@ -104,11 +104,16 @@ export interface HegotaSnapshot {
   id: string;
   eipsCommit: string;
   cutoff: string;
+  /** The EIP-8081 list state applied to the scores; differs from eipsCommit after a recorded list update. */
+  listsLabel: string | null;
+  listsCommit: string;
+  listsAt: string;
 }
 
 export function hegotaSnapshot(data: Publication): HegotaSnapshot {
   const builder = data.hegota_builder;
-  return { id: builder.snapshot_id, eipsCommit: builder.eips_commit, cutoff: builder.information_cutoff_at };
+  const lists = builder.lists_as_of ?? { label: null, commit: builder.eips_commit, committed_at: builder.information_cutoff_at };
+  return { id: builder.snapshot_id, eipsCommit: builder.eips_commit, cutoff: builder.information_cutoff_at, listsLabel: lists.label, listsCommit: lists.commit, listsAt: lists.committed_at };
 }
 
 export function hegotaLists(data: Publication): ListSummary[] {

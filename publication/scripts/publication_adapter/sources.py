@@ -319,8 +319,19 @@ def load_task10_hegota() -> tuple[dict[str, Any], list[dict[str, str]]]:
                 "immutable_url": f"https://github.com/ethereum/EIPs/blob/{summary['eips_commit']}/EIPS/eip-{row['eip']}.md",
             }
         )
+    lists_as_of, update_sources = _apply_list_update(entries, summary)
+    sources.extend(update_sources)
     order = {"SFI": 0, "CFI": 1, "PFI": 2}
     entries.sort(key=lambda item: (order[item["list"]], item["eip"]))
+    scenarios = {}
+    for name, lists in (("SFI", ["SFI"]), ("SFI+CFI", ["SFI", "CFI"]), ("SFI+CFI+PFI", ["SFI", "CFI", "PFI"])):
+        chosen = [item for item in entries if item["list"] in lists]
+        scenarios[name] = {
+            "scored_eips": sum(1 for item in chosen if item["status"] == "scored"),
+            "not_applicable_eips": sum(1 for item in chosen if item["status"] == STATUS_NOT_APPLICABLE),
+            "not_assessed_eips": sum(1 for item in chosen if item["status"] == "not_assessed"),
+            "score_sum": sum(item["score"] for item in chosen if item["status"] == "scored"),
+        }
     builder = {
         "snapshot_id": summary["snapshot_id"],
         "eips_commit": summary["eips_commit"],
@@ -328,12 +339,59 @@ def load_task10_hegota() -> tuple[dict[str, Any], list[dict[str, str]]]:
         "evaluation": "opus-v3",
         "lists": ["SFI", "CFI", "PFI"],
         "list_labels": {"SFI": "Scheduled for Inclusion", "CFI": "Considered for Inclusion", "PFI": "Proposed for Inclusion"},
-        "scenarios": summary["scenarios"],
+        "scenarios": scenarios,
         "population": summary["population"],
+        "lists_as_of": lists_as_of,
         "caveats": summary["caveats"],
         "entries": entries,
     }
     return builder, sources
+
+
+def _apply_list_update(entries: list[dict[str, Any]], summary: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Move builder entries to the newest recorded EIP-8081 lists; scores stay those of the snapshot.
+
+    Entries that left the SFI/CFI/PFI lists are removed; EIPs that joined after the snapshot are added as
+    not assessed, never as zero.
+    """
+    updates = sorted((TASK10_PROSPECTIVE / "list-updates").glob("*.yaml"))
+    snapshot = {"label": "Task 10 snapshot", "commit": summary["eips_commit"], "committed_at": summary["information_cutoff_at"], "changes": []}
+    if not updates:
+        return snapshot, []
+    path = updates[-1]
+    record = load_yaml(path)
+    if record.get("snapshot_id") != summary["snapshot_id"] or record.get("assessments_unchanged") is not True:
+        raise BuildError("List update does not belong to the Task 10 Hegotá snapshot")
+    current = {eip: name for name, eips in record["lists"].items() for eip in eips}
+    for entry in list(entries):
+        list_name = current.get(entry["eip"])
+        if list_name in {"SFI", "CFI", "PFI"}:
+            entry["list"] = list_name
+        else:
+            entries.remove(entry)
+    known = {entry["eip"] for entry in entries}
+    for change in record["changes"]:
+        if change["to"] in {"SFI", "CFI", "PFI"} and not change["assessed"] and change["eip"] not in known:
+            entries.append(
+                {
+                    "eip": change["eip"],
+                    "title": change["listed_title"],
+                    "list": change["to"],
+                    "status": "not_assessed",
+                    "score": None,
+                    "tier": None,
+                    "layers": [],
+                    "disposition_review": None,
+                    "criteria": [],
+                    "immutable_url": f"https://github.com/ethereum/EIPs/blob/{record['source']['repository_commit']}/EIPS/eip-{change['eip']}.md",
+                }
+            )
+    return {
+        "label": record["label"],
+        "commit": record["source"]["repository_commit"],
+        "committed_at": record["source"]["committed_at"],
+        "changes": record["changes"],
+    }, [source(path)]
 
 
 TASK10_HEGOTA_GATE = {"snapshot": "hegota-2026-10-08-6dac5e7", "population": 35, "scored": 27, "not_applicable": 8, "total": 543}

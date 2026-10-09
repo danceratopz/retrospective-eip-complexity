@@ -14,7 +14,7 @@ const rows = forkRows(data);
 const fit = linearFit(rows.map((row) => ({ x: row.total, y: row.days })));
 const lists = hegotaLists(data);
 const snapshot = hegotaSnapshot(data);
-const snapshotDate = new Date(snapshot.cutoff).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const snapshotDate = new Date(snapshot.listsAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const forkMax = Math.max(...rows.map((row) => row.total));
 const stamp = SCORES.stamp;
 const eipNumber = (label: string) => Number(label.replace(/\D/g, ''));
@@ -167,7 +167,7 @@ const slides = [
     <p class="eyebrow">Live demo {stamp && <span class="stamp-chip">{stamp}</span>}</p>
     <h2>This is where the current scope sits <span class="aside">(place your bets)</span></h2>
     <ShippingScatter id="build-scatter" rows={rows} fit={fit} stamp={stamp} lists={lists} label="Historical forks with fit and band; a movable marker shows the Hegotá complexity total for the selected lists" />
-    <p class="caveat"><strong>Very uncertain.</strong> Five data points, scope still changing, and the model knows how past forks turned out. The grey strip marks the range past forks cover; beyond it the dashed line is extrapolation. Lists as of {snapshotDate} (<a href={`https://github.com/ethereum/EIPs/tree/${snapshot.eipsCommit}`}>EIPs {snapshot.eipsCommit.slice(0, 7)}</a>); every candidate: <a href={basePath('prospective/hegota/')}>Hegotá evaluations</a>.</p>
+    <p class="caveat"><strong>Very uncertain.</strong> Five data points, scope still changing, and the model knows how past forks turned out. The grey strip marks the range past forks cover; beyond it the dashed line is extrapolation. Lists as of {snapshot.listsLabel ? `${snapshot.listsLabel}, ` : ''}{snapshotDate} (<a href={`https://github.com/ethereum/EIPs/tree/${snapshot.listsCommit}`}>EIPs {snapshot.listsCommit.slice(0, 7)}</a>){snapshot.listsCommit !== snapshot.eipsCommit && <>, scores from <a href={`https://github.com/ethereum/EIPs/tree/${snapshot.eipsCommit}`}>EIPs {snapshot.eipsCommit.slice(0, 7)}</a></>}; every candidate: <a href={basePath('prospective/hegota/')}>Hegotá evaluations</a>.</p>
   </Slide>
 
   <Slide id="closing" title="Are we optimizing for the right outcome?" class="closing">

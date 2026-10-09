@@ -312,7 +312,11 @@ class GeneratedPayloadTests(unittest.TestCase):
         self.assertEqual({fork: forks[fork]["at_cutoff_score_sum"] for fork in ("shanghai", "cancun", "prague", "osaka", "amsterdam")}, {"shanghai": 58, "cancun": 109, "prague": 159, "osaka": 72, "amsterdam": 238})
         self.assertEqual(list(self.data["fork_shipping"]["evaluations"]), ["opus-v3"])
         builder = self.data["hegota_builder"]
-        self.assertEqual({name: item["score_sum"] for name, item in builder["scenarios"].items()}, {"SFI": 77, "SFI+CFI": 273, "SFI+CFI+PFI": 543})
+        self.assertEqual({name: item["score_sum"] for name, item in builder["scenarios"].items()}, {"SFI": 77, "SFI+CFI": 385, "SFI+CFI+PFI": 513})
+        self.assertEqual(builder["lists_as_of"]["commit"][:7], "f154af8")
+        entries = {item["eip"]: item for item in builder["entries"]}
+        self.assertTrue(7666 not in entries and 8355 not in entries)
+        self.assertEqual({eip: (entries[eip]["list"], entries[eip]["status"], entries[eip]["score"]) for eip in (7907, 8360)}, {7907: ("PFI", "not_assessed", None), 8360: ("CFI", "not_assessed", None)})
         self.assertTrue(all(item["score"] is None for item in builder["entries"] if item["status"] == STATUS_NOT_APPLICABLE))
         self.assertEqual(forks["hegota"]["score_sum"], 543)
         for fork in forks.values():

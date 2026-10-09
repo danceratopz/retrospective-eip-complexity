@@ -59,7 +59,8 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
 
   <div class="explorer-controls">
     <fieldset class="hegota-lists">
-      <legend>Hegotá scope from EIP-8081 at EIPs <code>{builder.eips_commit.slice(0, 7)}</code></legend>
+      <legend>Hegotá scope from EIP-8081{builder.lists_as_of.label !== 'Task 10 snapshot' ? ` after ${builder.lists_as_of.label}` : ''}</legend>
+      <p class="muted">Lists as of EIPs <a href={`https://github.com/ethereum/EIPs/blob/${builder.lists_as_of.commit}/EIPS/eip-8081.md`}><code>{builder.lists_as_of.commit.slice(0, 7)}</code></a> ({builder.lists_as_of.committed_at.slice(0, 10)}); scores from the Opus 5.5 · v3 assessment of each EIP at <code>{builder.eips_commit.slice(0, 7)}</code>. EIPs added since are listed as not yet assessed and never count as zero.</p>
       <div class="chip-row">
         {builder.lists.map((list: string) => (
           <button type="button" class="chip" data-hegota-list={list} aria-pressed={DEFAULT_LISTS.includes(list) ? 'true' : 'false'} title={builder.list_labels[list]}>
@@ -78,7 +79,7 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
               <label class:list={['hegota-eip', item.status !== 'scored' && 'is-na']}>
                 <input type="checkbox" data-hegota-eip={item.eip} data-list={item.list} checked={item.status === 'scored' && DEFAULT_LISTS.includes(item.list)} disabled={item.status !== 'scored'} />
                 <span>EIP-{item.eip} {item.title}</span>
-                <span class="muted">{item.status === 'scored' ? `${item.score} · ${item.tier}` : 'Not applicable to EL rubric'}{item.disposition_review === 'proposed_pending_owner_review' ? ' · provisional disposition' : ''}</span>
+                <span class="muted">{item.status === 'scored' ? `${item.score} · ${item.tier}` : item.status === 'not_assessed' ? `Added at ${builder.lists_as_of.label}; not yet assessed` : 'Not applicable to EL rubric'}{item.disposition_review === 'proposed_pending_owner_review' ? ' · provisional disposition' : ''}</span>
               </label>
             ))}
           </fieldset>
@@ -131,9 +132,9 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
   </div>
   <div class="table-region" role="region" aria-label="Hegotá scenarios" tabindex="0">
     <table>
-      <caption>Hegotá EL-rubric totals by EIP-8081 list (Opus 5.5 · v3)</caption>
-      <thead><tr><th scope="col">Scenario</th><th scope="col" class="number">Scored EIPs</th><th scope="col" class="number">Not applicable</th><th scope="col" class="number">EL-rubric total</th></tr></thead>
-      <tbody>{scenarios.map(([name, item]) => <tr><td>{name}</td><td class="number">{item.scored_eips}</td><td class="number">{item.not_applicable_eips}</td><td class="number">{item.score_sum}</td></tr>)}</tbody>
+      <caption>Hegotá EL-rubric totals by EIP-8081 list as of {builder.lists_as_of.label} (Opus 5.5 · v3)</caption>
+      <thead><tr><th scope="col">Scenario</th><th scope="col" class="number">Scored EIPs</th><th scope="col" class="number">Not applicable</th><th scope="col" class="number">Not yet assessed</th><th scope="col" class="number">EL-rubric total</th></tr></thead>
+      <tbody>{scenarios.map(([name, item]) => <tr><td>{name}</td><td class="number">{item.scored_eips}</td><td class="number">{item.not_applicable_eips}</td><td class="number">{item.not_assessed_eips}</td><td class="number">{item.score_sum}</td></tr>)}</tbody>
     </table>
   </div>
   <div class="table-region" id="ai-capability-table" role="region" aria-label="AI capability by fork" tabindex="0">
@@ -301,8 +302,10 @@ const listScored = (list: string) => scored.filter((item: any) => item.list === 
     function render() {
       const chosen = selected();
       const total = chosen.reduce((sum, item) => sum + item.score, 0);
-      const na = entries.filter((item) => item.status !== 'scored' && state.lists.has(item.list)).length;
+      const na = entries.filter((item) => item.status === 'not_applicable' && state.lists.has(item.list)).length;
+      const unassessed = entries.filter((item) => item.status === 'not_assessed' && state.lists.has(item.list)).length;
       readout.textContent = `EL-rubric total ${total} across ${chosen.length} scored EIP${chosen.length === 1 ? '' : 's'}` + (na ? `; ${na} not applicable to the EL rubric` : '')
+        + (unassessed ? `; ${unassessed} not yet assessed` : '')
         + (state.ai && chosen.length ? `; AI-scaled at most ${Math.round((total / scale(payload.ai.hegota.horizon_minutes)) * 10) / 10}` : '');
       const sums = new Map<string, number>();
       for (const item of chosen) for (const criterion of item.criteria) sums.set(criterion.id, (sums.get(criterion.id) ?? 0) + criterion.score);
